@@ -1,8 +1,8 @@
-import type { Context } from 'elysia';
-import type { JwtPayload } from '@repo/types/auth.types';
-import type { AppFile } from '@/types/app.types';
+import type { Context } from "elysia";
+import type { JwtPayload } from "@repo/types/auth.types";
+import type { AppFile } from "@/types/app.types";
 
-export interface AppContext extends Omit<Context, 'body' | 'query' | 'params'> {
+export interface AppContext extends Omit<Context, "body" | "query" | "params"> {
   user?: JwtPayload;
   json?: (data: unknown, status?: number) => Response;
   files?: Record<string, AppFile[]>;
@@ -11,5 +11,9 @@ export interface AppContext extends Omit<Context, 'body' | 'query' | 'params'> {
   params: Record<string, string>;
 }
 
-export type ElysiaHandler = (c: AppContext) => Promise<Response | void> | Response | void;
-export type ElysiaMiddleware = (c: AppContext) => Promise<void | Response> | void | Response;
+export type ElysiaHandler = (
+  c: AppContext,
+) => Promise<Response | void> | Response | void;
+export type ElysiaMiddleware = (
+  c: AppContext,
+) => Promise<void | Response> | void | Response;

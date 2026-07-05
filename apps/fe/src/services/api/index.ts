@@ -1,27 +1,17 @@
-import {
-  AuthService,
-  CalendarService,
-  CompanyService,
-  MusicService,
-  NoteService,
-  NotificationService,
-  SettingsService,
-  SubscriptionService,
-  TodoService,
-  WorkstationService,
-} from '@repo/services';
+import ApiServicePackage from "@repo/services";
 
 const Api = {
-  Auth: AuthService,
-  Todo: TodoService,
-  Note: NoteService,
-  Calendar: CalendarService,
-  Music: MusicService,
-  Notification: NotificationService,
-  Settings: SettingsService,
-  Company: CompanyService,
-  Workstation: WorkstationService,
-  Subscription: SubscriptionService,
-};
+  Auth: ApiServicePackage.Auth,
+  Session: ApiServicePackage.Session,
+  Todo: ApiServicePackage.Todo,
+  Note: ApiServicePackage.Note,
+  Calendar: ApiServicePackage.Calender,
+  Music: ApiServicePackage.Music,
+  Notification: ApiServicePackage.Notification,
+  Settings: ApiServicePackage.Setting,
+  Company: ApiServicePackage.Company,
+  Workstation: ApiServicePackage.Workstation,
+  Subscription: ApiServicePackage.Subscription,
+} as const;
 
 export default Api;

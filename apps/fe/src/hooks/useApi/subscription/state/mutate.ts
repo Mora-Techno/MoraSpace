@@ -1,20 +1,20 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import Api from '@/services/api';
-import { CreateCheckoutInput } from '@/types/api/subscription';
+import { queryKey } from "@/configs";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import Api from "@/services/api";
+import { CreateCheckoutInput } from "@/types/api/subscription";
 
 export function useCancelSubscription() {
   const ns = useAppNameSpace();
 
   return useMutation({
-    mutationFn: () => Api.Subscription.cancel(),
+    mutationFn: () => Api.Subscription.CancelSubscription(),
     onSuccess: (res) => {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -26,7 +26,7 @@ export function useCancelSubscription() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -36,12 +36,13 @@ export function useCreateCheckout() {
   const ns = useAppNameSpace();
 
   return useMutation({
-    mutationFn: (payload: CreateCheckoutInput) => Api.Subscription.checkout(payload),
+    mutationFn: (payload: CreateCheckoutInput) =>
+      Api.Subscription.Checkout(payload),
     onSuccess: (res) => {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
 
       if (res.data.checkoutUrl) {
@@ -56,7 +57,7 @@ export function useCreateCheckout() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });

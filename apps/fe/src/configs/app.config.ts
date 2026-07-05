@@ -1,9 +1,9 @@
-import { BookOpen, Building2, History, Home, User } from 'lucide-react';
-import React from 'react';
+import { BookOpen, Building2, History, Home, User } from "lucide-react";
+import React from "react";
 
-import { RegisterProps } from '@/types/ui';
+import { RegisterProps } from "@/types/ui";
 
-import { env } from './env.config';
+import { env } from "./env.config";
 
 interface AppConfig {
   name: string;
@@ -46,36 +46,36 @@ export type PropsParams = {
 };
 
 export const appConfig: AppConfig = {
-  name: 'App',
-  description: 'App',
-  logo: '/images/logo.png',
+  name: "App",
+  description: "App",
+  logo: "/images/logo.png",
   metadata: {
-    title: 'App',
-    description: 'App',
-    keywords: ['App'],
-    author: 'App',
-    image: 'App',
+    title: "App",
+    description: "App",
+    keywords: ["App"],
+    author: "App",
+    image: "App",
   },
   social_media: {
     twitter: {
-      url: 'https://twitter.com/app',
-      icon: 'hugeicons:new-twitter-rectangle',
+      url: "https://twitter.com/app",
+      icon: "hugeicons:new-twitter-rectangle",
     },
     instagram: {
-      url: 'https://instagram.com/app',
-      icon: 'basil:instagram-outline',
+      url: "https://instagram.com/app",
+      icon: "basil:instagram-outline",
     },
     linkedin: {
-      url: 'https://linkedin.com/app',
-      icon: 'tabler:brand-linkedin',
+      url: "https://linkedin.com/app",
+      icon: "tabler:brand-linkedin",
     },
     youtube: {
-      url: 'https://youtube.com/app',
-      icon: 'mingcute:youtube-line',
+      url: "https://youtube.com/app",
+      icon: "mingcute:youtube-line",
     },
     tiktok: {
-      url: 'https://tiktok.com/app',
-      icon: 'hugeicons:tiktok',
+      url: "https://tiktok.com/app",
+      icon: "hugeicons:tiktok",
     },
   },
 };
@@ -86,54 +86,54 @@ interface NavigationMenuConfig {
     href: string;
     icon?: React.ReactNode;
     description?: string;
-    children?: NavigationMenuConfig['items'];
+    children?: NavigationMenuConfig["items"];
   }[];
 }
 
 export const navigationMenuConfig: NavigationMenuConfig = {
   items: [
     {
-      title: 'Beranda',
-      href: '/',
-      description: 'Landing page',
+      title: "Beranda",
+      href: "/",
+      description: "Landing page",
     },
     {
-      title: 'Resource',
-      href: '/resource',
-      description: 'Resource',
+      title: "Resource",
+      href: "/resource",
+      description: "Resource",
     },
     {
-      title: 'Blogs',
-      href: '/blogs',
-      description: 'Blog',
+      title: "Blogs",
+      href: "/blogs",
+      description: "Blog",
     },
     {
-      title: 'Pricing',
-      href: '/pricing',
-      description: 'Pricing',
+      title: "Pricing",
+      href: "/pricing",
+      description: "Pricing",
     },
   ],
 };
 
 export const SIDEBAR_MENU = [
-  { name: 'Beranda', url: '/home', icon: Home, subMenu: [] },
-  { name: 'Module', url: '/module', icon: BookOpen, subMenu: [] },
-  { name: 'Riwayat', url: '/history', icon: History, subMenu: [] },
-  { name: 'Profil', url: '/profile', icon: User, subMenu: [] },
+  { name: "Beranda", url: "/home", icon: Home, subMenu: [] },
+  { name: "Module", url: "/module", icon: BookOpen, subMenu: [] },
+  { name: "Riwayat", url: "/history", icon: History, subMenu: [] },
+  { name: "Profil", url: "/profile", icon: User, subMenu: [] },
 ];
 
-export const PUBLIC_ROUTES = ['/', '/home', '/resource', '/blogs', '/pricing'];
-export const AUTH_ROUTES = ['/login', '/register', '/forgot-password'];
+export const PUBLIC_ROUTES = ["/", "/home", "/resource", "/blogs", "/pricing"];
+export const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
 
 export const RegisterConfigRoutes: RegisterProps[] = [
   {
-    title: 'Daftarkan perusahaan mu',
-    href: '/register/company',
+    title: "Daftarkan perusahaan mu",
+    href: "/register/company",
     icon: Building2,
   },
   {
-    title: 'Daftarkan sebagai pekerja',
-    href: '/',
+    title: "Daftarkan sebagai pekerja",
+    href: "/",
     icon: User,
   },
 ];

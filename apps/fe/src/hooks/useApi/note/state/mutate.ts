@@ -1,19 +1,23 @@
-import { Note, PickCreateNote, PickUpdateNote } from '@repo/types';
-import { PickApiID } from '@repo/types/api.types';
-import { useMutation } from '@tanstack/react-query';
+import { Note, PickCreateNote, PickUpdateNote } from "@repo/types";
+import { PickApiID } from "@repo/types/api.types";
+import { useMutation } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import Api from '@/services/api';
-import type { TResponse } from '@/types/api/response';
+import { queryKey } from "@/configs";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import Api from "@/services/api";
+import type { TResponse } from "@/types/api/response";
 
-import { NoteCacheContext, readNoteDetailSnapshot, readNoteListSnapshot } from './utils';
+import {
+  NoteCacheContext,
+  readNoteDetailSnapshot,
+  readNoteListSnapshot,
+} from "./utils";
 
 export function useCreateNote() {
   const ns = useAppNameSpace();
 
   return useMutation<TResponse<Note>, Error, PickCreateNote, NoteCacheContext>({
-    mutationFn: (payload) => Api.Note.create(payload),
+    mutationFn: (payload) => Api.Note.CreateNote(payload),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: queryKey.notesRoot() });
       return { previousList: readNoteListSnapshot(ns) };
@@ -22,7 +26,7 @@ export function useCreateNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -32,12 +36,15 @@ export function useCreateNote() {
     },
     onError: (err, _variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
+        ns.queryClient.setQueryData(
+          queryKey.notes.list(),
+          context.previousList,
+        );
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -47,7 +54,7 @@ export function useDeleteNote() {
   const ns = useAppNameSpace();
 
   return useMutation<TResponse<Note>, Error, string, NoteCacheContext>({
-    mutationFn: (id) => Api.Note.remove(id),
+    mutationFn: (id) => Api.Note.DeleteNote(id),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: queryKey.notesRoot() });
       return { previousList: readNoteListSnapshot(ns) };
@@ -56,7 +63,7 @@ export function useDeleteNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -66,12 +73,15 @@ export function useDeleteNote() {
     },
     onError: (err, _variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
+        ns.queryClient.setQueryData(
+          queryKey.notes.list(),
+          context.previousList,
+        );
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -86,7 +96,7 @@ export function useUpdateNote() {
     { id: PickApiID; payload: PickUpdateNote },
     NoteCacheContext
   >({
-    mutationFn: ({ id, payload }) => Api.Note.update(id.id, payload),
+    mutationFn: ({ id, payload }) => Api.Note.UpdateNote(id.id, payload),
     onMutate: async ({ id }) => {
       await ns.queryClient.cancelQueries({ queryKey: queryKey.notesRoot() });
       return {
@@ -98,7 +108,7 @@ export function useUpdateNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -108,15 +118,21 @@ export function useUpdateNote() {
     },
     onError: (err, variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
+        ns.queryClient.setQueryData(
+          queryKey.notes.list(),
+          context.previousList,
+        );
       }
       if (context?.previousDetail !== undefined) {
-        ns.queryClient.setQueryData(queryKey.notes.detail(variables.id.id), context.previousDetail);
+        ns.queryClient.setQueryData(
+          queryKey.notes.detail(variables.id.id),
+          context.previousDetail,
+        );
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });

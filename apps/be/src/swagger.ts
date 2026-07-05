@@ -58,6 +58,10 @@ const swaggerPlugin = swagger({
         name: "Settings",
         description: "Preferensi UI dan notifikasi pengguna",
       },
+      {
+        name: "Session",
+        description: "Referensi Api Session",
+      },
     ],
   },
 });

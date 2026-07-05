@@ -13,8 +13,8 @@ export const RegisterDto = t.Object({
     t.String({ minLength: 10, description: "Nomor telepon (opsional)" }),
   ),
   companyRole: t.Optional(
-    t.Union([t.Literal("leader"), t.Literal("admin"), t.Literal("employee")], {
-      description: "Role company (default: employee)",
+    t.Union([t.Literal("Owner"), t.Literal("Admin"), t.Literal("Member")], {
+      description: "Role company (default: Owner)",
     }),
   ),
 });

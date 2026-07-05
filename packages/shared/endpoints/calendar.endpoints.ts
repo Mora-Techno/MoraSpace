@@ -1,6 +1,6 @@
-import { buildEndpoint, listEndpoints } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/calendar/events';
+const mount = "/calendar/events";
 
 export const CALENDAR_ENDPOINTS = {
   LIST: buildEndpoint(mount),
@@ -10,5 +10,8 @@ export const CALENDAR_ENDPOINTS = {
 export const calendarEventById = (id: string) => buildEndpoint(mount, `/${id}`);
 
 export function listCalendarEndpoints() {
-  return listEndpoints(CALENDAR_ENDPOINTS);
+  return Object.keys(CALENDAR_ENDPOINTS).map((key) => ({
+    name: key,
+    path: CALENDAR_ENDPOINTS[key as keyof typeof CALENDAR_ENDPOINTS],
+  }));
 }

@@ -61,7 +61,7 @@ class AuthController {
         email: newUser.email,
         phone: newUser.phone,
         fullName: newUser.fullName,
-        companyRole: (auth.companyRole ?? "employee") as CompanyRole,
+        companyRole: (auth.companyRole ?? "Member") as CompanyRole,
         companyId: null,
         companyMemberId: null,
         isVerify: false,

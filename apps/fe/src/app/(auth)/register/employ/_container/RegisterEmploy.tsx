@@ -11,7 +11,7 @@ import { RegisterFormSection } from "@/components/page/auth";
 const RegisterEmployeContainer = () => {
   const Api = useApi();
   const [formRegister, setFormRegister] = useState<PickRegister>({
-    companyRole: "employee",
+    companyRole: "Member",
     email: "",
     fullName: "",
     password: "",

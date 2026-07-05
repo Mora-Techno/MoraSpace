@@ -1,6 +1,6 @@
-import { buildEndpoint, listEndpoints } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/settings';
+const mount = "/settings";
 
 export const SETTINGS_ENDPOINTS = {
   GET: buildEndpoint(mount),
@@ -8,5 +8,8 @@ export const SETTINGS_ENDPOINTS = {
 } as const;
 
 export function listSettingsEndpoints() {
-  return listEndpoints(SETTINGS_ENDPOINTS);
+  return Object.keys(SETTINGS_ENDPOINTS).map((key) => ({
+    name: key,
+    path: SETTINGS_ENDPOINTS[key as keyof typeof SETTINGS_ENDPOINTS],
+  }));
 }

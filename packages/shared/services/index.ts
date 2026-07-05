@@ -1,50 +1,28 @@
-import { AuthService } from './auth.service';
-import { CalendarService } from './calendar.service';
-import { CompanyService } from './company.service';
-import { MusicService } from './music.service';
-import { NoteService } from './note.service';
-import { NotificationService } from './notification.service';
-import { SettingsService } from './settings.service';
-import { SubscriptionService } from './subscription.service';
-import { TodoService } from './todo.service';
-import { WorkstationService } from './workstation.service';
+import { WrapApi } from "../utils/wrapApi";
+import authService from "./auth.service";
+import calendarService from "./calendar.service";
+import companyService from "./company.service";
+import musicService from "./music.service";
+import noteService from "./note.service";
+import notificationService from "./notification.service";
+import sessionService from "./session.service";
+import settingsService from "./settings.service";
+import subscriptionService from "./subscription.service";
+import todoService from "./todo.service";
+import workstationService from "./workstation.service";
 
-export {
-  AuthService,
-  CalendarService,
-  CompanyService,
-  MusicService,
-  NoteService,
-  NotificationService,
-  SettingsService,
-  SubscriptionService,
-  TodoService,
-  WorkstationService,
-};
+class ApiServicePackage {
+  static Auth = WrapApi(authService);
+  static Session = WrapApi(sessionService);
+  static Note = WrapApi(noteService);
+  static Calender = WrapApi(calendarService);
+  static Company = WrapApi(companyService);
+  static Music = WrapApi(musicService);
+  static Notification = WrapApi(notificationService);
+  static Setting = WrapApi(settingsService);
+  static Subscription = WrapApi(subscriptionService);
+  static Todo = WrapApi(todoService);
+  static Workstation = WrapApi(workstationService);
+}
 
-export * from './auth.service';
-export * from './calendar.service';
-export * from './company.service';
-export * from './music.service';
-export * from './note.service';
-export * from './notification.service';
-export * from './settings.service';
-export * from './subscription.service';
-export * from './todo.service';
-export * from './workstation.service';
-export { toServiceResponse } from './service-response';
-
-export const Api = {
-  Auth: AuthService,
-  Todo: TodoService,
-  Note: NoteService,
-  Calendar: CalendarService,
-  Music: MusicService,
-  Notification: NotificationService,
-  Settings: SettingsService,
-  Company: CompanyService,
-  Workstation: WorkstationService,
-  Subscription: SubscriptionService,
-};
-
-export default Api;
+export default ApiServicePackage;

@@ -15,7 +15,7 @@ export default function RegisterCompanyContainer() {
   const Api = useApi();
 
   const [formRegister, setFormRegister] = useState<PickRegister>({
-    companyRole: "leader",
+    companyRole: "Owner",
     email: "",
     fullName: "",
     password: "",

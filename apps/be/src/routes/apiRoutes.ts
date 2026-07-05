@@ -8,12 +8,14 @@ import notificationRoutes from "./notificationRoutes";
 import companyRoutes from "./companyRoutes";
 import workstationRoutes from "./workstationRoutes";
 import subscriptionRoutes from "./subscriptionRoutes";
+import sessionRoutes from "./sessionRoutes";
+import { InternalApiKey } from "@/middlewares/apiKey";
 
 class ApiRouter {
   public apiRouter;
 
   constructor() {
-    this.apiRouter = new Elysia({ prefix: "/api" }).derive(() => ({
+    this.apiRouter = new Elysia({ prefix: "/api/v1" }).derive(() => ({
       json(data: any, status = 200) {
         return new Response(JSON.stringify(data), {
           status,
@@ -26,6 +28,7 @@ class ApiRouter {
 
   private routes() {
     this.apiRouter
+      .use(InternalApiKey)
       .use(authRoutes)
       .use(companyRoutes)
       .use(workstationRoutes)
@@ -34,7 +37,8 @@ class ApiRouter {
       .use(noteRoutes)
       .use(calendarRoutes)
       .use(musicRoutes)
-      .use(notificationRoutes);
+      .use(notificationRoutes)
+      .use(sessionRoutes);
   }
 }
 

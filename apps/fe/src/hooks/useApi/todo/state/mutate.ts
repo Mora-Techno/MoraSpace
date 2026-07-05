@@ -1,20 +1,22 @@
-import { PickCreateTodo, PickUpdateTodo, Todo } from '@repo/types';
-import { PickApiID } from '@repo/types/api.types';
-import { useMutation } from '@tanstack/react-query';
+import { PickCreateTodo, PickUpdateTodo, Todo } from "@repo/types";
+import { PickApiID } from "@repo/types/api.types";
+import { useMutation } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import Api from '@/services/api';
-import type { TResponse } from '@/types/api/response';
+import { queryKey } from "@/configs";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import Api from "@/services/api";
+import type { TResponse } from "@/types/api/response";
 
-import { readTodoSnapshot, TodoCacheContext } from './utils';
-import { todoRootKey } from './utils';
+import { readTodoSnapshot, TodoCacheContext } from "./utils";
+import { todoRootKey } from "./utils";
 
-export function useCreateTodo(filters?: Parameters<typeof readTodoSnapshot>[1]) {
+export function useCreateTodo(
+  filters?: Parameters<typeof readTodoSnapshot>[1],
+) {
   const ns = useAppNameSpace();
 
   return useMutation<TResponse<Todo>, Error, PickCreateTodo, TodoCacheContext>({
-    mutationFn: (payload) => Api.Todo.create(payload),
+    mutationFn: (payload) => Api.Todo.CreateTodo(payload),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: todoRootKey });
       return { previousData: readTodoSnapshot(ns, filters) };
@@ -23,7 +25,7 @@ export function useCreateTodo(filters?: Parameters<typeof readTodoSnapshot>[1]) 
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -33,12 +35,15 @@ export function useCreateTodo(filters?: Parameters<typeof readTodoSnapshot>[1]) 
     },
     onError: (err, _variables, context) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(queryKey.todos.list(filters), context.previousData);
+        ns.queryClient.setQueryData(
+          queryKey.todos.list(filters),
+          context.previousData,
+        );
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -48,7 +53,7 @@ export function useDeleteTodo() {
   const ns = useAppNameSpace();
 
   return useMutation<TResponse<Todo>, Error, PickApiID, TodoCacheContext>({
-    mutationFn: ({ id }) => Api.Todo.remove(id),
+    mutationFn: ({ id }) => Api.Todo.DeleteTodo(id),
     onMutate: async (variables) => {
       await ns.queryClient.cancelQueries({ queryKey: todoRootKey });
       return { previousData: readTodoSnapshot(ns) };
@@ -57,7 +62,7 @@ export function useDeleteTodo() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -72,7 +77,7 @@ export function useDeleteTodo() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -87,7 +92,7 @@ export function useUpdateTodo() {
     { id: PickApiID; payload: PickUpdateTodo },
     TodoCacheContext
   >({
-    mutationFn: ({ id, payload }) => Api.Todo.update(id.id, payload),
+    mutationFn: ({ id, payload }) => Api.Todo.UpdateTodo(id.id, payload),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: todoRootKey });
       return { previousData: readTodoSnapshot(ns) };
@@ -96,7 +101,7 @@ export function useUpdateTodo() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
     },
     onSettled: async () => {
@@ -111,7 +116,7 @@ export function useUpdateTodo() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
