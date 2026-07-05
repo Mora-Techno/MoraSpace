@@ -3,7 +3,7 @@ import { HttpResponse } from '@/http';
 import type { AppContext } from '@/contex';
 import type { PickCreatePlaylist } from '@repo/types/music.types';
 import { JwtPayload } from '@repo/types/auth.types';
-import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
+import { paramsValidate, memberContextValidate } from '@/validation/auth.validate';
 import { CreateMusicValidate } from '@/validation/music.validate';
 
 class MusicController {
@@ -11,10 +11,10 @@ class MusicController {
     try {
       const user = c.user as JwtPayload;
 
-      const authRespone = await unauthorizedValidate(user, c);
+      const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const data = await MusicService.list();
+      const data = await MusicService.list(user.companyMemberId!);
 
       if (!data) {
         return HttpResponse(c).badRequest();
@@ -30,13 +30,13 @@ class MusicController {
       const user = c.user as JwtPayload;
       const input = c.body as PickCreatePlaylist;
 
-      const authRespone = await unauthorizedValidate(user, c);
+      const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateRespone = await CreateMusicValidate(c, input);
       if (validateRespone) return validateRespone;
 
-      const data = await MusicService.create(input);
+      const data = await MusicService.create(user.companyMemberId!, input);
       if (!data) {
         return HttpResponse(c).badRequest();
       }
@@ -51,13 +51,13 @@ class MusicController {
       const user = c.user as JwtPayload;
       const params = c.params as { id: string };
 
-      const authRespone = await unauthorizedValidate(user, c);
+      const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await MusicService.remove(params.id);
+      const data = await MusicService.remove(params.id, user.companyMemberId!);
       if (!data) return HttpResponse(c).notFound('Playlist tidak ditemukan');
       return HttpResponse(c).ok(data, undefined, 'Playlist berhasil dihapus');
     } catch (error) {

@@ -1,24 +1,25 @@
-import { SETTINGS_ENDPOINTS } from '../endpoints/settings.endpoints';
-import type { PickUpdateSettings, Settings } from '../types/settings.types';
-import type { TResponse } from '../types/response.types';
-import { GetResponse, PatchResponse } from './http';
-import { toServiceResponse } from './service-response';
-
-export async function GetSettings(): Promise<TResponse<Settings>> {
-  const res = await GetResponse<Settings>(SETTINGS_ENDPOINTS.GET);
-  return toServiceResponse(res, {
-    message: 'Pengaturan berhasil diambil',
-  });
+import { SETTINGS_ENDPOINTS } from "../endpoints/settings.endpoints";
+import type { PickUpdateSettings, Settings } from "../types/settings.types";
+import type { TResponse } from "../types/response.types";
+import { GetResponse, PatchResponse } from "./http";
+import { toServiceResponse } from "./service-response";
+class SettingsService {
+  public async GetSettings(): Promise<TResponse<Settings>> {
+    const res = await GetResponse<Settings>(SETTINGS_ENDPOINTS.GET);
+    return toServiceResponse(res, {
+      message: "Pengaturan berhasil diambil",
+    });
+  }
+  public async UpdateSettings(
+    payload: PickUpdateSettings,
+  ): Promise<TResponse<Settings>> {
+    const res = await PatchResponse<Settings>(
+      SETTINGS_ENDPOINTS.UPDATE,
+      payload,
+    );
+    return toServiceResponse(res, {
+      message: "Pengaturan berhasil diperbarui",
+    });
+  }
 }
-
-export async function UpdateSettings(payload: PickUpdateSettings): Promise<TResponse<Settings>> {
-  const res = await PatchResponse<Settings>(SETTINGS_ENDPOINTS.UPDATE, payload);
-  return toServiceResponse(res, {
-    message: 'Pengaturan berhasil diperbarui',
-  });
-}
-
-export const SettingsService = {
-  get: GetSettings,
-  update: UpdateSettings,
-};
+export default new SettingsService();

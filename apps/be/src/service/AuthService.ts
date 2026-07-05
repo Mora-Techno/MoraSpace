@@ -1,33 +1,34 @@
-import bcryptjs from 'bcryptjs';
-import prisma from 'prisma/client';
-import NotificationService from '@/service/NotificationService';
-import { AUTH_EXPIRY } from '@/utils/authTokens';
+import bcryptjs from "bcryptjs";
+import prisma from "prisma/client";
+import NotificationService from "@/service/NotificationService";
+import { AUTH_EXPIRY } from "@/utils/authTokens";
 import {
   generateOtp,
   generateSecureToken,
   getMagicLinkExpiry,
   getOtpExpiry,
-} from '@/utils/authTokens';
+} from "@/utils/authTokens";
 import type {
   AuthSessionResponse,
+  PickResetPassword,
   PickSendMagicLink,
   PickSendOtp,
   PickVerifyMagicLink,
   PickVerifyOtp,
   SafeAuthUser,
-} from '@repo/types/auth.types';
-import { createTokenPair, sanitizeUser } from '@/utils/authTokens';
+} from "@repo/types/auth.types";
+import { createTokenPair, sanitizeUser } from "@/utils/authTokens";
+import { resolveAuthUser } from "@/utils/memberContext";
 
 class AuthService {
-  constructor() {}
-  public async createSession(userOrId: SafeAuthUser | string): Promise<AuthSessionResponse> {
+  public async createSession(
+    userOrId: SafeAuthUser | string,
+  ): Promise<AuthSessionResponse> {
     const user =
-      typeof userOrId === 'string'
-        ? await prisma.user.findUnique({ where: { id: userOrId } })
-        : userOrId;
+      typeof userOrId === "string" ? await resolveAuthUser(userOrId) : userOrId;
 
     if (!user) {
-      throw new Error('User tidak ditemukan');
+      throw new Error("User tidak ditemukan");
     }
 
     const tokens = await createTokenPair(user);
@@ -37,39 +38,45 @@ class AuthService {
     };
   }
 
-  public async refreshAccessToken(refreshToken: string): Promise<AuthSessionResponse> {
-    const users = await prisma.user.findMany({
+  public async refreshAccessToken(
+    refreshToken: string,
+  ): Promise<AuthSessionResponse> {
+    const tokens = await prisma.refreshToken.findMany({
       where: {
-        refreshToken: { not: null },
-        refreshTokenExpiresAt: { gt: new Date() },
+        revokedAt: null,
+        expiredAt: { gt: new Date() },
       },
     });
 
-    let matchedUser: (typeof users)[number] | null = null;
+    let matchedUserId: string | null = null;
 
-    for (const user of users) {
-      if (user.refreshToken && (await bcryptjs.compare(refreshToken, user.refreshToken))) {
-        matchedUser = user;
+    for (const token of tokens) {
+      if (await bcryptjs.compare(refreshToken, token.token)) {
+        matchedUserId = token.userId;
         break;
       }
     }
 
-    if (!matchedUser) {
-      throw new Error('Refresh token tidak valid atau sudah kedaluwarsa');
+    if (!matchedUserId) {
+      throw new Error("Refresh token tidak valid atau sudah kedaluwarsa");
     }
 
-    return this.createSession(matchedUser);
+    const user = await resolveAuthUser(matchedUserId);
+    if (!user) {
+      throw new Error("User tidak ditemukan");
+    }
+
+    return this.createSession(user);
   }
 
   public async revokeTokens(userId: string): Promise<void> {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        token: null,
-        refreshToken: null,
-        refreshTokenExpiresAt: null,
-      },
-    });
+    await prisma.$transaction([
+      prisma.refreshToken.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      }),
+      prisma.userSession.deleteMany({ where: { userId } }),
+    ]);
   }
 
   public async sendMagicLink(input: PickSendMagicLink): Promise<void> {
@@ -78,49 +85,66 @@ class AuthService {
     });
 
     if (!user) {
-      throw new Error('Akun tidak ditemukan');
+      throw new Error("Akun tidak ditemukan");
     }
 
     const magicLinkToken = generateSecureToken();
     const magicLinkExpiresAt = getMagicLinkExpiry();
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { magicLinkToken, magicLinkExpiresAt },
+    await prisma.emailVerification.create({
+      data: {
+        userId: user.id,
+        token: magicLinkToken,
+        expiredAt: magicLinkExpiresAt,
+      },
     });
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
     const magicLink = `${frontendUrl}/auth/magic-link?token=${magicLinkToken}`;
 
     await NotificationService.send({
       recipient: user.email,
-      subject: 'Magic Link Login - Mora Workstation',
+      subject: "Magic Link Login - Mora Workstation",
       body: `Klik link berikut untuk login (berlaku ${AUTH_EXPIRY.magicLinkMinutes} menit):\n\n${magicLink}`,
     });
   }
 
-  public async verifyMagicLink(input: PickVerifyMagicLink): Promise<AuthSessionResponse> {
-    const user = await prisma.user.findFirst({
+  public async verifyMagicLink(
+    input: PickVerifyMagicLink,
+  ): Promise<AuthSessionResponse> {
+    const verification = await prisma.emailVerification.findFirst({
       where: {
-        magicLinkToken: input.token,
-        magicLinkExpiresAt: { gt: new Date() },
+        token: input.token,
+        expiredAt: { gt: new Date() },
+        verifiedAt: null,
       },
+      orderBy: { expiredAt: "desc" },
     });
 
-    if (!user) {
-      throw new Error('Magic link tidak valid atau sudah kedaluwarsa');
+    if (!verification) {
+      throw new Error("Magic link tidak valid atau sudah kedaluwarsa");
     }
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        magicLinkToken: null,
-        magicLinkExpiresAt: null,
-        isVerify: true,
-      },
-    });
+    await prisma.$transaction([
+      prisma.emailVerification.update({
+        where: { id: verification.id },
+        data: { verifiedAt: new Date() },
+      }),
+      prisma.user.update({
+        where: { id: verification.userId },
+        data: {
+          emailVerifiedAt: new Date(),
+          status: "active",
+        },
+      }),
+    ]);
 
-    return this.createSession(user);
+    const user = await resolveAuthUser(verification.userId);
+    if (!user) {
+      throw new Error("User tidak ditemukan");
+    }
+
+    return this.createSession({ ...user, isVerify: true });
   }
 
   private async findUserByIdentifier(input: {
@@ -132,15 +156,17 @@ class AuthService {
     }
 
     if (input.phone) {
-      return prisma.user.findUnique({ where: { phone: input.phone } });
+      return prisma.user.findFirst({ where: { phone: input.phone } });
     }
 
     return null;
   }
 
-  public async sendOtp(input: PickSendOtp): Promise<{ expiresInMinutes: number }> {
+  public async sendOtp(
+    input: PickSendOtp,
+  ): Promise<{ expiresInMinutes: number }> {
     if (!input.email && !input.phone) {
-      throw new Error('Email atau nomor telepon wajib diisi');
+      throw new Error("Email atau nomor telepon wajib diisi");
     }
 
     const user = await this.findUserByIdentifier({
@@ -149,25 +175,28 @@ class AuthService {
     });
 
     if (!user) {
-      throw new Error('Akun tidak ditemukan');
+      throw new Error("Akun tidak ditemukan");
     }
 
     const otp = generateOtp();
     const expOtp = getOtpExpiry();
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { otp, expOtp },
+    await prisma.emailVerification.create({
+      data: {
+        userId: user.id,
+        token: otp,
+        expiredAt: expOtp,
+      },
     });
 
     const recipient = input.email ?? user.email;
-    const channel = input.phone ? 'SMS' : 'Email';
+    const channel = input.phone ? "SMS" : "Email";
 
     await NotificationService.send({
       recipient,
-      subject: 'Kode OTP Login - Mora Workstation',
+      subject: "Kode OTP Login - Mora Workstation",
       body:
-        channel === 'SMS'
+        channel === "SMS"
           ? `Kode OTP Mora Workstation Anda: ${otp}. Berlaku ${AUTH_EXPIRY.otpMinutes} menit.`
           : `Kode OTP Anda: ${otp}\n\nBerlaku selama ${AUTH_EXPIRY.otpMinutes} menit. Jangan bagikan kode ini kepada siapapun.`,
     });
@@ -177,7 +206,7 @@ class AuthService {
 
   public async verifyOtp(input: PickVerifyOtp): Promise<AuthSessionResponse> {
     if (!input.email && !input.phone) {
-      throw new Error('Email atau nomor telepon wajib diisi');
+      throw new Error("Email atau nomor telepon wajib diisi");
     }
 
     const user = await this.findUserByIdentifier({
@@ -186,34 +215,48 @@ class AuthService {
     });
 
     if (!user) {
-      throw new Error('Akun tidak ditemukan');
+      throw new Error("Akun tidak ditemukan");
     }
 
-    if (!user.otp || !user.expOtp) {
-      throw new Error('OTP belum diminta atau sudah kedaluwarsa');
+    if (!input.otp) {
+      throw new Error("OTP wajib diisi");
     }
 
-    if (user.expOtp < new Date()) {
-      throw new Error('OTP sudah kedaluwarsa');
-    }
-
-    if (user.otp !== input.otp) {
-      throw new Error('Kode OTP tidak valid');
-    }
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        otp: null,
-        expOtp: null,
-        isVerify: true,
+    const verification = await prisma.emailVerification.findFirst({
+      where: {
+        userId: user.id,
+        token: input.otp,
+        expiredAt: { gt: new Date() },
+        verifiedAt: null,
       },
+      orderBy: { expiredAt: "desc" },
     });
 
-    return this.createSession(user);
-  }
+    if (!verification) {
+      throw new Error("Kode OTP tidak valid atau sudah kedaluwarsa");
+    }
 
-  // public async paychRole(input:);
+    await prisma.$transaction([
+      prisma.emailVerification.update({
+        where: { id: verification.id },
+        data: { verifiedAt: new Date() },
+      }),
+      prisma.user.update({
+        where: { id: user.id },
+        data: {
+          emailVerifiedAt: new Date(),
+          status: "active",
+        },
+      }),
+    ]);
+
+    const authUser = await resolveAuthUser(user.id);
+    if (!authUser) {
+      throw new Error("User tidak ditemukan");
+    }
+
+    return this.createSession({ ...authUser, isVerify: true });
+  }
 }
 
 export default new AuthService();

@@ -1,61 +1,66 @@
-import swagger from '@elysiajs/swagger';
+import swagger from "@elysiajs/swagger";
 
 const swaggerPlugin = swagger({
-  path: '/api-docs',
-  specPath: '/api-docs/json',
+  path: "/api-docs",
+  specPath: "/api-docs/json",
   scalarConfig: {
     spec: {
-      url: '/api-docs/json',
+      url: "/api-docs/json",
     },
   },
   documentation: {
     info: {
-      title: 'Productify Workstation API',
-      version: '1.0.0',
+      title: "MoraSpace Workstation API",
+      version: "1.0.0",
       description:
-        'REST API Productify Workstation — Company, Workstation, Productivity, dan Wellness.',
+        "REST API MoraSpace Workstation — Company, Workstation, Productivity, dan Wellness.",
     },
     tags: [
       {
-        name: 'Auth',
-        description: 'Autentikasi pengguna — register, login, logout',
+        name: "Auth",
+        description: "Autentikasi pengguna — register, login, logout",
       },
       {
-        name: 'Companies',
-        description: 'Manajemen company, leader, admin, dan langganan tier',
+        name: "Companies",
+        description: "Manajemen company, leader, admin, dan langganan tier",
       },
       {
-        name: 'Workstations',
-        description: 'Manajemen workstation dan invite karyawan (max 4 free / 8 pro)',
-      },
-      {
-        name: 'Subscriptions',
+        name: "Workstations",
         description:
-          'Langganan Free/Pro/Enterprise via Stripe (internasional) dan Xendit (Indonesia)',
+          "Manajemen workstation dan invite karyawan (max 4 free / 8 pro)",
       },
       {
-        name: 'Todos',
-        description: 'Manajemen tugas harian dan tenggat waktu',
+        name: "Subscriptions",
+        description:
+          "Langganan Free/Pro/Enterprise via Stripe (internasional) dan Xendit (Indonesia)",
       },
       {
-        name: 'Notes',
-        description: 'Pencatatan ide, jurnal, dan snippet',
+        name: "Todos",
+        description: "Manajemen tugas harian dan tenggat waktu",
       },
       {
-        name: 'Calendar',
-        description: 'Penjadwalan agenda dan event kalender',
+        name: "Notes",
+        description: "Pencatatan ide, jurnal, dan snippet",
       },
       {
-        name: 'Music',
-        description: 'Referensi URL musik dan playlist fokus',
+        name: "Calendar",
+        description: "Penjadwalan agenda dan event kalender",
       },
       {
-        name: 'Notifications',
-        description: 'Pengiriman email reminder via SMTP',
+        name: "Music",
+        description: "Referensi URL musik dan playlist fokus",
       },
       {
-        name: 'Settings',
-        description: 'Preferensi UI dan notifikasi pengguna',
+        name: "Notifications",
+        description: "Pengiriman email reminder via SMTP",
+      },
+      {
+        name: "Settings",
+        description: "Preferensi UI dan notifikasi pengguna",
+      },
+      {
+        name: "Session",
+        description: "Referensi Api Session",
       },
     ],
   },

@@ -1,6 +1,8 @@
 import bcryptjs from 'bcryptjs';
 import prisma from 'prisma/client';
 import { getWorkstationUserLimit } from '@/utils/tierLimits';
+import { getCompanyTier } from '@/utils/planHelper';
+import { toSafeAuthUser } from '@/utils/memberContext';
 import type {
   PickCreateWorkstation,
   PickInviteMember,
@@ -8,6 +10,22 @@ import type {
 } from '@repo/types/workstation.types';
 
 class WorkstationService {
+  private async getDefaultDepartment(companyId: string) {
+    const existing = await prisma.department.findFirst({
+      where: { companyId, name: 'General' },
+    });
+
+    if (existing) return existing;
+
+    return prisma.department.create({
+      data: {
+        companyId,
+        name: 'General',
+        description: 'Default department',
+      },
+    });
+  }
+
   private async getCompanyWithLimit(companyId: string) {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
@@ -17,103 +35,122 @@ class WorkstationService {
       throw new Error('Company tidak ditemukan');
     }
 
+    const tier = await getCompanyTier(companyId);
+
     return {
       company,
-      maxMembers: getWorkstationUserLimit(company.tier),
+      tier,
+      maxMembers: getWorkstationUserLimit(tier),
     };
   }
 
   public async list(companyId: string) {
     const { maxMembers } = await this.getCompanyWithLimit(companyId);
 
-    const workstations = await prisma.workstation.findMany({
-      where: { companyId },
-      include: { _count: { select: { members: true } } },
-      orderBy: { createdAt: 'desc' },
+    const teams = await prisma.team.findMany({
+      where: { department: { companyId } },
+      include: {
+        department: true,
+        _count: { select: { members: true } },
+      },
+      orderBy: { name: 'asc' },
     });
 
-    return workstations.map((ws) => ({
-      id: ws.id,
-      name: ws.name,
-      companyId: ws.companyId,
-      createdById: ws.createdById,
-      memberCount: ws._count.members,
+    return teams.map((team) => ({
+      id: team.id,
+      name: team.name,
+      companyId,
+      createdById: team.leaderId,
+      memberCount: team._count.members,
       maxMembers,
-      createdAt: ws.createdAt,
-      updatedAt: ws.updatedAt,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     }));
   }
 
   public async getById(id: string, companyId: string) {
     const { maxMembers } = await this.getCompanyWithLimit(companyId);
 
-    const workstation = await prisma.workstation.findFirst({
-      where: { id, companyId },
+    const team = await prisma.team.findFirst({
+      where: { id, department: { companyId } },
       include: {
         members: {
           include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-                fullName: true,
-                companyRole: true,
+            companyMember: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                  },
+                },
+                roles: { include: { role: true } },
+                company: { select: { ownerId: true } },
               },
             },
           },
-          orderBy: { joinedAt: 'asc' },
         },
+        department: true,
       },
     });
 
-    if (!workstation) return null;
+    if (!team) return null;
 
     return {
-      id: workstation.id,
-      name: workstation.name,
-      companyId: workstation.companyId,
-      createdById: workstation.createdById,
-      memberCount: workstation.members.length,
+      id: team.id,
+      name: team.name,
+      companyId,
+      createdById: team.leaderId,
+      memberCount: team.members.length,
       maxMembers,
-      members: workstation.members,
-      createdAt: workstation.createdAt,
-      updatedAt: workstation.updatedAt,
+      members: team.members.map((member) => ({
+        id: member.id,
+        workstationId: team.id,
+        userId: member.companyMember.user.id,
+        role: member.isLeader ? 'admin' : 'member',
+        joinedAt: member.companyMember.joinedAt ?? new Date(),
+        user: toSafeAuthUser(member.companyMember.user, member.companyMember),
+      })),
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   }
 
   public async create(companyId: string, createdById: string, input: PickCreateWorkstation) {
     await this.getCompanyWithLimit(companyId);
+    const department = await this.getDefaultDepartment(companyId);
 
-    const workstation = await prisma.workstation.create({
+    const team = await prisma.team.create({
       data: {
+        departmentId: department.id,
         name: input.name,
-        companyId,
-        createdById,
+        leaderId: createdById,
       },
     });
 
     const { maxMembers } = await this.getCompanyWithLimit(companyId);
 
     return {
-      id: workstation.id,
-      name: workstation.name,
-      companyId: workstation.companyId,
-      createdById: workstation.createdById,
+      id: team.id,
+      name: team.name,
+      companyId,
+      createdById,
       memberCount: 0,
       maxMembers,
-      createdAt: workstation.createdAt,
-      updatedAt: workstation.updatedAt,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   }
 
   public async update(id: string, companyId: string, input: PickUpdateWorkstation) {
-    const existing = await prisma.workstation.findFirst({
-      where: { id, companyId },
+    const existing = await prisma.team.findFirst({
+      where: { id, department: { companyId } },
     });
 
     if (!existing) return null;
 
-    const workstation = await prisma.workstation.update({
+    const team = await prisma.team.update({
       where: { id },
       data: {
         ...(input.name !== undefined && { name: input.name }),
@@ -124,46 +161,64 @@ class WorkstationService {
     const { maxMembers } = await this.getCompanyWithLimit(companyId);
 
     return {
-      id: workstation.id,
-      name: workstation.name,
-      companyId: workstation.companyId,
-      createdById: workstation.createdById,
-      memberCount: workstation._count.members,
+      id: team.id,
+      name: team.name,
+      companyId,
+      createdById: team.leaderId,
+      memberCount: team._count.members,
       maxMembers,
-      createdAt: workstation.createdAt,
-      updatedAt: workstation.updatedAt,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
   }
 
   public async remove(id: string, companyId: string) {
-    const existing = await prisma.workstation.findFirst({
-      where: { id, companyId },
+    const existing = await prisma.team.findFirst({
+      where: { id, department: { companyId } },
     });
 
     if (!existing) return null;
 
-    await prisma.workstation.delete({ where: { id } });
+    await prisma.team.delete({ where: { id } });
     return existing;
   }
 
-  public async inviteMember(workstationId: string, companyId: string, input: PickInviteMember) {
-    const workstation = await prisma.workstation.findFirst({
-      where: { id: workstationId, companyId },
+  private async ensureCompanyMember(companyId: string, userId: string) {
+    const existing = await prisma.companyMember.findUnique({
+      where: { companyId_userId: { companyId, userId } },
+    });
+
+    if (existing) return existing;
+
+    return prisma.companyMember.create({
+      data: {
+        companyId,
+        userId,
+        status: 'active',
+        joinedAt: new Date(),
+      },
+    });
+  }
+
+  public async inviteMember(teamId: string, companyId: string, input: PickInviteMember) {
+    const team = await prisma.team.findFirst({
+      where: { id: teamId, department: { companyId } },
       include: {
         _count: { select: { members: true } },
-        company: true,
+        department: true,
       },
     });
 
-    if (!workstation) {
+    if (!team) {
       throw new Error('Workstation tidak ditemukan');
     }
 
-    const maxMembers = getWorkstationUserLimit(workstation.company.tier);
+    const tier = await getCompanyTier(companyId);
+    const maxMembers = getWorkstationUserLimit(tier);
 
-    if (workstation._count.members >= maxMembers) {
+    if (team._count.members >= maxMembers) {
       throw new Error(
-        `Batas anggota workstation tercapai (maks. ${maxMembers} untuk tier ${workstation.company.tier})`,
+        `Batas anggota workstation tercapai (maks. ${maxMembers} untuk tier ${tier})`,
       );
     }
 
@@ -172,15 +227,24 @@ class WorkstationService {
     });
 
     if (existingUser) {
-      if (existingUser.companyId && existingUser.companyId !== companyId) {
+      const otherMembership = await prisma.companyMember.findFirst({
+        where: {
+          userId: existingUser.id,
+          companyId: { not: companyId },
+        },
+      });
+
+      if (otherMembership) {
         throw new Error('Email sudah terdaftar di company lain');
       }
 
-      const alreadyMember = await prisma.workstationMember.findUnique({
+      const alreadyMember = await prisma.teamMember.findUnique({
         where: {
-          workstationId_userId: {
-            workstationId,
-            userId: existingUser.id,
+          teamId_companyMemberId: {
+            teamId,
+            companyMemberId: (
+              await this.ensureCompanyMember(companyId, existingUser.id)
+            ).id,
           },
         },
       });
@@ -190,34 +254,40 @@ class WorkstationService {
       }
 
       const member = await prisma.$transaction(async (tx) => {
-        const user =
-          existingUser.companyId === companyId
-            ? existingUser
-            : await tx.user.update({
-                where: { id: existingUser.id },
-                data: { companyId, companyRole: 'employee' },
-              });
+        const companyMember = await this.ensureCompanyMember(companyId, existingUser.id);
 
-        return tx.workstationMember.create({
+        return tx.teamMember.create({
           data: {
-            workstationId,
-            userId: user.id,
-            role: input.role ?? 'member',
+            teamId,
+            companyMemberId: companyMember.id,
+            isLeader: input.role === 'admin',
           },
           include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-                fullName: true,
-                companyRole: true,
+            companyMember: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    email: true,
+                    fullName: true,
+                  },
+                },
+                roles: { include: { role: true } },
+                company: { select: { ownerId: true } },
               },
             },
           },
         });
       });
 
-      return member;
+      return {
+        id: member.id,
+        workstationId: teamId,
+        userId: member.companyMember.user.id,
+        role: member.isLeader ? 'admin' : 'member',
+        joinedAt: member.companyMember.joinedAt ?? new Date(),
+        user: toSafeAuthUser(member.companyMember.user, member.companyMember),
+      };
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
@@ -227,53 +297,79 @@ class WorkstationService {
         data: {
           email: input.email,
           fullName: input.fullName,
-          password: hashedPassword,
-          companyRole: 'employee',
-          companyId,
+          passwordHash: hashedPassword,
+          status: 'active',
         },
       });
 
-      return tx.workstationMember.create({
+      const companyMember = await tx.companyMember.create({
         data: {
-          workstationId,
+          companyId,
           userId: user.id,
-          role: input.role ?? 'member',
+          status: 'active',
+          joinedAt: new Date(),
+        },
+      });
+
+      return tx.teamMember.create({
+        data: {
+          teamId,
+          companyMemberId: companyMember.id,
+          isLeader: input.role === 'admin',
         },
         include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-              fullName: true,
-              companyRole: true,
+          companyMember: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                  fullName: true,
+                },
+              },
+              roles: { include: { role: true } },
+              company: { select: { ownerId: true } },
             },
           },
         },
       });
     });
 
-    return member;
+    return {
+      id: member.id,
+      workstationId: teamId,
+      userId: member.companyMember.user.id,
+      role: member.isLeader ? 'admin' : 'member',
+      joinedAt: member.companyMember.joinedAt ?? new Date(),
+      user: toSafeAuthUser(member.companyMember.user, member.companyMember),
+    };
   }
 
-  public async removeMember(workstationId: string, companyId: string, userId: string) {
-    const workstation = await prisma.workstation.findFirst({
-      where: { id: workstationId, companyId },
+  public async removeMember(teamId: string, companyId: string, userId: string) {
+    const team = await prisma.team.findFirst({
+      where: { id: teamId, department: { companyId } },
     });
 
-    if (!workstation) return null;
+    if (!team) return null;
 
-    const member = await prisma.workstationMember.findUnique({
+    const companyMember = await prisma.companyMember.findUnique({
+      where: { companyId_userId: { companyId, userId } },
+    });
+
+    if (!companyMember) return null;
+
+    const member = await prisma.teamMember.findUnique({
       where: {
-        workstationId_userId: { workstationId, userId },
+        teamId_companyMemberId: {
+          teamId,
+          companyMemberId: companyMember.id,
+        },
       },
     });
 
     if (!member) return null;
 
-    await prisma.workstationMember.delete({
-      where: { id: member.id },
-    });
-
+    await prisma.teamMember.delete({ where: { id: member.id } });
     return member;
   }
 }

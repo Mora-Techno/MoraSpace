@@ -1,17 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Button } from '@/components/atoms';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms';
-import { Skeleton } from '@/components/atoms/skeleton';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { GhibliSwitch } from '@/components/molecules/ghibli-switch';
-import { PageHeader } from '@/components/molecules/page-header';
-import { useTheme } from '@/core/providers/theme.provider';
-import { useSettings, useUpdateSettings } from '@/hooks/settings';
-import { useSendNotification } from '@/hooks/useApi/notification';
-import { useLanguage } from '@/hooks/useLanguage';
+import { Button } from "@/components/atoms";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/atoms";
+import { Skeleton } from "@/components/atoms/skeleton";
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { GhibliSwitch } from "@/components/molecules/ghibli-switch";
+import { PageHeader } from "@/components/molecules/page-header";
+import { useTheme } from "@/core/providers/theme.provider";
+import { useSettings, useUpdateSettings } from "@/hooks/settings";
+import { useSendNotification } from "@/hooks/useApi/notification";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SettingsContainer() {
   const { data: settings, isLoading } = useSettings();
@@ -19,7 +25,7 @@ export default function SettingsContainer() {
   const sendNotification = useSendNotification();
   const { theme, toggleTheme } = useTheme();
   const { currentLanguage, changeLanguage, languages } = useLanguage();
-  const [testEmail, setTestEmail] = useState('');
+  const [testEmail, setTestEmail] = useState("");
 
   if (isLoading) {
     return (
@@ -45,15 +51,16 @@ export default function SettingsContainer() {
               <div>
                 <p className="text-sm font-medium">Dark / Light Mode</p>
                 <p className="text-xs text-muted-foreground">
-                  Tema {theme === 'dark' ? 'malam berbintang' : 'siang pedesaan'}
+                  Tema{" "}
+                  {theme === "dark" ? "malam berbintang" : "siang pedesaan"}
                 </p>
               </div>
               <GhibliSwitch
-                checked={theme === 'dark'}
+                checked={theme === "dark"}
                 onCheckedChange={() => {
                   toggleTheme();
                   updateSettings.mutate({
-                    theme: theme === 'light' ? 'dark' : 'light',
+                    theme: theme === "light" ? "dark" : "light",
                   });
                 }}
               />
@@ -62,11 +69,13 @@ export default function SettingsContainer() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">Format Jam</p>
-                <p className="text-xs text-muted-foreground">12 jam atau 24 jam</p>
+                <p className="text-xs text-muted-foreground">
+                  12 jam atau 24 jam
+                </p>
               </div>
               <Select
-                value={settings?.timeFormat ?? '24h'}
-                onValueChange={(value: '12h' | '24h') =>
+                value={settings?.timeFormat ?? "24h"}
+                onValueChange={(value: "12h" | "24h") =>
                   updateSettings.mutate({ timeFormat: value })
                 }
               >
@@ -114,8 +123,8 @@ export default function SettingsContainer() {
               onClick={() =>
                 sendNotification.mutate({
                   recipient: testEmail,
-                  subject: 'Test Notifikasi Productify',
-                  body: 'Email test dari PWA Produktivitas — tema Ghibli 🍃',
+                  subject: "Test Notifikasi MoraSpace",
+                  body: "Email test dari PWA Produktivitas — tema Ghibli 🍃",
                 })
               }
             >
@@ -130,7 +139,7 @@ export default function SettingsContainer() {
             {languages.map((lang) => (
               <Button
                 key={lang}
-                variant={currentLanguage === lang ? 'default' : 'outline'}
+                variant={currentLanguage === lang ? "default" : "outline"}
                 size="sm"
                 className="ghibli-btn"
                 onClick={() => changeLanguage(lang)}

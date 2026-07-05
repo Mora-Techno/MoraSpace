@@ -1,6 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import nodemailer from 'nodemailer';
-import type { NotificationStatus } from '@prisma/client';
-import prisma from 'prisma/client';
+import type { NotificationStatus } from '@repo/types/notification.types';
 import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
 
 class NotificationService {
@@ -41,15 +41,15 @@ class NotificationService {
       errorMessage = error instanceof Error ? error.message : 'Gagal mengirim email';
     }
 
-    const log = await prisma.notificationLog.create({
-      data: {
-        recipient: input.recipient,
-        subject: input.subject,
-        body: input.body,
-        status,
-        error: errorMessage,
-      },
-    });
+    const log = {
+      id: randomUUID(),
+      recipient: input.recipient,
+      subject: input.subject,
+      body: input.body,
+      status,
+      error: errorMessage,
+      createdAt: new Date(),
+    };
 
     if (status === 'failed') {
       throw new Error(errorMessage ?? 'Gagal mengirim email');
@@ -58,14 +58,8 @@ class NotificationService {
     return log;
   }
 
-  public async listLogs(query: NotificationLogQuery) {
-    const limit = query.limit ?? 20;
-
-    return prisma.notificationLog.findMany({
-      where: query.status ? { status: query.status } : undefined,
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
+  public async listLogs(_query: NotificationLogQuery) {
+    return [];
   }
 }
 

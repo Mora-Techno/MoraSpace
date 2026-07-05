@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { Leaf } from 'lucide-react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { Leaf } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import {
   Sidebar,
@@ -15,14 +15,14 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/atoms';
-import { NAV_ITEMS } from '@/configs/nav.config';
-import { cn } from '@/utils/classname';
+} from "@/components/atoms";
+import { NAV_ITEMS } from "@/configs/nav.config";
+import { cn } from "@/utils/classname";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
-  const isCollapsed = state === 'collapsed';
+  const isCollapsed = state === "collapsed";
 
   return (
     <Sidebar
@@ -35,7 +35,7 @@ export function AppSidebar() {
         ) : (
           <div className="flex items-center gap-2">
             <Leaf className="size-6 text-primary" />
-            <span className="font-serif text-xl font-semibold">Productify</span>
+            <span className="font-serif text-xl font-semibold">MoraSpace</span>
           </div>
         )}
       </SidebarHeader>
@@ -46,19 +46,23 @@ export function AppSidebar() {
             <SidebarMenu>
               {NAV_ITEMS.map((item) => {
                 const isActive =
-                  pathname === item.url || (item.url !== '/' && pathname.startsWith(item.url));
+                  pathname === item.url ||
+                  (item.url !== "/" && pathname.startsWith(item.url));
                 const Icon = item.icon;
 
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild tooltip={isCollapsed ? item.title : undefined}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={isCollapsed ? item.title : undefined}
+                    >
                       <Link
                         href={item.url}
                         className={cn(
-                          'flex h-10 items-center gap-3 rounded-xl px-3 py-2 transition-all duration-300',
+                          "flex h-10 items-center gap-3 rounded-xl px-3 py-2 transition-all duration-300",
                           isActive
-                            ? 'bg-primary/15 text-primary font-medium shadow-sm'
-                            : 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                            ? "bg-primary/15 text-primary font-medium shadow-sm"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground",
                         )}
                       >
                         <Icon className="size-5" />

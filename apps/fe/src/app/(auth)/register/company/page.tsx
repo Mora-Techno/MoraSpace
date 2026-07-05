@@ -1,5 +1,5 @@
-import RegisterContainer from './_containers/register';
+import RegisterCompanyContainer from "./_containers/RegisterCompany";
 
-export default function RegisterPage() {
-  return <RegisterContainer />;
+export default function RegisterCompanyPage() {
+  return <RegisterCompanyContainer />;
 }

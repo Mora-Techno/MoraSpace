@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { useGoogleLogin } from '@react-oauth/google';
-import { PickLogin } from '@repo/types';
-import { Leaf } from 'lucide-react';
-import Link from 'next/link';
-import { useState } from 'react';
+import { useGoogleLogin } from "@react-oauth/google";
+import { PickLogin } from "@repo/types";
+import { Leaf } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
-import { GoogleSvg } from '@/components/atoms/svg';
-import { RegisterCard } from '@/components/molecules';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { LoginFormSection } from '@/components/page/auth';
-import { RegisterConfigRoutes } from '@/configs';
-import { useApi } from '@/hooks/useApi/useApi';
+import { GoogleSvg } from "@/components/atoms/svg";
+import { RegisterCard } from "@/components/molecules";
+import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { LoginFormSection } from "@/components/page/auth";
+import { RegisterConfigRoutes } from "@/configs";
+import { useApi } from "@/hooks/useApi/useApi";
 
 export default function LoginContainer() {
   const api = useApi();
   const [formLogin, setFormLogin] = useState<PickLogin>({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const login = api.auth.mutate.login();
@@ -29,13 +29,13 @@ export default function LoginContainer() {
   };
 
   const googleLogin = useGoogleLogin({
-    flow: 'auth-code',
+    flow: "auth-code",
     onSuccess: async (codeResponse) => {
       // service.mutation.onLoginGoogle(codeResponse.code);
-      console.log('login google');
+      console.log("login google");
     },
     onError: (err) => {
-      console.log('Google Login Failed', err);
+      console.log("Google Login Failed", err);
     },
   });
   return (
@@ -49,7 +49,9 @@ export default function LoginContainer() {
           <button type="button" onClick={() => googleLogin()}>
             <GoogleSvg />
           </button>
-          <h1 className="text-sm font-semibold text-muted-foreground">Atau Masuk Menggunakan</h1>
+          <h1 className="text-sm font-semibold text-muted-foreground">
+            Atau Masuk Menggunakan
+          </h1>
         </div>
         <LoginFormSection
           service={{
@@ -78,7 +80,10 @@ export default function LoginContainer() {
             </Link>
           </p>
 
-          <Link href={'/forgot-password'} className="text-muted-foreground hover:text-primary">
+          <Link
+            href={"/forgot-password"}
+            className="text-muted-foreground hover:text-primary"
+          >
             <p className="text-sm">Lupa Kata Sandi</p>
           </Link>
         </div>

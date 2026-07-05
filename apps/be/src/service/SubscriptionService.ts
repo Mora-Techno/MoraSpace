@@ -10,7 +10,14 @@ import type {
   PaymentProvider,
   PickCreateCheckout,
   SubscriptionDetail,
+  SubscriptionStatus,
 } from '@repo/types/subscription.types';
+import {
+  ensurePlan,
+  getCompanyTier,
+  inferBillingCycle,
+  mapPlanNameToTier,
+} from '@/utils/planHelper';
 
 class SubscriptionService {
   public listPlans() {
@@ -21,49 +28,80 @@ class SubscriptionService {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: {
-        subscription: true,
-        payments: {
-          orderBy: { createdAt: 'desc' },
-          take: 10,
+        currentSubscription: { include: { plan: true } },
+        subscriptions: {
+          include: {
+            plan: true,
+            invoices: {
+              include: { payments: true },
+              orderBy: { dueDate: 'desc' },
+              take: 10,
+            },
+          },
+          orderBy: { currentPeriodEnd: 'desc' },
         },
       },
     });
 
     if (!company) return null;
 
+    const tier = await getCompanyTier(companyId);
+    const billingCycle = inferBillingCycle(company.currentSubscription);
+    const activeSubscription = company.currentSubscription ?? company.subscriptions[0] ?? null;
+
+    const recentPayments = company.subscriptions
+      .flatMap((subscription) =>
+        subscription.invoices.flatMap((invoice) =>
+          invoice.payments.map((payment) => ({
+            payment,
+            invoice,
+            subscription,
+          })),
+        ),
+      )
+      .sort((a, b) => {
+        const aTime = a.payment.paidAt?.getTime() ?? 0;
+        const bTime = b.payment.paidAt?.getTime() ?? 0;
+        return bTime - aTime;
+      })
+      .slice(0, 10);
+
     return {
       company: {
         id: company.id,
         name: company.name,
-        tier: company.tier,
-        billingCycle: company.billingCycle,
-        subscriptionStartsAt: company.subscriptionStartsAt.toISOString(),
-        subscriptionEndsAt: company.subscriptionEndsAt?.toISOString() ?? null,
-        maxWorkstationUsers: getWorkstationUserLimit(company.tier),
+        tier,
+        billingCycle,
+        subscriptionStartsAt:
+          activeSubscription?.currentPeriodStart?.toISOString() ?? company.createdAt.toISOString(),
+        subscriptionEndsAt: activeSubscription?.currentPeriodEnd?.toISOString() ?? null,
+        maxWorkstationUsers: getWorkstationUserLimit(tier),
       },
-      subscription: company.subscription
+      subscription: activeSubscription
         ? {
-            id: company.subscription.id,
-            companyId: company.subscription.companyId,
-            tier: company.subscription.tier,
-            billingCycle: company.subscription.billingCycle,
-            status: company.subscription.status,
-            provider: company.subscription.provider,
-            currentPeriodStart: company.subscription.currentPeriodStart?.toISOString() ?? null,
-            currentPeriodEnd: company.subscription.currentPeriodEnd?.toISOString() ?? null,
-            cancelAtPeriodEnd: company.subscription.cancelAtPeriodEnd,
-            maxWorkstationUsers: getWorkstationUserLimit(company.subscription.tier),
+            id: activeSubscription.id,
+            companyId: activeSubscription.companyId,
+            tier: mapPlanNameToTier(activeSubscription.plan.name),
+            billingCycle: inferBillingCycle(activeSubscription),
+            status: activeSubscription.status as SubscriptionStatus,
+            provider: (activeSubscription.provider as PaymentProvider | null) ?? null,
+            currentPeriodStart: activeSubscription.currentPeriodStart?.toISOString() ?? null,
+            currentPeriodEnd: activeSubscription.currentPeriodEnd?.toISOString() ?? null,
+            cancelAtPeriodEnd: activeSubscription.status === 'canceled',
+            maxWorkstationUsers: getWorkstationUserLimit(
+              mapPlanNameToTier(activeSubscription.plan.name),
+            ),
           }
         : null,
-      recentPayments: company.payments.map((payment) => ({
+      recentPayments: recentPayments.map(({ payment, subscription }) => ({
         id: payment.id,
-        provider: payment.provider,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-        tier: payment.tier,
-        billingCycle: payment.billingCycle,
-        createdAt: payment.createdAt.toISOString(),
+        provider: payment.provider as PaymentProvider,
+        amount: Number(payment.amount),
+        currency: 'usd',
+        status: payment.status as 'pending' | 'paid' | 'failed' | 'canceled',
+        tier: mapPlanNameToTier(subscription.plan.name),
+        billingCycle: inferBillingCycle(subscription),
+        createdAt: payment.paidAt?.toISOString() ?? new Date().toISOString(),
       })),
     };
   }
@@ -84,67 +122,114 @@ class SubscriptionService {
     const periodEnd = getPeriodEnd(input.billingCycle, now);
 
     return prisma.$transaction(async (tx) => {
-      const company = await tx.company.update({
-        where: { id: input.companyId },
-        data: {
-          tier: input.tier,
-          billingCycle: input.billingCycle,
-          subscriptionStartsAt: now,
-          subscriptionEndsAt: periodEnd,
-          ...(input.provider === 'stripe' &&
-            input.providerCustomerId && {
-              stripeCustomerId: input.providerCustomerId,
-            }),
-          ...(input.provider === 'xendit' &&
-            input.providerCustomerId && {
-              xenditCustomerId: input.providerCustomerId,
-            }),
-        },
+      const plan = await ensurePlan(input.tier, tx);
+
+      const existing = await tx.subscription.findFirst({
+        where: { companyId: input.companyId },
+        orderBy: { currentPeriodEnd: 'desc' },
       });
 
-      const subscription = await tx.subscription.upsert({
-        where: { companyId: input.companyId },
-        create: {
-          companyId: input.companyId,
-          tier: input.tier,
-          billingCycle: input.billingCycle,
-          status: 'active',
-          provider: input.provider,
-          providerCustomerId: input.providerCustomerId ?? null,
-          providerSubscriptionId: input.providerSubscriptionId ?? null,
-          currentPeriodStart: now,
-          currentPeriodEnd: periodEnd,
-          cancelAtPeriodEnd: false,
-        },
-        update: {
-          tier: input.tier,
-          billingCycle: input.billingCycle,
-          status: 'active',
-          provider: input.provider,
-          providerCustomerId: input.providerCustomerId ?? null,
-          providerSubscriptionId: input.providerSubscriptionId ?? null,
-          currentPeriodStart: now,
-          currentPeriodEnd: periodEnd,
-          cancelAtPeriodEnd: false,
+      const subscription = existing
+        ? await tx.subscription.update({
+            where: { id: existing.id },
+            data: {
+              planId: plan.id,
+              status: 'active',
+              provider: input.provider,
+              providerSubscriptionId: input.providerSubscriptionId ?? null,
+              currentPeriodStart: now,
+              currentPeriodEnd: periodEnd,
+            },
+          })
+        : await tx.subscription.create({
+            data: {
+              companyId: input.companyId,
+              planId: plan.id,
+              status: 'active',
+              provider: input.provider,
+              providerSubscriptionId: input.providerSubscriptionId ?? null,
+              currentPeriodStart: now,
+              currentPeriodEnd: periodEnd,
+            },
+          });
+
+      await tx.company.update({
+        where: { id: input.companyId },
+        data: { subscriptionId: subscription.id },
+      });
+
+      const invoice = await tx.invoice.create({
+        data: {
+          subscriptionId: subscription.id,
+          invoiceNumber: `INV-${Date.now()}`,
+          amount: input.amount,
+          currency: input.currency,
+          dueDate: now,
+          paidAt: input.amount === 0 ? now : now,
         },
       });
 
       const payment = await tx.payment.create({
         data: {
-          companyId: input.companyId,
-          subscriptionId: subscription.id,
+          invoiceId: invoice.id,
           provider: input.provider,
-          providerPaymentId: input.providerPaymentId ?? null,
+          transactionId: input.providerPaymentId ?? null,
           amount: input.amount,
-          currency: input.currency,
-          status: input.amount === 0 ? 'paid' : 'paid',
-          tier: input.tier,
-          billingCycle: input.billingCycle,
-          metadata: input.metadata as Prisma.InputJsonValue | undefined,
+          status: 'paid',
+          paidAt: now,
         },
       });
 
-      return { company, subscription, payment };
+      return { subscription, payment };
+    });
+  }
+
+  private async createPendingPayment(input: {
+    companyId: string;
+    tier: SubscriptionTier;
+    billingCycle: BillingCycle;
+    provider: PaymentProvider;
+    providerPaymentId: string;
+    amount: number;
+    currency: string;
+    metadata?: Prisma.InputJsonValue;
+  }) {
+    const plan = await ensurePlan(input.tier);
+    const now = new Date();
+
+    const subscription = await prisma.subscription.findFirst({
+      where: { companyId: input.companyId },
+      orderBy: { currentPeriodEnd: 'desc' },
+    });
+
+    const activeSubscription =
+      subscription ??
+      (await prisma.subscription.create({
+        data: {
+          companyId: input.companyId,
+          planId: plan.id,
+          status: 'incomplete',
+        },
+      }));
+
+    const invoice = await prisma.invoice.create({
+      data: {
+        subscriptionId: activeSubscription.id,
+        invoiceNumber: `INV-${Date.now()}`,
+        amount: input.amount,
+        currency: input.currency,
+        dueDate: now,
+      },
+    });
+
+    return prisma.payment.create({
+      data: {
+        invoiceId: invoice.id,
+        provider: input.provider,
+        transactionId: input.providerPaymentId,
+        amount: input.amount,
+        status: 'pending',
+      },
     });
   }
 
@@ -194,17 +279,14 @@ class SubscriptionService {
         cancelUrl,
       });
 
-      await prisma.payment.create({
-        data: {
-          companyId,
-          provider: 'stripe',
-          providerPaymentId: session.sessionId,
-          amount: session.amount,
-          currency: session.currency,
-          status: 'pending',
-          tier: input.tier,
-          billingCycle: input.billingCycle,
-        },
+      await this.createPendingPayment({
+        companyId,
+        tier: input.tier,
+        billingCycle: input.billingCycle,
+        provider: 'stripe',
+        providerPaymentId: session.sessionId,
+        amount: session.amount,
+        currency: session.currency,
       });
 
       return {
@@ -232,18 +314,15 @@ class SubscriptionService {
       cancelUrl,
     });
 
-    await prisma.payment.create({
-      data: {
-        companyId,
-        provider: 'xendit',
-        providerPaymentId: invoice.sessionId,
-        amount: invoice.amount,
-        currency: invoice.currency,
-        status: 'pending',
-        tier: input.tier,
-        billingCycle: input.billingCycle,
-        metadata: { externalId: invoice.externalId },
-      },
+    await this.createPendingPayment({
+      companyId,
+      tier: input.tier,
+      billingCycle: input.billingCycle,
+      provider: 'xendit',
+      providerPaymentId: invoice.sessionId,
+      amount: invoice.amount,
+      currency: invoice.currency,
+      metadata: { externalId: invoice.externalId },
     });
 
     return {
@@ -258,33 +337,18 @@ class SubscriptionService {
   }
 
   public async cancelSubscription(companyId: string) {
-    const subscription = await prisma.subscription.findUnique({
-      where: { companyId },
+    const subscription = await prisma.subscription.findFirst({
+      where: { companyId, status: 'active' },
+      orderBy: { currentPeriodEnd: 'desc' },
     });
 
     if (!subscription) {
       throw new Error('Langganan aktif tidak ditemukan');
     }
 
-    const now = new Date();
-
-    return prisma.$transaction(async (tx) => {
-      await tx.subscription.update({
-        where: { companyId },
-        data: {
-          status: 'canceled',
-          cancelAtPeriodEnd: true,
-        },
-      });
-
-      return tx.company.update({
-        where: { id: companyId },
-        data: {
-          tier: 'free',
-          billingCycle: 'monthly',
-          subscriptionEndsAt: now,
-        },
-      });
+    return prisma.subscription.update({
+      where: { id: subscription.id },
+      data: { status: 'canceled' },
     });
   }
 
@@ -311,11 +375,10 @@ class SubscriptionService {
 
       await prisma.payment.updateMany({
         where: {
-          companyId,
+          transactionId: session.id,
           provider: 'stripe',
-          providerPaymentId: session.id,
         },
-        data: { status: 'paid' },
+        data: { status: 'paid', paidAt: new Date() },
       });
 
       await this.activateSubscription({
@@ -323,7 +386,6 @@ class SubscriptionService {
         tier,
         billingCycle,
         provider: 'stripe',
-        providerCustomerId: session.customer ?? null,
         providerSubscriptionId: session.subscription ?? null,
         providerPaymentId: session.id,
         amount: session.amount_total ?? 0,
@@ -350,11 +412,10 @@ class SubscriptionService {
     if (status.toUpperCase() === 'PAID' && companyId && tier && billingCycle) {
       await prisma.payment.updateMany({
         where: {
-          companyId,
+          transactionId: invoiceId,
           provider: 'xendit',
-          providerPaymentId: invoiceId,
         },
-        data: { status: 'paid' },
+        data: { status: 'paid', paidAt: new Date() },
       });
 
       await this.activateSubscription({

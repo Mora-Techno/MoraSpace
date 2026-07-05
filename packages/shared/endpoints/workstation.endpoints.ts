@@ -1,19 +1,21 @@
-import { buildEndpoint, listEndpoints } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/workstations';
+const mount = "/workstations";
 
 export const WORKSTATION_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
+  BYID: (id: string) => buildEndpoint(mount, `/:${id}`),
+  BYIDMEMBER: (id: string) => buildEndpoint(mount, `/:${id}/members`),
+  UPDATE: (id: string) => buildEndpoint(mount, `/:${id}`),
+  DELETE: (id: string) => buildEndpoint(mount, `/:${id}`),
+  REMOVEMEMBER: (id: string, userId: string) =>
+    buildEndpoint(mount, `/:${id}/members/:${userId}`),
 } as const;
 
-export const workstationById = (id: string) => buildEndpoint(mount, `/${id}`);
-
-export const workstationMembers = (id: string) => buildEndpoint(mount, `/${id}/members`);
-
-export const workstationMemberById = (workstationId: string, userId: string) =>
-  buildEndpoint(mount, `/${workstationId}/members/${userId}`);
-
 export function listWorkstationEndpoints() {
-  return listEndpoints(WORKSTATION_ENDPOINTS);
+  return Object.keys(WORKSTATION_ENDPOINTS).map((key) => ({
+    name: key,
+    path: WORKSTATION_ENDPOINTS[key as keyof typeof WORKSTATION_ENDPOINTS],
+  }));
 }

@@ -7,221 +7,921 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id                     String              @id @default(uuid())
+  email                  String              @unique
+  passwordHash           String              @map("password_hash")
+  fullName               String              @map("full_name")
+  avatarUrl              String?             @map("avatar_url")
+  phone                  String?
+  timezone               String?
+  locale                 String?
+  status                 UserStatus          @default(pending)
+  emailVerifiedAt        DateTime?           @map("email_verified_at")
+  lastLoginAt            DateTime?           @map("last_login_at")
+  createdAt              DateTime            @default(now()) @map("created_at")
+  updatedAt              DateTime            @updatedAt @map("updated_at")
+  ownedCompanies         Company[]           @relation("CompanyOwner")
+  companyMembers         CompanyMember[]
+  managedDepartments     Department[]        @relation("DepartmentManager")
+  emailVerifications     EmailVerification[]
+  sentInvitations        Invitation[]        @relation("InvitationInviter")
+  passwordResets         PasswordReset[]
+  refreshTokens          RefreshToken[]
+  employeeReportingLines ReportingLine[]     @relation("ReportingEmployee")
+  managerReportingLines  ReportingLine[]     @relation("ReportingManager")
+  ledTeams               Team[]              @relation("TeamLeader")
+  sessions               UserSession[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  deviceName  String?  @map("device_name")
+  browser     String?
+  ipAddress   String?  @map("ip_address")
+  accessToken String   @map("access_token")
+  expiredAt   DateTime @map("expired_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_sessions")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  token     String
+  expiredAt DateTime  @map("expired_at")
+  revokedAt DateTime? @map("revoked_at")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}
+
+model EmailVerification {
+  id         String    @id @default(uuid())
+  userId     String    @map("user_id")
+  token      String
+  expiredAt  DateTime  @map("expired_at")
+  verifiedAt DateTime? @map("verified_at")
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verifications")
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  token     String
+  expiredAt DateTime @map("expired_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_resets")
+}
+
 model Company {
-  id                   String           @id @default(uuid())
-  name                 String
-  tier                 SubscriptionTier @default(free)
-  billingCycle         BillingCycle     @default(monthly)
-  subscriptionStartsAt DateTime         @default(now())
-  subscriptionEndsAt   DateTime?
-  leaderId             String           @unique
-  createdAt            DateTime         @default(now())
-  updatedAt            DateTime         @updatedAt
-  stripeCustomerId     String?
-  xenditCustomerId     String?
-  members              User[]           @relation("CompanyMembers")
-  leader               User             @relation("CompanyLeader", fields: [leaderId], references: [id])
-  payments             Payment[]
-  subscription         Subscription?
-  workstations         Workstation[]
+  id                  String           @id @default(uuid())
+  name                String
+  country             String?
+  createdAt           DateTime         @default(now()) @map("created_at")
+  currency            String?
+  logo                String?
+  ownerId             String           @map("owner_id")
+  slug                String           @unique
+  subscriptionId      String?          @unique @map("subscription_id")
+  timezone            String?
+  updatedAt           DateTime         @updatedAt @map("updated_at")
+  activityLogs        ActivityLog[]
+  aiConversations     AiConversation[]
+  apiKeys             ApiKey[]
+  auditLogs           AuditLog[]
+  calendarEvents      CalendarEvent[]
+  owner               User             @relation("CompanyOwner", fields: [ownerId], references: [id])
+  currentSubscription Subscription?    @relation("CompanyCurrentSubscription", fields: [subscriptionId], references: [id])
+  holidays            CompanyHoliday[]
+  members             CompanyMember[]
+  policies            CompanyPolicy?
+  settings            CompanySetting?
+  departments         Department[]
+  employmentTypes     EmploymentType[]
+  integrations        Integration[]
+  invitations         Invitation[]
+  meetings            Meeting[]
+  notifications       Notification[]
+  positions           Position[]
+  roles               Role[]
+  subscriptions       Subscription[]   @relation("CompanySubscriptions")
+  taskLabels          TaskLabel[]
+  taskPriorities      TaskPriority[]
+  taskStatuses        TaskStatus[]
+  tasks               Task[]
+  webhooks            Webhook[]
 
   @@map("companies")
 }
 
-model User {
-  id                    String              @id @default(uuid())
-  email                 String              @unique
-  fullName              String
-  password              String
-  token                 String?
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-  otp                   String?
-  expOtp                DateTime?
-  isVerify              Boolean?            @default(false)
-  companyRole           CompanyRole         @default(employee)
-  companyId             String?
-  phone                 String?             @unique
-  refreshToken          String?
-  refreshTokenExpiresAt DateTime?
-  magicLinkToken        String?
-  magicLinkExpiresAt    DateTime?
-  company               Company?            @relation("CompanyMembers", fields: [companyId], references: [id])
-  ownedCompany          Company?            @relation("CompanyLeader")
-  workstationMembers    WorkstationMember[]
-  createdWorkstations   Workstation[]       @relation("WorkstationCreator")
+model CompanySetting {
+  id               String   @id @default(uuid())
+  companyId        String   @unique @map("company_id")
+  workingHourStart DateTime @map("working_hour_start") @db.Time(0)
+  workingHourEnd   DateTime @map("working_hour_end") @db.Time(0)
+  workDays         String   @map("work_days")
+  allowRemote      Boolean  @default(false) @map("allow_remote")
+  allowMusic       Boolean  @default(false) @map("allow_music")
+  language         String?
+  timezone         String?
+  company          Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  @@map("User")
+  @@map("company_settings")
 }
 
-model Workstation {
-  id          String              @id @default(uuid())
+model CompanyPolicy {
+  id                    String  @id @default(uuid())
+  companyId             String  @unique @map("company_id")
+  respectWorkingHours   Boolean @default(true) @map("respect_working_hours")
+  queueNotification     Boolean @default(true) @map("queue_notification")
+  queueEmail            Boolean @default(true) @map("queue_email")
+  allowAfterHourMessage Boolean @default(false) @map("allow_after_hour_message")
+  emergencyNotification Boolean @default(true) @map("emergency_notification")
+  company               Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("company_policies")
+}
+
+model CompanyHoliday {
+  id          String   @id @default(uuid())
+  companyId   String   @map("company_id")
   name        String
-  companyId   String
-  createdById String
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  members     WorkstationMember[]
-  company     Company             @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy   User                @relation("WorkstationCreator", fields: [createdById], references: [id])
+  holidayDate DateTime @map("holiday_date") @db.Date
+  recurring   Boolean  @default(false)
+  company     Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  @@map("workstations")
+  @@map("company_holidays")
 }
 
-model WorkstationMember {
-  id            String                @id @default(uuid())
-  workstationId String
-  userId        String
-  role          WorkstationMemberRole @default(member)
-  joinedAt      DateTime              @default(now())
-  user          User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workstation   Workstation           @relation(fields: [workstationId], references: [id], onDelete: Cascade)
+model Department {
+  id          String             @id @default(uuid())
+  companyId   String             @map("company_id")
+  managerId   String?            @map("manager_id")
+  name        String
+  description String?
+  members     DepartmentMember[]
+  company     Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  manager     User?              @relation("DepartmentManager", fields: [managerId], references: [id])
+  teams       Team[]
 
-  @@unique([workstationId, userId])
-  @@map("workstation_members")
+  @@map("departments")
 }
 
-model Subscription {
-  id                     String             @id @default(uuid())
-  companyId              String             @unique
-  tier                   SubscriptionTier
-  billingCycle           BillingCycle
-  status                 SubscriptionStatus @default(active)
-  provider               PaymentProvider?
-  providerCustomerId     String?
-  providerSubscriptionId String?
-  currentPeriodStart     DateTime?
-  currentPeriodEnd       DateTime?
-  cancelAtPeriodEnd      Boolean            @default(false)
-  createdAt              DateTime           @default(now())
-  updatedAt              DateTime           @updatedAt
-  payments               Payment[]
-  company                Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+model Team {
+  id           String       @id @default(uuid())
+  departmentId String       @map("department_id")
+  leaderId     String?      @map("leader_id")
+  name         String
+  description  String?
+  members      TeamMember[]
+  department   Department   @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  leader       User?        @relation("TeamLeader", fields: [leaderId], references: [id])
 
-  @@map("subscriptions")
+  @@map("teams")
 }
 
-model Payment {
-  id                String           @id @default(uuid())
-  companyId         String
-  subscriptionId    String?
-  provider          PaymentProvider
-  providerPaymentId String?
-  amount            Int
-  currency          String
-  status            PaymentStatus    @default(pending)
-  tier              SubscriptionTier
-  billingCycle      BillingCycle
-  metadata          Json?
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
-  company           Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  subscription      Subscription?    @relation(fields: [subscriptionId], references: [id])
+model Position {
+  id          String          @id @default(uuid())
+  companyId   String          @map("company_id")
+  name        String
+  level       Int             @default(0)
+  description String?
+  members     CompanyMember[]
+  invitations Invitation[]
+  company     Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-  @@map("payments")
+  @@map("positions")
+}
+
+model EmploymentType {
+  id        String          @id @default(uuid())
+  companyId String          @map("company_id")
+  name      String
+  members   CompanyMember[]
+  company   Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("employment_types")
+}
+
+model ReportingLine {
+  id            String   @id @default(uuid())
+  employeeId    String   @map("employee_id")
+  managerId     String   @map("manager_id")
+  effectiveDate DateTime @map("effective_date")
+  employee      User     @relation("ReportingEmployee", fields: [employeeId], references: [id], onDelete: Cascade)
+  manager       User     @relation("ReportingManager", fields: [managerId], references: [id], onDelete: Cascade)
+
+  @@map("reporting_lines")
+}
+
+model CompanyMember {
+  id                String                @id @default(uuid())
+  companyId         String                @map("company_id")
+  userId            String                @map("user_id")
+  employeeCode      String?               @map("employee_code")
+  positionId        String?               @map("position_id")
+  employmentTypeId  String?               @map("employment_type_id")
+  joinedAt          DateTime?             @map("joined_at")
+  resignedAt        DateTime?             @map("resigned_at")
+  status            CompanyMemberStatus   @default(active)
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  activityLogs      ActivityLog[]         @relation("ActivityActor")
+  aiConversations   AiConversation[]
+  auditLogs         AuditLog[]            @relation("AuditActor")
+  calendarEvents    CalendarEvent[]       @relation("CalendarEventCreator")
+  calendarLinks     CalendarParticipant[]
+  company           Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  employmentType    EmploymentType?       @relation(fields: [employmentTypeId], references: [id])
+  position          Position?             @relation(fields: [positionId], references: [id])
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dailyStatistics   DailyStatistic[]
+  departmentLinks   DepartmentMember[]
+  meetingNotes      MeetingNote[]
+  meetingLinks      MeetingParticipant[]
+  organizedMeetings Meeting[]             @relation("MeetingOrganizer")
+  contacts          MemberContact[]
+  profile           MemberProfile?
+  roles             MemberRole[]
+  noteFolders       NoteFolder[]
+  notes             Note[]
+  notifications     Notification[]
+  playlists         Playlist[]
+  pomodoroSessions  PomodoroSession[]
+  reminders         Reminder[]
+  taskActivities    TaskActivity[]
+  taskAssignments   TaskAssignee[]
+  uploadedFiles     TaskAttachment[]
+  checklistItems    TaskChecklistItem[]
+  taskComments      TaskComment[]
+  reportedTasks     Task[]                @relation("TaskReporter")
+  teamLinks         TeamMember[]
+  todoLists         TodoList[]
+  todos             Todo[]
+  settings          UserSetting?
+
+  @@unique([companyId, userId])
+  @@map("company_members")
+}
+
+model MemberProfile {
+  id               String        @id @default(uuid())
+  companyMemberId  String        @unique @map("company_member_id")
+  gender           String?
+  birthday         DateTime?     @db.Date
+  address          String?
+  emergencyContact String?       @map("emergency_contact")
+  bio              String?
+  companyMember    CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("member_profiles")
+}
+
+model MemberContact {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  type            String
+  value           String
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("member_contacts")
+}
+
+model DepartmentMember {
+  id              String        @id @default(uuid())
+  departmentId    String        @map("department_id")
+  companyMemberId String        @map("company_member_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  department      Department    @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  @@unique([departmentId, companyMemberId])
+  @@map("department_members")
+}
+
+model TeamMember {
+  id              String        @id @default(uuid())
+  teamId          String        @map("team_id")
+  companyMemberId String        @map("company_member_id")
+  isLeader        Boolean       @default(false) @map("is_leader")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  team            Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, companyMemberId])
+  @@map("team_members")
+}
+
+model Role {
+  id          String           @id @default(uuid())
+  companyId   String           @map("company_id")
+  name        String
+  description String?
+  isSystem    Boolean          @default(false) @map("is_system")
+  invitations Invitation[]
+  members     MemberRole[]
+  permissions RolePermission[]
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("roles")
+}
+
+model Permission {
+  id            String           @id @default(uuid())
+  module        String
+  action        String
+  permissionKey String           @unique @map("permission_key")
+  description   String?
+  roles         RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  id           String     @id @default(uuid())
+  roleId       String     @map("role_id")
+  permissionId String     @map("permission_id")
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([roleId, permissionId])
+  @@map("role_permissions")
+}
+
+model MemberRole {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  roleId          String        @map("role_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  role            Role          @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([companyMemberId, roleId])
+  @@map("member_roles")
+}
+
+model Invitation {
+  id         String    @id @default(uuid())
+  companyId  String    @map("company_id")
+  email      String
+  invitedBy  String    @map("invited_by")
+  positionId String?   @map("position_id")
+  roleId     String?   @map("role_id")
+  token      String    @unique
+  expiredAt  DateTime  @map("expired_at")
+  acceptedAt DateTime? @map("accepted_at")
+  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  inviter    User      @relation("InvitationInviter", fields: [invitedBy], references: [id])
+  position   Position? @relation(fields: [positionId], references: [id])
+  role       Role?     @relation(fields: [roleId], references: [id])
+
+  @@map("invitations")
+}
+
+model Task {
+  id               String                @id @default(uuid())
+  companyId        String                @map("company_id")
+  title            String
+  description      String?
+  statusId         String                @map("status_id")
+  priorityId       String?               @map("priority_id")
+  reporterMemberId String                @map("reporter_member_id")
+  startDate        DateTime?             @map("start_date")
+  dueDate          DateTime?             @map("due_date")
+  completedAt      DateTime?             @map("completed_at")
+  estimatedMinutes Int?                  @map("estimated_minutes")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @updatedAt @map("updated_at")
+  activities       TaskActivity[]
+  assignees        TaskAssignee[]
+  attachments      TaskAttachment[]
+  checklists       TaskChecklist[]
+  comments         TaskComment[]
+  labels           TaskLabelAssignment[]
+  company          Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  priority         TaskPriority?         @relation(fields: [priorityId], references: [id])
+  reporter         CompanyMember         @relation("TaskReporter", fields: [reporterMemberId], references: [id])
+  status           TaskStatus            @relation(fields: [statusId], references: [id])
+
+  @@map("tasks")
+}
+
+model TaskAssignee {
+  id              String        @id @default(uuid())
+  taskId          String        @map("task_id")
+  companyMemberId String        @map("company_member_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, companyMemberId])
+  @@map("task_assignees")
+}
+
+model TaskStatus {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  name      String
+  color     String
+  sortOrder Int     @default(0) @map("order")
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@map("task_statuses")
+}
+
+model TaskPriority {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  name      String
+  color     String
+  level     Int     @default(0)
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@map("task_priorities")
+}
+
+model TaskLabel {
+  id        String                @id @default(uuid())
+  companyId String                @map("company_id")
+  name      String
+  color     String
+  tasks     TaskLabelAssignment[]
+  company   Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("task_labels")
+}
+
+model TaskLabelAssignment {
+  taskId  String    @map("task_id")
+  labelId String    @map("label_id")
+  label   TaskLabel @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  task    Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, labelId])
+  @@map("task_label_assignments")
+}
+
+model TaskComment {
+  id              String        @id @default(uuid())
+  taskId          String        @map("task_id")
+  companyMemberId String        @map("company_member_id")
+  content         String
+  createdAt       DateTime      @default(now()) @map("created_at")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("task_comments")
+}
+
+model TaskAttachment {
+  id         String        @id @default(uuid())
+  taskId     String        @map("task_id")
+  uploadedBy String        @map("uploaded_by")
+  fileName   String        @map("file_name")
+  fileUrl    String        @map("file_url")
+  fileSize   BigInt        @map("file_size")
+  task       Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploader   CompanyMember @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@map("task_attachments")
+}
+
+model TaskChecklist {
+  id     String              @id @default(uuid())
+  taskId String              @map("task_id")
+  title  String
+  items  TaskChecklistItem[]
+  task   Task                @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("task_checklists")
+}
+
+model TaskChecklistItem {
+  id          String         @id @default(uuid())
+  checklistId String         @map("checklist_id")
+  content     String
+  completed   Boolean        @default(false)
+  completedBy String?        @map("completed_by")
+  checklist   TaskChecklist  @relation(fields: [checklistId], references: [id], onDelete: Cascade)
+  completer   CompanyMember? @relation(fields: [completedBy], references: [id])
+
+  @@map("task_checklist_items")
+}
+
+model TaskActivity {
+  id              String        @id @default(uuid())
+  taskId          String        @map("task_id")
+  companyMemberId String        @map("company_member_id")
+  action          String
+  metadata        Json?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("task_activities")
+}
+
+model TodoList {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  name            String
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  todos           Todo[]
+
+  @@map("todo_lists")
 }
 
 model Todo {
-  id        String     @id @default(uuid())
-  text      String
-  status    TodoStatus @default(pending)
-  dueDate   DateTime?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  completed       Boolean       @default(false)
+  dueDate         DateTime?     @map("due_date")
+  listId          String?       @map("list_id")
+  title           String
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  list            TodoList?     @relation(fields: [listId], references: [id])
 
   @@map("todos")
 }
 
+model NoteFolder {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  name            String
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  notes           Note[]
+
+  @@map("note_folders")
+}
+
 model Note {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String        @id @default(uuid())
+  title           String
+  content         String?
+  companyMemberId String        @map("company_member_id")
+  folderId        String?       @map("folder_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  folder          NoteFolder?   @relation(fields: [folderId], references: [id])
 
   @@map("notes")
 }
 
 model CalendarEvent {
-  id          String    @id @default(uuid())
-  title       String
-  description String?
-  startDate   DateTime
-  endDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String                @id @default(uuid())
+  title        String
+  description  String?
+  companyId    String                @map("company_id")
+  createdBy    String                @map("created_by")
+  endTime      DateTime              @map("end_time")
+  startTime    DateTime              @map("start_time")
+  company      Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator      CompanyMember         @relation("CalendarEventCreator", fields: [createdBy], references: [id])
+  participants CalendarParticipant[]
 
   @@map("calendar_events")
 }
 
-model MusicPlaylist {
-  id        String   @id @default(uuid())
-  title     String
-  url       String
-  createdAt DateTime @default(now())
+model CalendarParticipant {
+  id              String        @id @default(uuid())
+  eventId         String        @map("event_id")
+  companyMemberId String        @map("company_member_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  event           CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
 
-  @@map("music_playlists")
+  @@unique([eventId, companyMemberId])
+  @@map("calendar_participants")
+}
+
+model Reminder {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  sourceType      String        @map("source_type")
+  sourceId        String        @map("source_id")
+  remindAt        DateTime      @map("remind_at")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("reminders")
+}
+
+model Meeting {
+  id           String               @id @default(uuid())
+  companyId    String               @map("company_id")
+  organizerId  String               @map("organizer_id")
+  title        String
+  description  String?
+  startTime    DateTime             @map("start_time")
+  endTime      DateTime             @map("end_time")
+  notes        MeetingNote[]
+  participants MeetingParticipant[]
+  company      Company              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  organizer    CompanyMember        @relation("MeetingOrganizer", fields: [organizerId], references: [id])
+
+  @@map("meetings")
+}
+
+model MeetingParticipant {
+  id              String        @id @default(uuid())
+  meetingId       String        @map("meeting_id")
+  companyMemberId String        @map("company_member_id")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  meeting         Meeting       @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@unique([meetingId, companyMemberId])
+  @@map("meeting_participants")
+}
+
+model MeetingNote {
+  id              String        @id @default(uuid())
+  meetingId       String        @map("meeting_id")
+  companyMemberId String        @map("company_member_id")
+  content         String
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  meeting         Meeting       @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+
+  @@map("meeting_notes")
+}
+
+model PomodoroSession {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  startedAt       DateTime      @map("started_at")
+  endedAt         DateTime?     @map("ended_at")
+  duration        Int?
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("pomodoro_sessions")
+}
+
+model Playlist {
+  id              String         @id @default(uuid())
+  companyMemberId String         @map("company_member_id")
+  name            String
+  items           PlaylistItem[]
+  companyMember   CompanyMember  @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("playlists")
+}
+
+model PlaylistItem {
+  id         String   @id @default(uuid())
+  playlistId String   @map("playlist_id")
+  title      String
+  youtubeUrl String   @map("youtube_url")
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@map("playlist_items")
+}
+
+model Notification {
+  id              String             @id @default(uuid())
+  companyId       String             @map("company_id")
+  companyMemberId String             @map("company_member_id")
+  title           String
+  body            String
+  type            String
+  readAt          DateTime?          @map("read_at")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  logs            NotificationLog[]
+  queue           NotificationQueue?
+  company         Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember      @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model NotificationQueue {
+  id             String       @id @default(uuid())
+  notificationId String       @unique @map("notification_id")
+  scheduledAt    DateTime     @map("scheduled_at")
+  status         String
+  retryCount     Int          @default(0) @map("retry_count")
+  processedAt    DateTime?    @map("processed_at")
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+
+  @@map("notification_queue")
+}
+
+model NotificationTemplate {
+  id      String @id @default(uuid())
+  code    String @unique
+  subject String
+  body    String
+
+  @@map("notification_templates")
 }
 
 model NotificationLog {
-  id        String             @id @default(uuid())
-  recipient String
-  subject   String
-  body      String
-  status    NotificationStatus
-  error     String?
-  createdAt DateTime           @default(now())
+  id             String       @id @default(uuid())
+  channel        String
+  deliveredAt    DateTime?    @map("delivered_at")
+  errorMessage   String?      @map("error_message")
+  notificationId String       @map("notification_id")
+  status         String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
 
   @@map("notification_logs")
 }
 
-enum CompanyRole {
-  leader
-  admin
-  employee
+model Plan {
+  id            String         @id @default(uuid())
+  name          String
+  priceMonthly  Decimal        @map("price_monthly") @db.Decimal(12, 2)
+  priceYearly   Decimal        @map("price_yearly") @db.Decimal(12, 2)
+  maxMembers    Int            @map("max_members")
+  features      Json
+  subscriptions Subscription[]
+
+  @@map("plans")
 }
 
-enum SubscriptionTier {
-  free
-  pro
-  enterprise
+model Subscription {
+  id                     String    @id @default(uuid())
+  companyId              String    @map("company_id")
+  currentPeriodEnd       DateTime? @map("current_period_end")
+  currentPeriodStart     DateTime? @map("current_period_start")
+  planId                 String    @map("plan_id")
+  providerSubscriptionId String?   @map("provider_subscription_id")
+  status                 String
+  provider               String?
+  companyAsCurrent       Company?  @relation("CompanyCurrentSubscription")
+  invoices               Invoice[]
+  company                Company   @relation("CompanySubscriptions", fields: [companyId], references: [id], onDelete: Cascade)
+  plan                   Plan      @relation(fields: [planId], references: [id])
+
+  @@map("subscriptions")
 }
 
-enum BillingCycle {
-  monthly
-  yearly
+model Invoice {
+  id             String       @id @default(uuid())
+  subscriptionId String       @map("subscription_id")
+  invoiceNumber  String       @unique @map("invoice_number")
+  amount         Decimal      @db.Decimal(12, 2)
+  currency       String
+  dueDate        DateTime     @map("due_date")
+  paidAt         DateTime?    @map("paid_at")
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  payments       Payment[]
+
+  @@map("invoices")
 }
 
-enum PaymentProvider {
-  stripe
-  xendit
+model Payment {
+  id            String    @id @default(uuid())
+  amount        Decimal   @db.Decimal(12, 2)
+  invoiceId     String    @map("invoice_id")
+  paidAt        DateTime? @map("paid_at")
+  transactionId String?   @map("transaction_id")
+  provider      String
+  status        String
+  invoice       Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
 }
 
-enum PaymentStatus {
-  pending
-  paid
-  failed
-  canceled
+model ActivityLog {
+  id            String        @id @default(uuid())
+  companyId     String        @map("company_id")
+  actorMemberId String        @map("actor_member_id")
+  targetType    String        @map("target_type")
+  targetId      String        @map("target_id")
+  action        String
+  metadata      Json?
+  createdAt     DateTime      @default(now()) @map("created_at")
+  actor         CompanyMember @relation("ActivityActor", fields: [actorMemberId], references: [id], onDelete: Cascade)
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("activity_logs")
 }
 
-enum SubscriptionStatus {
+model AuditLog {
+  id            String        @id @default(uuid())
+  companyId     String        @map("company_id")
+  actorMemberId String        @map("actor_member_id")
+  tableName     String        @map("table_name")
+  recordId      String        @map("record_id")
+  action        String
+  beforeData    Json?         @map("before_data")
+  afterData     Json?         @map("after_data")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  actor         CompanyMember @relation("AuditActor", fields: [actorMemberId], references: [id], onDelete: Cascade)
+  company       Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
+model DailyStatistic {
+  id              String        @id @default(uuid())
+  companyMemberId String        @map("company_member_id")
+  statisticDate   DateTime      @map("statistic_date") @db.Date
+  completedTasks  Int           @default(0) @map("completed_tasks")
+  pomodoroMinutes Int           @default(0) @map("pomodoro_minutes")
+  meetingMinutes  Int           @default(0) @map("meeting_minutes")
+  loginMinutes    Int           @default(0) @map("login_minutes")
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([companyMemberId, statisticDate])
+  @@map("daily_statistics")
+}
+
+model AiConversation {
+  id              String        @id @default(uuid())
+  companyId       String        @map("company_id")
+  companyMemberId String        @map("company_member_id")
+  title           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  messages        AiMessage[]
+
+  @@map("ai_conversations")
+}
+
+model AiMessage {
+  id             String         @id @default(uuid())
+  conversationId String         @map("conversation_id")
+  role           String
+  content        String
+  tokenUsage     Int?           @map("token_usage")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  conversation   AiConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@map("ai_messages")
+}
+
+model Integration {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  provider  String
+  status    String
+  config    Json
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("integrations")
+}
+
+model Webhook {
+  id        String  @id @default(uuid())
+  companyId String  @map("company_id")
+  url       String
+  secret    String
+  events    Json
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("webhooks")
+}
+
+model ApiKey {
+  id         String    @id @default(uuid())
+  companyId  String    @map("company_id")
+  name       String
+  apiKey     String    @unique @map("api_key")
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+  company    Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("api_keys")
+}
+
+model BackgroundJob {
+  id          String    @id @default(uuid())
+  jobName     String    @map("job_name")
+  payload     Json
+  status      String
+  scheduledAt DateTime  @map("scheduled_at")
+  processedAt DateTime? @map("processed_at")
+
+  @@map("background_jobs")
+}
+
+model UserSetting {
+  id                  String        @id @default(uuid())
+  companyMemberId     String        @unique @map("company_member_id")
+  theme               String?
+  language            String?
+  timezone            String?
+  enableMusic         Boolean       @default(false) @map("enable_music")
+  focusMode           Boolean       @default(false) @map("focus_mode")
+  notificationEnabled Boolean       @default(true) @map("notification_enabled")
+  companyMember       CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+enum UserStatus {
   active
-  canceled
-  past_due
-  incomplete
-}
-
-enum WorkstationMemberRole {
-  admin
-  member
-}
-
-enum TodoStatus {
   pending
-  completed
+  suspended
 }
 
-enum NotificationStatus {
-  success
-  failed
+enum CompanyMemberStatus {
+  active
+  leave
+  suspended
 }

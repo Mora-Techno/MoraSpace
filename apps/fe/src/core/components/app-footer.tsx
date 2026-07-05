@@ -1,8 +1,8 @@
-import { Icon } from '@iconify/react';
-import { Leaf } from 'lucide-react';
-import Link from 'next/link';
+import { Icon } from "@iconify/react";
+import { Leaf } from "lucide-react";
+import Link from "next/link";
 
-import { appConfig } from '@/configs/app.config';
+import { appConfig } from "@/configs/app.config";
 
 export default function AppFooter() {
   return (
@@ -14,12 +14,12 @@ export default function AppFooter() {
               <Leaf className="size-5 text-orange-400" />
             </div>
             <span className="font-serif text-lg font-semibold text-white">
-              {appConfig.name === 'App' ? 'Productify' : appConfig.name}
+              {appConfig.name === "App" ? "MoraSpace" : appConfig.name}
             </span>
           </Link>
           <p className="mt-4 max-w-xs text-sm text-zinc-500">
-            PWA Produktivitas dengan dark theme modern — kelola tugas, catatan, dan fokus dalam satu
-            tempat.
+            PWA Produktivitas dengan dark theme modern — kelola tugas, catatan,
+            dan fokus dalam satu tempat.
           </p>
         </div>
 
@@ -40,7 +40,7 @@ export default function AppFooter() {
       </div>
 
       <div className="mx-auto mt-10 max-w-5xl border-t border-white/5 pt-6 text-center text-xs text-zinc-600">
-        © {new Date().getFullYear()} Productify. All rights reserved.
+        © {new Date().getFullYear()} MoraSpace. All rights reserved.
       </div>
     </footer>
   );

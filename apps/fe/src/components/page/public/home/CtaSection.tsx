@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ArrowRight, Mail } from 'lucide-react';
-import Link from 'next/link';
+import { ArrowRight, Mail } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from '@/components/atoms';
+import { Button } from "@/components/atoms";
 
 export function CtaSection() {
   return (
@@ -19,8 +19,8 @@ export function CtaSection() {
             Tetap Update dengan Tips Produktivitas
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-zinc-400">
-            Daftar sekarang dan mulai kelola hidup digitalmu dengan Productify — PWA produktivitas
-            dengan nuansa FutureTech.
+            Daftar sekarang dan mulai kelola hidup digitalmu dengan MoraSpace —
+            PWA produktivitas dengan nuansa FutureTech.
           </p>
 
           <div className="mx-auto mt-8 flex max-w-md flex-col gap-3 sm:flex-row">

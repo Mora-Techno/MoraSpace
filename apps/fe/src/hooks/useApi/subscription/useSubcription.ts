@@ -1,5 +1,5 @@
-import { useCancelSubscription, useCreateCheckout } from './state/mutate';
-import { useSubscriptionPlans } from './state/query';
+import { useCancelSubscription, useCreateCheckout } from "./state/mutate";
+import { useSubscriptionPlans } from "./state/query";
 
 export const useSubscription = () => {
   return {

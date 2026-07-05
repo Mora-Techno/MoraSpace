@@ -1,4 +1,4 @@
-import type { SubscriptionTier } from '@prisma/client';
+import type { SubscriptionTier } from '@repo/types/company.types';
 
 export const WORKSTATION_USER_LIMITS: Record<SubscriptionTier, number> = {
   free: 4,

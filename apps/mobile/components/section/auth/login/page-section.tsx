@@ -1,36 +1,48 @@
-import { Link } from 'expo-router';
-import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react-native';
-import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Link } from "expo-router";
+import { Eye, EyeOff, Lock, LogIn, Mail } from "lucide-react-native";
+import { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  TextInput,
+  View,
+} from "react-native";
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Text } from '@/components/ui/text';
-import { useTheme } from '@/core/providers/theme.provinder';
-import { useAlert } from '@/hooks/useAlert/costum-alert';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
+import { useTheme } from "@/core/providers/theme.provinder";
+import { useAlert } from "@/hooks/useAlert/costum-alert";
 
 export default function LoginPage() {
   const { colors, isDark } = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const alert = useAlert();
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       className="flex-1"
     >
       <ScrollView
-        className={`flex-1 ${isDark ? 'bg-gray-900' : 'bg-gray-50'}`}
+        className={`flex-1 ${isDark ? "bg-gray-900" : "bg-gray-50"}`}
         style={{ backgroundColor: colors.background }}
-        contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
       >
         <View className="p-6">
           <View className="items-center mb-8">
             <View
               className={`w-20 h-20 rounded-full items-center justify-center mb-4 ${
-                isDark ? 'bg-gray-800' : 'bg-white'
+                isDark ? "bg-gray-800" : "bg-white"
               }`}
             >
               <LogIn size={40} color={colors.primary} />
@@ -41,10 +53,14 @@ export default function LoginPage() {
             </Text>
           </View>
 
-          <Card className={isDark ? 'bg-gray-800 border-gray-700' : 'bg-white'}>
+          <Card className={isDark ? "bg-gray-800 border-gray-700" : "bg-white"}>
             <CardHeader>
-              <CardTitle className={isDark ? 'text-slate-900' : 'text-black'}>Sign In</CardTitle>
-              <CardDescription>Enter your credentials to access your account</CardDescription>
+              <CardTitle className={isDark ? "text-slate-900" : "text-black"}>
+                Sign In
+              </CardTitle>
+              <CardDescription>
+                Enter your credentials to access your account
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <View className="space-y-4">
@@ -52,12 +68,14 @@ export default function LoginPage() {
                   <Text className="text-sm font-medium mb-2">Email</Text>
                   <View
                     className={`flex-row items-center border rounded-lg px-3 ${
-                      isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'
+                      isDark
+                        ? "border-gray-600 bg-gray-700"
+                        : "border-gray-300 bg-white"
                     }`}
                   >
                     <Mail size={20} color={colors.textSecondary} />
                     <TextInput
-                      className={`flex-1 py-3 px-3 ${isDark ? 'text-white' : 'text-gray-900'}`}
+                      className={`flex-1 py-3 px-3 ${isDark ? "text-white" : "text-gray-900"}`}
                       placeholder="john@example.com"
                       placeholderTextColor={colors.textSecondary}
                       value={email}
@@ -73,12 +91,14 @@ export default function LoginPage() {
                   <Text className="text-sm font-medium mb-2">Password</Text>
                   <View
                     className={`flex-row items-center border rounded-lg px-3 ${
-                      isDark ? 'border-gray-600 bg-gray-700' : 'border-gray-300 bg-white'
+                      isDark
+                        ? "border-gray-600 bg-gray-700"
+                        : "border-gray-300 bg-white"
                     }`}
                   >
                     <Lock size={20} color={colors.textSecondary} />
                     <TextInput
-                      className={`flex-1 py-3 px-3 ${isDark ? 'text-white' : 'text-gray-900'}`}
+                      className={`flex-1 py-3 px-3 ${isDark ? "text-white" : "text-gray-900"}`}
                       placeholder="Enter your password"
                       placeholderTextColor={colors.textSecondary}
                       value={password}
@@ -108,9 +128,9 @@ export default function LoginPage() {
                     className="p-0"
                     onPress={() =>
                       alert.toast({
-                        title: 'Coming Soon!',
-                        message: 'Fitur reset password akan segera hadir',
-                        icon: 'success',
+                        title: "Coming Soon!",
+                        message: "Fitur reset password akan segera hadir",
+                        icon: "success",
                       })
                     }
                   >
@@ -121,15 +141,21 @@ export default function LoginPage() {
                 </View>
 
                 <Button className="w-full mt-2">
-                  <Link href={'/(private)/(tabs)/home/_container/home'}>
-                    <Text className="text-white font-semibold text-base">Masuk</Text>
+                  <Link href={"/(private)/(tabs)/home/_container/home"}>
+                    <Text className="text-white font-semibold text-base">
+                      Masuk
+                    </Text>
                   </Link>
                 </Button>
 
                 <View className="flex-row items-center my-4">
-                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                  <View
+                    className={`flex-1 h-px ${isDark ? "bg-gray-700" : "bg-gray-300"}`}
+                  />
                   <Text className="px-4 text-sm text-gray-500">or</Text>
-                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-700' : 'bg-gray-300'}`} />
+                  <View
+                    className={`flex-1 h-px ${isDark ? "bg-gray-700" : "bg-gray-300"}`}
+                  />
                 </View>
 
                 <View className="space-y-2">
@@ -142,9 +168,14 @@ export default function LoginPage() {
                 </View>
 
                 <View className="flex-row justify-center items-center mt-4">
-                  <Text className="text-sm text-gray-500">Don&apos;t have an account? </Text>
+                  <Text className="text-sm text-gray-500">
+                    Don&apos;t have an account?{" "}
+                  </Text>
                   <Button variant="link" className="p-0">
-                    <Text className="text-sm font-semibold" style={{ color: colors.primary }}>
+                    <Text
+                      className="text-sm font-semibold"
+                      style={{ color: colors.primary }}
+                    >
                       Sign Up
                     </Text>
                   </Button>
@@ -155,7 +186,9 @@ export default function LoginPage() {
 
           <Card
             className={`mt-4 ${
-              isDark ? 'bg-gray-800 border-gray-700' : 'bg-blue-50 border-blue-200'
+              isDark
+                ? "bg-gray-800 border-gray-700"
+                : "bg-blue-50 border-blue-200"
             }`}
           >
             <CardContent className="pt-4">
