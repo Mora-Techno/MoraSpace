@@ -1,0 +1,111 @@
+services:
+  # ---------------------------------------------------------------------------
+  # Grafana Alloy — OpenTelemetry Collector
+  # ---------------------------------------------------------------------------
+  # Receives OTLP data from the backend and routes:
+  #   - Traces → Tempo
+  #   - Logs   → Loki
+  # ---------------------------------------------------------------------------
+  alloy:
+    image: grafana/alloy:v1.9.1
+    container_name: alloy
+    command:
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --stability.level=generally-available
+    volumes:
+      - ./observability/alloy/config.alloy:/etc/alloy/config.alloy:ro
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+      - "12345:12345"
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_started
+    networks:
+      - observability
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Grafana Tempo — Distributed Tracing Backend
+  # ---------------------------------------------------------------------------
+  tempo:
+    image: grafana/tempo:2.7.2
+    container_name: tempo
+    command:
+      - "-config.file=/etc/tempo.yaml"
+    volumes:
+      - ./observability/tempo/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200" # Tempo HTTP API (Grafana queries this)
+    networks:
+      - observability
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Grafana Loki — Log Aggregation Backend
+  # ---------------------------------------------------------------------------
+  loki:
+    image: grafana/loki:3.4.3
+    container_name: loki
+    command:
+      - "-config.file=/etc/loki/config.yaml"
+    volumes:
+      - ./observability/loki/config.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    ports:
+      - "3100:3100" # Loki HTTP API
+    networks:
+      - observability
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Grafana — Observability Dashboard
+  # ---------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:11.6.0
+    container_name: grafana
+    environment:
+      # Default credentials for development
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      # Disable login form for easier development access (optional)
+      # GF_AUTH_ANONYMOUS_ENABLED: "true"
+      # GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+      # Auto-provision datasources (Tempo + Loki)
+      - ./observability/grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3001:3000" # Grafana UI
+    depends_on:
+      tempo:
+        condition: service_started
+      loki:
+        condition: service_started
+    networks:
+      - observability
+    restart: unless-stopped
+
+# =============================================================================
+# Volumes — Persistent data storage
+# =============================================================================
+volumes:
+  grafana-data:
+    driver: local
+  tempo-data:
+    driver: local
+  loki-data:
+    driver: local
+
+# =============================================================================
+# Networks — Internal communication between services
+# =============================================================================
+networks:
+  observability:
+    driver: bridge
+    name: observability

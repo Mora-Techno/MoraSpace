@@ -7,21 +7,23 @@ import type {
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import type { AppContext } from "@/contex";
-import { JwtPayload } from "@repo/types/auth.types";
 import { unauthorizedValidate } from "@/validation/auth.validate";
 import { CreateAdminValidate } from "@/validation/company.validate";
+import { isTransportResponse } from "@/utils/transportResponse";
+import { getUser } from "@/utils/authTokens";
 
 class CompanyController {
   public async register(c: AppContext) {
     try {
       const body = c.body as PickRegisterCompany;
       const data = await CompanyService.registerLeader(body);
-      const session = await AuthService.createSession(data.leader.id);
+      const queryService = await AuthService.createSession(data.leader.id);
 
-      return HttpResponse(c).created(
-        { company: data.company, leader: data.leader, ...session },
-        "Company dan akun leader berhasil dibuat",
-      );
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(
+          { company: data.company, leader: data.leader, ...queryService },
+          "Company dan akun leader berhasil dibuat",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -30,7 +32,7 @@ class CompanyController {
   // ROLE Leader
   public async createAdmin(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const input = c.body as PickCreateAdmin;
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -43,13 +45,17 @@ class CompanyController {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await CompanyService.createAdmin(user.companyId, input);
+      const queryService = await CompanyService.createAdmin(
+        user.companyId,
+        input,
+      );
 
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).created(data, "Admin berhasil dibuat");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(queryService, "Admin berhasil dibuat");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -58,7 +64,7 @@ class CompanyController {
   // ROLE [leader, admin]
   public async listAdmins(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await unauthorizedValidate(user, c);
       if (authRespone) return authRespone;
@@ -84,7 +90,7 @@ class CompanyController {
 
   public async getProfile(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await unauthorizedValidate(user, c);
       if (authRespone) return authRespone;
@@ -109,7 +115,7 @@ class CompanyController {
   // Role [Admin]
   public async updateSubscription(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const body = c.body as PickUpdateCompanySubscription;
 
       const authRespone = await unauthorizedValidate(user, c);

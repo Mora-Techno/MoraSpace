@@ -1,6 +1,7 @@
 import type { Context } from "elysia";
 import type { JwtPayload } from "@repo/types/auth.types";
 import type { AppFile } from "@/types/app.types";
+import { RequestStore } from "@/types/request.types";
 
 export interface AppContext extends Omit<Context, "body" | "query" | "params"> {
   user?: JwtPayload;
@@ -9,6 +10,7 @@ export interface AppContext extends Omit<Context, "body" | "query" | "params"> {
   body: unknown;
   query: Record<string, unknown>;
   params: Record<string, string>;
+  store: RequestStore;
 }
 
 export type ElysiaHandler = (

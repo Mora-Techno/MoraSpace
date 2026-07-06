@@ -1,33 +1,41 @@
-import WorkstationService from '@/service/WorkstationService';
-import { HttpResponse } from '@/http';
-import type { JwtPayload } from '@repo/types/auth.types';
+import WorkstationService from "@/service/WorkstationService";
+import { HttpResponse } from "@/http";
+import { getUser } from "@/utils/authTokens";
 import type {
   PickCreateWorkstation,
   PickInviteMember,
   PickUpdateWorkstation,
-} from '@repo/types/workstation.types';
-import type { AppContext } from '@/contex';
-import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
-import { CreateWorkStationValidate } from '@/validation/workstation.validate';
+} from "@repo/types/workstation.types";
+import type { AppContext } from "@/contex";
+import {
+  paramsValidate,
+  unauthorizedValidate,
+} from "@/validation/auth.validate";
+import { CreateWorkStationValidate } from "@/validation/workstation.validate";
+import { isTransportResponse } from "@/utils/transportResponse";
 
 class WorkstationController {
   public async list(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await unauthorizedValidate(user, c);
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.list(user.companyId);
+      const queryService = await WorkstationService.list(user.companyId);
 
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).ok(data, 'Berhasil mengambil daftar workstation');
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil mengambil daftar workstation",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -35,7 +43,7 @@ class WorkstationController {
 
   public async getById(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -45,13 +53,20 @@ class WorkstationController {
       if (validateParams) return validateParams;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.getById(params.id, user.companyId);
-      if (!data) return HttpResponse(c).notFound('Workstation tidak ditemukan');
-
-      return HttpResponse(c).ok(data, 'Berhasil mengambil detail workstation');
+      const queryService = await WorkstationService.getById(
+        params.id,
+        user.companyId,
+      );
+      if (!queryService)
+        return HttpResponse(c).notFound("Workstation tidak ditemukan");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil mengambil detail workstation",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -59,7 +74,7 @@ class WorkstationController {
 
   public async create(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const body = c.body as PickCreateWorkstation;
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -69,12 +84,20 @@ class WorkstationController {
       if (validateRespone) return validateRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.create(user.companyId, user.id, body);
+      const queryService = await WorkstationService.create(
+        user.companyId,
+        user.id,
+        body,
+      );
 
-      return HttpResponse(c).created(data, 'Workstation berhasil dibuat');
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(
+          queryService,
+          "Workstation berhasil dibuat",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -82,7 +105,7 @@ class WorkstationController {
 
   public async update(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -92,19 +115,25 @@ class WorkstationController {
       if (validateParams) return validateParams;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const body = c.body as PickUpdateWorkstation;
-      const data = await WorkstationService.update(params.id, user.companyId, body);
-
-      if (!data) return HttpResponse(c).notFound('Workstation tidak ditemukan');
-
-      return HttpResponse(c).ok(
-        data,
-
-        'Workstation berhasil diperbarui',
+      const queryService = await WorkstationService.update(
+        params.id,
+        user.companyId,
+        body,
       );
+
+      if (!queryService)
+        return HttpResponse(c).notFound("Workstation tidak ditemukan");
+
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+
+          "Workstation berhasil diperbarui",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -112,7 +141,7 @@ class WorkstationController {
 
   public async remove(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -122,17 +151,17 @@ class WorkstationController {
       if (validateParams) return validateParams;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.remove(params.id, user.companyId);
-      if (!data) return HttpResponse(c).notFound('Workstation tidak ditemukan');
-
-      return HttpResponse(c).ok(
-        data,
-
-        'Workstation berhasil dihapus',
+      const queryService = await WorkstationService.remove(
+        params.id,
+        user.companyId,
       );
+      if (!queryService)
+        return HttpResponse(c).notFound("Workstation tidak ditemukan");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, "Workstation berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -141,7 +170,7 @@ class WorkstationController {
   // Bisa Join Menggunakan Link
   public async inviteMember(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -151,22 +180,31 @@ class WorkstationController {
       if (validateParams) return validateParams;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
       const body = c.body as PickInviteMember;
-      const data = await WorkstationService.inviteMember(params.id, user.companyId, body);
+      const queryService = await WorkstationService.inviteMember(
+        params.id,
+        user.companyId,
+        body,
+      );
 
-      return HttpResponse(c).created(data, 'Karyawan berhasil diinvite ke workstation');
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(
+          queryService,
+          "Karyawan berhasil diinvite ke workstation",
+        );
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Gagal menginvite karyawan';
+      const message =
+        error instanceof Error ? error.message : "Gagal menginvite karyawan";
       return HttpResponse(c).badRequest(message);
     }
   }
 
   public async removeMember(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string; userID: string };
 
       const authRespone = await unauthorizedValidate(user, c);
@@ -179,14 +217,23 @@ class WorkstationController {
       if (validateUserParams) return validateUserParams;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await WorkstationService.removeMember(params.id, user.companyId, params.userID);
+      const queryService = await WorkstationService.removeMember(
+        params.id,
+        user.companyId,
+        params.userID,
+      );
 
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!queryService)
+        return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, 'Anggota berhasil dihapus dari workstation');
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Anggota berhasil dihapus dari workstation",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

@@ -10,7 +10,7 @@ import workstationRoutes from "./workstationRoutes";
 import subscriptionRoutes from "./subscriptionRoutes";
 import sessionRoutes from "./sessionRoutes";
 import { InternalApiKey } from "@/middlewares/apiKey";
-
+import { errorPlugin, loggerPlugin, metricsPlugin } from "@/plugins";
 class ApiRouter {
   public apiRouter;
 
@@ -29,6 +29,8 @@ class ApiRouter {
   private routes() {
     this.apiRouter
       .use(InternalApiKey)
+      .use(loggerPlugin)
+      .use(errorPlugin)
       .use(authRoutes)
       .use(companyRoutes)
       .use(workstationRoutes)

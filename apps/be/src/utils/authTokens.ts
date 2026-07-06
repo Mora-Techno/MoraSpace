@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 import { getJwtSecret } from "./jwt.utils";
 import prisma from "prisma/client";
 import bcryptjs from "bcryptjs";
+import { AppContext } from "@/contex";
 
 const OTP_EXPIRY_MINUTES = 5;
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
@@ -117,4 +118,8 @@ export async function createTokenPair(
     refreshToken,
     expiresIn: AUTH_EXPIRY.accessToken,
   };
+}
+
+export function getUser(c: AppContext): JwtPayload {
+  return c.user as JwtPayload;
 }

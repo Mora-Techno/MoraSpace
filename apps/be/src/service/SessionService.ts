@@ -5,7 +5,7 @@ class SessionService {
   public async listService(users: JwtPayload, page: number, limit: number) {
     const skip = (page - 1) * limit;
 
-    const [totalSession, data] = await prisma.$transaction([
+    const [totalData, data] = await prisma.$transaction([
       prisma.userSession.count({
         where: {
           userId: users.id,
@@ -23,14 +23,14 @@ class SessionService {
       }),
     ]);
 
-    const totalPage = Math.ceil(totalSession / limit);
+    const totalPage = Math.ceil(totalData / limit);
 
     return {
       data: data,
       meta: {
         currentPage: page,
         limit: limit,
-        totalData: totalSession,
+        totalData: totalData,
         totalPage: totalPage,
       },
     };

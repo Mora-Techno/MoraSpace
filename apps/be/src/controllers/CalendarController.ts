@@ -5,26 +5,31 @@ import type {
   PickCreateEvent,
   PickUpdateEvent,
 } from "@repo/types/calendar.types";
-import { JwtPayload } from "@repo/types/auth.types";
 import { CreateEventValidation } from "@/validation/calender.validate";
 import {
   paramsValidate,
   memberContextValidate,
 } from "@/validation/auth.validate";
+import { isTransportResponse } from "@/utils/transportResponse";
+import { getUser } from "@/utils/authTokens";
 
 class CalendarController {
   public async list(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const data = await CalendarService.list(user.companyId!, c.query);
-      if (!data) {
+      const queryService = await CalendarService.list(user.companyId!, c.query);
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).ok(data, "Berhasil mengambil jadwal kalender");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil mengambil jadwal kalender",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -32,7 +37,7 @@ class CalendarController {
 
   public async create(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const input = c.body as PickCreateEvent;
 
       const authRespone = await memberContextValidate(user, c);
@@ -41,16 +46,20 @@ class CalendarController {
       const validateRespone = await CreateEventValidation(input, c);
       if (validateRespone) return validateRespone;
 
-      const data = await CalendarService.create(
+      const queryService = await CalendarService.create(
         user.companyId!,
         user.companyMemberId!,
         input,
       );
 
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(data, "Jadwal berhasil ditambahkan");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(
+          queryService,
+          "Jadwal berhasil ditambahkan",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -58,7 +67,7 @@ class CalendarController {
 
   public async update(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const input = c.body as PickUpdateEvent;
       const params = c.params as { id: string };
 
@@ -68,15 +77,16 @@ class CalendarController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await CalendarService.update(
+      const queryService = await CalendarService.update(
         params.id,
         user.companyId!,
         input,
       );
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).notFound("Jadwal tidak ditemukan");
       }
-      return HttpResponse(c).ok(data, "Jadwal berhasil diperbarui");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, "Jadwal berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -84,7 +94,7 @@ class CalendarController {
 
   public async remove(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await memberContextValidate(user, c);
@@ -93,10 +103,15 @@ class CalendarController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await CalendarService.remove(params.id, user.companyId!);
+      const queryService = await CalendarService.remove(
+        params.id,
+        user.companyId!,
+      );
 
-      if (!data) return HttpResponse(c).notFound("Jadwal tidak ditemukan");
-      return HttpResponse(c).ok(data, "Jadwal berhasil dihapus");
+      if (!queryService)
+        return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, "Jadwal berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

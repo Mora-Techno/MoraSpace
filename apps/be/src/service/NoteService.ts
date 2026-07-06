@@ -1,17 +1,43 @@
-import prisma from 'prisma/client';
-import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
+import prisma from "prisma/client";
+import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
 
 class NoteService {
-  public async list(companyMemberId: string) {
-    return prisma.note.findMany({
-      where: { companyMemberId },
-      select: {
-        id: true,
-        title: true,
-        content: true,
+  public async list(companyMemberId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
+
+    const [totalData, data] = await prisma.$transaction([
+      prisma.note.count({
+        where: {
+          companyMemberId,
+        },
+      }),
+      prisma.note.findMany({
+        where: {
+          companyMemberId,
+        },
+        select: {
+          id: true,
+          title: true,
+          content: true,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        skip: skip,
+        take: limit,
+      }),
+    ]);
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data: data,
+      meta: {
+        currentPage: page,
+        limit: limit,
+        totalData: totalData,
+        totalPage: totalPage,
       },
-      orderBy: { title: 'asc' },
-    });
+    };
   }
 
   public async getById(id: string, companyMemberId: string) {
@@ -30,7 +56,11 @@ class NoteService {
     });
   }
 
-  public async update(id: string, companyMemberId: string, input: PickUpdateNote) {
+  public async update(
+    id: string,
+    companyMemberId: string,
+    input: PickUpdateNote,
+  ) {
     const existing = await prisma.note.findFirst({
       where: { id, companyMemberId },
     });

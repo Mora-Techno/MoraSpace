@@ -4,14 +4,14 @@ import {
   memberContextValidate,
   paramsValidate,
 } from "@/validation/auth.validate";
-import { JwtPayload } from "@repo/types/auth.types";
 import SessionService from "@/service/SessionService";
 import { isTransportResponse } from "@/utils/transportResponse";
+import { getUser } from "@/utils/authTokens";
 
 class SessionController {
   public async list(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const page = Number(c.params) || 1;
       const limit = Number(c.query.limit) || 10;
 
@@ -19,18 +19,15 @@ class SessionController {
 
       if (authRespone) return authRespone;
 
-      const listSessionQuery = await SessionService.listService(
-        user,
-        limit,
-        page,
-      );
+      const queryService = await SessionService.listService(user, limit, page);
 
-      if (!listSessionQuery) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      if (isTransportResponse(listSessionQuery))
+      if (isTransportResponse(queryService))
         return HttpResponse(c).ok(
-          listSessionQuery,
+          queryService.data,
+          queryService.meta,
           "Berhasil mengambil session users",
         );
     } catch (error) {
@@ -39,32 +36,33 @@ class SessionController {
   }
   public async getById(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await memberContextValidate(user, c);
 
       if (authRespone) return authRespone;
 
-      const getSessionByIdQuery = await SessionService.getSessionByIdService(
+      const queryService = await SessionService.getSessionByIdService(
         params.id,
       );
 
-      if (!getSessionByIdQuery) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        getSessionByIdQuery,
-        "Berhasil mengambil session berdasarkan id",
-      );
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil mengambil session berdasarkan id",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
   }
   public async deleteSessionById(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await memberContextValidate(user, c);
@@ -74,39 +72,41 @@ class SessionController {
 
       if (paramsValidation) return paramsValidation;
 
-      const deleteService = await SessionService.deleteSessionById(params.id);
-      if (!deleteService) {
+      const queryService = await SessionService.deleteSessionById(params.id);
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        deleteService,
-        "Berhasil Delete History Session",
-      );
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil Delete History Session",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
   }
   public async deleteSession(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await memberContextValidate(user, c);
 
       if (authRespone) return authRespone;
 
-      const deleteService = await SessionService.deleteAllSessionService(
+      const queryService = await SessionService.deleteAllSessionService(
         user.id,
       );
 
-      if (!deleteService) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        deleteService,
-        "Berhasil Menghapus Seluruh Session",
-      );
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(
+          queryService,
+          "Berhasil Menghapus Seluruh Session",
+        );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
