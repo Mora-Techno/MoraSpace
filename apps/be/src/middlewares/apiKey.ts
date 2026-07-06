@@ -4,8 +4,7 @@ export const InternalApiKey = (app: any) => {
   app.onBeforeHandle(
     ({ headers, set }: { headers: Record<string, any>; set: any }) => {
       try {
-        const rawKey =
-          headers["x-internal-api-key"] ?? headers["X-Internal-Api-Key"];
+        const rawKey = headers["."] ?? headers["X-Internal-Api-Key"];
         const clientKey = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 
         const serverKey = process.env.INTERNAL_API_SECRET;

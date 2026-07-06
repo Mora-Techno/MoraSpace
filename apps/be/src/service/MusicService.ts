@@ -16,14 +16,38 @@ function mapPlaylist(playlist: {
 }
 
 class MusicService {
-  public async list(companyMemberId: string) {
-    const playlists = await prisma.playlist.findMany({
-      where: { companyMemberId },
-      include: { items: true },
-      orderBy: { name: "asc" },
-    });
+  public async list(companyMemberId: string, page: number, limit: number) {
+    const skip = (page - 1) * limit;
 
-    return playlists.map(mapPlaylist);
+    const [totalData, data] = await prisma.$transaction([
+      prisma.playlist.count({
+        where: {
+          companyMemberId,
+        },
+      }),
+      prisma.playlist.findMany({
+        where: {
+          companyMemberId,
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data: data,
+      meta: {
+        currentPage: page,
+        limit: limit,
+        totalData: totalData,
+        totalPage: totalPage,
+      },
+    };
   }
 
   public async create(companyMemberId: string, input: PickCreatePlaylist) {

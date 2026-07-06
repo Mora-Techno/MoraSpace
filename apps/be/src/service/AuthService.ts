@@ -10,7 +10,6 @@ import {
 } from "@/utils/authTokens";
 import type {
   AuthSessionResponse,
-  PickResetPassword,
   PickSendMagicLink,
   PickSendOtp,
   PickVerifyMagicLink,

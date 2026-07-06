@@ -6,28 +6,33 @@ import type {
   PickUpdateTodo,
   TodoQuery,
 } from "@repo/types/todo.types";
-import { JwtPayload } from "@repo/types/auth.types";
 import {
   paramsValidate,
-  unauthorizedValidate,
   memberContextValidate,
 } from "@/validation/auth.validate";
 import { CreateTodoValidate } from "@/validation/todo.validate";
+import { getUser } from "@/utils/authTokens";
+import { isTransportResponse } from "@/utils/transportResponse";
 
 class TodoController {
   public async list(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
 
       const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const data = await TodoService.list(user.companyMemberId!, c.query as TodoQuery);
+      const queryService = await TodoService.list(
+        user.companyMemberId!,
+        c.query as TodoQuery,
+      );
 
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).badRequest("");
       }
-      return HttpResponse(c).ok(data, undefined);
+
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, undefined);
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -36,7 +41,7 @@ class TodoController {
 
   public async create(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const body = c.body as PickCreateTodo;
 
       const authRespone = await memberContextValidate(user, c);
@@ -45,12 +50,16 @@ class TodoController {
       const validateRespone = await CreateTodoValidate(c, body);
       if (validateRespone) return validateRespone;
 
-      const data = await TodoService.create(user.companyMemberId!, body);
+      const queryService = await TodoService.create(
+        user.companyMemberId!,
+        body,
+      );
 
-      if (!data) {
+      if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(data, "Tugas berhasil dibuat");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).created(queryService, "Tugas berhasil dibuat");
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -59,7 +68,7 @@ class TodoController {
 
   public async update(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await memberContextValidate(user, c);
@@ -70,10 +79,16 @@ class TodoController {
 
       const body = c.body as PickUpdateTodo;
 
-      const data = await TodoService.update(params.id, user.companyMemberId!, body);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      const queryService = await TodoService.update(
+        params.id,
+        user.companyMemberId!,
+        body,
+      );
+      if (!queryService)
+        return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Tugas berhasil diperbarui");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, "Tugas berhasil diperbarui");
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -82,7 +97,7 @@ class TodoController {
 
   public async remove(c: AppContext) {
     try {
-      const user = c.user as JwtPayload;
+      const user = getUser(c);
       const params = c.params as { id: string };
 
       const authRespone = await memberContextValidate(user, c);
@@ -91,9 +106,14 @@ class TodoController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TodoService.remove(params.id, user.companyMemberId!);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
-      return HttpResponse(c).ok(data, "Tugas berhasil dihapus");
+      const queryService = await TodoService.remove(
+        params.id,
+        user.companyMemberId!,
+      );
+      if (!queryService)
+        return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (isTransportResponse(queryService))
+        return HttpResponse(c).ok(queryService, "Tugas berhasil dihapus");
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);

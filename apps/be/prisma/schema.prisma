@@ -567,6 +567,8 @@ model Note {
   content         String?
   companyMemberId String        @map("company_member_id")
   folderId        String?       @map("folder_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
   companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
   folder          NoteFolder?   @relation(fields: [folderId], references: [id])
 
@@ -663,6 +665,8 @@ model Playlist {
   id              String         @id @default(uuid())
   companyMemberId String         @map("company_member_id")
   name            String
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
   items           PlaylistItem[]
   companyMember   CompanyMember  @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
 
@@ -674,6 +678,8 @@ model PlaylistItem {
   playlistId String   @map("playlist_id")
   title      String
   youtubeUrl String   @map("youtube_url")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
   playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
 
   @@map("playlist_items")
