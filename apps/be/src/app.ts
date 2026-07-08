@@ -33,7 +33,7 @@ const app = new Elysia()
       credentials: true,
     }),
   )
-  .get("/", () => "Hello Elysia! Bun js")
+  .get("/", () => "Hello Mora Space Api")
   .use(apiRoutes)
   .use(swaggerPlugin);
 

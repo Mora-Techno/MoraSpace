@@ -5,8 +5,9 @@ import type {
   PickSendNotification,
 } from "../types/notification.types";
 import type { TResponse } from "../types/response.types";
-import { GetResponse, PostResponse, withQuery } from "./http";
+import { GetResponse, PatchResponse, PostResponse, withQuery } from "./http";
 import { toServiceResponse } from "./service-response";
+
 class NotificationService {
   public async SendNotification(
     payload: PickSendNotification,
@@ -20,6 +21,7 @@ class NotificationService {
       statusCode: 201,
     });
   }
+
   public async ListNotificationLogs(
     query?: NotificationLogQuery,
   ): Promise<TResponse<NotificationLog[]>> {
@@ -30,5 +32,34 @@ class NotificationService {
       message: "Riwayat notifikasi berhasil diambil",
     });
   }
+
+  public async ListInAppNotifications(): Promise<TResponse<any[]>> {
+    const res = await GetResponse<any[]>(NOTIFICATION_ENDPOINTS.LIST);
+    return toServiceResponse(res, {
+      message: "Daftar notifikasi berhasil diambil",
+    });
+  }
+
+  public async MarkRead(id: string): Promise<TResponse<any>> {
+    const res = await PatchResponse<any>(NOTIFICATION_ENDPOINTS.MARK_READ(id), {});
+    return toServiceResponse(res, {
+      message: "Notifikasi ditandai sudah dibaca",
+    });
+  }
+
+  public async MarkAllRead(): Promise<TResponse<any>> {
+    const res = await PatchResponse<any>(NOTIFICATION_ENDPOINTS.MARK_ALL_READ, {});
+    return toServiceResponse(res, {
+      message: "Semua notifikasi ditandai sudah dibaca",
+    });
+  }
+
+  public async ListQueue(): Promise<TResponse<any[]>> {
+    const res = await GetResponse<any[]>(NOTIFICATION_ENDPOINTS.QUEUE);
+    return toServiceResponse(res, {
+      message: "Antrean notifikasi berhasil diambil",
+    });
+  }
 }
+
 export default new NotificationService();

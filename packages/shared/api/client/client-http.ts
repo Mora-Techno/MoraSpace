@@ -13,14 +13,34 @@ type ClientFetchOptions = {
   withAuth: boolean;
 };
 
-function buildApiUrl(path: string): string {
+type TokenProvider = () => string | undefined | Promise<string | undefined>;
+type BaseURLProvider = () => string | undefined | Promise<string | undefined>;
+
+let _tokenProvider: TokenProvider | null = null;
+let _baseURLProvider: BaseURLProvider | null = null;
+
+export const setTokenProvider = (provider: TokenProvider) => {
+  _tokenProvider = provider;
+};
+
+export const setBaseURLProvider = (provider: BaseURLProvider) => {
+  _baseURLProvider = provider;
+};
+
+async function buildApiUrl(path: string): Promise<string> {
   if (path.startsWith('http://') || path.startsWith('https://')) {
     return path;
   }
 
-  const base = baseurl.replace(/\/$/, '');
+  let base = baseurl;
+  if (_baseURLProvider) {
+    const customBase = await _baseURLProvider();
+    if (customBase) base = customBase;
+  }
+
+  const normalizedBase = base.replace(/\/$/, '');
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${base}${normalizedPath}`;
+  return `${normalizedBase}${normalizedPath}`;
 }
 
 function buildBaseHeaders(accessToken?: string): Record<string, string> {
@@ -62,8 +82,16 @@ async function clientCoreFetchResponse<T>(
 ): Promise<ApiSuccessResponse<T>> {
   const { method = 'GET', body, headers: extraHeaders = {}, cache = 'no-store' } = config;
 
-  const accessToken = options.withAuth ? getAccessToken() : undefined;
-  const endpoint = buildApiUrl(path);
+  let accessToken: string | undefined = undefined;
+  if (options.withAuth) {
+    if (_tokenProvider) {
+      accessToken = await _tokenProvider();
+    } else {
+      accessToken = getAccessToken();
+    }
+  }
+
+  const endpoint = await buildApiUrl(path);
 
   const res = await fetch(endpoint, {
     method,

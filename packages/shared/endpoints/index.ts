@@ -29,3 +29,11 @@ export {
   listWorkstationEndpoints,
 } from "./workstation.endpoints";
 export { SESSION_ENDPOINT, listSessionEndpoints } from "./session.endpoint";
+export { DEPARTMENT_ENDPOINTS, listDepartmentEndpoints } from "./department.endpoints";
+export { TEAM_ENDPOINTS, listTeamEndpoints } from "./team.endpoints";
+export { POSITION_ENDPOINTS, listPositionEndpoints } from "./position.endpoints";
+export { MEMBER_ENDPOINTS, listMemberEndpoints } from "./member.endpoints";
+export { INVITATION_ENDPOINTS, listInvitationEndpoints } from "./invitation.endpoints";
+export { ROLE_ENDPOINTS, listRoleEndpoints } from "./role.endpoints";
+export { TASK_ENDPOINTS, listTaskEndpoints } from "./task.endpoints";
+export { POMODORO_ENDPOINTS, listPomodoroEndpoints } from "./pomodoro.endpoints";

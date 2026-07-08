@@ -23,3 +23,7 @@ export const NotificationLogQueryDto = t.Object({
     }),
   ),
 });
+
+export const NotificationParamsDto = t.Object({
+  id: t.String({ format: 'uuid', description: 'ID notifikasi' }),
+});
