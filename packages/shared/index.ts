@@ -14,6 +14,7 @@ export {
   MusicService,
   NoteService,
   NotificationService,
+  SessionService,
   SettingsService,
   SubscriptionService,
   TodoService,

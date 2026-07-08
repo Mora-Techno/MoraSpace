@@ -2,6 +2,7 @@ import Elysia from "elysia";
 import NotificationController from "@/controllers/NotificationController";
 import {
   NotificationLogQueryDto,
+  NotificationParamsDto,
   SendNotificationDto,
 } from "@/dto/notification.dto";
 import { AppContext } from "@/contex";
@@ -43,6 +44,55 @@ class NotificationRouter {
           summary: "Riwayat notifikasi",
           description:
             "Melihat riwayat notifikasi email yang sukses atau gagal dikirim oleh sistem.",
+          tags: ["Notifications"],
+        },
+      },
+    );
+    this.notificationRouter.get(
+      "/",
+      (c: AppContext) => NotificationController.listInApp(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Daftar notifikasi in-app",
+          description: "Menampilkan semua notifikasi aplikasi (in-app notification) untuk pengguna saat ini.",
+          tags: ["Notifications"],
+        },
+      },
+    );
+    this.notificationRouter.patch(
+      "/:id/read",
+      (c: AppContext) => NotificationController.markRead(c),
+      {
+        params: NotificationParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Tandai notifikasi dibaca",
+          description: "Mengubah status satu notifikasi menjadi sudah dibaca.",
+          tags: ["Notifications"],
+        },
+      },
+    );
+    this.notificationRouter.patch(
+      "/read-all",
+      (c: AppContext) => NotificationController.markAllRead(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Tandai semua notifikasi dibaca",
+          description: "Mengubah status seluruh notifikasi yang belum dibaca menjadi sudah dibaca.",
+          tags: ["Notifications"],
+        },
+      },
+    );
+    this.notificationRouter.get(
+      "/queue",
+      (c: AppContext) => NotificationController.listQueue(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Antrean notifikasi tertunda",
+          description: "Menampilkan daftar antrean notifikasi (NotificationQueue) yang dijadwalkan atau tertunda.",
           tags: ["Notifications"],
         },
       },

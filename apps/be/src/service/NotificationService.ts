@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import nodemailer from 'nodemailer';
+import prisma from 'prisma/client';
 import type { NotificationStatus } from '@repo/types/notification.types';
 import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
 
@@ -60,6 +61,79 @@ class NotificationService {
 
   public async listLogs(_query: NotificationLogQuery) {
     return [];
+  }
+
+  public async listInApp(companyMemberId: string, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [totalData, data] = await prisma.$transaction([
+      prisma.notification.count({
+        where: { companyMemberId },
+      }),
+      prisma.notification.findMany({
+        where: { companyMemberId },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
+  }
+
+  public async markRead(id: string, companyMemberId: string) {
+    const existing = await prisma.notification.findFirst({
+      where: { id, companyMemberId },
+    });
+    if (!existing) return null;
+
+    const updated = await prisma.notification.update({
+      where: { id },
+      data: { readAt: new Date() },
+    });
+    return updated;
+  }
+
+  public async markAllRead(companyMemberId: string) {
+    await prisma.notification.updateMany({
+      where: { companyMemberId, readAt: null },
+      data: { readAt: new Date() },
+    });
+    return { success: true };
+  }
+
+  public async listQueue(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [totalData, data] = await prisma.$transaction([
+      prisma.notificationQueue.count(),
+      prisma.notificationQueue.findMany({
+        include: { notification: true },
+        orderBy: { scheduledAt: 'asc' },
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 }
 

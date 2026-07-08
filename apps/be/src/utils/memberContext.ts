@@ -28,12 +28,12 @@ export function resolveCompanyRole(
   ownerId: string,
   roleNames: string[],
 ): CompanyRole {
-  if (userId === ownerId) return 'leader';
+  if (userId === ownerId) return 'Owner';
 
   const normalized = roleNames.map((name) => name.toLowerCase());
-  if (normalized.includes('admin')) return 'admin';
-  if (normalized.includes('owner')) return 'leader';
-  return 'employee';
+  if (normalized.includes('admin')) return 'Admin';
+  if (normalized.includes('owner')) return 'Owner';
+  return 'Member';
 }
 
 export function toSafeAuthUser(
@@ -59,7 +59,7 @@ export function toSafeAuthUser(
         member.company.ownerId,
         member.roles.map((item) => item.role.name),
       )
-    : 'employee';
+    : 'Member';
 
   return {
     id: user.id,

@@ -9,8 +9,18 @@ import companyRoutes from "./companyRoutes";
 import workstationRoutes from "./workstationRoutes";
 import subscriptionRoutes from "./subscriptionRoutes";
 import sessionRoutes from "./sessionRoutes";
+import departmentRoutes from "./departmentRoutes";
+import teamRoutes from "./teamRoutes";
+import positionRoutes from "./positionRoutes";
+import memberRoutes from "./memberRoutes";
+import invitationRoutes from "./invitationRoutes";
+import roleRoutes from "./roleRoutes";
+import permissionRoutes from "./permissionRoutes";
+import taskRoutes from "./taskRoutes";
+import pomodoroRoutes from "./pomodoroRoutes";
 import { InternalApiKey } from "@/middlewares/apiKey";
 import { errorPlugin, loggerPlugin, metricsPlugin } from "@/plugins";
+
 class ApiRouter {
   public apiRouter;
 
@@ -40,7 +50,16 @@ class ApiRouter {
       .use(calendarRoutes)
       .use(musicRoutes)
       .use(notificationRoutes)
-      .use(sessionRoutes);
+      .use(sessionRoutes)
+      .use(departmentRoutes)
+      .use(teamRoutes)
+      .use(positionRoutes)
+      .use(memberRoutes)
+      .use(invitationRoutes)
+      .use(roleRoutes)
+      .use(permissionRoutes)
+      .use(taskRoutes)
+      .use(pomodoroRoutes);
   }
 }
 

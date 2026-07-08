@@ -14,7 +14,7 @@ class MusicController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number(c.params) || 1;
+      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
       const limit = Number(c.query.limit) || 10;
 
       const authRespone = await memberContextValidate(user, c);
@@ -29,12 +29,11 @@ class MusicController {
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService.data,
-          queryService.meta,
-          "Berhasil mengambil daftar playlist",
-        );
+      return HttpResponse(c).ok(
+        queryService.data,
+        queryService.meta,
+        "Berhasil mengambil daftar playlist",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

@@ -10,12 +10,21 @@ import settingsService from "./settings.service";
 import subscriptionService from "./subscription.service";
 import todoService from "./todo.service";
 import workstationService from "./workstation.service";
+import departmentService from "./department.service";
+import teamService from "./team.service";
+import positionService from "./position.service";
+import memberService from "./member.service";
+import invitationService from "./invitation.service";
+import roleService from "./role.service";
+import taskService from "./task.service";
+import pomodoroService from "./pomodoro.service";
 
 class ApiServicePackage {
   static Auth = WrapApi(authService);
   static Session = WrapApi(sessionService);
   static Note = WrapApi(noteService);
   static Calender = WrapApi(calendarService);
+  static Calendar = WrapApi(calendarService);
   static Company = WrapApi(companyService);
   static Music = WrapApi(musicService);
   static Notification = WrapApi(notificationService);
@@ -23,6 +32,35 @@ class ApiServicePackage {
   static Subscription = WrapApi(subscriptionService);
   static Todo = WrapApi(todoService);
   static Workstation = WrapApi(workstationService);
+  static Department = WrapApi(departmentService);
+  static Team = WrapApi(teamService);
+  static Position = WrapApi(positionService);
+  static Member = WrapApi(memberService);
+  static Invitation = WrapApi(invitationService);
+  static Role = WrapApi(roleService);
+  static Task = WrapApi(taskService);
+  static Pomodoro = WrapApi(pomodoroService);
 }
 
+export { default as AuthService } from "./auth.service";
+export { default as CalendarService } from "./calendar.service";
+export { default as CompanyService } from "./company.service";
+export { default as MusicService } from "./music.service";
+export { default as NoteService } from "./note.service";
+export { default as NotificationService } from "./notification.service";
+export { default as SessionService } from "./session.service";
+export { default as SettingsService } from "./settings.service";
+export { default as SubscriptionService } from "./subscription.service";
+export { default as TodoService } from "./todo.service";
+export { default as WorkstationService } from "./workstation.service";
+export { default as DepartmentService } from "./department.service";
+export { default as TeamService } from "./team.service";
+export { default as PositionService } from "./position.service";
+export { default as MemberService } from "./member.service";
+export { default as InvitationService } from "./invitation.service";
+export { default as RoleService } from "./role.service";
+export { default as TaskService } from "./task.service";
+export { default as PomodoroService } from "./pomodoro.service";
+export { toServiceResponse } from "./service-response";
+export { ApiServicePackage as Api };
 export default ApiServicePackage;
