@@ -3,6 +3,7 @@ import TeamController from "@/controllers/TeamController";
 import {
   AddTeamMemberDto,
   CreateTeamDto,
+  InviteMemberDto,
   TeamMemberParamsDto,
   TeamParamsDto,
   TeamQueryDto,
@@ -23,46 +24,35 @@ class TeamRouter {
   }
 
   private routes() {
-    this.teamRouter.get(
-      "/",
-      (c: AppContext) => TeamController.list(c),
-      {
-        query: TeamQueryDto,
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Daftar tim",
-          description: "Menampilkan semua tim di perusahaan atau filter berdasarkan departemen.",
-          tags: ["Teams"],
-        },
+    this.teamRouter.get("/", (c: AppContext) => TeamController.list(c), {
+      query: TeamQueryDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Daftar tim",
+        description:
+          "Menampilkan semua tim di perusahaan atau filter berdasarkan departemen.",
+        tags: ["Teams"],
       },
-    );
-    this.teamRouter.post(
-      "/",
-      (c: AppContext) => TeamController.create(c),
-      {
-        body: CreateTeamDto,
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Buat tim baru",
-          description: "Membuat tim baru di dalam suatu departemen.",
-          tags: ["Teams"],
-        },
+    });
+    this.teamRouter.post("/", (c: AppContext) => TeamController.create(c), {
+      body: CreateTeamDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Buat tim baru",
+        description: "Membuat tim baru di dalam suatu departemen.",
+        tags: ["Teams"],
       },
-    );
-    this.teamRouter.patch(
-      "/:id",
-      (c: AppContext) => TeamController.update(c),
-      {
-        params: TeamParamsDto,
-        body: UpdateTeamDto,
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Perbarui tim",
-          description: "Mengubah nama, deskripsi, atau leader tim.",
-          tags: ["Teams"],
-        },
+    });
+    this.teamRouter.patch("/:id", (c: AppContext) => TeamController.update(c), {
+      params: TeamParamsDto,
+      body: UpdateTeamDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Perbarui tim",
+        description: "Mengubah nama, deskripsi, atau leader tim.",
+        tags: ["Teams"],
       },
-    );
+    });
     this.teamRouter.delete(
       "/:id",
       (c: AppContext) => TeamController.remove(c),
@@ -98,7 +88,8 @@ class TeamRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Tambah anggota tim",
-          description: "Menambahkan anggota ke dalam tim atau mengatur status leader.",
+          description:
+            "Menambahkan anggota ke dalam tim atau mengatur status leader.",
           tags: ["Teams"],
         },
       },
@@ -112,6 +103,19 @@ class TeamRouter {
         detail: {
           summary: "Hapus anggota tim",
           description: "Menghapus anggota dari tim.",
+          tags: ["Teams"],
+        },
+      },
+    );
+    this.teamRouter.post(
+      "/inviteMember",
+      (c: AppContext) => TeamController.inviteMember(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        body: InviteMemberDto,
+        detail: {
+          summary: "Inveting Member Ke Tim",
+          description: "MengInveting Member Ke Tim.",
           tags: ["Teams"],
         },
       },

@@ -24,11 +24,7 @@ const swaggerPlugin = swagger({
         name: "Companies",
         description: "Manajemen company, leader, admin, dan langganan tier",
       },
-      {
-        name: "Workstations",
-        description:
-          "Manajemen workstation dan invite karyawan (max 4 free / 8 pro)",
-      },
+
       {
         name: "Subscriptions",
         description:
