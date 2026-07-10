@@ -1,27 +1,59 @@
-import app from './app';
-import { connectWithRetry } from './config/databases';
-import { verifyMailTransport } from './utils/main.utils';
+import app from "./app";
+import { connectWithRetry, disconnectDatabase } from "./config/databases";
+import { verifyMailTransport } from "./utils/mail.utils";
 
-const port = process.env.PORT ? Number(process.env.PORT) : 5000;
-app.listen(port);
-console.log(` Elysia running at in port:${port}`);
+let isShuttingDown = false;
 
-// Jangan blok server start hanya karena DB/SMTP belum siap.
-// Ini penting supaya Swagger (`/docs`) dan health check tetap bisa diakses saat troubleshooting.
-void (async () => {
-  try {
-    await connectWithRetry();
-  } catch (err) {
-    console.error(' Could not connect to database after retries:', err);
-  }
+async function shutdown(signal: string) {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+
+  console.log(` Shutting down (${signal})...`);
 
   try {
-    await verifyMailTransport();
-    console.log(' SMTP connected successfully!');
+    await disconnectDatabase();
+    console.log(" Database disconnected.");
   } catch (error) {
-    console.warn(
-      ' SMTP verification failed. Magic link email will not work until SMTP credentials are fixed.',
+    console.error(
+      " Failed to disconnect database:",
+      error instanceof Error ? error.message : error,
     );
-    console.warn(error instanceof Error ? error.message : 'Unknown SMTP error');
   }
-})();
+
+  process.exit(0);
+}
+
+process.once("SIGINT", () => {
+  void shutdown("SIGINT");
+});
+
+process.once("SIGTERM", () => {
+  void shutdown("SIGTERM");
+});
+
+process.once("beforeExit", () => {
+  void disconnectDatabase();
+});
+
+connectWithRetry()
+  .then(() => {
+    void verifyMailTransport()
+      .then(() => {
+        console.log(" SMTP connected successfully!");
+      })
+      .catch((error) => {
+        console.warn(
+          " SMTP verification failed. Magic link email will not work until SMTP credentials are fixed.",
+        );
+        console.warn(
+          error instanceof Error ? error.message : "Unknown SMTP error",
+        );
+      });
+
+    const port = process.env.PORT ? Number(process.env.PORT) : 5000;
+    app.listen(port);
+    console.log(` Elysia running at in port:${port}`);
+  })
+  .catch((err) => {
+    console.error(" Could not connect to database after retries:", err);
+  });

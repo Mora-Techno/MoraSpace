@@ -15,8 +15,14 @@ import {
 } from "@repo/types/auth.types";
 import AuthService from "@/service/AuthService";
 import prisma from "prisma/client";
-import { sanitizeUser } from "@/utils/authTokens";
+import {
+  AUTH_EXPIRY,
+  generateSecureToken,
+  getMagicLinkExpiry,
+  sanitizeUser,
+} from "@/utils/authTokens";
 import type { AppContext } from "@/contex";
+import NotificationService from "@/service/NotificationService";
 
 class AuthController {
   public async register(c: AppContext) {
@@ -44,6 +50,8 @@ class AuthController {
         }
       }
 
+      const magicLinkToken = generateSecureToken();
+      const magicLinkExpiresAt = getMagicLinkExpiry();
       const hashedPassword = await bcryptjs.hash(auth.password, 10);
 
       const newUser = await prisma.user.create({
@@ -68,6 +76,22 @@ class AuthController {
         createdAt: newUser.createdAt,
         updatedAt: newUser.updatedAt,
       };
+
+      const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+      const magicLink = `${frontendUrl}/auth/magic-link?token=${magicLinkToken}`;
+      await prisma.emailVerification.create({
+        data: {
+          token: magicLinkToken,
+          expiredAt: magicLinkExpiresAt,
+          userId: newUser.id,
+        },
+      });
+
+      await NotificationService.send({
+        body: `Klik link berikut untuk aktivasi Akun (berlaku ${AUTH_EXPIRY.magicLinkMinutes} menit):\n\n${magicLink}`,
+        recipient: newUser.email,
+        subject: "Aktivasi Email Akun Space",
+      });
 
       return HttpResponse(c).created(
         sanitizeUser(safeUser),

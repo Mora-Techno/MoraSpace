@@ -37,7 +37,7 @@ class ApiRouter {
 
   private routes() {
     this.apiRouter
-      .use(InternalApiKey)
+      // .use(InternalApiKey)
       .use(loggerPlugin)
       .use(errorPlugin)
       .use(authRoutes)

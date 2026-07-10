@@ -99,7 +99,7 @@ class AuthService {
     });
 
     const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
-    const magicLink = `${frontendUrl}/auth/magic-link?token=${magicLinkToken}`;
+    const magicLink = `${frontendUrl}/magic-link?token=${magicLinkToken}`;
 
     await NotificationService.send({
       recipient: user.email,

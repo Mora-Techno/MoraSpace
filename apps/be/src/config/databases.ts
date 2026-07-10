@@ -1,20 +1,25 @@
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import prisma from "prisma/client";
 
 export async function connectWithRetry(retries = 30, delay = 3000) {
   for (let i = 0; i < retries; i++) {
     try {
       await prisma.$connect();
-      console.log(' Database connected successfully!');
+      await prisma.$queryRaw`SELECT 1`;
+      console.log(" Database connected successfully!");
       return prisma;
     } catch (err) {
-      console.error(` Failed to connect (attempt ${i + 1}/${retries})`);
+      console.error(`Failed to connect (attempt ${i + 1}/${retries})`);
       if (i === retries - 1) {
-        console.error(' All retry attempts failed');
+        console.error(" All retry attempts failed");
         throw err;
       }
       await new Promise((r) => setTimeout(r, delay));
     }
   }
 }
+
+export async function disconnectDatabase() {
+  await prisma.$disconnect();
+}
+
+export { prisma };
