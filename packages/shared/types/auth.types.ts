@@ -68,3 +68,5 @@ export type PickVerifyOtp = Partial<Pick<IAuth, "email" | "phone">> &
   Pick<IAuth, "otp">;
 export type PickCreateAdmin = Pick<IAuth, "email" | "fullName" | "password">;
 export type PickLogout = Pick<IAuth, "id">;
+
+// Respone

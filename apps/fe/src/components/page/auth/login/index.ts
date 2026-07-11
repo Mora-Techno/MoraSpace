@@ -1,1 +1,1 @@
-export { default as LoginFormSection } from './login-form.section';
+export { default as LoginFormSection } from "./LoginForm.Section";
