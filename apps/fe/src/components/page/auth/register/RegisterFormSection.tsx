@@ -64,6 +64,25 @@ const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({
         />
       </div>
       <div className="space-y-2">
+        <label htmlFor="email" className="text-sm font-medium">
+          Phone
+        </label>
+        <DecoratedInput
+          id="phone"
+          type="text"
+          value={formRegister.phone!}
+          onChange={(e) =>
+            setFormRegister((prev) => ({
+              ...prev,
+              phone: e.target.value,
+            }))
+          }
+          required
+          placeholder="+62-"
+          className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
+        />
+      </div>
+      <div className="space-y-2">
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>

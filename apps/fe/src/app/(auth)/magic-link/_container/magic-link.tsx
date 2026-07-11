@@ -1,13 +1,35 @@
 "use client";
 
-type MagicLinkContainerProps = {
-  token: string;
-};
-const MagicLinkContainer: React.FC<MagicLinkContainerProps> = ({ token }) => {
-  //
+import MagicLinkSection from "@/components/page/auth/magic-link/MagicLinkSection";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useLayoutEffect } from "react";
+
+const MagicLinkContainer = () => {
+  const api = useApi();
+  const useMagicLink = api.auth.mutate.verifyMagicLink();
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
+
+  const handleVerifyMagicLink = () => {
+    if (!token) return null;
+    useMagicLink.mutateAsync({
+      token,
+    });
+  };
+
+  useEffect(() => {
+    handleVerifyMagicLink();
+  }, [token, searchParams]);
+
   return (
     <main className="w-full min-h-screen">
-      <div>{/*  */}</div>
+      <MagicLinkSection
+        initial={{
+          title: "Email Berhasil Diverifikasi",
+          desc: "Magic Link berhasil diverifikasi. Anda akan diarahkan ke dashboard dalam beberapa detik.",
+        }}
+      />
     </main>
   );
 };

@@ -123,17 +123,17 @@ export const SIDEBAR_MENU = [
 ];
 
 export const PUBLIC_ROUTES = ["/", "/home", "/resource", "/blogs", "/pricing"];
-export const AUTH_ROUTES = ["/login", "/register", "/forgot-password"];
+export const AUTH_ROUTES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/magic-link",
+];
 
 export const RegisterConfigRoutes: RegisterProps[] = [
   {
     title: "Daftarkan perusahaan mu",
     href: "/register/company",
     icon: Building2,
-  },
-  {
-    title: "Daftarkan sebagai pekerja",
-    href: "/",
-    icon: User,
   },
 ];

@@ -1,9 +1,12 @@
-import { APP_SESSION_COOKIE_KEY } from '../../config/cookies.config';
-import { baseurl } from '../../config/repo.config';
-import { ApiError as ApiErrorClass, type ApiSuccessResponse } from '../../types/api.types';
+import { APP_SESSION_COOKIE_KEY } from "../../config/cookies.config";
+import { baseurl } from "../../config/repo.config";
+import {
+  ApiError as ApiErrorClass,
+  type ApiSuccessResponse,
+} from "../../types/api.types";
 
 export interface ClientRequestConfig {
-  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   headers?: Record<string, string>;
   cache?: RequestCache;
@@ -28,7 +31,7 @@ export const setBaseURLProvider = (provider: BaseURLProvider) => {
 };
 
 async function buildApiUrl(path: string): Promise<string> {
-  if (path.startsWith('http://') || path.startsWith('https://')) {
+  if (path.startsWith("http://") || path.startsWith("https://")) {
     return path;
   }
 
@@ -38,8 +41,8 @@ async function buildApiUrl(path: string): Promise<string> {
     if (customBase) base = customBase;
   }
 
-  const normalizedBase = base.replace(/\/$/, '');
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+  const normalizedBase = base.replace(/\/$/, "");
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
   return `${normalizedBase}${normalizedPath}`;
 }
 
@@ -48,11 +51,11 @@ function buildBaseHeaders(accessToken?: string): Record<string, string> {
     process.env.NEXT_INTERNAL_API_SECRET ||
     process.env.INTERNAL_API_SECRET ||
     process.env.INTERNAL_API_KEY ||
-    '';
+    "";
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    'x-internal-api-key': internalApiKey,
+    "Content-Type": "application/json",
+    "x-internal-api-key": internalApiKey,
   };
 
   if (accessToken) {
@@ -63,10 +66,10 @@ function buildBaseHeaders(accessToken?: string): Record<string, string> {
 }
 
 function getAccessToken(): string | undefined {
-  if (typeof document === 'undefined') return undefined;
+  if (typeof document === "undefined") return undefined;
 
   const match = document.cookie
-    .split('; ')
+    .split("; ")
     .find((row) => row.startsWith(`${APP_SESSION_COOKIE_KEY}=`));
 
   if (!match) return undefined;
@@ -80,7 +83,12 @@ async function clientCoreFetchResponse<T>(
   config: ClientRequestConfig = {},
   options: ClientFetchOptions = { withAuth: true },
 ): Promise<ApiSuccessResponse<T>> {
-  const { method = 'GET', body, headers: extraHeaders = {}, cache = 'no-store' } = config;
+  const {
+    method = "GET",
+    body,
+    headers: extraHeaders = {},
+    cache = "no-store",
+  } = config;
 
   let accessToken: string | undefined = undefined;
   if (options.withAuth) {
@@ -100,7 +108,7 @@ async function clientCoreFetchResponse<T>(
       ...extraHeaders,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
-    credentials: 'same-origin',
+    credentials: "same-origin",
     cache,
   });
 
@@ -108,14 +116,17 @@ async function clientCoreFetchResponse<T>(
   try {
     json = await res.json();
   } catch {
-    throw new ApiErrorClass(`Request failed with status ${res.status}`, res.status);
+    throw new ApiErrorClass(
+      `Request failed with status ${res.status}`,
+      res.status,
+    );
   }
 
   if (!res.ok || json?.success === false) {
-    if (res.status === 401 && typeof window !== 'undefined') {
+    if (res.status === 401 && typeof window !== "undefined") {
       const currentPath = window.location.pathname;
-      if (!currentPath.startsWith('/login')) {
-        window.location.href = '/login';
+      if (!currentPath.startsWith("/login")) {
+        window.location.href = "/login";
       }
     }
 
@@ -138,56 +149,70 @@ async function clientCoreFetch<T>(
   return json.data;
 }
 
-export async function ClientGetResponse<T>(path: string): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'GET' });
+export async function ClientGetResponse<T>(
+  path: string,
+): Promise<ApiSuccessResponse<T>> {
+  return clientCoreFetchResponse<T>(path, { method: "GET" });
 }
 
 export async function ClientPostResponse<T>(
   path: string,
   data?: unknown,
 ): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'POST', body: data });
+  return clientCoreFetchResponse<T>(path, { method: "POST", body: data });
 }
 
 export async function ClientPatchResponse<T>(
   path: string,
   data?: unknown,
 ): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'PATCH', body: data });
+  return clientCoreFetchResponse<T>(path, { method: "PATCH", body: data });
 }
 
 export async function ClientPutResponse<T>(
   path: string,
   data?: unknown,
 ): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'PUT', body: data });
+  return clientCoreFetchResponse<T>(path, { method: "PUT", body: data });
 }
 
-export async function ClientDelResponse<T>(path: string): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'DELETE' });
+export async function ClientDelResponse<T>(
+  path: string,
+): Promise<ApiSuccessResponse<T>> {
+  return clientCoreFetchResponse<T>(path, { method: "DELETE" });
 }
 
-export async function ClientPublicGetResponse<T>(path: string): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'GET' }, { withAuth: false });
+export async function ClientPublicGetResponse<T>(
+  path: string,
+): Promise<ApiSuccessResponse<T>> {
+  return clientCoreFetchResponse<T>(
+    path,
+    { method: "GET" },
+    { withAuth: false },
+  );
 }
 
 export async function ClientPublicPostResponse<T>(
   path: string,
   data?: unknown,
 ): Promise<ApiSuccessResponse<T>> {
-  return clientCoreFetchResponse<T>(path, { method: 'POST', body: data }, { withAuth: false });
+  return clientCoreFetchResponse<T>(
+    path,
+    { method: "POST", body: data },
+    { withAuth: false },
+  );
 }
 
 export async function ClientDel<T>(path: string): Promise<T> {
-  return clientCoreFetch<T>(path, { method: 'DELETE' });
+  return clientCoreFetch<T>(path, { method: "DELETE" });
 }
 
 export async function ClientGet<T>(path: string): Promise<T> {
-  return clientCoreFetch<T>(path, { method: 'GET' });
+  return clientCoreFetch<T>(path, { method: "GET" });
 }
 
 export async function ClientPost<T>(path: string, data?: unknown): Promise<T> {
-  return clientCoreFetch<T>(path, { method: 'POST', body: data });
+  return clientCoreFetch<T>(path, { method: "POST", body: data });
 }
 
 export const GetResponse = ClientGetResponse;
