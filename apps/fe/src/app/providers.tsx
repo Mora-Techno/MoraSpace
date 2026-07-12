@@ -4,6 +4,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NextTopLoader from "nextjs-toploader";
 import { Toaster } from "react-hot-toast";
+
 import { SidebarProvider } from "@/components/atoms";
 import { PWAUpdatePrompt } from "@/components/pwa/PWAUpdatePrompt";
 import { env } from "@/configs";

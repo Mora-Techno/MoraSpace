@@ -4,14 +4,14 @@ import {
   PickVerifyMagicLink,
   TResponse,
 } from "@repo/types";
+import { AuthSessionResponse } from "@repo/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
 import { saveTokens } from "@/server/auth-cookie";
+import Api from "@/services/api";
 import { persistAuthSessionFromResponse } from "@/utils/storage";
-import { AuthSessionResponse } from "@repo/types/auth.types";
 
 type AuthCacheContext = {
   previousData: unknown;
@@ -19,7 +19,6 @@ type AuthCacheContext = {
 
 export function useLogin() {
   const ns = useAppNameSpace();
-  const router = useRouter();
 
   return useMutation<
     TResponse<AuthSessionResponse>,
@@ -53,13 +52,13 @@ export function useLogin() {
       // setting routes berdasarkan role
       switch (role) {
         case "Admin":
-          ns.router.push("/");
+          ns.router.push("/admin/dashboard");
           break;
         case "Member":
-          ns.router.push("/");
+          ns.router.push("/member/dashboard");
           break;
         case "Owner":
-          ns.router.push("/");
+          ns.router.push("");
           break;
       }
     },

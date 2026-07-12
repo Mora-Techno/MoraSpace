@@ -13,21 +13,23 @@ import { BottomNav } from "@/core/components/bottom-nav";
 import LanguageDropdown from "@/core/components/language.dropdown";
 import NotificationDropdown from "@/core/components/notification.dropdown";
 import ThemeToggle from "@/core/components/theme-toggle";
-import { useLogout } from "@/hooks/auth";
+import { useApi } from "@/hooks/useApi/useApi";
 
 interface AppShellProps {
   children: React.ReactNode;
 }
 
 function LogoutButton() {
-  const logout = useLogout();
+  const api = useApi();
+  const useLogout = api.auth.mutate.logout();
+
   return (
     <Button
       variant="ghost"
       size="icon"
       className="size-9"
-      onClick={() => logout.mutate()}
-      disabled={logout.isPending}
+      onClick={() => useLogout.mutate()}
+      disabled={useLogout.isPending}
       aria-label="Logout"
     >
       <LogOut className="size-4" />

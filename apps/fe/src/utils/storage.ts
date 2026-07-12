@@ -62,7 +62,9 @@ export function persistAuthSessionFromResponse(data: unknown) {
     (typeof user?.refreshToken === "string" ? user.refreshToken : null);
 
   const role =
+    (typeof user?.companyRole === "string" ? user.companyRole : null) ??
     (typeof user?.role === "string" ? user.role : null) ??
+    (typeof record.companyRole === "string" ? record.companyRole : null) ??
     (typeof record.role === "string" ? record.role : null);
 
   if (!refreshToken) return;

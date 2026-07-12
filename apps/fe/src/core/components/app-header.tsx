@@ -1,4 +1,6 @@
 import { Leaf } from "lucide-react";
+import { User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
 
@@ -9,8 +11,7 @@ import {
 } from "@/components/atoms/navigation-menu";
 import { navigationMenuConfig } from "@/configs/app.config";
 import { cn } from "@/utils/classname";
-import { User } from "lucide-react";
-import Image from "next/image";
+
 // import UserDropdown from './user.dropdown';
 import LanguageDropdown from "./language.dropdown";
 import NotificationDropdown from "./notification.dropdown";

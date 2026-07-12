@@ -1,9 +1,10 @@
 "use client";
 
-import MagicLinkSection from "@/components/page/auth/magic-link/MagicLinkSection";
-import { useApi } from "@/hooks/useApi/useApi";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useLayoutEffect } from "react";
+
+import MagicLinkSection from "@/components/page/auth/magic-link/MagicLinkSection";
+import { useApi } from "@/hooks/useApi/useApi";
 
 const MagicLinkContainer = () => {
   const api = useApi();

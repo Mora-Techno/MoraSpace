@@ -1,37 +1,56 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import { clearTokens,saveTokens } from "@/server/auth-cookie";
+import Api from "@/services/api";
 import {
   clearAuthSession,
   loadAuthSession,
   syncAuthFromRefreshResponse,
 } from "@/utils/storage";
 
-async function restoreAuthSession() {
-  const stored = loadAuthSession();
-  const respone = await fetch("/auth/api/v1/refresh", {
-    method: "POST",
-    credentials: "include",
-    cache: "no-store",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(
-      stored?.refreshToken ? { refreshToken: stored.refreshToken } : {},
-    ),
-  });
-  if (!respone.ok) {
+async function restoreAuthSession(refreshToken: string) {
+  try {
+    const response = await Api.Auth.RefreshToken({ refreshToken });
+
+    if (!response?.data) {
+      clearAuthSession();
+      await clearTokens().catch(() => {});
+      return false;
+    }
+
+    const data = response.data;
+    const accessToken = data.accessToken;
+    const newRefreshToken = data.refreshToken || refreshToken;
+    const role =
+      (data.user as Record<string, any>)?.companyRole ??
+      (data.user as Record<string, any>)?.role ??
+      (data as Record<string, any>)?.role;
+
+    if (accessToken && newRefreshToken) {
+      await saveTokens({
+        role: role,
+        accessToken: accessToken,
+        refreshToken: newRefreshToken,
+      });
+      syncAuthFromRefreshResponse(data, {
+        refreshToken: newRefreshToken,
+        role: role,
+        updatedAt: Date.now(),
+      });
+      return true;
+    }
+
     clearAuthSession();
+    await clearTokens().catch(() => {});
+    return false;
+  } catch {
+    clearAuthSession();
+    await clearTokens().catch(() => {});
     return false;
   }
-  const json = (await respone.json().catch(() => null)) as {
-    data?: unknown;
-  } | null;
-
-  syncAuthFromRefreshResponse(json?.data, stored);
-  return true;
 }
 
 export default function PrivateProviders({
@@ -39,7 +58,6 @@ export default function PrivateProviders({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -49,7 +67,30 @@ export default function PrivateProviders({
 
     async function bootstrapSession() {
       try {
-        const ok = await restoreAuthSession();
+        const stored = loadAuthSession();
+
+        if (!stored?.refreshToken) {
+          if (!cancelled) {
+            setIsAuthenticated(false);
+            setIsReady(true);
+            router.replace("/login");
+          }
+          return;
+        }
+
+        // Jika session baru saja diperbarui (misal setelah login), langsung izinkan masuk tanpa memanggil RefreshToken ulang
+        const isRecentlyUpdated =
+          stored.updatedAt && Date.now() - stored.updatedAt < 5 * 60 * 1000;
+
+        if (isRecentlyUpdated) {
+          if (!cancelled) {
+            setIsAuthenticated(true);
+            setIsReady(true);
+          }
+          return;
+        }
+
+        const ok = await restoreAuthSession(stored.refreshToken);
         if (cancelled) return;
 
         setIsAuthenticated(ok);
@@ -66,11 +107,12 @@ export default function PrivateProviders({
         }
       }
     }
+
     void bootstrapSession();
     return () => {
       cancelled = true;
     };
   }, [router]);
 
-  return <> {isReady && isAuthenticated ? children : null}</>;
+  return <>{isReady && isAuthenticated ? children : null}</>;
 }
