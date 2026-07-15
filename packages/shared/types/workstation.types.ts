@@ -1,5 +1,5 @@
-import type { CompanyRole } from "./company.types";
-import type { IAuth } from "./auth.types";
+import type { IAuth } from './auth.types';
+import type { CompanyRole } from './company.types';
 
 export interface IWorkstation {
   id: string;
@@ -19,27 +19,23 @@ export interface IWorkstationMember {
   joinedAt: Date;
 }
 
-export type PickCreateWorkstation = Pick<IWorkstation, "name">;
-export type PickUpdateWorkstation = Partial<Pick<IWorkstation, "name">>;
-export type WorkstationParams = Pick<IWorkstation, "id">;
+export type PickCreateWorkstation = Pick<IWorkstation, 'name'>;
+export type PickUpdateWorkstation = Partial<Pick<IWorkstation, 'name'>>;
+export type WorkstationParams = Pick<IWorkstation, 'id'>;
 
-export type PickInviteMember = Pick<IAuth, "email" | "fullName"> &
-  Partial<Pick<IWorkstationMember, "role">>;
+export type PickInviteMember = Pick<IAuth, 'email' | 'fullName'> &
+  Partial<Pick<IWorkstationMember, 'role'>>;
 
-export interface WorkstationMember extends Pick<
-  IWorkstationMember,
-  "id" | "workstationId" | "userId" | "role"
-> {
+export interface WorkstationMember
+  extends Pick<IWorkstationMember, 'id' | 'workstationId' | 'userId' | 'role'> {
   joinedAt: string;
-  user: Pick<IAuth, "id" | "email" | "fullName"> & {
+  user: Pick<IAuth, 'id' | 'email' | 'fullName'> & {
     companyRole: CompanyRole | string;
   };
 }
 
-export interface Workstation extends Pick<
-  IWorkstation,
-  "id" | "name" | "companyId" | "createdById"
-> {
+export interface Workstation
+  extends Pick<IWorkstation, 'id' | 'name' | 'companyId' | 'createdById'> {
   memberCount: number;
   maxMembers: number;
   createdAt: string;

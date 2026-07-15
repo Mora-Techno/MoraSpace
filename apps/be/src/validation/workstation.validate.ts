@@ -1,5 +1,5 @@
-import { AppContext } from '@/contex';
-import { PickCreateWorkstation } from '@repo/types/workstation.types';
+import type { AppContext } from '@/contex';
+import type { PickCreateWorkstation } from '@repo/types/workstation.types';
 import { HttpResponse } from '@/http';
 
 export async function CreateWorkStationValidate(c: AppContext, input: PickCreateWorkstation) {

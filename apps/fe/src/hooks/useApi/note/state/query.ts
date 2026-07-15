@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
-import { queryKey } from "@/configs";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import Api from '@/services/api';
 
 export function useNote(id: string) {
   return useQuery({

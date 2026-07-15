@@ -1,4 +1,4 @@
-import { AppContext } from '@/contex';
+import type { AppContext } from '@/contex';
 
 type RequestTimingStore = {
   startedAt?: number;

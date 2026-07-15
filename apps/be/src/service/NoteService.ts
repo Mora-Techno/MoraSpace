@@ -1,5 +1,5 @@
-import prisma from "prisma/client";
-import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
+import prisma from 'prisma/client';
+import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
 
 class NoteService {
   public async list(companyMemberId: string, page: number, limit: number) {
@@ -21,7 +21,7 @@ class NoteService {
           content: true,
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: 'asc',
         },
         skip: skip,
         take: limit,
@@ -56,11 +56,7 @@ class NoteService {
     });
   }
 
-  public async update(
-    id: string,
-    companyMemberId: string,
-    input: PickUpdateNote,
-  ) {
+  public async update(id: string, companyMemberId: string, input: PickUpdateNote) {
     const existing = await prisma.note.findFirst({
       where: { id, companyMemberId },
     });

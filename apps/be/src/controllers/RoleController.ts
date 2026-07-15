@@ -1,22 +1,27 @@
-import RoleService from "@/service/RoleService";
-import { HttpResponse } from "@/http";
-import { getUser } from "@/utils/authTokens";
-import { memberContextValidate, paramsValidate } from "@/validation/auth.validate";
-import type { AppContext } from "@/contex";
-import type { PickCreateRole, PickUpdateRole, PickUpdateRolePermissions } from "@repo/types/role.types";
+import RoleService from '@/service/RoleService';
+import { HttpResponse } from '@/http';
+import { getUser } from '@/utils/authTokens';
+import { memberContextValidate, paramsValidate } from '@/validation/auth.validate';
+import type { AppContext } from '@/contex';
+import type {
+  PickCreateRole,
+  PickUpdateRole,
+  PickUpdateRolePermissions,
+} from '@repo/types/role.types';
 
 class RoleController {
   public async listRoles(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
+      const page =
+        Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
       const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const result = await RoleService.listRoles(user.companyId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil daftar role");
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar role');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -30,7 +35,7 @@ class RoleController {
       if (authResponse) return authResponse;
 
       const data = await RoleService.createRole(user.companyId!, body);
-      return HttpResponse(c).created(data, "Role berhasil dibuat");
+      return HttpResponse(c).created(data, 'Role berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -48,9 +53,9 @@ class RoleController {
       if (validateParams) return validateParams;
 
       const data = await RoleService.updateRole(params.id, user.companyId!, body);
-      if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Role tidak ditemukan');
 
-      return HttpResponse(c).ok(data, "Role berhasil diperbarui");
+      return HttpResponse(c).ok(data, 'Role berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -67,11 +72,11 @@ class RoleController {
       if (validateParams) return validateParams;
 
       const data = await RoleService.removeRole(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Role tidak ditemukan');
 
-      return HttpResponse(c).ok(data, "Role berhasil dihapus");
+      return HttpResponse(c).ok(data, 'Role berhasil dihapus');
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Gagal menghapus role";
+      const msg = error instanceof Error ? error.message : 'Gagal menghapus role';
       return HttpResponse(c).badRequest(msg);
     }
   }
@@ -87,9 +92,9 @@ class RoleController {
       if (validateParams) return validateParams;
 
       const data = await RoleService.getRolePermissions(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Role tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil permission role");
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil permission role');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -106,10 +111,14 @@ class RoleController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await RoleService.updateRolePermissions(params.id, user.companyId!, body.permissionIds);
-      if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
+      const data = await RoleService.updateRolePermissions(
+        params.id,
+        user.companyId!,
+        body.permissionIds,
+      );
+      if (!data) return HttpResponse(c).notFound('Role tidak ditemukan');
 
-      return HttpResponse(c).ok(data, "Permission role berhasil diperbarui");
+      return HttpResponse(c).ok(data, 'Permission role berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -122,7 +131,7 @@ class RoleController {
       if (authResponse) return authResponse;
 
       const data = await RoleService.listMasterPermissions();
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil master permission");
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil master permission');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

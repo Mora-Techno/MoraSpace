@@ -1,9 +1,4 @@
-import {
-  useLogin,
-  useLogout,
-  useRegister,
-  useVerifyMagicLink,
-} from "./state/mutate";
+import { useLogin, useLogout, useRegister, useVerifyMagicLink } from './state/mutate';
 
 export const useAuth = () => {
   return {

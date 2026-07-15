@@ -16,9 +16,9 @@ export interface IMusicPlayListItem {
   updatedAt: Date;
 }
 
-export type MusicPlaylist = Pick<IMusicPlaylist, "id" | "title" | "url"> & {
+export type MusicPlaylist = Pick<IMusicPlaylist, 'id' | 'title' | 'url'> & {
   createdAt: string;
 };
 
-export type PickCreatePlaylist = Pick<IMusicPlaylist, "title" | "url">;
-export type PlaylistParams = Pick<IMusicPlaylist, "id">;
+export type PickCreatePlaylist = Pick<IMusicPlaylist, 'title' | 'url'>;
+export type PlaylistParams = Pick<IMusicPlaylist, 'id'>;

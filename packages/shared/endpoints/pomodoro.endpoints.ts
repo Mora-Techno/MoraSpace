@@ -1,14 +1,14 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/pomodoro";
+const mount = '/pomodoro';
 
 export const POMODORO_ENDPOINTS = {
-  START: buildEndpoint(mount, "/start"),
-  PAUSE: buildEndpoint(mount, "/pause"),
-  RESUME: buildEndpoint(mount, "/resume"),
-  STOP: buildEndpoint(mount, "/stop"),
-  TODAY: buildEndpoint(mount, "/today"),
-  STATISTICS: buildEndpoint(mount, "/statistics"),
+  START: buildEndpoint(mount, '/start'),
+  PAUSE: buildEndpoint(mount, '/pause'),
+  RESUME: buildEndpoint(mount, '/resume'),
+  STOP: buildEndpoint(mount, '/stop'),
+  TODAY: buildEndpoint(mount, '/today'),
+  STATISTICS: buildEndpoint(mount, '/statistics'),
 } as const;
 
 export function listPomodoroEndpoints() {

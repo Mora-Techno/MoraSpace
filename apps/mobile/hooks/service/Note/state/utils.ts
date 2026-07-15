@@ -1,5 +1,6 @@
-import type { QueryClient } from '@tanstack/react-query';
 import type { Note } from '@repo/types';
+import type { QueryClient } from '@tanstack/react-query';
+
 import { queryKey } from '@/config/query-key';
 
 export type NoteCacheContext = {

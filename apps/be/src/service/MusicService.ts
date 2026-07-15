@@ -1,5 +1,5 @@
-import prisma from "prisma/client";
-import type { PickCreatePlaylist } from "@repo/types/music.types";
+import prisma from 'prisma/client';
+import type { PickCreatePlaylist } from '@repo/types/music.types';
 
 function mapPlaylist(playlist: {
   id: string;
@@ -10,7 +10,7 @@ function mapPlaylist(playlist: {
   return {
     id: playlist.id,
     title: firstItem?.title ?? playlist.name,
-    url: firstItem?.youtubeUrl ?? "",
+    url: firstItem?.youtubeUrl ?? '',
     createdAt: new Date().toISOString(),
   };
 }
@@ -30,7 +30,7 @@ class MusicService {
           companyMemberId,
         },
         orderBy: {
-          createdAt: "asc",
+          createdAt: 'asc',
         },
         take: limit,
         skip: skip,

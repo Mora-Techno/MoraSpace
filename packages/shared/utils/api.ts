@@ -1,4 +1,4 @@
 export {
   setBaseURLProvider,
   setTokenProvider,
-} from "../api/client/client-http";
+} from '../api/client/client-http';

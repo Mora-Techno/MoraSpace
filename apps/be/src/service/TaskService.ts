@@ -232,7 +232,12 @@ class TaskService {
     return this.getById(id, companyId);
   }
 
-  public async updateStatus(id: string, companyId: string, actorMemberId: string, statusId: string) {
+  public async updateStatus(
+    id: string,
+    companyId: string,
+    actorMemberId: string,
+    statusId: string,
+  ) {
     const existing = await prisma.task.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 

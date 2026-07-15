@@ -1,6 +1,6 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/music/playlists";
+const mount = '/music/playlists';
 
 export const MUSIC_ENDPOINTS = {
   LIST: buildEndpoint(mount),

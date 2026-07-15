@@ -1,5 +1,5 @@
-import { AppContext } from '@/contex';
-import { JwtPayload } from '@repo/types/auth.types';
+import type { AppContext } from '@/contex';
+import type { JwtPayload } from '@repo/types/auth.types';
 import { HttpResponse } from '@/http';
 
 export async function unauthorizedValidate(user: JwtPayload, c: AppContext) {

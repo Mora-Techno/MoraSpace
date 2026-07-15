@@ -1,12 +1,12 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/session";
+const mount = '/session';
 
 export const SESSION_ENDPOINT = {
-  LIST: buildEndpoint(mount, "/"),
-  BYID: (id: string) => buildEndpoint(mount, `/:${id}`),
-  DELETE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  DELETEALL: buildEndpoint(mount, "/"),
+  LIST: buildEndpoint(mount, '/'),
+  BYID: (id: string) => buildEndpoint(mount, `/${id}`),
+  DELETE: (id: string) => buildEndpoint(mount, `/${id}`),
+  DELETEALL: buildEndpoint(mount, '/'),
 } as const;
 
 export function listSessionEndpoints() {

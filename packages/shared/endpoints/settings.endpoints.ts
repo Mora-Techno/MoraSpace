@@ -1,6 +1,6 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/settings";
+const mount = '/settings';
 
 export const SETTINGS_ENDPOINTS = {
   GET: buildEndpoint(mount),

@@ -1,15 +1,15 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/roles";
+const mount = '/roles';
 
 export const ROLE_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
-  UPDATE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  DELETE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  PERMISSIONS: (id: string) => buildEndpoint(mount, `/:${id}/permissions`),
-  UPDATE_PERMISSIONS: (id: string) => buildEndpoint(mount, `/:${id}/permissions`),
-  MASTER_PERMISSIONS: buildEndpoint("/permissions"),
+  UPDATE: (id: string) => buildEndpoint(mount, `/${id}`),
+  DELETE: (id: string) => buildEndpoint(mount, `/${id}`),
+  PERMISSIONS: (id: string) => buildEndpoint(mount, `/${id}/permissions`),
+  UPDATE_PERMISSIONS: (id: string) => buildEndpoint(mount, `/${id}/permissions`),
+  MASTER_PERMISSIONS: buildEndpoint('/permissions'),
 } as const;
 
 export function listRoleEndpoints() {

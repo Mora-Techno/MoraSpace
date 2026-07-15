@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import DashboardMemberSection from "@/components/page/private/member/dashboard/dashboard-section";
+import DashboardMemberSection from '@/components/page/private/member/dashboard/dashboard-section';
 
 const DashboardMemberContainer = () => {
   return (
     <main className="w-full min-h-screen">
       <DashboardMemberSection
         template={{
-          message: "Initial Dashboard Member",
-          title: "Dashboard Member",
+          message: 'Initial Dashboard Member',
+          title: 'Dashboard Member',
         }}
       />
     </main>

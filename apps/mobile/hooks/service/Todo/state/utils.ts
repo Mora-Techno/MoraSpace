@@ -1,6 +1,7 @@
-import type { QueryClient } from '@tanstack/react-query';
 import type { Todo } from '@repo/types';
 import type { TodoQuery } from '@repo/types/todo.types';
+import type { QueryClient } from '@tanstack/react-query';
+
 import { queryKey } from '@/config/query-key';
 
 export type TodoCacheContext = {

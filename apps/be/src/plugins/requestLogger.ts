@@ -1,6 +1,6 @@
-import { Elysia } from "elysia";
-import { randomUUID } from "crypto";
-import { logger } from "@/utils/logger.utils";
+import { Elysia } from 'elysia';
+import { randomUUID } from 'node:crypto';
+import { logger } from '@/utils/logger.utils';
 
 export const loggerPlugin = new Elysia()
 
@@ -16,7 +16,7 @@ export const loggerPlugin = new Elysia()
         method: request.method,
         path: new URL(request.url).pathname,
       },
-      "Incoming Request",
+      'Incoming Request',
     );
   })
 
@@ -31,6 +31,6 @@ export const loggerPlugin = new Elysia()
         status: set.status,
         duration,
       },
-      "Request Completed",
+      'Request Completed',
     );
   });

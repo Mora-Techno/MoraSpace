@@ -49,8 +49,7 @@ export async function getCompanyTier(companyId: string): Promise<SubscriptionTie
     },
   });
 
-  const plan =
-    company?.currentSubscription?.plan ?? company?.subscriptions[0]?.plan ?? null;
+  const plan = company?.currentSubscription?.plan ?? company?.subscriptions[0]?.plan ?? null;
 
   return plan ? mapPlanNameToTier(plan.name) : 'free';
 }

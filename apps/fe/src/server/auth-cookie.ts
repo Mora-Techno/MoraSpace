@@ -1,11 +1,11 @@
-"use server";
+'use server';
 import {
   APP_SESSION_COOKIE_KEY,
   APP_SESSION_COOKIE_REFRESH,
   APP_SESSION_COOKIE_ROLE,
   AUTH_COOKIE_MAX_AGE,
-} from "@repo/config/cookies.config";
-import { cookies } from "next/headers";
+} from '@repo/config/cookies.config';
+import { cookies } from 'next/headers';
 
 const COOKIE_KEYS = {
   accessToken: APP_SESSION_COOKIE_KEY,
@@ -30,22 +30,22 @@ export async function getCookieStore() {
 
 export async function saveTokens(tokens: AuthTokens): Promise<void> {
   const store = await getCookieStore();
-  const isProduction = process.env.NODE_ENV === "production";
+  const isProduction = process.env.NODE_ENV === 'production';
 
   try {
     store.set(COOKIE_KEYS.accessToken, tokens.accessToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "lax",
-      path: "/",
+      sameSite: 'lax',
+      path: '/',
       maxAge: COOKIE_TTL.accessToken,
     });
 
     store.set(COOKIE_KEYS.refreshToken, tokens.refreshToken, {
       httpOnly: true,
       secure: isProduction,
-      sameSite: "lax",
-      path: "/",
+      sameSite: 'lax',
+      path: '/',
       maxAge: COOKIE_TTL.refreshToken,
     });
 
@@ -53,13 +53,13 @@ export async function saveTokens(tokens: AuthTokens): Promise<void> {
       store.set(COOKIE_KEYS.role, tokens.role, {
         httpOnly: true,
         secure: isProduction,
-        sameSite: "lax",
-        path: "/",
+        sameSite: 'lax',
+        path: '/',
         maxAge: COOKIE_TTL.role,
       });
     }
   } catch (err) {
-    console.error("[Auth] saveTokens: gagal menyimpan cookie:", err);
+    console.error('[Auth] saveTokens: gagal menyimpan cookie:', err);
     throw err;
   }
 }

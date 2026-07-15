@@ -1,9 +1,9 @@
-import { TodoQuery } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
+import type { TodoQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
 
-import Api from "@/services/api";
+import Api from '@/services/api';
 
-import { todosListKey } from "./utils";
+import { todosListKey } from './utils';
 
 export function useTodos(filters?: TodoQuery) {
   return useQuery({

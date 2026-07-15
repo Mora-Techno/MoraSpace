@@ -1,6 +1,6 @@
-import { AppContext } from '@/contex';
+import type { AppContext } from '@/contex';
 import { HttpResponse } from '@/http';
-import { PickCreateNote } from '@repo/types/note.types';
+import type { PickCreateNote } from '@repo/types/note.types';
 
 export async function CreateNoteValidation(c: AppContext, input: PickCreateNote) {
   if (!input) {

@@ -1,4 +1,4 @@
-import { GhibliEmptyState } from "@/components/molecules";
+import { GhibliEmptyState } from '@/components/molecules';
 
 interface DashboardMemberSectionProps {
   template: {
@@ -6,12 +6,8 @@ interface DashboardMemberSectionProps {
     message: string;
   };
 }
-const DashboardMemberSection: React.FC<DashboardMemberSectionProps> = ({
-  template,
-}) => {
-  return (
-    <GhibliEmptyState title={template.title} description={template.message} />
-  );
+const DashboardMemberSection: React.FC<DashboardMemberSectionProps> = ({ template }) => {
+  return <GhibliEmptyState title={template.title} description={template.message} />;
 };
 
 export default DashboardMemberSection;

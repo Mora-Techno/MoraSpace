@@ -1,4 +1,4 @@
-import type { ApiSuccessResponse } from "../types/api.types";
+import type { ApiSuccessResponse } from '../types/api.types';
 
 type ServiceResponseOverride = {
   message?: string;

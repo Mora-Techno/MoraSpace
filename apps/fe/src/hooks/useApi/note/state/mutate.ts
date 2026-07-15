@@ -1,17 +1,13 @@
-import { Note, PickCreateNote, PickUpdateNote } from "@repo/types";
-import { PickApiID } from "@repo/types/api.types";
-import { useMutation } from "@tanstack/react-query";
+import type { Note, PickCreateNote, PickUpdateNote } from '@repo/types';
+import type { PickApiID } from '@repo/types/api.types';
+import { useMutation } from '@tanstack/react-query';
 
-import { queryKey } from "@/configs";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
-import type { TResponse } from "@/types/api/response";
+import { queryKey } from '@/configs';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
+import type { TResponse } from '@/types/api/response';
 
-import {
-  NoteCacheContext,
-  readNoteDetailSnapshot,
-  readNoteListSnapshot,
-} from "./utils";
+import { type NoteCacheContext, readNoteDetailSnapshot, readNoteListSnapshot } from './utils';
 
 export function useCreateNote() {
   const ns = useAppNameSpace();
@@ -26,7 +22,7 @@ export function useCreateNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -36,15 +32,12 @@ export function useCreateNote() {
     },
     onError: (err, _variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.list(),
-          context.previousList,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -63,7 +56,7 @@ export function useDeleteNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -73,15 +66,12 @@ export function useDeleteNote() {
     },
     onError: (err, _variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.list(),
-          context.previousList,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -108,7 +98,7 @@ export function useUpdateNote() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -118,21 +108,15 @@ export function useUpdateNote() {
     },
     onError: (err, variables, context) => {
       if (context?.previousList !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.list(),
-          context.previousList,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       if (context?.previousDetail !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.detail(variables.id.id),
-          context.previousDetail,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.detail(variables.id.id), context.previousDetail);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

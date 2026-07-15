@@ -12,11 +12,5 @@ export interface ISession {
 // type
 export type Session = Pick<
   ISession,
-  | "ipAddress"
-  | "browser"
-  | "accessToken"
-  | "createdAt"
-  | "deviceName"
-  | "expiredAt"
-  | "id"
+  'ipAddress' | 'browser' | 'accessToken' | 'createdAt' | 'deviceName' | 'expiredAt' | 'id'
 >;
