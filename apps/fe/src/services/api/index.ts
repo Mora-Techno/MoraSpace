@@ -1,4 +1,4 @@
-import ApiServicePackage from '@repo/services';
+import ApiServicePackage from "@repo/services";
 
 const Api = {
   Auth: ApiServicePackage.Auth,
@@ -12,7 +12,6 @@ const Api = {
   Settings: ApiServicePackage.Setting,
   Setting: ApiServicePackage.Setting,
   Company: ApiServicePackage.Company,
-  Workstation: ApiServicePackage.Workstation,
   Subscription: ApiServicePackage.Subscription,
   Department: ApiServicePackage.Department,
   Team: ApiServicePackage.Team,

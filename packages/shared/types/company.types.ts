@@ -1,8 +1,8 @@
-import type { IAuth } from './auth.types';
+import type { IAuth } from "./auth.types";
 
-export type CompanyRole = 'Owner' | 'Admin' | 'Member';
-export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
-export type BillingCycle = 'monthly' | 'yearly';
+export type CompanyRole = "Owner" | "Admin" | "Member";
+export type SubscriptionTier = "free" | "pro" | "enterprise";
+export type BillingCycle = "monthly" | "yearly";
 
 export interface ICompany {
   id: string;
@@ -18,35 +18,46 @@ export interface ICompany {
   updatedAt: Date;
 }
 
-export type PickRegisterCompany = Pick<IAuth, 'email' | 'fullName' | 'password'> &
-  Partial<Pick<ICompany, 'tier'>> & {
+export type PickRegisterCompany = Pick<
+  IAuth,
+  "email" | "fullName" | "password"
+> &
+  Partial<Pick<ICompany, "tier">> & {
     companyName: string;
   };
 
-export type { PickCreateAdmin } from './auth.types';
+export type { PickCreateAdmin } from "./auth.types";
 
-export type PickUpdateCompanySubscription = Pick<ICompany, 'tier' | 'billingCycle'>;
+export type PickUpdateCompanySubscription = Pick<
+  ICompany,
+  "tier" | "billingCycle"
+>;
 
-export type CompanyParams = Pick<ICompany, 'id'>;
+export type CompanyParams = Pick<ICompany, "id">;
 
 export type SafeUser = Pick<
   IAuth,
-  'id' | 'email' | 'fullName' | 'companyRole' | 'companyId' | 'createdAt' | 'updatedAt'
+  | "id"
+  | "email"
+  | "fullName"
+  | "companyRole"
+  | "companyId"
+  | "createdAt"
+  | "updatedAt"
 >;
 
-export interface CompanyProfile
-  extends Pick<
-    ICompany,
-    | 'id'
-    | 'name'
-    | 'tier'
-    | 'billingCycle'
-    | 'subscriptionStartsAt'
-    | 'subscriptionEndsAt'
-    | 'leaderId'
-    | 'createdAt'
-    | 'updatedAt'
-  > {
+export interface CompanyProfile extends Pick<
+  ICompany,
+  | "id"
+  | "name"
+  | "tier"
+  | "billingCycle"
+  | "subscriptionStartsAt"
+  | "subscriptionEndsAt"
+  | "leaderId"
+  | "createdAt"
+  | "updatedAt"
+> {
   maxWorkstationUsers: number;
 }
 
@@ -59,3 +70,5 @@ export interface AdminUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export type CompanyRespone = Omit<ICompany, "">;
