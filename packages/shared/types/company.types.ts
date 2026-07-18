@@ -70,3 +70,5 @@ export interface AdminUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export type CompanyRespone = Omit<ICompany, "">;

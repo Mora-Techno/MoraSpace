@@ -1,9 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateEvent,
-  EventQuery,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
+import prisma from 'prisma/client';
+import type { PickCreateEvent, EventQuery, PickUpdateEvent } from '@repo/types/calendar.types';
 
 function mapEvent(event: {
   id: string;
@@ -40,17 +36,13 @@ class CalendarService {
 
     const events = await prisma.calendarEvent.findMany({
       where,
-      orderBy: { startTime: "asc" },
+      orderBy: { startTime: 'asc' },
     });
 
     return events.map(mapEvent);
   }
 
-  public async create(
-    companyId: string,
-    companyMemberId: string,
-    input: PickCreateEvent,
-  ) {
+  public async create(companyId: string, companyMemberId: string, input: PickCreateEvent) {
     const event = await prisma.calendarEvent.create({
       data: {
         companyId,
@@ -58,9 +50,7 @@ class CalendarService {
         title: input.title,
         description: input.description,
         startTime: new Date(input.startDate),
-        endTime: input.endDate
-          ? new Date(input.endDate)
-          : new Date(input.startDate),
+        endTime: input.endDate ? new Date(input.endDate) : new Date(input.startDate),
       },
     });
 

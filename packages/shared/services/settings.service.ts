@@ -1,6 +1,6 @@
 import { SETTINGS_ENDPOINTS } from "../endpoints/settings.endpoints";
-import type { PickUpdateSettings, Settings } from "../types/settings.types";
 import type { TResponse } from "../types/response.types";
+import type { PickUpdateSettings, Settings } from "../types/settings.types";
 import { GetResponse, PatchResponse } from "./http";
 import { toServiceResponse } from "./service-response";
 class SettingsService {

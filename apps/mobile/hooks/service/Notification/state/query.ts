@@ -2,6 +2,7 @@ import type { NotificationLogQuery } from '@repo/types';
 import { useQuery } from '@tanstack/react-query';
 
 import Api from '@/service/props.service';
+
 import { notificationLogsKey } from './utils';
 
 export function useNotificationLogs(query?: NotificationLogQuery) {

@@ -8,18 +8,28 @@ export const CreateTaskDto = t.Object({
   startDate: t.Optional(t.String({ format: 'date-time', description: 'Tanggal mulai' })),
   dueDate: t.Optional(t.String({ format: 'date-time', description: 'Tenggat waktu' })),
   estimatedMinutes: t.Optional(t.Numeric({ description: 'Estimasi waktu dalam menit' })),
-  assigneeIds: t.Optional(t.Array(t.String({ format: 'uuid' }), { description: 'Daftar ID assignee' })),
+  assigneeIds: t.Optional(
+    t.Array(t.String({ format: 'uuid' }), { description: 'Daftar ID assignee' }),
+  ),
 });
 
 export const UpdateTaskDto = t.Object({
   title: t.Optional(t.String({ minLength: 1, description: 'Judul tugas baru' })),
   description: t.Optional(t.Nullable(t.String({ description: 'Deskripsi tugas baru' }))),
   statusId: t.Optional(t.String({ format: 'uuid', description: 'ID status tugas baru' })),
-  priorityId: t.Optional(t.Nullable(t.String({ format: 'uuid', description: 'ID prioritas baru' }))),
-  startDate: t.Optional(t.Nullable(t.String({ format: 'date-time', description: 'Tanggal mulai baru' }))),
-  dueDate: t.Optional(t.Nullable(t.String({ format: 'date-time', description: 'Tenggat waktu baru' }))),
+  priorityId: t.Optional(
+    t.Nullable(t.String({ format: 'uuid', description: 'ID prioritas baru' })),
+  ),
+  startDate: t.Optional(
+    t.Nullable(t.String({ format: 'date-time', description: 'Tanggal mulai baru' })),
+  ),
+  dueDate: t.Optional(
+    t.Nullable(t.String({ format: 'date-time', description: 'Tenggat waktu baru' })),
+  ),
   estimatedMinutes: t.Optional(t.Nullable(t.Numeric({ description: 'Estimasi waktu baru' }))),
-  assigneeIds: t.Optional(t.Array(t.String({ format: 'uuid' }), { description: 'Daftar ID assignee baru' })),
+  assigneeIds: t.Optional(
+    t.Array(t.String({ format: 'uuid' }), { description: 'Daftar ID assignee baru' }),
+  ),
 });
 
 export const TaskParamsDto = t.Object({

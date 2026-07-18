@@ -1,5 +1,5 @@
-import { PickApiID } from "@repo/types/api.types";
-import {
+import type { PickApiID } from "@repo/types/api.types";
+import type {
   CalendarEvent,
   PickCreateEvent,
   PickUpdateEvent,

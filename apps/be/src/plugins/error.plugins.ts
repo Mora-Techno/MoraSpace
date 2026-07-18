@@ -1,5 +1,5 @@
-import { Elysia } from "elysia";
-import { logger } from "@/utils/logger.utils";
+import { Elysia } from 'elysia';
+import { logger } from '@/utils/logger.utils';
 
 export const errorPlugin = new Elysia().onError(({ request, code, error }) => {
   logger.error(
@@ -9,6 +9,6 @@ export const errorPlugin = new Elysia().onError(({ request, code, error }) => {
       code,
       err: error,
     },
-    "Request Failed",
+    'Request Failed',
   );
 });

@@ -1,24 +1,16 @@
-import bcryptjs from "bcryptjs";
-import prisma from "prisma/client";
-import { getWorkstationUserLimit } from "@/utils/tierLimits";
-import { getPeriodEnd } from "@/config/subscriptionPlans";
+import bcryptjs from 'bcryptjs';
+import prisma from 'prisma/client';
+import { getWorkstationUserLimit } from '@/utils/tierLimits';
+import { getPeriodEnd } from '@/config/subscriptionPlans';
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
   PickUpdateCompanySubscription,
-} from "@repo/types/company.types";
-import { sanitizeUser } from "@/utils/authTokens";
-import {
-  resolveAuthUser,
-  toSafeAuthUser,
-  uniqueCompanySlug,
-} from "@/utils/memberContext";
-import {
-  ensurePlan,
-  getCompanyTier,
-  inferBillingCycle,
-} from "@/utils/planHelper";
-import { ensureDefaultRoles } from "@/utils/roleHelper";
+} from '@repo/types/company.types';
+import { sanitizeUser } from '@/utils/authTokens';
+import { resolveAuthUser, toSafeAuthUser, uniqueCompanySlug } from '@/utils/memberContext';
+import { ensurePlan, getCompanyTier, inferBillingCycle } from '@/utils/planHelper';
+import { ensureDefaultRoles } from '@/utils/roleHelper';
 
 class CompanyService {
   public async registerLeader(input: PickRegisterCompany) {
@@ -27,11 +19,11 @@ class CompanyService {
     });
 
     if (existing) {
-      throw new Error("Email sudah terdaftar");
+      throw new Error('Email sudah terdaftar');
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
-    const tier = input.tier ?? "free";
+    const tier = input.tier ?? 'free';
     const now = new Date();
     const slug = await uniqueCompanySlug(input.companyName);
 
@@ -41,7 +33,7 @@ class CompanyService {
           email: input.email,
           fullName: input.fullName,
           passwordHash: hashedPassword,
-          status: "active",
+          status: 'active',
           emailVerifiedAt: now,
         },
       });
@@ -55,13 +47,13 @@ class CompanyService {
       });
 
       const roles = await ensureDefaultRoles(company.id, tx);
-      const ownerRole = roles.find((role) => role.name === "Owner");
+      const ownerRole = roles.find((role) => role.name === 'Owner');
 
       const member = await tx.companyMember.create({
         data: {
           companyId: company.id,
           userId: leader.id,
-          status: "active",
+          status: 'active',
           joinedAt: now,
         },
       });
@@ -78,13 +70,13 @@ class CompanyService {
       await tx.companySetting.create({
         data: {
           companyId: company.id,
-          workingHourStart: new Date("1970-01-01T09:00:00.000Z"),
-          workingHourEnd: new Date("1970-01-01T18:00:00.000Z"),
-          workDays: "mon,tue,wed,thu,fri",
+          workingHourStart: new Date('1970-01-01T09:00:00.000Z'),
+          workingHourEnd: new Date('1970-01-01T18:00:00.000Z'),
+          workDays: 'mon,tue,wed,thu,fri',
           allowRemote: true,
           allowMusic: true,
-          language: "id",
-          timezone: "Asia/Jakarta",
+          language: 'id',
+          timezone: 'Asia/Jakarta',
         },
       });
 
@@ -95,18 +87,18 @@ class CompanyService {
       await tx.department.create({
         data: {
           companyId: company.id,
-          name: "General",
-          description: "Default department",
+          name: 'General',
+          description: 'Default department',
         },
       });
 
       const plan = await ensurePlan(tier, tx);
-      const periodEnd = getPeriodEnd("monthly", now);
+      const periodEnd = getPeriodEnd('monthly', now);
       const subscription = await tx.subscription.create({
         data: {
           companyId: company.id,
           planId: plan.id,
-          status: "active",
+          status: 'active',
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,
         },
@@ -122,7 +114,7 @@ class CompanyService {
 
     const leader = await resolveAuthUser(result.leader.id, result.company.id);
     if (!leader) {
-      throw new Error("Leader tidak ditemukan");
+      throw new Error('Leader tidak ditemukan');
     }
 
     return {
@@ -130,9 +122,9 @@ class CompanyService {
         id: result.company.id,
         name: result.company.name,
         tier,
-        billingCycle: "monthly" as const,
+        billingCycle: 'monthly' as const,
         subscriptionStartsAt: now,
-        subscriptionEndsAt: getPeriodEnd("monthly", now),
+        subscriptionEndsAt: getPeriodEnd('monthly', now),
         leaderId: result.company.ownerId,
         stripeCustomerId: null,
         xenditCustomerId: null,
@@ -150,7 +142,7 @@ class CompanyService {
     });
 
     if (existing) {
-      throw new Error("Email sudah terdaftar");
+      throw new Error('Email sudah terdaftar');
     }
 
     const company = await prisma.company.findUnique({
@@ -158,12 +150,12 @@ class CompanyService {
     });
 
     if (!company) {
-      throw new Error("Company tidak ditemukan");
+      throw new Error('Company tidak ditemukan');
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
     const adminRole = await prisma.role.findFirst({
-      where: { companyId, name: { equals: "Admin", mode: "insensitive" } },
+      where: { companyId, name: { equals: 'Admin', mode: 'insensitive' } },
     });
 
     const result = await prisma.$transaction(async (tx) => {
@@ -172,7 +164,7 @@ class CompanyService {
           email: input.email,
           fullName: input.fullName,
           passwordHash: hashedPassword,
-          status: "active",
+          status: 'active',
         },
       });
 
@@ -180,7 +172,7 @@ class CompanyService {
         data: {
           companyId,
           userId: user.id,
-          status: "active",
+          status: 'active',
           joinedAt: new Date(),
         },
       });
@@ -213,7 +205,7 @@ class CompanyService {
         companyId,
         roles: {
           some: {
-            role: { name: { equals: "Admin", mode: "insensitive" } },
+            role: { name: { equals: 'Admin', mode: 'insensitive' } },
           },
         },
       },
@@ -230,7 +222,7 @@ class CompanyService {
         roles: { include: { role: true } },
         company: { select: { ownerId: true } },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     return members.map((member) => {
@@ -249,10 +241,8 @@ class CompanyService {
         fullName: authUser.fullName,
         companyRole: authUser.companyRole,
         companyId: authUser.companyId,
-        createdAt:
-          authUser.createdAt?.toISOString() ?? new Date().toISOString(),
-        updatedAt:
-          authUser.updatedAt?.toISOString() ?? new Date().toISOString(),
+        createdAt: authUser.createdAt?.toISOString() ?? new Date().toISOString(),
+        updatedAt: authUser.updatedAt?.toISOString() ?? new Date().toISOString(),
       };
     });
   }
@@ -287,15 +277,14 @@ class CompanyService {
       name: company.name,
       tier,
       billingCycle,
-      subscriptionStartsAt:
-        company.currentSubscription?.currentPeriodStart ?? company.createdAt,
+      subscriptionStartsAt: company.currentSubscription?.currentPeriodStart ?? company.createdAt,
       subscriptionEndsAt: company.currentSubscription?.currentPeriodEnd ?? null,
       leaderId: company.ownerId,
       leader: {
         id: company.owner.id,
         email: company.owner.email,
         fullName: company.owner.fullName,
-        companyRole: "leader" as const,
+        companyRole: 'leader' as const,
       },
       stripeCustomerId: null,
       xenditCustomerId: null,
@@ -309,10 +298,7 @@ class CompanyService {
     };
   }
 
-  public async updateSubscription(
-    companyId: string,
-    input: PickUpdateCompanySubscription,
-  ) {
+  public async updateSubscription(companyId: string, input: PickUpdateCompanySubscription) {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: { currentSubscription: true },
@@ -321,7 +307,7 @@ class CompanyService {
     if (!company) return null;
 
     const now = new Date();
-    const billingCycle = input.billingCycle ?? "monthly";
+    const billingCycle = input.billingCycle ?? 'monthly';
     const plan = await ensurePlan(input.tier);
     const periodEnd = getPeriodEnd(billingCycle, now);
 
@@ -331,7 +317,7 @@ class CompanyService {
             where: { id: company.currentSubscription.id },
             data: {
               planId: plan.id,
-              status: "active",
+              status: 'active',
               currentPeriodStart: now,
               currentPeriodEnd: periodEnd,
             },
@@ -340,7 +326,7 @@ class CompanyService {
             data: {
               companyId,
               planId: plan.id,
-              status: "active",
+              status: 'active',
               currentPeriodStart: now,
               currentPeriodEnd: periodEnd,
             },

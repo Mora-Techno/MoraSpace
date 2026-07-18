@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import { useGoogleLogin } from "@react-oauth/google";
-import { PickRegister } from "@repo/types";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
+import { useGoogleLogin } from '@react-oauth/google';
+import { PickRegister } from '@repo/types';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
 
-import { GoogleSvg } from "@/components/atoms/svg";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { RegisterFormSection } from "@/components/page/auth";
-import { useApi } from "@/hooks/useApi/useApi";
+import { GoogleSvg } from '@/components/atoms/svg';
+import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { RegisterFormSection } from '@/components/page/auth';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function RegisterCompanyContainer() {
   const Api = useApi();
 
   const [formRegister, setFormRegister] = useState<PickRegister>({
-    companyRole: "Owner",
-    email: "",
-    fullName: "",
-    password: "",
-    phone: "",
+    companyRole: 'Owner',
+    email: '',
+    fullName: '',
+    password: '',
+    phone: '',
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -32,12 +32,12 @@ export default function RegisterCompanyContainer() {
   };
 
   const googleLogin = useGoogleLogin({
-    flow: "auth-code",
+    flow: 'auth-code',
     onSuccess: async (codeRespone) => {
-      console.log("login google");
+      console.log('login google');
     },
     onError: (err) => {
-      console.log("Google Login Failed", err);
+      console.log('Google Login Failed', err);
     },
   });
   return (
@@ -46,18 +46,14 @@ export default function RegisterCompanyContainer() {
         <div className="mb-6 flex flex-col items-center gap-2 text-center">
           <Image
             alt="icon"
-            src={"/images/logo.png"}
+            src={'/images/logo.png'}
             width={46}
             height={46}
             className="rounded-full"
           />
           <span className="text-lg font-semibold">Mora</span>
-          <h1 className="font-serif text-2xl font-semibold">
-            Buat Akun Perusahaan mu
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Mulai perjalanan produktivitasmu
-          </p>
+          <h1 className="font-serif text-2xl font-semibold">Buat Akun Perusahaan mu</h1>
+          <p className="text-sm text-muted-foreground">Mulai perjalanan produktivitasmu</p>
         </div>
 
         <RegisterFormSection
@@ -76,24 +72,16 @@ export default function RegisterCompanyContainer() {
           <button type="button" onClick={() => googleLogin()}>
             <GoogleSvg />
           </button>
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Atau Daftar Menggunakan
-          </h1>
+          <h1 className="text-sm font-semibold text-muted-foreground">Atau Daftar Menggunakan</h1>
         </div>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Daftar Sebagai Pekerja ? {""}
-          <Link
-            href="/register/employ"
-            className="font-medium text-primary hover:underline"
-          >
+          Daftar Sebagai Pekerja ? {''}
+          <Link href="/register/employ" className="font-medium text-primary hover:underline">
             Klick Disini
           </Link>
         </p>
         <p className="mt-2 text-center text-sm">
-          <Link
-            href="/login"
-            className="text-muted-foreground hover:text-primary"
-          >
+          <Link href="/login" className="text-muted-foreground hover:text-primary">
             ← Kembali ke masuk
           </Link>
         </p>

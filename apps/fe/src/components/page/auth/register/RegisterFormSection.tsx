@@ -1,7 +1,7 @@
-import { PickRegister } from "@repo/types";
-import { Eye, EyeClosed } from "lucide-react";
+import { PickRegister } from '@repo/types';
+import { Eye, EyeClosed } from 'lucide-react';
 
-import { ActionButton, DecoratedInput } from "@/components/wrapper";
+import { ActionButton, DecoratedInput } from '@/components/wrapper';
 
 interface RegisterFormSectionProps {
   service: {
@@ -16,13 +16,9 @@ interface RegisterFormSectionProps {
     setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }
-const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({
-  service,
-  state,
-}) => {
+const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({ service, state }) => {
   const { isPending, onSubmit } = service;
-  const { formRegister, setFormRegister, showPassword, setShowPassword } =
-    state;
+  const { formRegister, setFormRegister, showPassword, setShowPassword } = state;
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div className="space-y-2">
@@ -88,7 +84,7 @@ const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({
         </label>
         <DecoratedInput
           id="password"
-          type={showPassword ? "text" : "password"}
+          type={showPassword ? 'text' : 'password'}
           value={formRegister.password}
           iconRight={
             showPassword ? (
@@ -115,12 +111,8 @@ const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
       </div>
-      <ActionButton
-        type="submit"
-        className="ghibli-btn w-full"
-        disabled={isPending}
-      >
-        {isPending ? "Memproses..." : "Daftar"}
+      <ActionButton type="submit" className="ghibli-btn w-full" disabled={isPending}>
+        {isPending ? 'Memproses...' : 'Daftar'}
       </ActionButton>
     </form>
   );

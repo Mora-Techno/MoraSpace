@@ -1,15 +1,12 @@
-import { NotificationLog, PickSendNotification } from "@repo/types";
-import { TResponse } from "@repo/types/response.types";
-import { useMutation } from "@tanstack/react-query";
+import type { NotificationLog, PickSendNotification } from '@repo/types';
+import type { TResponse } from '@repo/types/response.types';
+import { useMutation } from '@tanstack/react-query';
 
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
 
-import { notificationsRootKey } from "./utils";
-import {
-  NotificationCacheContext,
-  readNotificationLogsSnapshot,
-} from "./utils";
+import { notificationsRootKey } from './utils';
+import { type NotificationCacheContext, readNotificationLogsSnapshot } from './utils';
 
 export function useSendNotification() {
   const ns = useAppNameSpace();
@@ -31,7 +28,7 @@ export function useSendNotification() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -46,7 +43,7 @@ export function useSendNotification() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

@@ -4,6 +4,7 @@ export {
   listEndpoints,
   version,
 } from "./config/api.config";
+export * from "./config/query-stale";
 export * from "./endpoints";
 export * from "./types";
 export {
@@ -18,7 +19,14 @@ export {
   SettingsService,
   SubscriptionService,
   TodoService,
-  WorkstationService,
+  DepartmentService,
+  TeamService,
+  PositionService,
+  MemberService,
+  InvitationService,
+  RoleService,
+  TaskService,
+  PomodoroService,
   toServiceResponse,
 } from "./services";
 

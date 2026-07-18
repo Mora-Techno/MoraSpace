@@ -1,16 +1,17 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/teams";
+const mount = '/teams';
 
 export const TEAM_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
-  UPDATE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  DELETE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  MEMBERS: (id: string) => buildEndpoint(mount, `/:${id}/members`),
-  ADD_MEMBER: (id: string) => buildEndpoint(mount, `/:${id}/members`),
+  UPDATE: (id: string) => buildEndpoint(mount, `/${id}`),
+  DELETE: (id: string) => buildEndpoint(mount, `/${id}`),
+  MEMBERS: (id: string) => buildEndpoint(mount, `/${id}/members`),
+  ADD_MEMBER: (id: string) => buildEndpoint(mount, `/${id}/members`),
   REMOVE_MEMBER: (id: string, memberId: string) =>
-    buildEndpoint(mount, `/:${id}/members/:${memberId}`),
+    buildEndpoint(mount, `/${id}/members/${memberId}`),
+  INVITE_MEMBER: buildEndpoint(mount, '/inviteMember'),
 } as const;
 
 export function listTeamEndpoints() {

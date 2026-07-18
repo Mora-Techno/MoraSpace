@@ -1,13 +1,14 @@
-import NotificationService from "@/service/NotificationService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  NotificationLogQuery,
-  PickSendNotification,
-} from "@repo/types/notification.types";
-import { getUser } from "@/utils/authTokens";
-import { memberContextValidate, paramsValidate, unauthorizedValidate } from "@/validation/auth.validate";
-import { SendNotifValidation } from "@/validation/notification.validate";
+import NotificationService from '@/service/NotificationService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
+import { getUser } from '@/utils/authTokens';
+import {
+  memberContextValidate,
+  paramsValidate,
+  unauthorizedValidate,
+} from '@/validation/auth.validate';
+import { SendNotifValidation } from '@/validation/notification.validate';
 
 class NotificationController {
   public async send(c: AppContext) {
@@ -26,7 +27,7 @@ class NotificationController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(data, "Email berhasil dikirim");
+      return HttpResponse(c).ok(data, 'Email berhasil dikirim');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -40,11 +41,11 @@ class NotificationController {
       if (authRespone) return authRespone;
 
       const data = await NotificationService.listLogs({
-        status: c.query.status as NotificationLogQuery["status"],
+        status: c.query.status as NotificationLogQuery['status'],
         limit: c.query.limit ? Number(c.query.limit) : undefined,
       });
 
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil riwayat notifikasi");
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil riwayat notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -60,7 +61,7 @@ class NotificationController {
       if (authResponse) return authResponse;
 
       const result = await NotificationService.listInApp(user.companyMemberId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil daftar notifikasi");
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -77,9 +78,9 @@ class NotificationController {
       if (validateParams) return validateParams;
 
       const data = await NotificationService.markRead(params.id, user.companyMemberId!);
-      if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Notifikasi tidak ditemukan');
 
-      return HttpResponse(c).ok(data, "Notifikasi ditandai sudah dibaca");
+      return HttpResponse(c).ok(data, 'Notifikasi ditandai sudah dibaca');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -92,7 +93,7 @@ class NotificationController {
       if (authResponse) return authResponse;
 
       const data = await NotificationService.markAllRead(user.companyMemberId!);
-      return HttpResponse(c).ok(data, "Semua notifikasi ditandai sudah dibaca");
+      return HttpResponse(c).ok(data, 'Semua notifikasi ditandai sudah dibaca');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -108,7 +109,7 @@ class NotificationController {
       if (authResponse) return authResponse;
 
       const result = await NotificationService.listQueue(page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil antrean notifikasi");
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil antrean notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

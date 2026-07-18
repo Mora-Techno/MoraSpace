@@ -2,9 +2,10 @@ import type { Note, PickCreateNote, PickUpdateNote } from '@repo/types';
 import type { TResponse } from '@repo/types/response.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
-import { queryKey } from '@/config/query-key';
 
+import { queryKey } from '@/config/query-key';
 import Api from '@/service/props.service';
+
 import { type NoteCacheContext, readNoteDetailSnapshot, readNoteListSnapshot } from './utils';
 
 export function useCreateNote() {

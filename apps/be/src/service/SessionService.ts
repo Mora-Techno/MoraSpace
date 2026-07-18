@@ -1,5 +1,5 @@
-import { JwtPayload } from "@repo/types/auth.types";
-import prisma from "prisma/client";
+import type { JwtPayload } from '@repo/types/auth.types';
+import prisma from 'prisma/client';
 
 class SessionService {
   public async listService(users: JwtPayload, page: number, limit: number) {
@@ -16,7 +16,7 @@ class SessionService {
           userId: users.id,
         },
         orderBy: {
-          expiredAt: "asc",
+          expiredAt: 'asc',
         },
         take: limit,
         skip: skip,
@@ -37,7 +37,7 @@ class SessionService {
   }
   public async getSessionByIdService(id: string) {
     if (!id) {
-      throw new Error("id session tidak temukan");
+      throw new Error('id session tidak temukan');
     }
     const sessionQuery = await prisma.userSession.findUnique({
       where: {
@@ -48,7 +48,7 @@ class SessionService {
   }
   public async deleteSessionById(id: string) {
     if (!id) {
-      throw new Error("id session tidak temukan");
+      throw new Error('id session tidak temukan');
     }
     const query = await prisma.userSession.delete({
       where: {

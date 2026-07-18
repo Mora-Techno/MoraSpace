@@ -9,11 +9,19 @@ export const CompanyMemberStatusEnum = t.Union([
 
 export const UpdateMemberDto = t.Object({
   employeeCode: t.Optional(t.Nullable(t.String({ description: 'Kode karyawan' }))),
-  positionId: t.Optional(t.Nullable(t.String({ format: 'uuid', description: 'ID posisi/jabatan' }))),
-  employmentTypeId: t.Optional(t.Nullable(t.String({ format: 'uuid', description: 'ID tipe kepegawaian' }))),
+  positionId: t.Optional(
+    t.Nullable(t.String({ format: 'uuid', description: 'ID posisi/jabatan' })),
+  ),
+  employmentTypeId: t.Optional(
+    t.Nullable(t.String({ format: 'uuid', description: 'ID tipe kepegawaian' })),
+  ),
   status: t.Optional(CompanyMemberStatusEnum),
-  joinedAt: t.Optional(t.Nullable(t.String({ format: 'date-time', description: 'Tanggal bergabung' }))),
-  resignedAt: t.Optional(t.Nullable(t.String({ format: 'date-time', description: 'Tanggal keluar' }))),
+  joinedAt: t.Optional(
+    t.Nullable(t.String({ format: 'date-time', description: 'Tanggal bergabung' })),
+  ),
+  resignedAt: t.Optional(
+    t.Nullable(t.String({ format: 'date-time', description: 'Tanggal keluar' })),
+  ),
 });
 
 export const UpdateMemberProfileDto = t.Object({
