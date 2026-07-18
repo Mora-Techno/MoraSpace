@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import Api from '@/services/api';
+import { queryKey } from "@/configs";
+import Api from "@/services/api";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 
 export function useGetTodayFocus() {
   return useQuery({
@@ -10,6 +11,7 @@ export function useGetTodayFocus() {
       const res = await Api.Pomodoro.GetTodayFocus();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }
 
@@ -20,5 +22,6 @@ export function useGetPomodoroStatistics() {
       const res = await Api.Pomodoro.GetStatistics();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }

@@ -16,4 +16,3 @@ export function readDepartmentSnapshot(
 }
 
 export const departmentRootKey = queryKey.departmentsRoot();
-export const MODULE_QUERY_STALE_TIME = 60_000;

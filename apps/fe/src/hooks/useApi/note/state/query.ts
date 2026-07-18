@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import Api from '@/services/api';
+import { queryKey } from "@/configs";
+import Api from "@/services/api";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 
 export function useNote(id: string) {
   return useQuery({
@@ -10,6 +11,7 @@ export function useNote(id: string) {
       const res = await Api.Note.GetNote(id);
       return res.data;
     },
+    staleTime: MODULE_QUERY,
     enabled: !!id,
   });
 }
@@ -21,5 +23,6 @@ export function useNotes() {
       const res = await Api.Note.ListNotes();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { MODULE_QUERY_STALE_TIME } from "./utils";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 import { queryKey } from "@/configs";
 import Api from "@/services/api";
 
@@ -10,7 +10,7 @@ export function useListDepartments() {
       const res = await Api.Department.ListDepartments();
       return res.data;
     },
-    staleTime: MODULE_QUERY_STALE_TIME,
+    staleTime: MODULE_QUERY,
   });
 }
 
@@ -21,7 +21,7 @@ export function useGetDepartment(id: string) {
       const res = await Api.Department.GetDepartment(id);
       return res.data;
     },
-    staleTime: MODULE_QUERY_STALE_TIME,
+    staleTime: MODULE_QUERY,
     enabled: !!id,
   });
 }

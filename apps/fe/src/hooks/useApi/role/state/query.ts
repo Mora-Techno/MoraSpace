@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import Api from '@/services/api';
+import { queryKey } from "@/configs";
+import Api from "@/services/api";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 
 export function useListRoles() {
   return useQuery({
@@ -10,6 +11,7 @@ export function useListRoles() {
       const res = await Api.Role.ListRoles();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }
 
@@ -20,6 +22,7 @@ export function useGetRolePermissions(id: string) {
       const res = await Api.Role.GetRolePermissions(id);
       return res.data;
     },
+    staleTime: MODULE_QUERY,
     enabled: !!id,
   });
 }
@@ -31,5 +34,6 @@ export function useListMasterPermissions() {
       const res = await Api.Role.ListMasterPermissions();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }

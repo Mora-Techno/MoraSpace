@@ -1,9 +1,10 @@
-import type { NotificationLogQuery } from '@repo/types';
-import { useQuery } from '@tanstack/react-query';
+import type { NotificationLogQuery } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 
-import Api from '@/services/api';
+import Api from "@/services/api";
 
-import { notificationLogsKey } from './utils';
+import { notificationLogsKey } from "./utils";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 
 export function useNotificationLogs(query?: NotificationLogQuery) {
   return useQuery({
@@ -12,5 +13,6 @@ export function useNotificationLogs(query?: NotificationLogQuery) {
       const res = await Api.Notification.ListNotificationLogs(query);
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }

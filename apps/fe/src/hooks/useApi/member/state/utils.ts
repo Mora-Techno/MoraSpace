@@ -1,12 +1,14 @@
-import type { Member } from '@repo/types';
-
-import { queryKey } from '@/configs';
-import type { AppNameSpace } from '@/hooks/useAppNameSpace';
+import type { ICompanyMember } from "@repo/types";
+import { queryKey } from "@/configs";
+import type { AppNameSpace } from "@/hooks/useAppNameSpace";
 
 export type MemberCacheContext = {
-  previousData?: Member[];
+  previousData?: ICompanyMember[];
 };
 
-export function readMemberSnapshot(ns: AppNameSpace): Member[] | undefined {
-  return ns.queryClient.getQueryData<Member[]>(queryKey.members.list());
+export function readMemberSnapshot(
+  ns: AppNameSpace,
+): ICompanyMember[] | undefined {
+  return ns.queryClient.getQueryData<ICompanyMember[]>(queryKey.members.list());
 }
+export const membersRoot = queryKey.membersRoot();

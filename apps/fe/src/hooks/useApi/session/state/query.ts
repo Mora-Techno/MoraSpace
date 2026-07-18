@@ -1,7 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import Api from '@/services/api';
+import { queryKey } from "@/configs";
+import Api from "@/services/api";
+import { MODULE_QUERY } from "@repo/config/query-stale";
 
 export function useListSessions() {
   return useQuery({
@@ -10,6 +11,7 @@ export function useListSessions() {
       const res = await Api.Session.ListSession();
       return res.data;
     },
+    staleTime: MODULE_QUERY,
   });
 }
 
@@ -20,6 +22,7 @@ export function useGetSession(id: string) {
       const res = await Api.Session.SessionById(id);
       return res.data;
     },
+    staleTime: MODULE_QUERY,
     enabled: !!id,
   });
 }
