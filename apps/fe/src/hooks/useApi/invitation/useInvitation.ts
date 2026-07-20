@@ -3,8 +3,8 @@ import {
   useCreateInvitation,
   useDeleteInvitation,
   useRejectInvitation,
-} from "./state/mutate";
-import { useListInvitations } from "./state/query";
+} from './state/mutate';
+import { useListInvitations } from './state/query';
 
 export const useInvitation = () => {
   return {

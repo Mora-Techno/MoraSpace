@@ -13,6 +13,7 @@ export type {
   PickSendOtp,
   PickVerifyMagicLink,
   PickVerifyOtp,
+  PickForgotPassword,PickResetPassword,
   SafeAuthUser,
 } from './auth.types';
 export type {
@@ -108,7 +109,6 @@ export type {
   PickUpdateWorkstation,
   Workstation,
   WorkstationMember,
-  WorkstationMemberRole,
   WorkstationParams,
 } from './workstation.types';
 export type {

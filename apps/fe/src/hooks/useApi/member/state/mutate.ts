@@ -1,14 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { queryKey } from "@/configs";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
-import {
-  ICompanyMember,
-  PickUpdateCompanyMember,
-  TResponse,
-} from "@repo/types";
+import { ICompanyMember, PickUpdateCompanyMember, TResponse } from '@repo/types';
+import { useMutation } from '@tanstack/react-query';
 
-import { membersRoot, MemberCacheContext, readMemberSnapshot } from "./utils";
+import { queryKey } from '@/configs';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
+
+import { MemberCacheContext, membersRoot, readMemberSnapshot } from './utils';
 
 export function useUpdateMember() {
   const ns = useAppNameSpace();
@@ -27,7 +24,7 @@ export function useUpdateMember() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -37,7 +34,7 @@ export function useUpdateMember() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -45,12 +42,7 @@ export function useUpdateMember() {
 
 export function useDeleteMember() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<ICompanyMember>,
-    Error,
-    { id: string },
-    MemberCacheContext
-  >({
+  return useMutation<TResponse<ICompanyMember>, Error, { id: string }, MemberCacheContext>({
     mutationFn: ({ id }) => Api.Member.DeleteMember(id),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: membersRoot });
@@ -60,7 +52,7 @@ export function useDeleteMember() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -72,7 +64,7 @@ export function useDeleteMember() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -87,7 +79,7 @@ export function useUpdateProfile() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -99,7 +91,7 @@ export function useUpdateProfile() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -114,7 +106,7 @@ export function useUpdateContacts() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -126,7 +118,7 @@ export function useUpdateContacts() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

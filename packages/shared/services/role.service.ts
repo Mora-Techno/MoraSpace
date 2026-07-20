@@ -1,6 +1,7 @@
 import { ROLE_ENDPOINTS } from '../endpoints/role.endpoints';
 import type { TResponse } from '../types/response.types';
 import type {
+  IPermission,
   IRole,
   PickCreateRole,
   PickUpdateRole,
@@ -30,8 +31,8 @@ class RoleService {
     return toServiceResponse(res, { message: 'Role berhasil dihapus' });
   }
 
-  public async GetRolePermissions(id: string): Promise<TResponse<any[]>> {
-    const res = await GetResponse<any[]>(ROLE_ENDPOINTS.PERMISSIONS(id));
+  public async GetRolePermissions(id: string): Promise<TResponse<IPermission[]>> {
+    const res = await GetResponse<IPermission[]>(ROLE_ENDPOINTS.PERMISSIONS(id));
     return toServiceResponse(res, { message: 'Permission role berhasil diambil' });
   }
 
@@ -43,8 +44,8 @@ class RoleService {
     return toServiceResponse(res, { message: 'Permission role berhasil diperbarui' });
   }
 
-  public async ListMasterPermissions(): Promise<TResponse<any[]>> {
-    const res = await GetResponse<any[]>(ROLE_ENDPOINTS.MASTER_PERMISSIONS);
+  public async ListMasterPermissions(): Promise<TResponse<IPermission[]>> {
+    const res = await GetResponse<IPermission[]>(ROLE_ENDPOINTS.MASTER_PERMISSIONS);
     return toServiceResponse(res, { message: 'Master permission berhasil diambil' });
   }
 }

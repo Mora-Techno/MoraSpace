@@ -1,12 +1,12 @@
-import type { Member } from '@repo/types';
+import type { ICompanyMember } from '@repo/types';
 import type { QueryClient } from '@tanstack/react-query';
 
 import { queryKey } from '@/config/query-key';
 
 export type MemberCacheContext = {
-  previousData?: Member[];
+  previousData?: ICompanyMember[];
 };
 
-export function readMemberSnapshot(queryClient: QueryClient): Member[] | undefined {
-  return queryClient.getQueryData<Member[]>(queryKey.members.list());
+export function readMemberSnapshot(queryClient: QueryClient): ICompanyMember[] | undefined {
+  return queryClient.getQueryData<ICompanyMember[]>(queryKey.members.list());
 }

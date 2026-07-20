@@ -8,6 +8,8 @@ import {
   SendOtpDto,
   VerifyMagicLinkDto,
   VerifyOtpDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
 } from '@/dto/auth.dto';
 import type { AppContext } from '@/contex';
 
@@ -86,6 +88,22 @@ class AuthRouter {
       detail: {
         summary: 'Verifikasi OTP',
         description: 'Memverifikasi OTP dan mengembalikan session JWT.',
+        tags: ['Auth'],
+      },
+    });
+    this.authRouter.post('/forgot-password', (c: AppContext) => AuthController.forgotPassword(c), {
+      body: ForgotPasswordDto,
+      detail: {
+        summary: 'Lupa password',
+        description: 'Mengirim email berisi link untuk reset password.',
+        tags: ['Auth'],
+      },
+    });
+    this.authRouter.post('/reset-password', (c: AppContext) => AuthController.ResetPassword(c), {
+      body: ResetPasswordDto,
+      detail: {
+        summary: 'Reset password',
+        description: 'Mereset password pengguna menggunakan token dari email.',
         tags: ['Auth'],
       },
     });

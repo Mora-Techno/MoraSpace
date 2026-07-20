@@ -1,0 +1,13 @@
+hooks/service/Calendar/state/query.ts(6,25): error TS2305: Module '"./utils"' has no exported member 'MODULE_QUERY_STALE_TIME'.
+hooks/service/Company/state/query.ts(10,37): error TS2339: Property 'MyCompany' does not exist on type 'WrappedApi<CompanyService>'.
+hooks/service/Role/state/mutate.ts(90,5): error TS2322: Type '({ id, payload }: { id: string; payload: PickUpdateRolePermissions; }) => Promise<TResponse<IRole>>' is not assignable to type 'MutationFunction<TResponse<IPermission[]>, { id: string; payload: PickUpdateRolePermissions; }>'.
+  Type 'Promise<TResponse<IRole>>' is not assignable to type 'Promise<TResponse<IPermission[]>>'.
+    Type 'TResponse<IRole>' is not assignable to type 'TResponse<IPermission[]>'.
+      Type 'IRole' is missing the following properties from type 'IPermission[]': length, pop, push, concat, and 35 more.
+hooks/service/Settings/state/mutate.ts(13,5): error TS2322: Type '(payload: Partial<Pick<ISettings, "timeFormat" | "defaultNotifications" | "theme">>) => Promise<TResponse<Settings>>' is not assignable to type 'MutationFunction<TResponse<ISettings>, Partial<Pick<ISettings, "timeFormat" | "defaultNotifications" | "theme">>>'.
+  Type 'Promise<TResponse<Settings>>' is not assignable to type 'Promise<TResponse<ISettings>>'.
+    Type 'TResponse<Settings>' is not assignable to type 'TResponse<ISettings>'.
+      Type 'Settings' is not assignable to type 'ISettings'.
+        Types of property 'createdAt' are incompatible.
+          Type 'string' is not assignable to type 'Date'.
+service/props.service.ts(15,34): error TS2339: Property 'Workstation' does not exist on type 'typeof ApiServicePackage'.

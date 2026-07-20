@@ -1,12 +1,12 @@
-import type { Invitation } from '@repo/types';
+import type { IInvitation } from '@repo/types';
 import type { QueryClient } from '@tanstack/react-query';
 
 import { queryKey } from '@/config/query-key';
 
 export type InvitationCacheContext = {
-  previousData?: Invitation[];
+  previousData?: IInvitation[];
 };
 
-export function readInvitationSnapshot(queryClient: QueryClient): Invitation[] | undefined {
-  return queryClient.getQueryData<Invitation[]>(queryKey.invitations.list());
+export function readInvitationSnapshot(queryClient: QueryClient): IInvitation[] | undefined {
+  return queryClient.getQueryData<IInvitation[]>(queryKey.invitations.list());
 }

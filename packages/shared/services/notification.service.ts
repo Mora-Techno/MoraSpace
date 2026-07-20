@@ -28,29 +28,29 @@ class NotificationService {
     });
   }
 
-  public async ListInAppNotifications(): Promise<TResponse<any[]>> {
-    const res = await GetResponse<any[]>(NOTIFICATION_ENDPOINTS.LIST);
+  public async ListInAppNotifications(): Promise<TResponse<NotificationLog[]>> {
+    const res = await GetResponse<NotificationLog[]>(NOTIFICATION_ENDPOINTS.LIST);
     return toServiceResponse(res, {
       message: 'Daftar notifikasi berhasil diambil',
     });
   }
 
-  public async MarkRead(id: string): Promise<TResponse<any>> {
-    const res = await PatchResponse<any>(NOTIFICATION_ENDPOINTS.MARK_READ(id), {});
+  public async MarkRead(id: string): Promise<TResponse<NotificationLog>> {
+    const res = await PatchResponse<NotificationLog>(NOTIFICATION_ENDPOINTS.MARK_READ(id), {});
     return toServiceResponse(res, {
       message: 'Notifikasi ditandai sudah dibaca',
     });
   }
 
-  public async MarkAllRead(): Promise<TResponse<any>> {
-    const res = await PatchResponse<any>(NOTIFICATION_ENDPOINTS.MARK_ALL_READ, {});
+  public async MarkAllRead(): Promise<TResponse<unknown>> {
+    const res = await PatchResponse<unknown>(NOTIFICATION_ENDPOINTS.MARK_ALL_READ, {});
     return toServiceResponse(res, {
       message: 'Semua notifikasi ditandai sudah dibaca',
     });
   }
 
-  public async ListQueue(): Promise<TResponse<any[]>> {
-    const res = await GetResponse<any[]>(NOTIFICATION_ENDPOINTS.QUEUE);
+  public async ListQueue(): Promise<TResponse<NotificationLog[]>> {
+    const res = await GetResponse<NotificationLog[]>(NOTIFICATION_ENDPOINTS.QUEUE);
     return toServiceResponse(res, {
       message: 'Antrean notifikasi berhasil diambil',
     });
