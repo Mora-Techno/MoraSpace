@@ -1,10 +1,12 @@
-"use client";
+'use client';
 
-import type { EventQuery } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import Api from "@/services/api";
-import { eventsListKey } from "./utils";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import type { EventQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
+
+import Api from '@/services/api';
+
+import { eventsListKey } from './utils';
 
 export function useEvents(query?: EventQuery) {
   return useQuery({

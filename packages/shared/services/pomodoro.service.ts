@@ -29,13 +29,13 @@ class PomodoroService {
     return toServiceResponse(res, { message: 'Sesi pomodoro dihentikan' });
   }
 
-  public async GetTodayFocus(): Promise<TResponse<any>> {
-    const res = await GetResponse<any>(POMODORO_ENDPOINTS.TODAY);
+  public async GetTodayFocus(): Promise<TResponse<unknown>> {
+    const res = await GetResponse<unknown>(POMODORO_ENDPOINTS.TODAY);
     return toServiceResponse(res, { message: 'Data fokus hari ini berhasil diambil' });
   }
 
-  public async GetStatistics(): Promise<TResponse<any>> {
-    const res = await GetResponse<any>(POMODORO_ENDPOINTS.STATISTICS);
+  public async GetStatistics(): Promise<TResponse<unknown>> {
+    const res = await GetResponse<unknown>(POMODORO_ENDPOINTS.STATISTICS);
     return toServiceResponse(res, { message: 'Statistik fokus berhasil diambil' });
   }
 }

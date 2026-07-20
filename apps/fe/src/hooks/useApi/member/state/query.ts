@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import { queryKey } from "@/configs";
-import Api from "@/services/api";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import { useQuery } from '@tanstack/react-query';
+
+import { queryKey } from '@/configs';
+import Api from '@/services/api';
 
 export function useListMembers() {
   return useQuery({

@@ -1,12 +1,12 @@
-import type { Task } from '@repo/types';
+import type { ITask } from '@repo/types';
 
 import { queryKey } from '@/configs';
 import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type TaskCacheContext = {
-  previousData?: Task[];
+  previousData?: ITask[];
 };
 
-export function readTaskSnapshot(ns: AppNameSpace): Task[] | undefined {
-  return ns.queryClient.getQueryData<Task[]>(queryKey.tasks.list());
+export function readTaskSnapshot(ns: AppNameSpace): ITask[] | undefined {
+  return ns.queryClient.getQueryData<ITask[]>(queryKey.tasks.list());
 }

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import Api from '@/service/props.service';
 
-import { eventsListKey, MODULE_QUERY_STALE_TIME } from './utils';
+import { eventsListKey } from './utils';
 
 export function useEvents(query?: EventQuery) {
   return useQuery({
@@ -12,6 +12,5 @@ export function useEvents(query?: EventQuery) {
       const res = await Api.Calendar.ListEvents(query);
       return res.data;
     },
-    staleTime: MODULE_QUERY_STALE_TIME,
   });
 }

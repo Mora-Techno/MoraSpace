@@ -1,71 +1,73 @@
-import { Search, Sparkles } from 'lucide-react';
+'use client';
+
+import { Search, Sparkles, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 import { Button } from '@/components/atoms';
 import { Badge } from '@/components/atoms';
 import { useGsapStagger } from '@/hooks/useGsapStagger';
 
-const TAGS = ['Produktivitas', 'Todo', 'Notes', 'Kalender', 'Musik Fokus'];
+const TAGS = ['Produktivitas', 'Tasks', 'Notes', 'Kalender', 'Fokus', "Music"];
 
 export function HeroSection() {
   const ref = useGsapStagger<HTMLDivElement>([]);
 
   return (
-    <section className="relative overflow-hidden px-4 pb-20 pt-8 md:px-6 md:pb-28 md:pt-12">
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -left-32 top-0 size-[420px] rounded-full bg-primary/10 blur-[120px]" />
-        <div className="absolute -right-20 top-20 size-[360px] rounded-full bg-primary/10 blur-[100px]" />
+    <section className="relative overflow-hidden px-4 pb-20 pt-16 md:px-6 md:pb-32 md:pt-24">
+      {/* Decorative background blur elements */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+        <div className="absolute left-[10%] top-[20%] size-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
+        <div className="absolute right-[10%] top-[40%] size-[400px] rounded-full bg-secondary/30 blur-[100px] opacity-70" />
       </div>
 
-      <div ref={ref} className="relative mx-auto max-w-5xl text-center">
-        <div data-stagger-item>
-          <Badge className="mb-6 border-orange-500/30 bg-orange-500/10 px-4 py-1.5 text-orange-300 hover:bg-orange-500/10">
-            <Sparkles className="size-3.5" />
-            New — Produtify
+      <div ref={ref} className="relative z-10 mx-auto max-w-5xl text-center">
+        <div data-stagger-item className="flex justify-center mb-8">
+          <Badge className="backdrop-blur-md bg-primary/10 border-primary/20 text-primary-foreground/80 dark:text-primary py-1.5 px-4 flex items-center gap-2 rounded-full">
+            <Sparkles className="size-4" />
+            <span className="font-medium">Spaces 1.0 - One Workspace. Better Work.</span>
           </Badge>
         </div>
 
         <h1
           data-stagger-item
-          className="font-serif text-4xl font-bold leading-tight tracking-tight md:text-6xl  lg:text-7xl"
+          className="font-serif text-5xl font-extrabold leading-tight tracking-tight md:text-7xl lg:text-8xl text-foreground"
         >
-          Jelajahi Masa Depan{' '}
-          <span className="bg-gradient-to-r from-primary via-primary/60 to-secondary bg-clip-text text-transparent">
-            Produktivitas Digital
+          Sistem Operasi untuk{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent-foreground">
+            Tim Modern
           </span>
         </h1>
 
         <p
           data-stagger-item
-          className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-zinc-400 md:text-lg"
+          className="mx-auto mt-8 max-w-2xl text-lg leading-relaxed text-muted-foreground md:text-xl font-medium"
         >
-          Kelola tugas, catatan, kalender, dan musik fokus dalam satu PWA yang elegan. Dibangun
-          untuk pekerja modern yang menginginkan alur kerja yang tenang namun powerful.
+          Satukan komunikasi, manajemen tugas, kalender, dan asisten AI dalam satu ekosistem yang dirancang untuk fokus dan produktivitas sehat.
         </p>
 
         <div
           data-stagger-item
-          className="mx-auto mt-10 flex max-w-xl items-center gap-2 rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-md"
+          className="mx-auto mt-12 flex max-w-xl items-center gap-3 rounded-full border border-border/50 bg-card/60 p-2 shadow-2xl shadow-primary/5 backdrop-blur-xl transition-all duration-300 focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10"
         >
-          <Search className="ml-3 size-5 shrink-0 " />
+          <Search className="ml-4 size-5 text-muted-foreground shrink-0" />
           <input
             type="text"
-            placeholder="Cari fitur, tips produktivitas..."
-            className="flex-1 bg-transparent py-3 text-sm  outline-none placeholder:text-zinc-500"
+            placeholder="Cari fitur seperti 'Pomodoro' atau 'AI Meeting'..."
+            className="flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted-foreground/70"
           />
           <Button
             asChild
-            className="rounded-xl bg-gradient-to-r from-primary/50 to-primary/60 px-5  hover:from-primary/80 hover:to-primary/90"
+            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105"
           >
-            <Link href="/login">Mulai</Link>
+            <Link href="/login">Mulai Gratis <ArrowRight className="ml-2 size-5" /></Link>
           </Button>
         </div>
 
-        <div data-stagger-item className="mt-8 flex flex-wrap items-center justify-center gap-2">
+        <div data-stagger-item className="mt-12 flex flex-wrap items-center justify-center gap-3">
           {TAGS.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-foreground/10 bg-foreground/5 px-4 py-1.5 text-xs text-zinc-400 cursor-pointer transition-colors hover:border-primary/60 hover:text-primary/60"
+              className="rounded-full border border-border/50 bg-background/50 px-5 py-2 text-sm text-muted-foreground backdrop-blur-sm cursor-pointer transition-all duration-300 hover:border-primary/40 hover:text-primary hover:bg-primary/5 shadow-sm"
             >
               {tag}
             </span>

@@ -1,27 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
 import {
   IInvitation,
   PickAcceptInvitation,
   PickCreateInvitation,
   PickRejectInvitation,
   TResponse,
-} from "@repo/types";
-import {
-  InvitationCacheContext,
-  invitationsRootKey,
-  readInvitationSnapshot,
-} from "./utils";
+} from '@repo/types';
+import { useMutation } from '@tanstack/react-query';
+
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
+
+import { InvitationCacheContext, invitationsRootKey, readInvitationSnapshot } from './utils';
 
 export function useCreateInvitation() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<IInvitation>,
-    Error,
-    PickCreateInvitation,
-    InvitationCacheContext
-  >({
+  return useMutation<TResponse<IInvitation>, Error, PickCreateInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.CreateInvitation(payload),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: invitationsRootKey });
@@ -31,7 +24,7 @@ export function useCreateInvitation() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -43,7 +36,7 @@ export function useCreateInvitation() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -51,12 +44,7 @@ export function useCreateInvitation() {
 
 export function useAcceptInvitation() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<IInvitation>,
-    Error,
-    PickAcceptInvitation,
-    InvitationCacheContext
-  >({
+  return useMutation<TResponse<IInvitation>, Error, PickAcceptInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.AcceptInvitation(payload),
     onMutate: async () => {
       await ns.queryClient.invalidateQueries({ queryKey: invitationsRootKey });
@@ -66,7 +54,7 @@ export function useAcceptInvitation() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -78,7 +66,7 @@ export function useAcceptInvitation() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -86,12 +74,7 @@ export function useAcceptInvitation() {
 
 export function useRejectInvitation() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<IInvitation>,
-    Error,
-    PickRejectInvitation,
-    InvitationCacheContext
-  >({
+  return useMutation<TResponse<IInvitation>, Error, PickRejectInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.RejectInvitation(payload),
     onMutate: async () => {
       await ns.queryClient.invalidateQueries({ queryKey: invitationsRootKey });
@@ -101,7 +84,7 @@ export function useRejectInvitation() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -113,7 +96,7 @@ export function useRejectInvitation() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -121,22 +104,17 @@ export function useRejectInvitation() {
 
 export function useDeleteInvitation() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<IInvitation>,
-    Error,
-    { id: string },
-    InvitationCacheContext
-  >({
+  return useMutation<TResponse<IInvitation>, Error, { id: string }, InvitationCacheContext>({
     mutationFn: ({ id }) => Api.Invitation.DeleteInvitation(id),
     onMutate: async () => {
       await ns.queryClient.invalidateQueries({ queryKey: invitationsRootKey });
       return { previousData: readInvitationSnapshot(ns) };
     },
-    onSuccess: (res: any) => {
+    onSuccess: (res) => {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -144,11 +122,11 @@ export function useDeleteInvitation() {
         queryKey: invitationsRootKey,
       });
     },
-    onError: (err: any) => {
+    onError: (err) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

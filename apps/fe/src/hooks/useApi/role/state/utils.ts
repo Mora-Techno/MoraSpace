@@ -1,12 +1,14 @@
-import type { Role } from '@repo/types';
+import type { IRole } from '@repo/types';
 
 import { queryKey } from '@/configs';
 import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type RoleCacheContext = {
-  previousData?: Role[];
+  previousData?: IRole[];
 };
 
-export function readRoleSnapshot(ns: AppNameSpace): Role[] | undefined {
-  return ns.queryClient.getQueryData<Role[]>(queryKey.roles.list());
+export function readRoleSnapshot(ns: AppNameSpace): IRole[] | undefined {
+  return ns.queryClient.getQueryData<IRole[]>(queryKey.roles.list());
 }
+
+export const rolesRoot = queryKey.rolesRoot();

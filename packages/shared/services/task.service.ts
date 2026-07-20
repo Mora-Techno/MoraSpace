@@ -49,26 +49,29 @@ class TaskService {
     return toServiceResponse(res, { message: 'Status tugas berhasil diperbarui' });
   }
 
-  public async AddComment(id: string, payload: PickAddTaskComment): Promise<TResponse<any>> {
-    const res = await PostResponse<any>(TASK_ENDPOINTS.COMMENT(id), payload);
+  public async AddComment(id: string, payload: PickAddTaskComment): Promise<TResponse<unknown>> {
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.COMMENT(id), payload);
     return toServiceResponse(res, { message: 'Komentar berhasil ditambahkan', statusCode: 201 });
   }
 
   public async CreateChecklist(
     id: string,
     payload: PickCreateTaskChecklist,
-  ): Promise<TResponse<any>> {
-    const res = await PostResponse<any>(TASK_ENDPOINTS.CHECKLIST(id), payload);
+  ): Promise<TResponse<unknown>> {
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.CHECKLIST(id), payload);
     return toServiceResponse(res, { message: 'Checklist berhasil dibuat', statusCode: 201 });
   }
 
-  public async AddAttachment(id: string, payload: PickAddTaskAttachment): Promise<TResponse<any>> {
-    const res = await PostResponse<any>(TASK_ENDPOINTS.ATTACHMENT(id), payload);
+  public async AddAttachment(
+    id: string,
+    payload: PickAddTaskAttachment,
+  ): Promise<TResponse<unknown>> {
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.ATTACHMENT(id), payload);
     return toServiceResponse(res, { message: 'Lampiran berhasil ditambahkan', statusCode: 201 });
   }
 
-  public async ListActivities(id: string): Promise<TResponse<any[]>> {
-    const res = await GetResponse<any[]>(TASK_ENDPOINTS.ACTIVITY(id));
+  public async ListActivities(id: string): Promise<TResponse<unknown[]>> {
+    const res = await GetResponse<unknown[]>(TASK_ENDPOINTS.ACTIVITY(id));
     return toServiceResponse(res, { message: 'Riwayat aktivitas berhasil diambil' });
   }
 }

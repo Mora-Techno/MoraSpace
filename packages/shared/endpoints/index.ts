@@ -24,10 +24,7 @@ export {
   listSubscriptionEndpoints,
 } from './subscription.endpoints';
 export { TODO_ENDPOINTS, listTodoEndpoints } from './todo.endpoints';
-export {
-  WORKSTATION_ENDPOINTS,
-  listWorkstationEndpoints,
-} from './workstation.endpoints';
+
 export { SESSION_ENDPOINT, listSessionEndpoints } from './session.endpoint';
 export { DEPARTMENT_ENDPOINTS, listDepartmentEndpoints } from './department.endpoints';
 export { TEAM_ENDPOINTS, listTeamEndpoints } from './team.endpoints';

@@ -12,7 +12,6 @@ const Api = {
   Setting: ApiServicePackage.Setting,
   Settings: ApiServicePackage.Setting,
   Company: ApiServicePackage.Company,
-  Workstation: ApiServicePackage.Workstation,
   Subscription: ApiServicePackage.Subscription,
   Department: ApiServicePackage.Department,
   Team: ApiServicePackage.Team,

@@ -1,12 +1,12 @@
-import type { Task } from '@repo/types';
+import type { ITask } from '@repo/types';
 import type { QueryClient } from '@tanstack/react-query';
 
 import { queryKey } from '@/config/query-key';
 
 export type TaskCacheContext = {
-  previousData?: Task[];
+  previousData?: ITask[];
 };
 
-export function readTaskSnapshot(queryClient: QueryClient): Task[] | undefined {
-  return queryClient.getQueryData<Task[]>(queryKey.tasks.list());
+export function readTaskSnapshot(queryClient: QueryClient): ITask[] | undefined {
+  return queryClient.getQueryData<ITask[]>(queryKey.tasks.list());
 }

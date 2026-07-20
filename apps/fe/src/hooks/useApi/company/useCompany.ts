@@ -1,9 +1,5 @@
-import {
-  useCreateAdmin,
-  useRegisterCompany,
-  useUpdateCompanySubscription,
-} from "./state/mutate";
-import { useGetMyCompany, useListAdmins } from "./state/query";
+import { useCreateAdmin, useRegisterCompany, useUpdateCompanySubscription } from './state/mutate';
+import { useGetMyCompany, useListAdmins } from './state/query';
 
 export const useCompany = () => {
   return {

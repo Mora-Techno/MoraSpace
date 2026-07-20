@@ -1,21 +1,34 @@
-import type { PickLogin, PickRegister, PickVerifyMagicLink, TResponse } from '@repo/types';
-import type { AuthSessionResponse } from '@repo/types/auth.types';
-import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
+import type {
+  PickLogin,
+  PickRegister,
+  PickVerifyMagicLink,
+  TResponse,
+} from "@repo/types";
+import type {
+  AuthSessionResponse,
+  PickForgotPassword,
+  PickResetPassword,
+  PickSendMagicLink,
+  SafeAuthUser,
+} from "@repo/types/auth.types";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import { saveTokens } from '@/server/auth-cookie';
-import Api from '@/services/api';
-import { persistAuthSessionFromResponse } from '@/utils/storage';
-
-type AuthCacheContext = {
-  previousData: unknown;
-};
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { saveTokens } from "@/server/auth-cookie";
+import Api from "@/services/api";
+import { persistAuthSessionFromResponse } from "@/utils/storage";
+import { AuthCacheContext } from "./utils";
 
 export function useLogin() {
   const ns = useAppNameSpace();
 
-  return useMutation<TResponse<AuthSessionResponse>, Error, PickLogin, AuthCacheContext>({
+  return useMutation<
+    TResponse<AuthSessionResponse>,
+    Error,
+    PickLogin,
+    AuthCacheContext
+  >({
     mutationFn: (payload: PickLogin) => Api.Auth.Login(payload),
     onSuccess: async (res) => {
       const data = res.data;
@@ -36,19 +49,19 @@ export function useLogin() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
 
       // setting routes berdasarkan role
       switch (role) {
-        case 'Admin':
-          ns.router.push('/admin/dashboard');
+        case "Admin":
+          ns.router.push("/admin/dashboard");
           break;
-        case 'Member':
-          ns.router.push('/member/dashboard');
+        case "Member":
+          ns.router.push("/member/dashboard");
           break;
-        case 'Owner':
-          ns.router.push('');
+        case "Owner":
+          ns.router.push("");
           break;
       }
     },
@@ -56,7 +69,7 @@ export function useLogin() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -72,23 +85,23 @@ export function useLogout() {
       } catch {
         // Tetap logout lokal meski BE gagal
       }
-      await fetch('/api/session/delete', { method: 'POST' });
+      await fetch("/api/session/delete", { method: "POST" });
     },
     onSuccess: () => {
       ns.alert.toast({
-        title: 'Logout berhasil',
-        message: 'Sampai jumpa lagi!',
-        icon: 'success',
+        title: "Logout berhasil",
+        message: "Sampai jumpa lagi!",
+        icon: "success",
       });
-      router.replace('/login');
+      router.replace("/login");
     },
     onError: (err: Error) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
-      router.replace('/login');
+      router.replace("/login");
     },
   });
 }
@@ -97,21 +110,26 @@ export function useRegister() {
   const ns = useAppNameSpace();
   const router = useRouter();
 
-  return useMutation({
+  return useMutation<
+    TResponse<SafeAuthUser>,
+    Error,
+    PickRegister,
+    AuthCacheContext
+  >({
     mutationFn: (payload: PickRegister) => Api.Auth.Register(payload),
     onSuccess: (res) => {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: 'success',
+        icon: "success",
       });
-      router.replace('/');
+      router.replace("/");
     },
     onError: (err: Error) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
       });
     },
   });
@@ -121,20 +139,92 @@ export function useVerifyMagicLink() {
   const ns = useAppNameSpace();
 
   return useMutation({
-    mutationFn: async (payload: PickVerifyMagicLink) => Api.Auth.VerifyMagicLink(payload),
+    mutationFn: (payload: PickVerifyMagicLink) =>
+      Api.Auth.VerifyMagicLink(payload),
     onSuccess: (res) => {
       ns.alert.toast({
         message: res.message,
         title: res.message,
-        icon: 'success',
+        icon: "success",
       });
-      ns.router.push('/login');
     },
-    onError: (err: Error) => {
+    onError: (err) => {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: 'error',
+        icon: "error",
+      });
+    },
+  });
+}
+
+export function useSendMagicLink() {
+  const ns = useAppNameSpace();
+
+  return useMutation<
+    TResponse<{ email: string }>,
+    Error,
+    PickSendMagicLink,
+    AuthCacheContext
+  >({
+    mutationFn: (payload) => Api.Auth.SendMagicLink(payload),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        message: res.message,
+        title: res.message,
+        icon: "success",
+      });
+    },
+    onError: (err) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
+      });
+    },
+  });
+}
+
+export function useForgotPassword() {
+  const ns = useAppNameSpace();
+
+  return useMutation<TResponse<null>,Error,PickForgotPassword,AuthCacheContext>({
+    mutationFn: (payload) => Api.Auth.ForgotPassword(payload),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        message: res.message,
+        title: res.message,
+        icon: "success",
+      });
+    },
+    onError: (err) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
+      });
+    },
+  });
+}
+
+export function useResetPassword() {
+  const ns = useAppNameSpace();
+  const router = useRouter();
+
+  return useMutation<TResponse<null>,Error,PickResetPassword,AuthCacheContext>({
+    mutationFn: (payload) => Api.Auth.ResetPassword(payload),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        message: res.message,
+        title: res.message,
+        icon: "success",
+      });
+    },
+    onError: (err) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
       });
     },
   });

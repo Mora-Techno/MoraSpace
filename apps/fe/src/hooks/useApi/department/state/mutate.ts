@@ -1,17 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
+import { TResponse } from '@repo/types';
 import {
   DepartmentRespone,
   PickCreateDepartment,
   PickUpdateDepartment,
-} from "@repo/types/department.types";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import Api from "@/services/api";
-import { TResponse } from "@repo/types";
-import {
-  DepartmentCacheContext,
-  departmentRootKey,
-  readDepartmentSnapshot,
-} from "./utils";
+} from '@repo/types/department.types';
+import { useMutation } from '@tanstack/react-query';
+
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import Api from '@/services/api';
+
+import { DepartmentCacheContext, departmentRootKey, readDepartmentSnapshot } from './utils';
 
 export function useCreateDepartment() {
   const ns = useAppNameSpace();
@@ -30,7 +28,7 @@ export function useCreateDepartment() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -42,7 +40,7 @@ export function useCreateDepartment() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -56,8 +54,7 @@ export function useUpdateDepartment() {
     { id: string; payload: PickUpdateDepartment },
     DepartmentCacheContext
   >({
-    mutationFn: ({ id, payload }) =>
-      Api.Department.UpdateDepartment(id, payload),
+    mutationFn: ({ id, payload }) => Api.Department.UpdateDepartment(id, payload),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: departmentRootKey });
       return { previousData: readDepartmentSnapshot(ns) };
@@ -66,7 +63,7 @@ export function useUpdateDepartment() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -78,7 +75,7 @@ export function useUpdateDepartment() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -86,12 +83,7 @@ export function useUpdateDepartment() {
 
 export function useDeleteDepartment() {
   const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<DepartmentRespone>,
-    Error,
-    { id: string },
-    DepartmentCacheContext
-  >({
+  return useMutation<TResponse<DepartmentRespone>, Error, { id: string }, DepartmentCacheContext>({
     mutationFn: ({ id }) => Api.Department.DeleteDepartment(id),
     onMutate: async () => {
       await ns.queryClient.cancelQueries({ queryKey: departmentRootKey });
@@ -101,7 +93,7 @@ export function useDeleteDepartment() {
       ns.alert.toast({
         title: res.message,
         message: res.message,
-        icon: "success",
+        icon: 'success',
       });
     },
     onSettled: async () => {
@@ -113,7 +105,7 @@ export function useDeleteDepartment() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

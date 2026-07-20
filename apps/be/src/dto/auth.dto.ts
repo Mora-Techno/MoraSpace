@@ -43,3 +43,12 @@ export const VerifyOtpDto = t.Object({
     description: 'Kode OTP 6 digit',
   }),
 });
+
+export const ForgotPasswordDto = t.Object({
+  email: t.String({ format: 'email', description: 'Email pengguna' }),
+});
+
+export const ResetPasswordDto = t.Object({
+  token: t.String({ minLength: 1, description: 'Token reset password' }),
+  password: t.String({ minLength: 6, description: 'Password baru' }),
+});

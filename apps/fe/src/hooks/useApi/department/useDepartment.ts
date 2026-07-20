@@ -1,9 +1,5 @@
-import {
-  useCreateDepartment,
-  useDeleteDepartment,
-  useUpdateDepartment,
-} from "./state/mutate";
-import { useGetDepartment, useListDepartments } from "./state/query";
+import { useCreateDepartment, useDeleteDepartment, useUpdateDepartment } from './state/mutate';
+import { useGetDepartment, useListDepartments } from './state/query';
 
 export const useDepartment = () => {
   return {

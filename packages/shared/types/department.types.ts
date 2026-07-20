@@ -14,4 +14,4 @@ export type PickCreateDepartment = {
 
 export type PickUpdateDepartment = Partial<PickCreateDepartment>;
 
-export type DepartmentRespone = Omit<IDepartment, "">;
+export type DepartmentRespone = Omit<IDepartment, ''>;
