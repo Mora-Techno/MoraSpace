@@ -20,6 +20,16 @@ export type PickAcceptInvitation = {
   token: string;
 };
 
+export type InvitationQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  status?: string;
+  positionId?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 export type PickRejectInvitation = {
   token: string;
 };

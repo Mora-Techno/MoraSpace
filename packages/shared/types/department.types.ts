@@ -14,4 +14,15 @@ export type PickCreateDepartment = {
 
 export type PickUpdateDepartment = Partial<PickCreateDepartment>;
 
-export type DepartmentRespone = Omit<IDepartment, ''>;
+export type DepartmentQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  managerId?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type DepartmentRespone = Omit<IDepartment, "">;

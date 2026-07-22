@@ -44,6 +44,20 @@ export type PickCreateTaskChecklist = {
   items?: string[];
 };
 
+export type TaskQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  statusId?: string;
+  priorityId?: string;
+  assigneeId?: string;
+  reporterMemberId?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 export type PickAddTaskAttachment = {
   fileName: string;
   fileUrl: string;

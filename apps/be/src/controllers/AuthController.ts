@@ -21,6 +21,7 @@ import {
   AUTH_EXPIRY,
   generateSecureToken,
   getMagicLinkExpiry,
+  getUser,
   sanitizeUser,
 } from "@/utils/authTokens";
 import type { AppContext } from "@/contex";
@@ -286,14 +287,31 @@ class AuthController {
       const body = c.body as PickResetPassword;
 
       if (!body.token || !body.password) {
-        return HttpResponse(c).badRequest("Token dan password baru wajib diisi");
+        return HttpResponse(c).badRequest(
+          "Token dan password baru wajib diisi",
+        );
       }
 
       await AuthService.resetPassword(body);
+      return HttpResponse(c).ok(null, undefined, "Password berhasil direset");
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async list(c: AppContext) {
+    try {
+      const user = getUser(c);
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound("Company tidak ditemukan");
+      }
+
+      const result = await AuthService.list(user.companyId, c.query as any);
       return HttpResponse(c).ok(
-        null,
-        undefined,
-        "Password berhasil direset",
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar pengguna",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

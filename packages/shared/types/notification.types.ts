@@ -1,4 +1,4 @@
-export type NotificationStatus = 'success' | 'failed';
+export type NotificationStatus = "success" | "failed";
 
 /** Mirror Prisma model `NotificationLog` */
 export interface INotificationLog {
@@ -13,14 +13,38 @@ export interface INotificationLog {
 
 export type NotificationLog = Pick<
   INotificationLog,
-  'id' | 'recipient' | 'subject' | 'body' | 'status' | 'error'
+  "id" | "recipient" | "subject" | "body" | "status" | "error"
 > & {
   createdAt: string;
 };
 
 export type NotificationLogQuery = {
+  search?: string;
   status?: NotificationStatus;
+  page?: number;
   limit?: number;
+  type?: string;
+  startDate?: string;
+  endDate?: string;
 };
 
-export type PickSendNotification = Pick<INotificationLog, 'recipient' | 'subject' | 'body'>;
+export type NotificationInAppQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  read?: "true" | "false";
+  type?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
+export type NotificationQueueQuery = {
+  page?: number;
+  limit?: number;
+  status?: "pending" | "processing" | "failed";
+};
+
+export type PickSendNotification = Pick<
+  INotificationLog,
+  "recipient" | "subject" | "body"
+>;

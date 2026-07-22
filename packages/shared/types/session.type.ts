@@ -9,8 +9,25 @@ export interface ISession {
   createdAt: string;
 }
 
+export type SessionQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  device?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 // type
 export type Session = Pick<
   ISession,
-  'ipAddress' | 'browser' | 'accessToken' | 'createdAt' | 'deviceName' | 'expiredAt' | 'id'
+  | "ipAddress"
+  | "browser"
+  | "accessToken"
+  | "createdAt"
+  | "deviceName"
+  | "expiredAt"
+  | "id"
 >;

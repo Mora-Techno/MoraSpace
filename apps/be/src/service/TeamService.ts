@@ -1,10 +1,14 @@
-import prisma from 'prisma/client';
-import type { PickCreateTeam, PickUpdateTeam, PickAddTeamMember } from '@repo/types/team.types';
-import { toSafeAuthUser } from '@/utils/memberContext';
-import bcryptjs from 'bcryptjs';
-import { getCompanyTier } from '@/utils/planHelper';
-import { getWorkstationUserLimit } from '@/utils/tierLimits';
-import type { PickInviteMember } from '@repo/types/workstation.types';
+import prisma from "prisma/client";
+import type {
+  PickCreateTeam,
+  PickUpdateTeam,
+  PickAddTeamMember,
+} from "@repo/types/team.types";
+import { toSafeAuthUser } from "@/utils/memberContext";
+import bcryptjs from "bcryptjs";
+import { getCompanyTier } from "@/utils/planHelper";
+import { getWorkstationUserLimit } from "@/utils/tierLimits";
+import type { PickInviteMember } from "@repo/types/workstation.types";
 
 class TeamService {
   private async ensureCompanyMember(companyId: string, userId: string) {
@@ -18,26 +22,71 @@ class TeamService {
       data: {
         companyId,
         userId,
-        status: 'active',
+        status: "active",
         joinedAt: new Date(),
       },
     });
   }
 
-  public async list(companyId: string, departmentId?: string, page = 1, limit = 10) {
+  public async list(
+    companyId: string,
+    query: {
+      search?: string;
+      departmentId?: string;
+      leaderId?: string;
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
-    const whereClause: any = {
+
+    const whereClause: Record<string, unknown> = {
       department: { companyId },
     };
-    if (departmentId) {
-      whereClause.departmentId = departmentId;
+
+    if (query.search) {
+      whereClause.name = { contains: query.search, mode: "insensitive" };
     }
+
+    if (query.departmentId) {
+      whereClause.departmentId = query.departmentId;
+    }
+
+    if (query.leaderId) {
+      whereClause.leaderId = query.leaderId;
+    }
+
+    if (query.startDate || query.endDate) {
+      whereClause.createdAt = {};
+      if (query.startDate)
+        (whereClause.createdAt as Record<string, unknown>).gte = new Date(
+          query.startDate,
+        );
+      if (query.endDate)
+        (whereClause.createdAt as Record<string, unknown>).lte = new Date(
+          query.endDate,
+        );
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.name = "asc";
+    }
+
     const [totalData, data] = await prisma.$transaction([
       prisma.team.count({
-        where: whereClause,
+        where: whereClause as any,
       }),
       prisma.team.findMany({
-        where: whereClause,
+        where: whereClause as any,
         include: {
           leader: {
             select: { id: true, fullName: true, email: true, avatarUrl: true },
@@ -49,7 +98,7 @@ class TeamService {
             select: { members: true },
           },
         },
-        orderBy: { name: 'asc' },
+        orderBy,
         take: limit,
         skip: skip,
       }),
@@ -72,7 +121,8 @@ class TeamService {
     const department = await prisma.department.findFirst({
       where: { id: input.departmentId, companyId },
     });
-    if (!department) throw new Error('Departemen tidak ditemukan di perusahaan ini');
+    if (!department)
+      throw new Error("Departemen tidak ditemukan di perusahaan ini");
 
     const team = await prisma.team.create({
       data: {
@@ -114,7 +164,12 @@ class TeamService {
     return existing;
   }
 
-  public async listMembers(teamId: string, companyId: string, page = 1, limit = 10) {
+  public async listMembers(
+    teamId: string,
+    companyId: string,
+    page = 1,
+    limit = 10,
+  ) {
     const team = await prisma.team.findFirst({
       where: { id: teamId, department: { companyId } },
     });
@@ -160,16 +215,20 @@ class TeamService {
     };
   }
 
-  public async addMember(teamId: string, companyId: string, input: PickAddTeamMember) {
+  public async addMember(
+    teamId: string,
+    companyId: string,
+    input: PickAddTeamMember,
+  ) {
     const team = await prisma.team.findFirst({
       where: { id: teamId, department: { companyId } },
     });
-    if (!team) throw new Error('Tim tidak ditemukan');
+    if (!team) throw new Error("Tim tidak ditemukan");
 
     const member = await prisma.companyMember.findFirst({
       where: { id: input.companyMemberId, companyId },
     });
-    if (!member) throw new Error('Anggota tidak ditemukan di perusahaan ini');
+    if (!member) throw new Error("Anggota tidak ditemukan di perusahaan ini");
 
     const teamMember = await prisma.teamMember.upsert({
       where: {
@@ -190,7 +249,11 @@ class TeamService {
     return teamMember;
   }
 
-  public async removeMember(teamId: string, memberId: string, companyId: string) {
+  public async removeMember(
+    teamId: string,
+    memberId: string,
+    companyId: string,
+  ) {
     const team = await prisma.team.findFirst({
       where: { id: teamId, department: { companyId } },
     });
@@ -207,7 +270,11 @@ class TeamService {
     await prisma.teamMember.delete({ where: { id: existing.id } });
     return existing;
   }
-  public async inviteMember(teamId: string, companyId: string, input: PickInviteMember) {
+  public async inviteMember(
+    teamId: string,
+    companyId: string,
+    input: PickInviteMember,
+  ) {
     const team = await prisma.team.findFirst({
       where: { id: teamId, department: { companyId } },
       include: {
@@ -217,14 +284,16 @@ class TeamService {
     });
 
     if (!team) {
-      throw new Error('Team tidak ditemukan');
+      throw new Error("Team tidak ditemukan");
     }
 
     const tier = await getCompanyTier(companyId);
     const maxMembers = getWorkstationUserLimit(tier);
 
     if (team._count.members >= maxMembers) {
-      throw new Error(`Batas anggota team tercapai (maks. ${maxMembers} untuk tier ${tier})`);
+      throw new Error(
+        `Batas anggota team tercapai (maks. ${maxMembers} untuk tier ${tier})`,
+      );
     }
 
     const existingUser = await prisma.user.findUnique({
@@ -240,30 +309,35 @@ class TeamService {
       });
 
       if (otherMembership) {
-        throw new Error('Email sudah terdaftar di company lain');
+        throw new Error("Email sudah terdaftar di company lain");
       }
 
       const alreadyMember = await prisma.teamMember.findUnique({
         where: {
           teamId_companyMemberId: {
             teamId,
-            companyMemberId: (await this.ensureCompanyMember(companyId, existingUser.id)).id,
+            companyMemberId: (
+              await this.ensureCompanyMember(companyId, existingUser.id)
+            ).id,
           },
         },
       });
 
       if (alreadyMember) {
-        throw new Error('Pengguna sudah menjadi anggota workstation ini');
+        throw new Error("Pengguna sudah menjadi anggota workstation ini");
       }
 
       const member = await prisma.$transaction(async (tx) => {
-        const companyMember = await this.ensureCompanyMember(companyId, existingUser.id);
+        const companyMember = await this.ensureCompanyMember(
+          companyId,
+          existingUser.id,
+        );
 
         return tx.teamMember.create({
           data: {
             teamId,
             companyMemberId: companyMember.id,
-            isLeader: input.role === 'Admin',
+            isLeader: input.role === "Admin",
           },
           include: {
             companyMember: {
@@ -287,7 +361,7 @@ class TeamService {
         id: member.id,
         teamId: teamId,
         userId: member.companyMember.user.id,
-        role: member.isLeader ? 'Admin' : 'Member',
+        role: member.isLeader ? "Admin" : "Member",
         joinedAt: member.companyMember.joinedAt ?? new Date(),
         user: toSafeAuthUser(member.companyMember.user, member.companyMember),
       };
