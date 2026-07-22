@@ -1,34 +1,35 @@
-import Elysia from 'elysia';
-import authRoutes from './authRoutes';
-import todoRoutes from './todoRoutes';
-import noteRoutes from './noteRoutes';
-import calendarRoutes from './calendarRoutes';
-import musicRoutes from './musicRoutes';
-import notificationRoutes from './notificationRoutes';
-import companyRoutes from './companyRoutes';
-import subscriptionRoutes from './subscriptionRoutes';
-import sessionRoutes from './sessionRoutes';
-import departmentRoutes from './departmentRoutes';
-import teamRoutes from './teamRoutes';
-import positionRoutes from './positionRoutes';
-import memberRoutes from './memberRoutes';
-import invitationRoutes from './invitationRoutes';
-import roleRoutes from './roleRoutes';
-import permissionRoutes from './permissionRoutes';
-import taskRoutes from './taskRoutes';
-import pomodoroRoutes from './pomodoroRoutes';
-import { InternalApiKey } from '@/middlewares/apiKey';
-import { errorPlugin, loggerPlugin, metricsPlugin } from '@/plugins';
+import Elysia from "elysia";
+import authRoutes from "./authRoutes";
+import todoRoutes from "./todoRoutes";
+import noteRoutes from "./noteRoutes";
+import calendarRoutes from "./calendarRoutes";
+import musicRoutes from "./musicRoutes";
+import notificationRoutes from "./notificationRoutes";
+import companyRoutes from "./companyRoutes";
+import subscriptionRoutes from "./subscriptionRoutes";
+import sessionRoutes from "./sessionRoutes";
+import departmentRoutes from "./departmentRoutes";
+import teamRoutes from "./teamRoutes";
+import positionRoutes from "./positionRoutes";
+import memberRoutes from "./memberRoutes";
+import invitationRoutes from "./invitationRoutes";
+import roleRoutes from "./roleRoutes";
+import permissionRoutes from "./permissionRoutes";
+import taskRoutes from "./taskRoutes";
+import pomodoroRoutes from "./pomodoroRoutes";
+import systemRoutes from "./systemRoutes";
+import { InternalApiKey } from "@/middlewares/apiKey";
+import { errorPlugin, loggerPlugin, metricsPlugin } from "@/plugins";
 
 class ApiRouter {
   public apiRouter;
 
   constructor() {
-    this.apiRouter = new Elysia({ prefix: '/api/v1' }).derive(() => ({
+    this.apiRouter = new Elysia({ prefix: "/api/v1" }).derive(() => ({
       json(data: any, status = 200) {
         return new Response(JSON.stringify(data), {
           status,
-          headers: { 'Content-Type': 'application/json' },
+          headers: { "Content-Type": "application/json" },
         });
       },
     }));
@@ -37,7 +38,7 @@ class ApiRouter {
 
   private routes() {
     this.apiRouter
-      // .use(InternalApiKey)
+      .use(InternalApiKey)
       .use(loggerPlugin)
       .use(errorPlugin)
       .use(authRoutes)
@@ -57,7 +58,8 @@ class ApiRouter {
       .use(roleRoutes)
       .use(permissionRoutes)
       .use(taskRoutes)
-      .use(pomodoroRoutes);
+      .use(pomodoroRoutes)
+      .use(systemRoutes);
   }
 }
 

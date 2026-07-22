@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "graphify": {
+      "command": "graphify-mcp",
+      "args": ["/Space/graphify-out/graph.json"]
+    }
+  }
+}

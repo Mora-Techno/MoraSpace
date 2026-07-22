@@ -13,7 +13,8 @@ import { LenisProvider } from '@/core/providers/lenis.provinder';
 import { ThemeProvider } from '@/core/providers/theme.provider';
 import { AlertProvinder } from '@/hooks/useAlert/costum-alert';
 import { ReactQueryClientProvider } from '@/pkg/react-query/query-client.pkg';
-
+import Api from '@/services/api';
+import React from 'react';
 import { composeProviders } from './composeProvinders';
 
 const Providers = composeProviders([
@@ -31,6 +32,13 @@ const Providers = composeProviders([
 ]);
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
+  React.useEffect(() => {
+    // Smart warming: ping db on app load
+    Api.System.Ping().catch((err) => {
+      console.warn('Smart warming ping failed:', err);
+    });
+  }, []);
+
   return (
     <Providers>
       <PWAUpdatePrompt />

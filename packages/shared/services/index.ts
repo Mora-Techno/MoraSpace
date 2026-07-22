@@ -17,6 +17,7 @@ import subscriptionService from './subscription.service';
 import taskService from './task.service';
 import teamService from './team.service';
 import todoService from './todo.service';
+import systemService from './system.service';
 
 class ApiServicePackage {
   static Auth = WrapApi(authService);
@@ -38,6 +39,7 @@ class ApiServicePackage {
   static Role = WrapApi(roleService);
   static Task = WrapApi(taskService);
   static Pomodoro = WrapApi(pomodoroService);
+  static System = WrapApi(systemService);
 }
 
 export { default as AuthService } from './auth.service';
@@ -58,6 +60,7 @@ export { default as InvitationService } from './invitation.service';
 export { default as RoleService } from './role.service';
 export { default as TaskService } from './task.service';
 export { default as PomodoroService } from './pomodoro.service';
+export { default as SystemService } from './system.service';
 export { toServiceResponse } from './service-response';
 export { ApiServicePackage as Api };
 export default ApiServicePackage;
