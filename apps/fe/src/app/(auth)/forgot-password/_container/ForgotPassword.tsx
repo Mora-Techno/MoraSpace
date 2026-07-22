@@ -1,6 +1,6 @@
 "use client";
 
-import ForgotPasswordSection from "@/components/page/auth/ForgotPassword/ForgotPassword";
+import ForgotPasswordSection from "@/components/page/auth/ForgotPassword/ForgotPasswordSection";
 import { useApi } from "@/hooks/useApi/useApi";
 import { PickForgotPassword } from "@repo/types";
 import React, { useState } from "react";

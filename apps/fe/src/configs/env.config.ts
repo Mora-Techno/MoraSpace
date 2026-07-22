@@ -23,6 +23,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: requiredString,
     NEXT_PUBLIC_GATE_API: requiredString,
     NEXT_PUBLIC_VERSION_API: requiredString,
+    NEXT_PUBLIC_INTERNAL_API_SECRET: requiredString,
   },
 
   // Runtime Environment Variables Configuration
@@ -34,6 +35,7 @@ export const env = createEnv({
     NEXT_PUBLIC_BASEPATH: process.env.NEXT_PUBLIC_BASEPATH,
 
     NEXT_INTERNAL_API_SECRET: process.env.NEXT_INTERNAL_API_SECRET,
+    NEXT_PUBLIC_INTERNAL_API_SECRET: process.env.NEXT_PUBLIC_INTERNAL_API_SECRET,
     NEXT_PUBLIC_GATE_API: process.env.NEXT_PUBLIC_GATE_API,
     NEXT_PUBLIC_VERSION_API: process.env.NEXT_PUBLIC_VERSION_API,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,

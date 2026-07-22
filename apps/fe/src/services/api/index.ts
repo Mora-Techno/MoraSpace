@@ -21,6 +21,7 @@ const Api = {
   Role: ApiServicePackage.Role,
   Task: ApiServicePackage.Task,
   Pomodoro: ApiServicePackage.Pomodoro,
+  System: ApiServicePackage.System,
 } as const;
 
 export default Api;
