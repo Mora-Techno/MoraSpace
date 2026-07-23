@@ -1,5 +1,9 @@
-import prisma from 'prisma/client';
-import type { PickCreateEvent, EventQuery, PickUpdateEvent } from '@repo/types/calendar.types';
+import prisma from "prisma/client";
+import type {
+  PickCreateEvent,
+  EventQuery,
+  PickUpdateEvent,
+} from "@repo/types/calendar.types";
 
 function mapEvent(event: {
   id: string;
@@ -20,11 +24,28 @@ function mapEvent(event: {
 }
 
 class CalendarService {
-  public async list(companyId: string, query: EventQuery) {
-    const where: {
-      companyId: string;
-      startTime?: { gte: Date; lt: Date };
-    } = { companyId };
+  public async list(
+    companyId: string,
+    query: EventQuery & {
+      search?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+      startDate?: string;
+      endDate?: string;
+      createdBy?: string;
+    },
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = { companyId };
+
+    if (query.search) {
+      where.title = { contains: query.search, mode: "insensitive" };
+    }
 
     if (query.month && query.year) {
       const month = Number(query.month) - 1;
@@ -34,15 +55,53 @@ class CalendarService {
       where.startTime = { gte: start, lt: end };
     }
 
-    const events = await prisma.calendarEvent.findMany({
-      where,
-      orderBy: { startTime: 'asc' },
-    });
+    if (query.startDate || query.endDate) {
+      where.startTime = {
+        ...((where.startTime as Record<string, unknown>) || {}),
+        ...(query.startDate ? { gte: new Date(query.startDate) } : {}),
+        ...(query.endDate ? { lte: new Date(query.endDate) } : {}),
+      };
+    }
 
-    return events.map(mapEvent);
+    if (query.createdBy) {
+      where.createdBy = query.createdBy;
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.startTime = "asc";
+    }
+
+    const [totalData, events] = await prisma.$transaction([
+      prisma.calendarEvent.count({ where: where as any }),
+      prisma.calendarEvent.findMany({
+        where: where as any,
+        orderBy,
+        skip: skip,
+        take: limit,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data: events.map(mapEvent),
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 
-  public async create(companyId: string, companyMemberId: string, input: PickCreateEvent) {
+  public async create(
+    companyId: string,
+    companyMemberId: string,
+    input: PickCreateEvent,
+  ) {
     const event = await prisma.calendarEvent.create({
       data: {
         companyId,
@@ -50,7 +109,9 @@ class CalendarService {
         title: input.title,
         description: input.description,
         startTime: new Date(input.startDate),
-        endTime: input.endDate ? new Date(input.endDate) : new Date(input.startDate),
+        endTime: input.endDate
+          ? new Date(input.endDate)
+          : new Date(input.startDate),
       },
     });
 

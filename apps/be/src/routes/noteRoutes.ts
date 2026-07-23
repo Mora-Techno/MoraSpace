@@ -1,63 +1,75 @@
-import Elysia from 'elysia';
-import NoteController from '@/controllers/NoteController';
-import { CreateNoteDto, NoteParamsDto, UpdateNoteDto } from '@/dto/note.dto';
-import type { AppContext } from '@/contex';
-import { verifyToken } from '@/middlewares/auth';
+import Elysia from "elysia";
+import NoteController from "@/controllers/NoteController";
+import {
+  CreateNoteDto,
+  NoteParamsDto,
+  NoteQueryDto,
+  UpdateNoteDto,
+} from "@/dto/note.dto";
+import type { AppContext } from "@/contex";
+import { verifyToken } from "@/middlewares/auth";
 
 class NoteRouter {
   public noteRouter;
 
   constructor() {
-    this.noteRouter = new Elysia({ prefix: '/notes', tags: ['Notes'] });
+    this.noteRouter = new Elysia({ prefix: "/notes", tags: ["Notes"] });
     this.routes();
   }
 
   private routes() {
-    this.noteRouter.get('/', (c: AppContext) => NoteController.list(c), {
+    this.noteRouter.get("/", (c: AppContext) => NoteController.list(c), {
+      query: NoteQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
-        summary: 'Daftar semua catatan',
-        description: 'Menampilkan rangkuman atau daftar semua catatan yang tersimpan.',
-        tags: ['Notes'],
+        summary: "Daftar semua catatan",
+        description:
+          "Menampilkan rangkuman atau daftar semua catatan yang tersimpan.",
+        tags: ["Notes"],
       },
     });
-    this.noteRouter.get('/:id', (c: AppContext) => NoteController.getById(c), {
+    this.noteRouter.get("/:id", (c: AppContext) => NoteController.getById(c), {
       params: NoteParamsDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
-        summary: 'Detail catatan',
-        description: 'Menampilkan isi penuh dari satu catatan spesifik.',
-        tags: ['Notes'],
+        summary: "Detail catatan",
+        description: "Menampilkan isi penuh dari satu catatan spesifik.",
+        tags: ["Notes"],
       },
     });
-    this.noteRouter.post('/', (c: AppContext) => NoteController.create(c), {
+    this.noteRouter.post("/", (c: AppContext) => NoteController.create(c), {
       body: CreateNoteDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
-        summary: 'Simpan catatan baru',
-        description: 'Menyimpan catatan baru berisi judul dan konten.',
-        tags: ['Notes'],
+        summary: "Simpan catatan baru",
+        description: "Menyimpan catatan baru berisi judul dan konten.",
+        tags: ["Notes"],
       },
     });
-    this.noteRouter.put('/:id', (c: AppContext) => NoteController.update(c), {
+    this.noteRouter.put("/:id", (c: AppContext) => NoteController.update(c), {
       params: NoteParamsDto,
       body: UpdateNoteDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
-        summary: 'Edit catatan',
-        description: 'Menyimpan perubahan secara menyeluruh pada catatan yang sudah ada.',
-        tags: ['Notes'],
+        summary: "Edit catatan",
+        description:
+          "Menyimpan perubahan secara menyeluruh pada catatan yang sudah ada.",
+        tags: ["Notes"],
       },
     });
-    this.noteRouter.delete('/:id', (c: AppContext) => NoteController.remove(c), {
-      params: NoteParamsDto,
-      beforeHandle: [verifyToken().beforeHandle],
-      detail: {
-        summary: 'Hapus catatan',
-        description: 'Menghapus catatan secara permanen berdasarkan ID.',
-        tags: ['Notes'],
+    this.noteRouter.delete(
+      "/:id",
+      (c: AppContext) => NoteController.remove(c),
+      {
+        params: NoteParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Hapus catatan",
+          description: "Menghapus catatan secara permanen berdasarkan ID.",
+          tags: ["Notes"],
+        },
       },
-    });
+    );
   }
 }
 

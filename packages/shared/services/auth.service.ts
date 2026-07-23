@@ -11,9 +11,15 @@ import type {
   PickVerifyMagicLink,
   PickVerifyOtp,
   SafeAuthUser,
+  UserQuery,
 } from "../types/auth.types";
 import type { TResponse } from "../types/response.types";
-import { PostResponse, PublicPostResponse } from "./http";
+import {
+  GetResponse,
+  PostResponse,
+  PublicPostResponse,
+  withQuery,
+} from "./http";
 import { toServiceResponse } from "./service-response";
 class AuthService {
   public async Login(
@@ -129,6 +135,17 @@ class AuthService {
     return toServiceResponse(res, {
       message: "Reset password berhasil",
       statusCode: 200,
+    });
+  }
+
+  public async ListUsers(
+    query?: UserQuery,
+  ): Promise<TResponse<SafeAuthUser[]>> {
+    const res = await GetResponse<SafeAuthUser[]>(
+      withQuery(AUTH_ENDPOINTS.USERS, query),
+    );
+    return toServiceResponse(res, {
+      message: "Daftar pengguna berhasil diambil",
     });
   }
 }

@@ -91,7 +91,6 @@ class AuthService {
 
     const magicLinkToken = generateSecureToken();
     const magicLinkExpiresAt = getMagicLinkExpiry();
-    
 
     await prisma.emailVerification.create({
       data: {
@@ -260,7 +259,7 @@ class AuthService {
     return this.createSession({ ...authUser, isVerify: true });
   }
 
-  // not use yet  
+  // not use yet
   public async forgotPassword(input: PickForgotPassword): Promise<void> {
     const user = await prisma.user.findUnique({
       where: { email: input.email },
@@ -309,7 +308,9 @@ class AuthService {
     });
 
     if (!passwordReset) {
-      throw new Error("Token reset password tidak valid atau sudah kedaluwarsa");
+      throw new Error(
+        "Token reset password tidak valid atau sudah kedaluwarsa",
+      );
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
@@ -330,6 +331,92 @@ class AuthService {
         data: { revokedAt: new Date() },
       }),
     ]);
+  }
+
+  public async list(
+    companyId: string,
+    query: {
+      search?: string;
+      status?: "active" | "inactive";
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+
+    if (companyId) {
+      where.companyMembers = { some: { companyId } };
+    }
+
+    if (query.search) {
+      where.OR = [
+        { fullName: { contains: query.search, mode: "insensitive" } },
+        { email: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.startDate || query.endDate) {
+      where.createdAt = {};
+      if (query.startDate)
+        (where.createdAt as Record<string, unknown>).gte = new Date(
+          query.startDate,
+        );
+      if (query.endDate)
+        (where.createdAt as Record<string, unknown>).lte = new Date(
+          query.endDate,
+        );
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.createdAt = "desc";
+    }
+
+    const [totalData, data] = await prisma.$transaction([
+      prisma.user.count({ where: where as any }),
+      prisma.user.findMany({
+        where: where as any,
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          avatarUrl: true,
+          phone: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy,
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 }
 

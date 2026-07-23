@@ -6,6 +6,15 @@ export interface IPomodoroSession {
   duration: number | null;
 }
 
+export type PomodoroQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+};
+
 export type PickStartPomodoro = {
   metadata?: Record<string, unknown>;
 };

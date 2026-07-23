@@ -1,9 +1,12 @@
-import PomodoroService from '@/service/PomodoroService';
-import { HttpResponse } from '@/http';
-import { getUser } from '@/utils/authTokens';
-import { memberContextValidate } from '@/validation/auth.validate';
-import type { AppContext } from '@/contex';
-import type { PickStartPomodoro, PickStopPomodoro } from '@repo/types/pomodoro.types';
+import PomodoroService from "@/service/PomodoroService";
+import { HttpResponse } from "@/http";
+import { getUser } from "@/utils/authTokens";
+import { memberContextValidate } from "@/validation/auth.validate";
+import type { AppContext } from "@/contex";
+import type {
+  PickStartPomodoro,
+  PickStopPomodoro,
+} from "@repo/types/pomodoro.types";
 
 class PomodoroController {
   public async start(c: AppContext) {
@@ -13,8 +16,11 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const body = (c.body || {}) as PickStartPomodoro;
-      const data = await PomodoroService.start(user.companyMemberId!, body.metadata);
-      return HttpResponse(c).created(data, 'Sesi pomodoro dimulai');
+      const data = await PomodoroService.start(
+        user.companyMemberId!,
+        body.metadata,
+      );
+      return HttpResponse(c).created(data, "Sesi pomodoro dimulai");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -27,9 +33,12 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const data = await PomodoroService.pause(user.companyMemberId!);
-      return HttpResponse(c).ok(data, 'Sesi pomodoro diubah menjadi jeda (pause)');
+      return HttpResponse(c).ok(
+        data,
+        "Sesi pomodoro diubah menjadi jeda (pause)",
+      );
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Gagal menjeda sesi';
+      const msg = error instanceof Error ? error.message : "Gagal menjeda sesi";
       return HttpResponse(c).badRequest(msg);
     }
   }
@@ -41,7 +50,7 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const data = await PomodoroService.resume(user.companyMemberId!);
-      return HttpResponse(c).ok(data, 'Sesi pomodoro dilanjutkan (resume)');
+      return HttpResponse(c).ok(data, "Sesi pomodoro dilanjutkan (resume)");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -54,10 +63,15 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const body = (c.body || {}) as PickStopPomodoro;
-      const data = await PomodoroService.stop(user.companyMemberId!, body.sessionId, body.duration);
-      return HttpResponse(c).ok(data, 'Sesi pomodoro dihentikan (stop)');
+      const data = await PomodoroService.stop(
+        user.companyMemberId!,
+        body.sessionId,
+        body.duration,
+      );
+      return HttpResponse(c).ok(data, "Sesi pomodoro dihentikan (stop)");
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Gagal menghentikan sesi';
+      const msg =
+        error instanceof Error ? error.message : "Gagal menghentikan sesi";
       return HttpResponse(c).badRequest(msg);
     }
   }
@@ -69,7 +83,11 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const data = await PomodoroService.getToday(user.companyMemberId!);
-      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil data fokus hari ini');
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil data fokus hari ini",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -82,7 +100,31 @@ class PomodoroController {
       if (authResponse) return authResponse;
 
       const data = await PomodoroService.getStatistics(user.companyMemberId!);
-      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil statistik fokus');
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil statistik fokus",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async list(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const authResponse = await memberContextValidate(user, c);
+      if (authResponse) return authResponse;
+
+      const result = await PomodoroService.list(
+        user.companyMemberId!,
+        c.query as any,
+      );
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar sesi pomodoro",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

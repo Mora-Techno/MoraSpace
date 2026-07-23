@@ -1,5 +1,5 @@
-import { useCreateTodo, useDeleteTodo, useUpdateTodo } from './state/mutate';
-import { todosListKey } from './state/utils';
+import { useCreateTodo, useDeleteTodo, useUpdateTodo } from "./state/mutate";
+import { useTodos } from "./state/query";
 
 export const useTodo = () => {
   return {
@@ -9,7 +9,7 @@ export const useTodo = () => {
       update: useUpdateTodo,
     },
     query: {
-      get: todosListKey,
+      get: useTodos,
     },
   };
 };

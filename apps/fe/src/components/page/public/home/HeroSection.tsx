@@ -15,10 +15,10 @@ export function HeroSection() {
   return (
     <section className="relative overflow-hidden px-4 pb-20 pt-16 md:px-6 md:pb-32 md:pt-24">
       {/* Decorative background blur elements */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e6e6e6_1px,transparent_1px),linear-gradient(to_bottom,#e6e6e6_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40 dark:opacity-10" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#e6e6e6_1px,transparent_1px),linear-gradient(to_bottom,#e6e6e6_1px,transparent_1px)] bg-size-[4rem_4rem] mask-[radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-40 dark:opacity-10" />
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-        <div className="absolute left-[10%] top-[20%] size-[500px] rounded-full bg-primary/20 blur-[120px] animate-pulse" />
-        <div className="absolute right-[10%] top-[40%] size-[400px] rounded-full bg-secondary/30 blur-[100px] opacity-70" />
+        <div className="absolute left-[10%] top-[20%] size-125 rounded-full bg-primary/20 blur-[120px] animate-pulse" />
+        <div className="absolute right-[10%] top-[40%] size-100 rounded-full bg-secondary/30 blur-[100px] opacity-70" />
       </div>
 
       <div ref={ref} className="relative z-10 mx-auto max-w-5xl text-center">
@@ -36,7 +36,7 @@ export function HeroSection() {
           className="font-serif text-5xl font-extrabold leading-tight tracking-tight md:text-7xl lg:text-8xl text-foreground"
         >
           Sistem Operasi untuk{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent-foreground">
+          <span className="bg-linear-to-r bg-clip-text text-transparent from-primary to-accent-foreground">
             Tim Modern
           </span>
         </h1>
@@ -59,14 +59,6 @@ export function HeroSection() {
             placeholder="Cari fitur seperti 'Pomodoro' atau 'AI Meeting'..."
             className="flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted-foreground/70"
           />
-          <Button
-            asChild
-            className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-6 text-base font-semibold shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-105"
-          >
-            <Link href="/login">
-              Mulai Gratis <ArrowRight className="ml-2 size-5" />
-            </Link>
-          </Button>
         </div>
 
         <div

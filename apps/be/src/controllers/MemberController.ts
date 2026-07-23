@@ -1,27 +1,31 @@
-import MemberService from '@/service/MemberService';
-import { HttpResponse } from '@/http';
-import { getUser } from '@/utils/authTokens';
-import { memberContextValidate, paramsValidate } from '@/validation/auth.validate';
-import type { AppContext } from '@/contex';
+import MemberService from "@/service/MemberService";
+import { HttpResponse } from "@/http";
+import { getUser } from "@/utils/authTokens";
+import {
+  memberContextValidate,
+  paramsValidate,
+} from "@/validation/auth.validate";
+import type { AppContext } from "@/contex";
 import type {
   PickUpdateCompanyMember,
   PickUpdateMemberProfile,
   PickUpdateMemberContacts,
-} from '@repo/types/member.types';
+} from "@repo/types/member.types";
 
 class MemberController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const page =
-        Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
-      const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await MemberService.list(user.companyId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar anggota');
+      const result = await MemberService.list(user.companyId!, c.query as any);
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar anggota",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -38,9 +42,13 @@ class MemberController {
       if (validateParams) return validateParams;
 
       const data = await MemberService.getById(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil detail anggota');
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil detail anggota",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -58,9 +66,9 @@ class MemberController {
       if (validateParams) return validateParams;
 
       const data = await MemberService.update(params.id, user.companyId!, body);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, 'Anggota berhasil diperbarui');
+      return HttpResponse(c).ok(data, "Anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -77,9 +85,9 @@ class MemberController {
       if (validateParams) return validateParams;
 
       const data = await MemberService.remove(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, 'Anggota berhasil dihapus');
+      return HttpResponse(c).ok(data, "Anggota berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -96,9 +104,13 @@ class MemberController {
       if (validateParams) return validateParams;
 
       const data = await MemberService.getProfile(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil profil anggota');
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil profil anggota",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -115,10 +127,14 @@ class MemberController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await MemberService.updateProfile(params.id, user.companyId!, body);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      const data = await MemberService.updateProfile(
+        params.id,
+        user.companyId!,
+        body,
+      );
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, 'Profil anggota berhasil diperbarui');
+      return HttpResponse(c).ok(data, "Profil anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -135,9 +151,13 @@ class MemberController {
       if (validateParams) return validateParams;
 
       const data = await MemberService.getContacts(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil kontak anggota');
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil kontak anggota",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -154,10 +174,14 @@ class MemberController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await MemberService.updateContacts(params.id, user.companyId!, body);
-      if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
+      const data = await MemberService.updateContacts(
+        params.id,
+        user.companyId!,
+        body,
+      );
+      if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, 'Kontak anggota berhasil diperbarui');
+      return HttpResponse(c).ok(data, "Kontak anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
