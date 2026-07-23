@@ -7,10 +7,11 @@ import {
   CreateTaskChecklistDto,
   CreateTaskDto,
   TaskParamsDto,
+  TaskQueryDto,
   UpdateTaskDto,
   UpdateTaskStatusDto,
 } from "@/dto/task.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class TaskRouter {
@@ -23,10 +24,12 @@ class TaskRouter {
 
   private routes() {
     this.taskRouter.get("/", (c: AppContext) => TaskController.list(c), {
+      query: TaskQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Daftar semua tugas",
-        description: "Menampilkan daftar seluruh tugas di dalam workstation perusahaan.",
+        description:
+          "Menampilkan daftar seluruh tugas di dalam workstation perusahaan.",
         tags: ["Tasks"],
       },
     });
@@ -35,7 +38,8 @@ class TaskRouter {
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Buat tugas baru",
-        description: "Membuat tugas baru dengan status, prioritas, serta penugasan opsional.",
+        description:
+          "Membuat tugas baru dengan status, prioritas, serta penugasan opsional.",
         tags: ["Tasks"],
       },
     });
@@ -44,7 +48,8 @@ class TaskRouter {
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Detail tugas",
-        description: "Melihat informasi lengkap tugas, komentar, lampiran, checklist, dan riwayat aktivitas.",
+        description:
+          "Melihat informasi lengkap tugas, komentar, lampiran, checklist, dan riwayat aktivitas.",
         tags: ["Tasks"],
       },
     });
@@ -54,19 +59,24 @@ class TaskRouter {
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Perbarui properti tugas",
-        description: "Mengubah judul, deskripsi, tenggat waktu, atau penugasan.",
+        description:
+          "Mengubah judul, deskripsi, tenggat waktu, atau penugasan.",
         tags: ["Tasks"],
       },
     });
-    this.taskRouter.delete("/:id", (c: AppContext) => TaskController.remove(c), {
-      params: TaskParamsDto,
-      beforeHandle: [verifyToken().beforeHandle],
-      detail: {
-        summary: "Hapus tugas",
-        description: "Menghapus tugas dari sistem secara permanen.",
-        tags: ["Tasks"],
+    this.taskRouter.delete(
+      "/:id",
+      (c: AppContext) => TaskController.remove(c),
+      {
+        params: TaskParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Hapus tugas",
+          description: "Menghapus tugas dari sistem secara permanen.",
+          tags: ["Tasks"],
+        },
       },
-    });
+    );
     this.taskRouter.post(
       "/:id/assign",
       (c: AppContext) => TaskController.assign(c),
@@ -76,7 +86,8 @@ class TaskRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Tugaskan anggota",
-          description: "Menambahkan atau mengganti daftar penanggung jawab (assignees) pada tugas.",
+          description:
+            "Menambahkan atau mengganti daftar penanggung jawab (assignees) pada tugas.",
           tags: ["Tasks"],
         },
       },
@@ -145,7 +156,8 @@ class TaskRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Riwayat aktivitas tugas",
-          description: "Melihat catatan riwayat perubahan dan aktivitas pada tugas.",
+          description:
+            "Melihat catatan riwayat perubahan dan aktivitas pada tugas.",
           tags: ["Tasks"],
         },
       },

@@ -1,11 +1,12 @@
-"use client";
+'use client';
 
-import { EventQuery } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import type { EventQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
 
-import Api from "@/services/api";
+import Api from '@/services/api';
 
-import { eventsListKey, MODULE_QUERY_STALE_TIME } from "./utils";
+import { eventsListKey } from './utils';
 
 export function useEvents(query?: EventQuery) {
   return useQuery({
@@ -14,6 +15,6 @@ export function useEvents(query?: EventQuery) {
       const res = await Api.Calendar.ListEvents(query);
       return res.data;
     },
-    staleTime: MODULE_QUERY_STALE_TIME,
+    staleTime: MODULE_QUERY,
   });
 }

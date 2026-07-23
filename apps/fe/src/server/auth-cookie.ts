@@ -1,3 +1,4 @@
+'use server';
 import {
   APP_SESSION_COOKIE_KEY,
   APP_SESSION_COOKIE_REFRESH,

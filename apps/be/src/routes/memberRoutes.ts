@@ -2,11 +2,12 @@ import Elysia from "elysia";
 import MemberController from "@/controllers/MemberController";
 import {
   MemberParamsDto,
+  MemberQueryDto,
   UpdateMemberContactsDto,
   UpdateMemberDto,
   UpdateMemberProfileDto,
 } from "@/dto/member.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class MemberRouter {
@@ -21,18 +22,15 @@ class MemberRouter {
   }
 
   private routes() {
-    this.memberRouter.get(
-      "/",
-      (c: AppContext) => MemberController.list(c),
-      {
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Daftar anggota perusahaan",
-          description: "Menampilkan semua anggota di perusahaan.",
-          tags: ["Company Members"],
-        },
+    this.memberRouter.get("/", (c: AppContext) => MemberController.list(c), {
+      query: MemberQueryDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Daftar anggota perusahaan",
+        description: "Menampilkan semua anggota di perusahaan.",
+        tags: ["Company Members"],
       },
-    );
+    });
     this.memberRouter.get(
       "/:id",
       (c: AppContext) => MemberController.getById(c),
@@ -55,7 +53,8 @@ class MemberRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Perbarui data kepegawaian",
-          description: "Mengubah kode karyawan, jabatan, tipe kepegawaian, atau status.",
+          description:
+            "Mengubah kode karyawan, jabatan, tipe kepegawaian, atau status.",
           tags: ["Company Members"],
         },
       },
@@ -81,7 +80,8 @@ class MemberRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Profil pribadi anggota",
-          description: "Mengambil data biodata (gender, birthday, address, dll) anggota.",
+          description:
+            "Mengambil data biodata (gender, birthday, address, dll) anggota.",
           tags: ["Company Members"],
         },
       },

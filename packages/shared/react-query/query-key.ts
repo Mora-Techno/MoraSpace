@@ -27,6 +27,8 @@ export const queryKey = {
   notificationsRoot: () => ['notifications'] as const,
   notifications: {
     logs: (query?: NotificationLogQuery) => ['notifications', 'logs', query ?? {}] as const,
+    list: () => ['notifications', 'list'] as const,
+    queue: () => ['notifications', 'queue'] as const,
   },
 
   settingsRoot: () => ['settings'] as const,
@@ -38,5 +40,67 @@ export const queryKey = {
   subscriptions: {
     plans: () => ['subscriptions', 'plans'] as const,
     me: () => ['subscriptions', 'me'] as const,
+  },
+
+  companiesRoot: () => ['companies'] as const,
+  companies: {
+    admins: () => ['companies', 'admins'] as const,
+    me: () => ['companies', 'me'] as const,
+  },
+
+  departmentsRoot: () => ['departments'] as const,
+  departments: {
+    list: () => ['departments', 'list'] as const,
+    detail: (id: string) => ['departments', 'detail', id] as const,
+  },
+
+  teamsRoot: () => ['teams'] as const,
+  teams: {
+    list: (query?: { departmentId?: string }) => ['teams', 'list', query ?? {}] as const,
+    members: (id: string) => ['teams', 'members', id] as const,
+  },
+
+  positionsRoot: () => ['positions'] as const,
+  positions: {
+    list: () => ['positions', 'list'] as const,
+  },
+
+  membersRoot: () => ['members'] as const,
+  members: {
+    list: () => ['members', 'list'] as const,
+    detail: (id: string) => ['members', 'detail', id] as const,
+    profile: (id: string) => ['members', 'profile', id] as const,
+    contacts: (id: string) => ['members', 'contacts', id] as const,
+  },
+
+  invitationsRoot: () => ['invitations'] as const,
+  invitations: {
+    list: () => ['invitations', 'list'] as const,
+  },
+
+  rolesRoot: () => ['roles'] as const,
+  roles: {
+    list: () => ['roles', 'list'] as const,
+    permissions: (id: string) => ['roles', 'permissions', id] as const,
+    masterPermissions: () => ['roles', 'masterPermissions'] as const,
+  },
+
+  tasksRoot: () => ['tasks'] as const,
+  tasks: {
+    list: () => ['tasks', 'list'] as const,
+    detail: (id: string) => ['tasks', 'detail', id] as const,
+    activities: (id: string) => ['tasks', 'activities', id] as const,
+  },
+
+  pomodoroRoot: () => ['pomodoro'] as const,
+  pomodoro: {
+    today: () => ['pomodoro', 'today'] as const,
+    statistics: () => ['pomodoro', 'statistics'] as const,
+  },
+
+  sessionRoot: () => ['session'] as const,
+  session: {
+    list: () => ['session', 'list'] as const,
+    detail: (id: string) => ['session', 'detail', id] as const,
   },
 } as const;

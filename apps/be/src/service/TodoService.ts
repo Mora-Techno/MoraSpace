@@ -1,5 +1,9 @@
-import prisma from 'prisma/client';
-import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
+import prisma from "prisma/client";
+import type {
+  PickCreateTodo,
+  PickUpdateTodo,
+  TodoQuery,
+} from "@repo/types/todo.types";
 
 function mapTodo(todo: {
   id: string;
@@ -10,7 +14,7 @@ function mapTodo(todo: {
   return {
     id: todo.id,
     text: todo.title,
-    status: todo.completed ? ('completed' as const) : ('pending' as const),
+    status: todo.completed ? ("completed" as const) : ("pending" as const),
     dueDate: todo.dueDate?.toISOString() ?? null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -18,18 +22,35 @@ function mapTodo(todo: {
 }
 
 class TodoService {
-  public async list(companyMemberId: string, query: TodoQuery) {
-    const where: {
-      companyMemberId: string;
-      completed?: boolean;
-      dueDate?: { gte: Date; lt: Date };
-    } = { companyMemberId };
+  public async list(
+    companyMemberId: string,
+    query: TodoQuery & {
+      search?: string;
+      page?: number;
+      limit?: number;
+      startDate?: string;
+      endDate?: string;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    },
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    if (query.status) {
-      where.completed = query.status === 'completed';
+    const where: Record<string, unknown> = {
+      companyMemberId,
+    };
+
+    if (query.search) {
+      where.title = { contains: query.search, mode: "insensitive" };
     }
 
-    if (query.date === 'today') {
+    if (query.status) {
+      where.completed = query.status === "completed";
+    }
+
+    if (query.date === "today") {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       const end = new Date(start);
@@ -37,12 +58,43 @@ class TodoService {
       where.dueDate = { gte: start, lt: end };
     }
 
-    const todos = await prisma.todo.findMany({
-      where,
-      orderBy: [{ completed: 'asc' }, { dueDate: 'asc' }],
-    });
+    if (query.startDate || query.endDate) {
+      where.dueDate = {
+        ...((where.dueDate as Record<string, unknown>) || {}),
+        ...(query.startDate ? { gte: new Date(query.startDate) } : {}),
+        ...(query.endDate ? { lte: new Date(query.endDate) } : {}),
+      };
+    }
 
-    return todos.map(mapTodo);
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.completed = "asc";
+      orderBy.dueDate = "asc";
+    }
+
+    const [totalData, todos] = await prisma.$transaction([
+      prisma.todo.count({ where: where as any }),
+      prisma.todo.findMany({
+        where: where as any,
+        orderBy,
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data: todos.map(mapTodo),
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 
   public async create(companyMemberId: string, input: PickCreateTodo) {
@@ -57,7 +109,11 @@ class TodoService {
     return mapTodo(todo);
   }
 
-  public async update(id: string, companyMemberId: string, input: PickUpdateTodo) {
+  public async update(
+    id: string,
+    companyMemberId: string,
+    input: PickUpdateTodo,
+  ) {
     const existing = await prisma.todo.findFirst({
       where: { id, companyMemberId },
     });
@@ -67,7 +123,9 @@ class TodoService {
       where: { id },
       data: {
         ...(input.text !== undefined && { title: input.text }),
-        ...(input.status !== undefined && { completed: input.status === 'completed' }),
+        ...(input.status !== undefined && {
+          completed: input.status === "completed",
+        }),
         ...(input.dueDate !== undefined && {
           dueDate: input.dueDate ? new Date(input.dueDate) : null,
         }),

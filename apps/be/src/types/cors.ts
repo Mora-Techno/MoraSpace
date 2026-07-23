@@ -1,5 +1,11 @@
-const isLocal = process.env.APP_ENV === "local";
+const isLocal = process.env.APP_ENV === 'local' || process.env.NODE_ENV === 'development';
 
-export const corsOrigins = isLocal
-  ? ["http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000"]
-  : (process.env.CORS_ORIGINS?.split(",").map((v) => v.trim()) ?? []);
+export const getCorsOrigin = (requestOrigin: string) => {
+  if (isLocal) {
+    return /^(http:\/\/localhost:|http:\/\/127\.0\.0\.1:|http:\/\/192\.168\.)/.test(requestOrigin);
+  }
+
+  const allowedOrigins =
+    process.env.CORS_ORIGINS?.split(',').map((v) => v.trim().replace(/\/$/, '')) ?? [];
+  return allowedOrigins.includes(requestOrigin);
+};

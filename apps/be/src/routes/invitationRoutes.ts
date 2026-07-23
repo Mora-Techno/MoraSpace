@@ -4,9 +4,10 @@ import {
   AcceptInvitationDto,
   CreateInvitationDto,
   InvitationParamsDto,
+  InvitationQueryDto,
   RejectInvitationDto,
 } from "@/dto/invitation.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class InvitationRouter {
@@ -25,10 +26,12 @@ class InvitationRouter {
       "/",
       (c: AppContext) => InvitationController.list(c),
       {
+        query: InvitationQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar undangan",
-          description: "Menampilkan semua undangan yang dikirim oleh perusahaan.",
+          description:
+            "Menampilkan semua undangan yang dikirim oleh perusahaan.",
           tags: ["Invitations"],
         },
       },
@@ -41,7 +44,8 @@ class InvitationRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Buat undangan",
-          description: "Mengirim undangan ke alamat email untuk bergabung ke perusahaan.",
+          description:
+            "Mengirim undangan ke alamat email untuk bergabung ke perusahaan.",
           tags: ["Invitations"],
         },
       },
@@ -54,7 +58,8 @@ class InvitationRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Terima undangan",
-          description: "Menerima undangan menggunakan token dan bergabung ke perusahaan.",
+          description:
+            "Menerima undangan menggunakan token dan bergabung ke perusahaan.",
           tags: ["Invitations"],
         },
       },
@@ -79,7 +84,8 @@ class InvitationRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Batalkan undangan",
-          description: "Menghapus atau membatalkan undangan yang belum diterima.",
+          description:
+            "Menghapus atau membatalkan undangan yang belum diterima.",
           tags: ["Invitations"],
         },
       },

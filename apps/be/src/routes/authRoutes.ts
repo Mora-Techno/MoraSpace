@@ -1,15 +1,19 @@
 import Elysia from "elysia";
 import AuthController from "@/controllers/AuthController";
 import {
+  ForgotPasswordDto,
   LoginDto,
   RefreshTokenDto,
   RegisterDto,
+  ResetPasswordDto,
   SendMagicLinkDto,
   SendOtpDto,
+  UserQueryDto,
   VerifyMagicLinkDto,
   VerifyOtpDto,
 } from "@/dto/auth.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
+import { verifyToken } from "@/middlewares/auth";
 
 class AuthRouter {
   public authRouter;
@@ -115,6 +119,40 @@ class AuthRouter {
         },
       },
     );
+    this.authRouter.post(
+      "/forgot-password",
+      (c: AppContext) => AuthController.forgotPassword(c),
+      {
+        body: ForgotPasswordDto,
+        detail: {
+          summary: "Lupa password",
+          description: "Mengirim email berisi link untuk reset password.",
+          tags: ["Auth"],
+        },
+      },
+    );
+    this.authRouter.post(
+      "/reset-password",
+      (c: AppContext) => AuthController.ResetPassword(c),
+      {
+        body: ResetPasswordDto,
+        detail: {
+          summary: "Reset password",
+          description:
+            "Mereset password pengguna menggunakan token dari email.",
+          tags: ["Auth"],
+        },
+      },
+    );
+    this.authRouter.get("/users", (c: AppContext) => AuthController.list(c), {
+      query: UserQueryDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Daftar pengguna",
+        description: "Menampilkan semua pengguna di perusahaan.",
+        tags: ["Auth"],
+      },
+    });
   }
 }
 export default new AuthRouter().authRouter;

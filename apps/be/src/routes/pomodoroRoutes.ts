@@ -1,7 +1,11 @@
 import Elysia from "elysia";
 import PomodoroController from "@/controllers/PomodoroController";
-import { StartPomodoroDto, StopPomodoroDto } from "@/dto/pomodoro.dto";
-import { AppContext } from "@/contex";
+import {
+  PomodoroQueryDto,
+  StartPomodoroDto,
+  StopPomodoroDto,
+} from "@/dto/pomodoro.dto";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class PomodoroRouter {
@@ -73,7 +77,8 @@ class PomodoroRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Statistik fokus hari ini",
-          description: "Melihat total durasi dan daftar sesi fokus yang dilakukan hari ini.",
+          description:
+            "Melihat total durasi dan daftar sesi fokus yang dilakukan hari ini.",
           tags: ["Pomodoro & Focus"],
         },
       },
@@ -85,7 +90,22 @@ class PomodoroRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Statistik keseluruhan fokus",
-          description: "Melihat ringkasan total durasi dan jumlah sesi fokus yang pernah dilakukan.",
+          description:
+            "Melihat ringkasan total durasi dan jumlah sesi fokus yang pernah dilakukan.",
+          tags: ["Pomodoro & Focus"],
+        },
+      },
+    );
+    this.pomodoroRouter.get(
+      "/",
+      (c: AppContext) => PomodoroController.list(c),
+      {
+        query: PomodoroQueryDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Daftar sesi pomodoro",
+          description:
+            "Menampilkan semua sesi pomodoro dengan filter pencarian, status, dan rentang tanggal.",
           tags: ["Pomodoro & Focus"],
         },
       },

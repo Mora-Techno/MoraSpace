@@ -1,6 +1,6 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/notes";
+const mount = '/notes';
 
 export const NOTE_ENDPOINTS = {
   LIST: buildEndpoint(mount),

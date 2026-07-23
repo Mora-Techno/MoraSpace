@@ -1,17 +1,25 @@
 import { AUTH_ENDPOINTS } from "../endpoints/auth.endpoints";
 import type {
   AuthSessionResponse,
+  PickForgotPassword,
   PickLogin,
   PickRefreshToken,
   PickRegister,
+  PickResetPassword,
   PickSendMagicLink,
   PickSendOtp,
   PickVerifyMagicLink,
   PickVerifyOtp,
   SafeAuthUser,
+  UserQuery,
 } from "../types/auth.types";
 import type { TResponse } from "../types/response.types";
-import { PostResponse, PublicPostResponse } from "./http";
+import {
+  GetResponse,
+  PostResponse,
+  PublicPostResponse,
+  withQuery,
+} from "./http";
 import { toServiceResponse } from "./service-response";
 class AuthService {
   public async Login(
@@ -103,6 +111,41 @@ class AuthService {
     return toServiceResponse(res, {
       message: "OTP berhasil diverifikasi",
       statusCode: 200,
+    });
+  }
+  public async ForgotPassword(
+    payload: PickForgotPassword,
+  ): Promise<TResponse<null>> {
+    const res = await PublicPostResponse<null>(
+      AUTH_ENDPOINTS.FORGOT_PASSWORD,
+      payload,
+    );
+    return toServiceResponse(res, {
+      message: "Lupa password berhasil",
+      statusCode: 200,
+    });
+  }
+  public async ResetPassword(
+    payload: PickResetPassword,
+  ): Promise<TResponse<null>> {
+    const res = await PublicPostResponse<null>(
+      AUTH_ENDPOINTS.RESET_PASSWORD,
+      payload,
+    );
+    return toServiceResponse(res, {
+      message: "Reset password berhasil",
+      statusCode: 200,
+    });
+  }
+
+  public async ListUsers(
+    query?: UserQuery,
+  ): Promise<TResponse<SafeAuthUser[]>> {
+    const res = await GetResponse<SafeAuthUser[]>(
+      withQuery(AUTH_ENDPOINTS.USERS, query),
+    );
+    return toServiceResponse(res, {
+      message: "Daftar pengguna berhasil diambil",
     });
   }
 }

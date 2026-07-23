@@ -13,3 +13,12 @@ export type PickCreatePosition = {
 };
 
 export type PickUpdatePosition = Partial<PickCreatePosition>;
+
+export type PositionQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  level?: number;
+};

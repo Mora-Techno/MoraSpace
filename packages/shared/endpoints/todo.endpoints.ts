@@ -1,13 +1,13 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/todos";
+const mount = '/todos';
 
 export const TODO_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
-  BYID: (id: string) => buildEndpoint(mount, `/:${id}`),
-  DELETE: (id: string) => buildEndpoint(mount, `/:${id}`),
-  UPDATE: (id: string) => buildEndpoint(mount, `/:${id}`),
+  BYID: (id: string) => buildEndpoint(mount, `/${id}`),
+  DELETE: (id: string) => buildEndpoint(mount, `/${id}`),
+  UPDATE: (id: string) => buildEndpoint(mount, `/${id}`),
 } as const;
 
 export function listTodoEndpoints() {

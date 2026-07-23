@@ -46,6 +46,15 @@ export type SafeUser = Pick<
   | "updatedAt"
 >;
 
+export type CompanyQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
+};
+
 export interface CompanyProfile extends Pick<
   ICompany,
   | "id"
@@ -70,3 +79,5 @@ export interface AdminUser {
   createdAt: string;
   updatedAt: string;
 }
+
+export type CompanyRespone = Omit<ICompany, "">;

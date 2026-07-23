@@ -1,7 +1,7 @@
 import Elysia from 'elysia';
 import CalendarController from '@/controllers/CalendarController';
 import { CreateEventDto, EventParamsDto, EventQueryDto, UpdateEventDto } from '@/dto/calendar.dto';
-import { AppContext } from '@/contex';
+import type { AppContext } from '@/contex';
 import { verifyToken } from '@/middlewares/auth';
 
 class CalendarRouter {

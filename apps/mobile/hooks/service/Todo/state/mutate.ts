@@ -4,7 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert } from 'react-native';
 
 import Api from '@/service/props.service';
-import { type TodoCacheContext, readTodoSnapshot, todoRootKey, todosListKey } from './utils';
+
+import { readTodoSnapshot, type TodoCacheContext, todoRootKey, todosListKey } from './utils';
 
 export function useCreateTodo(filters?: TodoQuery) {
   const queryClient = useQueryClient();

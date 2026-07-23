@@ -2,7 +2,7 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import type { CompanyRole } from "@repo/types/company.types";
 import { HttpResponse } from "@/http";
-import {
+import type {
   PickLogin,
   PickRegister,
   PickRefreshToken,
@@ -12,11 +12,20 @@ import {
   PickSendOtp,
   JwtPayload,
   PickLogout,
+  PickForgotPassword,
+  PickResetPassword,
 } from "@repo/types/auth.types";
 import AuthService from "@/service/AuthService";
 import prisma from "prisma/client";
-import { sanitizeUser } from "@/utils/authTokens";
+import {
+  AUTH_EXPIRY,
+  generateSecureToken,
+  getMagicLinkExpiry,
+  getUser,
+  sanitizeUser,
+} from "@/utils/authTokens";
 import type { AppContext } from "@/contex";
+import NotificationService from "@/service/NotificationService";
 
 class AuthController {
   public async register(c: AppContext) {
@@ -44,6 +53,8 @@ class AuthController {
         }
       }
 
+      const magicLinkToken = generateSecureToken();
+      const magicLinkExpiresAt = getMagicLinkExpiry();
       const hashedPassword = await bcryptjs.hash(auth.password, 10);
 
       const newUser = await prisma.user.create({
@@ -69,12 +80,27 @@ class AuthController {
         updatedAt: newUser.updatedAt,
       };
 
+      const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+      const magicLink = `${frontendUrl}/magic-link?token=${magicLinkToken}`;
+      await prisma.emailVerification.create({
+        data: {
+          token: magicLinkToken,
+          expiredAt: magicLinkExpiresAt,
+          userId: newUser.id,
+        },
+      });
+
+      await NotificationService.send({
+        body: `Klik link berikut untuk aktivasi Akun (berlaku ${AUTH_EXPIRY.magicLinkMinutes} menit):\n\n${magicLink}`,
+        recipient: newUser.email,
+        subject: "Aktivasi Email Akun Space",
+      });
+
       return HttpResponse(c).created(
         sanitizeUser(safeUser),
         "Akun berhasil didaftarkan",
       );
     } catch (error) {
-      console.error(error);
       return HttpResponse(c).internalError(error);
     }
   }
@@ -104,7 +130,6 @@ class AuthController {
 
       return HttpResponse(c).ok(session, undefined, "Login berhasil");
     } catch (error) {
-      console.error(error);
       return HttpResponse(c).internalError(error);
     }
   }
@@ -124,10 +149,7 @@ class AuthController {
         "Token berhasil diperbarui",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal memperbarui token";
-      return HttpResponse(c).unauthorized(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -146,10 +168,7 @@ class AuthController {
         "Magic link berhasil dikirim ke email",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal mengirim magic link";
-      return HttpResponse(c).badRequest(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -168,10 +187,7 @@ class AuthController {
         "Magic link berhasil diverifikasi",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Magic link tidak valid";
-      return HttpResponse(c).unauthorized(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -195,10 +211,7 @@ class AuthController {
         "OTP berhasil dikirim",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal mengirim OTP";
-      return HttpResponse(c).badRequest(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -223,10 +236,7 @@ class AuthController {
         "OTP berhasil diverifikasi",
       );
     } catch (error) {
-      console.error(error);
-      const message =
-        error instanceof Error ? error.message : "OTP tidak valid";
-      return HttpResponse(c).unauthorized(message);
+      return HttpResponse(c).internalError(error);
     }
   }
 
@@ -250,8 +260,61 @@ class AuthController {
       await AuthService.revokeTokens(id);
       return HttpResponse(c).ok(null, undefined, "Logout berhasil");
     } catch (error) {
-      console.error(error);
       return HttpResponse(c).unauthorized("Token tidak valid");
+    }
+  }
+  public async forgotPassword(c: AppContext) {
+    try {
+      const body = c.body as PickForgotPassword;
+
+      if (!body.email) {
+        return HttpResponse(c).badRequest("Email wajib diisi");
+      }
+
+      await AuthService.forgotPassword(body);
+      return HttpResponse(c).ok(
+        { email: body.email },
+        undefined,
+        "Link reset password berhasil dikirim ke email",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async ResetPassword(c: AppContext) {
+    try {
+      const body = c.body as PickResetPassword;
+
+      if (!body.token || !body.password) {
+        return HttpResponse(c).badRequest(
+          "Token dan password baru wajib diisi",
+        );
+      }
+
+      await AuthService.resetPassword(body);
+      return HttpResponse(c).ok(null, undefined, "Password berhasil direset");
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async list(c: AppContext) {
+    try {
+      const user = getUser(c);
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound("Company tidak ditemukan");
+      }
+
+      const result = await AuthService.list(user.companyId, c.query as any);
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar pengguna",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
     }
   }
 }

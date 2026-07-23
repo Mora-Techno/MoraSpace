@@ -15,15 +15,13 @@ class NoteController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number(c.params) || 1;
-      const limit = Number(c.query.limit) || 10;
+
       const authRespone = await memberContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const queryService = await NoteService.list(
         user.companyMemberId!,
-        page,
-        limit,
+        c.query as any,
       );
 
       if (!queryService) {

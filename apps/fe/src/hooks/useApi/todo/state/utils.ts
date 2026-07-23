@@ -1,8 +1,8 @@
-import { Todo } from '@repo/types';
-import { TodoQuery } from '@repo/types';
+import type { Todo } from '@repo/types';
+import type { TodoQuery } from '@repo/types';
 
 import { queryKey } from '@/configs';
-import { AppNameSpace } from '@/hooks/useAppNameSpace';
+import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type TodoCacheContext = {
   previousData?: Todo[];

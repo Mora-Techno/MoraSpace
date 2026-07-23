@@ -1,7 +1,10 @@
 import TaskService from "@/service/TaskService";
 import { HttpResponse } from "@/http";
 import { getUser } from "@/utils/authTokens";
-import { memberContextValidate, paramsValidate } from "@/validation/auth.validate";
+import {
+  memberContextValidate,
+  paramsValidate,
+} from "@/validation/auth.validate";
 import type { AppContext } from "@/contex";
 import type {
   PickCreateTask,
@@ -17,14 +20,16 @@ class TaskController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
-      const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await TaskService.list(user.companyId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil daftar tugas");
+      const result = await TaskService.list(user.companyId!, c.query as any);
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar tugas",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -43,7 +48,11 @@ class TaskController {
       const data = await TaskService.getById(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil detail tugas");
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        "Berhasil mengambil detail tugas",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -56,7 +65,11 @@ class TaskController {
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await TaskService.create(user.companyId!, user.companyMemberId!, body);
+      const data = await TaskService.create(
+        user.companyId!,
+        user.companyMemberId!,
+        body,
+      );
       return HttpResponse(c).created(data, "Tugas berhasil dibuat");
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -74,7 +87,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.update(params.id, user.companyId!, user.companyMemberId!, body);
+      const data = await TaskService.update(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).ok(data, "Tugas berhasil diperbarui");
@@ -113,7 +131,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.assign(params.id, user.companyId!, user.companyMemberId!, body.assigneeIds);
+      const data = await TaskService.assign(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body.assigneeIds,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).ok(data, "Penugasan berhasil diperbarui");
@@ -133,7 +156,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.updateStatus(params.id, user.companyId!, user.companyMemberId!, body.statusId);
+      const data = await TaskService.updateStatus(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body.statusId,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).ok(data, "Status tugas berhasil diperbarui");
@@ -153,7 +181,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.addComment(params.id, user.companyId!, user.companyMemberId!, body.content);
+      const data = await TaskService.addComment(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body.content,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).created(data, "Komentar berhasil ditambahkan");
@@ -173,7 +206,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.createChecklist(params.id, user.companyId!, user.companyMemberId!, body);
+      const data = await TaskService.createChecklist(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).created(data, "Checklist berhasil dibuat");
@@ -193,7 +231,12 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.addAttachment(params.id, user.companyId!, user.companyMemberId!, body);
+      const data = await TaskService.addAttachment(
+        params.id,
+        user.companyId!,
+        user.companyMemberId!,
+        body,
+      );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
       return HttpResponse(c).created(data, "Lampiran berhasil ditambahkan");
@@ -206,7 +249,8 @@ class TaskController {
     try {
       const user = getUser(c);
       const params = c.params as { id: string };
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
+      const page =
+        Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
       const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
@@ -215,10 +259,19 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const result = await TaskService.listActivities(params.id, user.companyId!, page, limit);
+      const result = await TaskService.listActivities(
+        params.id,
+        user.companyId!,
+        page,
+        limit,
+      );
       if (!result) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil riwayat aktivitas tugas");
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil riwayat aktivitas tugas",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

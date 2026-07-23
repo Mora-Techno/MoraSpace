@@ -1,10 +1,10 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 
 export const InternalApiKey = (app: any) => {
   app.onBeforeHandle(
     ({ headers, set }: { headers: Record<string, any>; set: any }) => {
       try {
-        const rawKey = headers["."] ?? headers["X-Internal-Api-Key"];
+        const rawKey = headers["."] ?? headers["x-internal-api-key"];
         const clientKey = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 
         const serverKey = process.env.INTERNAL_API_SECRET;
@@ -41,7 +41,7 @@ export const InternalApiKey = (app: any) => {
             message: "Kunci API internal tidak valid",
           };
         }
-      } catch (error) {
+      } catch (_error) {
         set.status = 500;
         return {
           status: 500,

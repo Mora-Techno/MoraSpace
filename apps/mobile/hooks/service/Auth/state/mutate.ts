@@ -20,7 +20,7 @@ export function useLogin() {
 }
 
 export function useRegister() {
-  return useMutation<TResponse<any>, Error, PickRegister>({
+  return useMutation<TResponse<unknown>, Error, PickRegister>({
     mutationFn: (payload) => Api.Auth.Register(payload),
     onSuccess: (res) => {
       Alert.alert('Sukses', res.message ?? 'Register berhasil!');

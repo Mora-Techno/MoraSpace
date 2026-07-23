@@ -1,4 +1,4 @@
-export type TodoStatus = 'pending' | 'completed';
+export type TodoStatus = "pending" | "completed";
 
 /** Mirror Prisma model `Todo` */
 export interface ITodo {
@@ -10,23 +10,30 @@ export interface ITodo {
   updatedAt: Date;
 }
 
-export type Todo = Pick<ITodo, 'id' | 'text' | 'status'> & {
+export type Todo = Pick<ITodo, "id" | "text" | "status"> & {
   dueDate: string | null;
   createdAt: string;
   updatedAt: string;
 };
 
 export type TodoQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
   status?: TodoStatus;
-  date?: 'today';
+  date?: "today";
+  startDate?: string;
+  endDate?: string;
 };
 
-export type PickCreateTodo = Pick<ITodo, 'text'> & {
+export type PickCreateTodo = Pick<ITodo, "text"> & {
   dueDate?: string;
 };
 
-export type PickUpdateTodo = Partial<Pick<ITodo, 'text' | 'status'>> & {
+export type PickUpdateTodo = Partial<Pick<ITodo, "text" | "status">> & {
   dueDate?: string | null;
 };
 
-export type TodoParams = Pick<ITodo, 'id'>;
+export type TodoParams = Pick<ITodo, "id">;

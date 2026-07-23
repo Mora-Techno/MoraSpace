@@ -1,1 +1,4 @@
-export { setBaseURLProvider, setTokenProvider } from '../api/client/client-http';
+export {
+  setBaseURLProvider,
+  setTokenProvider,
+} from '../api/client/client-http';

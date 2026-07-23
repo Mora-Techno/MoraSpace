@@ -1,33 +1,31 @@
-"use client";
+'use client';
 
-import { Leaf, LogOut } from "lucide-react";
+import { Leaf, LogOut } from 'lucide-react';
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/atoms";
-import { Button } from "@/components/atoms";
-import { AppSidebar } from "@/core/components/app-sidebar";
-import { BottomNav } from "@/core/components/bottom-nav";
-import LanguageDropdown from "@/core/components/language.dropdown";
-import NotificationDropdown from "@/core/components/notification.dropdown";
-import ThemeToggle from "@/core/components/theme-toggle";
-import { useLogout } from "@/hooks/auth";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/atoms';
+import { Button } from '@/components/atoms';
+import { AppSidebar } from '@/core/components/app-sidebar';
+import { BottomNav } from '@/core/components/bottom-nav';
+import LanguageDropdown from '@/core/components/language.dropdown';
+import NotificationDropdown from '@/core/components/notification.dropdown';
+import ThemeToggle from '@/core/components/theme-toggle';
+import { useApi } from '@/hooks/useApi/useApi';
 
 interface AppShellProps {
   children: React.ReactNode;
 }
 
 function LogoutButton() {
-  const logout = useLogout();
+  const api = useApi();
+  const useLogout = api.auth.mutate.logout();
+
   return (
     <Button
       variant="ghost"
       size="icon"
       className="size-9"
-      onClick={() => logout.mutate()}
-      disabled={logout.isPending}
+      onClick={() => useLogout.mutate()}
+      disabled={useLogout.isPending}
       aria-label="Logout"
     >
       <LogOut className="size-4" />
@@ -48,9 +46,7 @@ export function AppShell({ children }: AppShellProps) {
               <SidebarTrigger className="hidden md:inline-flex" />
               <div className="flex items-center gap-2 md:hidden">
                 <Leaf className="size-5 text-primary" />
-                <span className="font-serif text-lg font-semibold">
-                  MoraSpace
-                </span>
+                <span className="font-serif text-lg font-semibold">MoraSpace</span>
               </div>
               <div className="ml-auto flex items-center gap-2">
                 <ThemeToggle />
@@ -61,9 +57,7 @@ export function AppShell({ children }: AppShellProps) {
             </header>
 
             <main className="flex-1 overflow-auto pb-20 md:pb-6">
-              <div className="mx-auto w-full max-w-7xl p-4 md:p-8">
-                {children}
-              </div>
+              <div className="mx-auto w-full max-w-7xl p-4 md:p-8">{children}</div>
             </main>
           </div>
         </SidebarInset>

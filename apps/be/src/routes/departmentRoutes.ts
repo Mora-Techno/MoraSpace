@@ -3,9 +3,10 @@ import DepartmentController from "@/controllers/DepartmentController";
 import {
   CreateDepartmentDto,
   DepartmentParamsDto,
+  DepartmentQueryDto,
   UpdateDepartmentDto,
 } from "@/dto/department.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class DepartmentRouter {
@@ -24,6 +25,7 @@ class DepartmentRouter {
       "/",
       (c: AppContext) => DepartmentController.list(c),
       {
+        query: DepartmentQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar departemen",
@@ -53,7 +55,8 @@ class DepartmentRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Detail departemen",
-          description: "Melihat detail departemen beserta manajer dan tim di dalamnya.",
+          description:
+            "Melihat detail departemen beserta manajer dan tim di dalamnya.",
           tags: ["Departments"],
         },
       },

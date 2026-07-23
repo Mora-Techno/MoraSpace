@@ -20,5 +20,13 @@ export type MusicPlaylist = Pick<IMusicPlaylist, "id" | "title" | "url"> & {
   createdAt: string;
 };
 
+export type MusicQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+};
+
 export type PickCreatePlaylist = Pick<IMusicPlaylist, "title" | "url">;
 export type PlaylistParams = Pick<IMusicPlaylist, "id">;

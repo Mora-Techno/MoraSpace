@@ -1,7 +1,12 @@
 import Elysia from "elysia";
 import NoteController from "@/controllers/NoteController";
-import { CreateNoteDto, NoteParamsDto, UpdateNoteDto } from "@/dto/note.dto";
-import { AppContext } from "@/contex";
+import {
+  CreateNoteDto,
+  NoteParamsDto,
+  NoteQueryDto,
+  UpdateNoteDto,
+} from "@/dto/note.dto";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class NoteRouter {
@@ -14,6 +19,7 @@ class NoteRouter {
 
   private routes() {
     this.noteRouter.get("/", (c: AppContext) => NoteController.list(c), {
+      query: NoteQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Daftar semua catatan",

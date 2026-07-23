@@ -1,4 +1,5 @@
 import { t } from "elysia";
+import { PaginationDto, SortDto, SearchDto } from "./filter.dto";
 
 export const LoginDto = t.Object({
   email: t.String({ format: "email", description: "Email pengguna" }),
@@ -52,4 +53,36 @@ export const VerifyOtpDto = t.Object({
     maxLength: 6,
     description: "Kode OTP 6 digit",
   }),
+});
+
+export const ForgotPasswordDto = t.Object({
+  email: t.String({ format: "email", description: "Email pengguna" }),
+});
+
+export const ResetPasswordDto = t.Object({
+  token: t.String({ minLength: 1, description: "Token reset password" }),
+  password: t.String({ minLength: 6, description: "Password baru" }),
+});
+
+export const UserQueryDto = t.Object({
+  ...SearchDto.properties,
+  ...PaginationDto.properties,
+  ...SortDto.properties,
+  status: t.Optional(
+    t.Union([t.Literal("active"), t.Literal("inactive")], {
+      description: "Filter berdasarkan status pengguna",
+    }),
+  ),
+  startDate: t.Optional(
+    t.String({
+      format: "date-time",
+      description: "Filter tanggal mulai (ISO 8601)",
+    }),
+  ),
+  endDate: t.Optional(
+    t.String({
+      format: "date-time",
+      description: "Filter tanggal akhir (ISO 8601)",
+    }),
+  ),
 });

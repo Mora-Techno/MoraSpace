@@ -6,7 +6,11 @@ import type {
   PickSendNotification,
 } from "@repo/types/notification.types";
 import { getUser } from "@/utils/authTokens";
-import { memberContextValidate, paramsValidate, unauthorizedValidate } from "@/validation/auth.validate";
+import {
+  memberContextValidate,
+  paramsValidate,
+  unauthorizedValidate,
+} from "@/validation/auth.validate";
 import { SendNotifValidation } from "@/validation/notification.validate";
 
 class NotificationController {
@@ -39,12 +43,12 @@ class NotificationController {
       const authRespone = await unauthorizedValidate(user, c);
       if (authRespone) return authRespone;
 
-      const data = await NotificationService.listLogs({
-        status: c.query.status as NotificationLogQuery["status"],
-        limit: c.query.limit ? Number(c.query.limit) : undefined,
-      });
-
-      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil riwayat notifikasi");
+      const result = await NotificationService.listLogs(c.query as any);
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil riwayat notifikasi",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -53,14 +57,19 @@ class NotificationController {
   public async listInApp(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
-      const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await NotificationService.listInApp(user.companyMemberId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil daftar notifikasi");
+      const result = await NotificationService.listInApp(
+        user.companyMemberId!,
+        c.query as any,
+      );
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar notifikasi",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -76,7 +85,10 @@ class NotificationController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await NotificationService.markRead(params.id, user.companyMemberId!);
+      const data = await NotificationService.markRead(
+        params.id,
+        user.companyMemberId!,
+      );
       if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
 
       return HttpResponse(c).ok(data, "Notifikasi ditandai sudah dibaca");
@@ -101,14 +113,16 @@ class NotificationController {
   public async listQueue(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
-      const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await NotificationService.listQueue(page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil antrean notifikasi");
+      const result = await NotificationService.listQueue(c.query as any);
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil antrean notifikasi",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

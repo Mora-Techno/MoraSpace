@@ -7,11 +7,11 @@
     "dev": "bun run prisma:generate && bun --watch run src/serve.ts",
     "start": "bun run src/serve.ts",
     "build": "tsc",
-    "lint": "biome lint src scripts",
-    "lint:fix": "biome lint --write src scripts",
+    "lint": "biome lint src",
+    "lint:fix": "biome lint --write --unsafe src",
     "test": "bun test",
-    "format": "biome format --write src scripts",
-    "format:check": "biome format src scripts"
+    "format": "biome format --write src",
+    "format:check": "biome format src"
   },
   "dependencies": {
     "@elysia/opentelemetry": "^1.4.12",

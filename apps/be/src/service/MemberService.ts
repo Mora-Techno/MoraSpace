@@ -1,19 +1,83 @@
-import prisma from 'prisma/client';
+import prisma from "prisma/client";
 import type {
   PickUpdateCompanyMember,
   PickUpdateMemberProfile,
   PickUpdateMemberContacts,
-} from '@repo/types/member.types';
+} from "@repo/types/member.types";
 
 class MemberService {
-  public async list(companyId: string, page = 1, limit = 10) {
+  public async list(
+    companyId: string,
+    query: {
+      search?: string;
+      status?: "active" | "inactive" | "pending" | "resigned";
+      positionId?: string;
+      departmentId?: string;
+      employmentTypeId?: string;
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = { companyId };
+
+    if (query.search) {
+      where.user = {
+        OR: [
+          { fullName: { contains: query.search, mode: "insensitive" } },
+          { email: { contains: query.search, mode: "insensitive" } },
+        ],
+      };
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.positionId) {
+      where.positionId = query.positionId;
+    }
+
+    if (query.departmentId) {
+      where.departmentLinks = {
+        some: { departmentId: query.departmentId },
+      };
+    }
+
+    if (query.employmentTypeId) {
+      where.employmentTypeId = query.employmentTypeId;
+    }
+
+    if (query.startDate || query.endDate) {
+      where.joinedAt = {};
+      if (query.startDate)
+        (where.joinedAt as Record<string, unknown>).gte = new Date(
+          query.startDate,
+        );
+      if (query.endDate)
+        (where.joinedAt as Record<string, unknown>).lte = new Date(
+          query.endDate,
+        );
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "desc";
+    } else {
+      orderBy.createdAt = "desc";
+    }
+
     const [totalData, data] = await prisma.$transaction([
-      prisma.companyMember.count({
-        where: { companyId },
-      }),
+      prisma.companyMember.count({ where: where as any }),
       prisma.companyMember.findMany({
-        where: { companyId },
+        where: where as any,
         include: {
           user: {
             select: {
@@ -30,7 +94,7 @@ class MemberService {
           profile: true,
           contacts: true,
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy,
         take: limit,
         skip: skip,
       }),
@@ -81,16 +145,26 @@ class MemberService {
     return member;
   }
 
-  public async update(id: string, companyId: string, input: PickUpdateCompanyMember) {
-    const existing = await prisma.companyMember.findFirst({ where: { id, companyId } });
+  public async update(
+    id: string,
+    companyId: string,
+    input: PickUpdateCompanyMember,
+  ) {
+    const existing = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!existing) return null;
 
     const member = await prisma.companyMember.update({
       where: { id },
       data: {
-        ...(input.employeeCode !== undefined && { employeeCode: input.employeeCode }),
+        ...(input.employeeCode !== undefined && {
+          employeeCode: input.employeeCode,
+        }),
         ...(input.positionId !== undefined && { positionId: input.positionId }),
-        ...(input.employmentTypeId !== undefined && { employmentTypeId: input.employmentTypeId }),
+        ...(input.employmentTypeId !== undefined && {
+          employmentTypeId: input.employmentTypeId,
+        }),
         ...(input.status !== undefined && { status: input.status as any }),
         ...(input.joinedAt !== undefined && {
           joinedAt: input.joinedAt ? new Date(input.joinedAt) : null,
@@ -111,7 +185,9 @@ class MemberService {
   }
 
   public async remove(id: string, companyId: string) {
-    const existing = await prisma.companyMember.findFirst({ where: { id, companyId } });
+    const existing = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!existing) return null;
 
     await prisma.companyMember.delete({ where: { id } });
@@ -119,7 +195,9 @@ class MemberService {
   }
 
   public async getProfile(id: string, companyId: string) {
-    const member = await prisma.companyMember.findFirst({ where: { id, companyId } });
+    const member = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!member) return null;
 
     const profile = await prisma.memberProfile.findUnique({
@@ -128,8 +206,14 @@ class MemberService {
     return profile ?? {};
   }
 
-  public async updateProfile(id: string, companyId: string, input: PickUpdateMemberProfile) {
-    const member = await prisma.companyMember.findFirst({ where: { id, companyId } });
+  public async updateProfile(
+    id: string,
+    companyId: string,
+    input: PickUpdateMemberProfile,
+  ) {
+    const member = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!member) return null;
 
     const profile = await prisma.memberProfile.upsert({
@@ -148,7 +232,9 @@ class MemberService {
           birthday: input.birthday ? new Date(input.birthday) : null,
         }),
         ...(input.address !== undefined && { address: input.address }),
-        ...(input.emergencyContact !== undefined && { emergencyContact: input.emergencyContact }),
+        ...(input.emergencyContact !== undefined && {
+          emergencyContact: input.emergencyContact,
+        }),
         ...(input.bio !== undefined && { bio: input.bio }),
       },
     });
@@ -156,7 +242,9 @@ class MemberService {
   }
 
   public async getContacts(id: string, companyId: string) {
-    const member = await prisma.companyMember.findFirst({ where: { id, companyId } });
+    const member = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!member) return null;
 
     const contacts = await prisma.memberContact.findMany({
@@ -165,8 +253,14 @@ class MemberService {
     return contacts;
   }
 
-  public async updateContacts(id: string, companyId: string, input: PickUpdateMemberContacts) {
-    const member = await prisma.companyMember.findFirst({ where: { id, companyId } });
+  public async updateContacts(
+    id: string,
+    companyId: string,
+    input: PickUpdateMemberContacts,
+  ) {
+    const member = await prisma.companyMember.findFirst({
+      where: { id, companyId },
+    });
     if (!member) return null;
 
     await prisma.$transaction([

@@ -1,23 +1,61 @@
-import { JwtPayload } from "@repo/types/auth.types";
+import type { JwtPayload } from "@repo/types/auth.types";
 import prisma from "prisma/client";
 
 class SessionService {
-  public async listService(users: JwtPayload, page: number, limit: number) {
+  public async listService(
+    users: JwtPayload,
+    query: {
+      search?: string;
+      startDate?: string;
+      endDate?: string;
+      device?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
+    const where: Record<string, unknown> = { userId: users.id };
+
+    if (query.search) {
+      where.OR = [
+        { device: { contains: query.search, mode: "insensitive" } },
+        { browser: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    if (query.device) {
+      where.device = { contains: query.device, mode: "insensitive" };
+    }
+
+    if (query.startDate || query.endDate) {
+      where.createdAt = {};
+      if (query.startDate)
+        (where.createdAt as Record<string, unknown>).gte = new Date(
+          query.startDate,
+        );
+      if (query.endDate)
+        (where.createdAt as Record<string, unknown>).lte = new Date(
+          query.endDate,
+        );
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.expiredAt = "asc";
+    }
+
     const [totalData, data] = await prisma.$transaction([
-      prisma.userSession.count({
-        where: {
-          userId: users.id,
-        },
-      }),
+      prisma.userSession.count({ where: where as any }),
       prisma.userSession.findMany({
-        where: {
-          userId: users.id,
-        },
-        orderBy: {
-          expiredAt: "asc",
-        },
+        where: where as any,
+        orderBy,
         take: limit,
         skip: skip,
       }),

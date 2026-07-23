@@ -1,11 +1,12 @@
 import Elysia from "elysia";
 import CompanyController from "@/controllers/CompanyController";
 import {
+  CompanyQueryDto,
   CreateAdminDto,
   RegisterCompanyDto,
   UpdateSubscriptionDto,
 } from "@/dto/company.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken, requireRole } from "@/middlewares/auth";
 
 class CompanyRouter {
@@ -52,6 +53,7 @@ class CompanyRouter {
       "/admins",
       (c: AppContext) => CompanyController.listAdmins(c),
       {
+        query: CompanyQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar admin company",

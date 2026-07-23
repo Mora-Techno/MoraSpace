@@ -1,11 +1,13 @@
 import Elysia from "elysia";
 import NotificationController from "@/controllers/NotificationController";
 import {
+  NotificationInAppQueryDto,
   NotificationLogQueryDto,
   NotificationParamsDto,
+  NotificationQueueQueryDto,
   SendNotificationDto,
 } from "@/dto/notification.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class NotificationRouter {
@@ -52,10 +54,12 @@ class NotificationRouter {
       "/",
       (c: AppContext) => NotificationController.listInApp(c),
       {
+        query: NotificationInAppQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar notifikasi in-app",
-          description: "Menampilkan semua notifikasi aplikasi (in-app notification) untuk pengguna saat ini.",
+          description:
+            "Menampilkan semua notifikasi aplikasi (in-app notification) untuk pengguna saat ini.",
           tags: ["Notifications"],
         },
       },
@@ -80,7 +84,8 @@ class NotificationRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Tandai semua notifikasi dibaca",
-          description: "Mengubah status seluruh notifikasi yang belum dibaca menjadi sudah dibaca.",
+          description:
+            "Mengubah status seluruh notifikasi yang belum dibaca menjadi sudah dibaca.",
           tags: ["Notifications"],
         },
       },
@@ -89,10 +94,12 @@ class NotificationRouter {
       "/queue",
       (c: AppContext) => NotificationController.listQueue(c),
       {
+        query: NotificationQueueQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Antrean notifikasi tertunda",
-          description: "Menampilkan daftar antrean notifikasi (NotificationQueue) yang dijadwalkan atau tertunda.",
+          description:
+            "Menampilkan daftar antrean notifikasi (NotificationQueue) yang dijadwalkan atau tertunda.",
           tags: ["Notifications"],
         },
       },

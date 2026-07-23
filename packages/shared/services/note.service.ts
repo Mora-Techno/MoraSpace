@@ -1,12 +1,25 @@
 import { NOTE_ENDPOINTS } from "../endpoints/note.endpoints";
-import type { Note, PickCreateNote, PickUpdateNote } from "../types/note.types";
+import type {
+  Note,
+  NoteQuery,
+  PickCreateNote,
+  PickUpdateNote,
+} from "../types/note.types";
 import type { TResponse } from "../types/response.types";
-import { DeleteResponse, GetResponse, PostResponse, PutResponse } from "./http";
+import {
+  DeleteResponse,
+  GetResponse,
+  PostResponse,
+  PutResponse,
+  withQuery,
+} from "./http";
 import { toServiceResponse } from "./service-response";
 
 class NoteService {
-  public async ListNotes(): Promise<TResponse<Note[]>> {
-    const res = await GetResponse<Note[]>(NOTE_ENDPOINTS.LIST);
+  public async ListNotes(query?: NoteQuery): Promise<TResponse<Note[]>> {
+    const res = await GetResponse<Note[]>(
+      withQuery(NOTE_ENDPOINTS.LIST, query),
+    );
     return toServiceResponse(res, {
       message: "Daftar catatan berhasil diambil",
     });

@@ -15,6 +15,8 @@ import type {
   PickVerifyMagicLink,
   PickVerifyOtp,
   SafeAuthUser,
+  PickForgotPassword,
+  PickResetPassword,
 } from "@repo/types/auth.types";
 import { createTokenPair, sanitizeUser } from "@/utils/authTokens";
 import { resolveAuthUser } from "@/utils/memberContext";
@@ -99,7 +101,7 @@ class AuthService {
     });
 
     const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
-    const magicLink = `${frontendUrl}/auth/magic-link?token=${magicLinkToken}`;
+    const magicLink = `${frontendUrl}/magic-link?token=${magicLinkToken}`;
 
     await NotificationService.send({
       recipient: user.email,
@@ -255,6 +257,166 @@ class AuthService {
     }
 
     return this.createSession({ ...authUser, isVerify: true });
+  }
+
+  // not use yet
+  public async forgotPassword(input: PickForgotPassword): Promise<void> {
+    const user = await prisma.user.findUnique({
+      where: { email: input.email },
+    });
+
+    if (!user) {
+      throw new Error("Akun tidak ditemukan");
+    }
+
+    const resetToken = generateSecureToken();
+    const expiresAt = getMagicLinkExpiry();
+    const forgot = "forgot";
+
+    await prisma.passwordReset.create({
+      data: {
+        userId: user.id,
+        token: resetToken,
+        expiredAt: expiresAt,
+      },
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}&link=${forgot}`;
+
+    await NotificationService.send({
+      recipient: user.email,
+      subject: "Reset Password - Mora Workstation",
+      body: `Klik link berikut untuk mereset password Anda (berlaku ${AUTH_EXPIRY.magicLinkMinutes} menit):\n\n${resetLink}`,
+    });
+  }
+
+  public async resetPassword(input: PickResetPassword): Promise<void> {
+    if (!input.token) {
+      throw new Error("Token reset password tidak valid");
+    }
+    if (!input.password) {
+      throw new Error("Password wajib diisi");
+    }
+
+    const passwordReset = await prisma.passwordReset.findFirst({
+      where: {
+        token: input.token,
+        expiredAt: { gt: new Date() },
+      },
+      orderBy: { expiredAt: "desc" },
+    });
+
+    if (!passwordReset) {
+      throw new Error(
+        "Token reset password tidak valid atau sudah kedaluwarsa",
+      );
+    }
+
+    const hashedPassword = await bcryptjs.hash(input.password, 10);
+
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: passwordReset.userId },
+        data: { passwordHash: hashedPassword },
+      }),
+      prisma.passwordReset.deleteMany({
+        where: { userId: passwordReset.userId },
+      }),
+      prisma.userSession.deleteMany({
+        where: { userId: passwordReset.userId },
+      }),
+      prisma.refreshToken.updateMany({
+        where: { userId: passwordReset.userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      }),
+    ]);
+  }
+
+  public async list(
+    companyId: string,
+    query: {
+      search?: string;
+      status?: "active" | "inactive";
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
+
+    const where: Record<string, unknown> = {};
+
+    if (companyId) {
+      where.companyMembers = { some: { companyId } };
+    }
+
+    if (query.search) {
+      where.OR = [
+        { fullName: { contains: query.search, mode: "insensitive" } },
+        { email: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.startDate || query.endDate) {
+      where.createdAt = {};
+      if (query.startDate)
+        (where.createdAt as Record<string, unknown>).gte = new Date(
+          query.startDate,
+        );
+      if (query.endDate)
+        (where.createdAt as Record<string, unknown>).lte = new Date(
+          query.endDate,
+        );
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.createdAt = "desc";
+    }
+
+    const [totalData, data] = await prisma.$transaction([
+      prisma.user.count({ where: where as any }),
+      prisma.user.findMany({
+        where: where as any,
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          avatarUrl: true,
+          phone: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+        orderBy,
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 }
 

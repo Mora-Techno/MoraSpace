@@ -73,14 +73,14 @@ class CompanyController {
         return HttpResponse(c).notFound("Company tidak ditemukan");
       }
 
-      const data = await CompanyService.listAdmins(user.companyId);
+      const result = await CompanyService.listAdmins(
+        user.companyId,
+        c.query as any,
+      );
 
-      if (!data) {
-        return HttpResponse(c).badRequest();
-      }
       return HttpResponse(c).ok(
-        data,
-
+        result.data,
+        result.meta,
         "Berhasil mengambil daftar admin",
       );
     } catch (error) {

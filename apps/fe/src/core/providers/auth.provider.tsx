@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
-
-import { isAuthRoute, isPublicRoute } from '@/configs/routes.config';
+import { usePathname, useRouter } from "next/navigation";
+import React from "react";
+import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
+import { loadAuthSession } from "@/utils/storage";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -14,30 +14,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [role, setRole] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    async function loadSession() {
-      try {
-        const res = await fetch('/api/auth/session', {
-          credentials: 'include',
-        });
-
-        if (!res.ok) {
-          setAuthenticated(false);
-          return;
-        }
-
-        const session = await res.json();
-
-        setAuthenticated(session.authenticated);
-        setRole(session.role ?? null);
-      } catch {
+    function checkSession() {
+      const stored = loadAuthSession();
+      if (stored?.refreshToken) {
+        setAuthenticated(true);
+        setRole(stored.role ?? null);
+      } else {
         setAuthenticated(false);
-      } finally {
-        setLoading(false);
+        setRole(null);
       }
+      setLoading(false);
     }
 
-    loadSession();
-  }, []);
+    checkSession();
+  }, [pathname]);
 
   React.useEffect(() => {
     if (loading || !pathname) return;
@@ -46,18 +36,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const onAuth = isAuthRoute(pathname);
 
     if (!authenticated && !onPublic && !onAuth) {
-      router.replace('/login');
+      router.replace("/login");
       return;
     }
 
-    if (authenticated && onAuth) {
-      router.replace('/home');
-      return;
-    }
-
-    // TODO:
-    // cek role di sini
-    // if(role !== "admin") ...
+    // if (authenticated) {
+    //   if (role === "admin") {
+    //     router.replace("/admin/dashboard");
+    //   } else if (role === "member") {
+    //     router.replace("/member/dashboard");
+    //   } else {
+    //     router.replace("/home");
+    //   }
+    //   return;
+    // }
   }, [loading, authenticated, pathname, router, role]);
 
   if (loading) return null;

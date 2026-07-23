@@ -2,14 +2,22 @@ import {
   MUSIC_ENDPOINTS,
   musicPlaylistById,
 } from "../endpoints/music.endpoints";
-import type { MusicPlaylist, PickCreatePlaylist } from "../types/music.types";
+import type {
+  MusicPlaylist,
+  MusicQuery,
+  PickCreatePlaylist,
+} from "../types/music.types";
 import type { TResponse } from "../types/response.types";
-import { DeleteResponse, GetResponse, PostResponse } from "./http";
+import { DeleteResponse, GetResponse, PostResponse, withQuery } from "./http";
 import { toServiceResponse } from "./service-response";
 
 class MusicService {
-  public async ListPlaylists(): Promise<TResponse<MusicPlaylist[]>> {
-    const res = await GetResponse<MusicPlaylist[]>(MUSIC_ENDPOINTS.LIST);
+  public async ListPlaylists(
+    query?: MusicQuery,
+  ): Promise<TResponse<MusicPlaylist[]>> {
+    const res = await GetResponse<MusicPlaylist[]>(
+      withQuery(MUSIC_ENDPOINTS.LIST, query),
+    );
     return toServiceResponse(res, {
       message: "Daftar playlist berhasil diambil",
     });

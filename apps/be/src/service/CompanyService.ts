@@ -207,33 +207,76 @@ class CompanyService {
     return sanitizeUser(authUser);
   }
 
-  public async listAdmins(companyId: string) {
-    const members = await prisma.companyMember.findMany({
-      where: {
-        companyId,
-        roles: {
-          some: {
-            role: { name: { equals: "Admin", mode: "insensitive" } },
-          },
-        },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            fullName: true,
-            createdAt: true,
-            updatedAt: true,
-          },
-        },
-        roles: { include: { role: true } },
-        company: { select: { ownerId: true } },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+  public async listAdmins(
+    companyId: string,
+    query: {
+      search?: string;
+      status?: "active" | "inactive";
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return members.map((member) => {
+    const where: Record<string, unknown> = {
+      companyId,
+      roles: {
+        some: {
+          role: { name: { equals: "Admin", mode: "insensitive" } },
+        },
+      },
+    };
+
+    if (query.search) {
+      where.user = {
+        OR: [
+          { fullName: { contains: query.search, mode: "insensitive" } },
+          { email: { contains: query.search, mode: "insensitive" } },
+        ],
+      };
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "desc";
+    } else {
+      orderBy.createdAt = "desc";
+    }
+
+    const [totalData, members] = await prisma.$transaction([
+      prisma.companyMember.count({ where: where as any }),
+      prisma.companyMember.findMany({
+        where: where as any,
+        include: {
+          user: {
+            select: {
+              id: true,
+              email: true,
+              fullName: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
+          roles: { include: { role: true } },
+          company: { select: { ownerId: true } },
+        },
+        orderBy,
+        take: limit,
+        skip: skip,
+      }),
+    ]);
+
+    const totalPage = Math.ceil(totalData / limit);
+
+    const data = members.map((member) => {
       const authUser = toSafeAuthUser(
         {
           ...member.user,
@@ -255,6 +298,16 @@ class CompanyService {
           authUser.updatedAt?.toISOString() ?? new Date().toISOString(),
       };
     });
+
+    return {
+      data,
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage,
+      },
+    };
   }
 
   public async getById(companyId: string) {

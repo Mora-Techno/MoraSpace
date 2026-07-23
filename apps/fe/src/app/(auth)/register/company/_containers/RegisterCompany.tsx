@@ -10,6 +10,7 @@ import { GoogleSvg } from "@/components/atoms/svg";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { RegisterFormSection } from "@/components/page/auth";
 import { useApi } from "@/hooks/useApi/useApi";
+import GoogleSignInButton from "@/components/molecules/GoogleSignButton";
 
 export default function RegisterCompanyContainer() {
   const Api = useApi();
@@ -73,12 +74,11 @@ export default function RegisterCompanyContainer() {
           }}
         />
         <div className="w-full flex justify-center items-center flex-col space-y-3">
-          <button type="button" onClick={() => googleLogin()}>
-            <GoogleSvg />
-          </button>
           <h1 className="text-sm font-semibold text-muted-foreground">
             Atau Daftar Menggunakan
           </h1>
+          {/* Nanti Dipakein Service yang Benar */}
+          <GoogleSignInButton onSuccess={googleLogin} disabled />
         </div>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Daftar Sebagai Pekerja ? {""}

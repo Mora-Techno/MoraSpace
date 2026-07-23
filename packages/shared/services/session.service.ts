@@ -1,12 +1,16 @@
 import { SESSION_ENDPOINT } from "../endpoints";
-import { TResponse } from "../types/response.types";
-import { Session } from "../types/session.type";
-import { DeleteResponse, GetResponse } from "./http";
+import type { TResponse } from "../types/response.types";
+import type { Session, SessionQuery } from "../types/session.type";
+import { DeleteResponse, GetResponse, withQuery } from "./http";
 import { toServiceResponse } from "./service-response";
 
 class SessionService {
-  public async ListSession(): Promise<TResponse<Session[]>> {
-    const res = await GetResponse<Session[]>(SESSION_ENDPOINT.LIST);
+  public async ListSession(
+    query?: SessionQuery,
+  ): Promise<TResponse<Session[]>> {
+    const res = await GetResponse<Session[]>(
+      withQuery(SESSION_ENDPOINT.LIST, query),
+    );
     return toServiceResponse(res, {
       message: "Daftar Session Berhasil",
       statusCode: 200,

@@ -1,7 +1,11 @@
 import Elysia from "elysia";
 import MusicController from "@/controllers/MusicController";
-import { CreatePlaylistDto, PlaylistParamsDto } from "@/dto/music.dto";
-import { AppContext } from "@/contex";
+import {
+  CreatePlaylistDto,
+  MusicQueryDto,
+  PlaylistParamsDto,
+} from "@/dto/music.dto";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class MusicRouter {
@@ -17,6 +21,7 @@ class MusicRouter {
 
   private routes() {
     this.musicRouter.get("/", (c: AppContext) => MusicController.list(c), {
+      query: MusicQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Daftar playlist musik",

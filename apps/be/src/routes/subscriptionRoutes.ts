@@ -1,7 +1,10 @@
 import Elysia from "elysia";
 import SubscriptionController from "@/controllers/SubscriptionController";
-import { CreateCheckoutDto } from "@/dto/subscription.dto";
-import { AppContext } from "@/contex";
+import {
+  CreateCheckoutDto,
+  SubscriptionQueryDto,
+} from "@/dto/subscription.dto";
+import type { AppContext } from "@/contex";
 
 class SubscriptionRouter {
   public subscriptionRouter;
@@ -15,6 +18,19 @@ class SubscriptionRouter {
   }
 
   private routes() {
+    this.subscriptionRouter.get(
+      "/",
+      (c: AppContext) => SubscriptionController.list(c),
+      {
+        query: SubscriptionQueryDto,
+        detail: {
+          summary: "Daftar langganan",
+          description:
+            "Menampilkan semua langganan di perusahaan dengan filter.",
+          tags: ["Subscriptions"],
+        },
+      },
+    );
     this.subscriptionRouter.get(
       "/plans",
       (c: AppContext) => SubscriptionController.listPlans(c),

@@ -1,6 +1,6 @@
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import SessionController from "@/controllers/SessionController";
-import { SessionParamsDto } from "@/dto/session.dto";
+import { SessionParamsDto, SessionQueryDto } from "@/dto/session.dto";
 import { verifyToken } from "@/middlewares/auth";
 import Elysia from "elysia";
 
@@ -13,6 +13,7 @@ class SessionRouter {
   }
   private routes() {
     this.sessionRouter.get("/", (c: AppContext) => SessionController.list(c), {
+      query: SessionQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
         summary: "Daftar Semua session",

@@ -2,6 +2,7 @@ import { COMPANY_ENDPOINTS } from "../endpoints/company.endpoints";
 import type {
   AdminUser,
   CompanyProfile,
+  CompanyQuery,
   PickCreateAdmin,
   PickRegisterCompany,
   PickUpdateCompanySubscription,
@@ -12,6 +13,7 @@ import {
   PatchResponse,
   PostResponse,
   PublicPostResponse,
+  withQuery,
 } from "./http";
 import { toServiceResponse } from "./service-response";
 
@@ -40,8 +42,12 @@ class CompanyService {
       statusCode: 201,
     });
   }
-  public async ListAdmins(): Promise<TResponse<AdminUser[]>> {
-    const res = await GetResponse<AdminUser[]>(COMPANY_ENDPOINTS.LIST_ADMINS);
+  public async ListAdmins(
+    query?: CompanyQuery,
+  ): Promise<TResponse<AdminUser[]>> {
+    const res = await GetResponse<AdminUser[]>(
+      withQuery(COMPANY_ENDPOINTS.LIST_ADMINS, query),
+    );
     return toServiceResponse(res, {
       message: "Daftar admin berhasil diambil",
     });

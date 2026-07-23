@@ -2,7 +2,7 @@
 
 import { useGoogleLogin } from "@react-oauth/google";
 import { PickLogin } from "@repo/types";
-import { Leaf } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { LoginFormSection } from "@/components/page/auth";
 import { RegisterConfigRoutes } from "@/configs";
 import { useApi } from "@/hooks/useApi/useApi";
+import GoogleSignInButton from "@/components/molecules/GoogleSignButton";
 
 export default function LoginContainer() {
   const api = useApi();
@@ -41,18 +42,16 @@ export default function LoginContainer() {
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <GhibliCard className="w-full max-w-md" hover={false}>
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <Leaf className="size-8 text-primary" />
-          <h1 className="font-serif text-2xl font-semibold">Selamat Datang</h1>
+        <div className="w-full flex justify-center items-center">
+          <Image
+            alt="logo"
+            src={"/images/logo.png"}
+            height={64}
+            width={64}
+            className="rounded-full"
+          />
         </div>
-        <div className="w-full flex justify-center items-center flex-col space-y-3">
-          <button type="button" onClick={() => googleLogin()}>
-            <GoogleSvg />
-          </button>
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Atau Masuk Menggunakan
-          </h1>
-        </div>
+
         <LoginFormSection
           service={{
             handleSubmit: handleSubmit,
@@ -65,6 +64,16 @@ export default function LoginContainer() {
             showPassword: showPassword,
           }}
         />
+
+        <div className="w-full rounded-sm  border  my-2" />
+
+        <div className="w-full flex justify-center items-center flex-col space-y-3">
+          <h1 className="text-sm font-semibold text-muted-foreground">
+            Atau Masuk Menggunakan
+          </h1>
+          {/* Nanti Dipakein Service yang Benar */}
+          <GoogleSignInButton onSuccess={googleLogin} disabled />
+        </div>
         {RegisterConfigRoutes.map((items, key) => {
           const Icon = items.icon;
           return (
@@ -73,6 +82,7 @@ export default function LoginContainer() {
             </div>
           );
         })}
+
         <div className="w-full flex justify-between items-center">
           <p className="mt-2 text-sm">
             <Link href="/" className="text-muted-foreground hover:text-primary">

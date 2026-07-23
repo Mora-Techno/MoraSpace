@@ -1,4 +1,4 @@
-import { Note } from '@repo/types';
+import type { Note } from '@repo/types';
 
 import { queryKey } from '@/configs';
 import type { AppNameSpace } from '@/hooks/useAppNameSpace';

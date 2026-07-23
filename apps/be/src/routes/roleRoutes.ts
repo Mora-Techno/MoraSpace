@@ -2,11 +2,13 @@ import Elysia from "elysia";
 import RoleController from "@/controllers/RoleController";
 import {
   CreateRoleDto,
+  PermissionQueryDto,
   RoleParamsDto,
+  RoleQueryDto,
   UpdateRoleDto,
   UpdateRolePermissionsDto,
 } from "@/dto/role.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class RoleRouter {
@@ -21,31 +23,24 @@ class RoleRouter {
   }
 
   private routes() {
-    this.roleRouter.get(
-      "/",
-      (c: AppContext) => RoleController.listRoles(c),
-      {
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Daftar role",
-          description: "Menampilkan semua peran (role) di perusahaan.",
-          tags: ["Roles & Permissions"],
-        },
+    this.roleRouter.get("/", (c: AppContext) => RoleController.listRoles(c), {
+      query: RoleQueryDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Daftar role",
+        description: "Menampilkan semua peran (role) di perusahaan.",
+        tags: ["Roles & Permissions"],
       },
-    );
-    this.roleRouter.post(
-      "/",
-      (c: AppContext) => RoleController.createRole(c),
-      {
-        body: CreateRoleDto,
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Buat role kustom",
-          description: "Membuat peran kustom baru di perusahaan.",
-          tags: ["Roles & Permissions"],
-        },
+    });
+    this.roleRouter.post("/", (c: AppContext) => RoleController.createRole(c), {
+      body: CreateRoleDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: "Buat role kustom",
+        description: "Membuat peran kustom baru di perusahaan.",
+        tags: ["Roles & Permissions"],
       },
-    );
+    });
     this.roleRouter.patch(
       "/:id",
       (c: AppContext) => RoleController.updateRole(c),
@@ -81,7 +76,8 @@ class RoleRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar permission role",
-          description: "Menampilkan semua hak akses sistem yang dipetakan pada peran ini.",
+          description:
+            "Menampilkan semua hak akses sistem yang dipetakan pada peran ini.",
           tags: ["Roles & Permissions"],
         },
       },
@@ -96,6 +92,20 @@ class RoleRouter {
         detail: {
           summary: "Perbarui pemetaan permission",
           description: "Mengganti seluruh pemetaan hak akses pada peran ini.",
+          tags: ["Roles & Permissions"],
+        },
+      },
+    );
+    this.roleRouter.get(
+      "/permissions",
+      (c: AppContext) => RoleController.listMasterPermissions(c),
+      {
+        query: PermissionQueryDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Daftar permission master",
+          description:
+            "Menampilkan semua permission master yang tersedia di sistem.",
           tags: ["Roles & Permissions"],
         },
       },

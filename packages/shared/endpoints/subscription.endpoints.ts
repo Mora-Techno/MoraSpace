@@ -3,6 +3,7 @@ import { buildEndpoint } from "../config/api.config";
 const mount = "/subscriptions";
 
 export const SUBSCRIPTION_ENDPOINTS = {
+  LIST: buildEndpoint(mount, "/"),
   PLANS: buildEndpoint(mount, "/plans"),
   ME: buildEndpoint(mount, "/me"),
   CHECKOUT: buildEndpoint(mount, "/checkout"),

@@ -1,12 +1,13 @@
 import { SUBSCRIPTION_ENDPOINTS } from "../endpoints/subscription.endpoints";
+import type { TResponse } from "../types/response.types";
 import type {
   CheckoutData,
   PickCreateCheckout,
   SubscriptionDetail,
   SubscriptionPlan,
+  SubscriptionQuery,
 } from "../types/subscription.types";
-import type { TResponse } from "../types/response.types";
-import { GetResponse, PostResponse } from "./http";
+import { GetResponse, PostResponse, withQuery } from "./http";
 import { toServiceResponse } from "./service-response";
 
 class SubscriptionService {
@@ -44,6 +45,17 @@ class SubscriptionService {
     );
     return toServiceResponse(res, {
       message: "Langganan berhasil dibatalkan",
+    });
+  }
+
+  public async ListSubscriptions(
+    query?: SubscriptionQuery,
+  ): Promise<TResponse<SubscriptionDetail[]>> {
+    const res = await GetResponse<SubscriptionDetail[]>(
+      withQuery(SUBSCRIPTION_ENDPOINTS.LIST, query),
+    );
+    return toServiceResponse(res, {
+      message: "Daftar langganan berhasil diambil",
     });
   }
 }

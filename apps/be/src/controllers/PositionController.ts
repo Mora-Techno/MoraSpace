@@ -1,22 +1,33 @@
 import PositionService from "@/service/PositionService";
 import { HttpResponse } from "@/http";
 import { getUser } from "@/utils/authTokens";
-import { memberContextValidate, paramsValidate } from "@/validation/auth.validate";
+import {
+  memberContextValidate,
+  paramsValidate,
+} from "@/validation/auth.validate";
 import type { AppContext } from "@/contex";
-import type { PickCreatePosition, PickUpdatePosition } from "@repo/types/position.types";
+import type {
+  PickCreatePosition,
+  PickUpdatePosition,
+} from "@repo/types/position.types";
 
 class PositionController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || Number(c.params) || 1;
-      const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await PositionService.list(user.companyId!, page, limit);
-      return HttpResponse(c).ok(result.data, result.meta, "Berhasil mengambil daftar jabatan");
+      const result = await PositionService.list(
+        user.companyId!,
+        c.query as any,
+      );
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar jabatan",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -47,7 +58,11 @@ class PositionController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await PositionService.update(params.id, user.companyId!, body);
+      const data = await PositionService.update(
+        params.id,
+        user.companyId!,
+        body,
+      );
       if (!data) return HttpResponse(c).notFound("Jabatan tidak ditemukan");
 
       return HttpResponse(c).ok(data, "Jabatan berhasil diperbarui");

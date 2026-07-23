@@ -1,4 +1,4 @@
-import { MusicPlaylist } from '@repo/types';
+import type { MusicPlaylist } from '@repo/types';
 
 import { queryKey } from '@/configs';
 import type { AppNameSpace } from '@/hooks/useAppNameSpace';

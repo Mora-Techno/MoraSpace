@@ -55,6 +55,17 @@ export interface AuthSessionResponse extends AuthTokensResponse {
 
 export type JwtPayload = AccessTokenPayload;
 
+export type UserQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  status?: "active" | "inactive";
+  startDate?: string;
+  endDate?: string;
+};
+
 export type PickLogin = Pick<IAuth, "email" | "password">;
 export type PickRegister = Pick<
   IAuth,
@@ -68,3 +79,5 @@ export type PickVerifyOtp = Partial<Pick<IAuth, "email" | "phone">> &
   Pick<IAuth, "otp">;
 export type PickCreateAdmin = Pick<IAuth, "email" | "fullName" | "password">;
 export type PickLogout = Pick<IAuth, "id">;
+export type PickForgotPassword = Pick<IAuth, "email">;
+export type PickResetPassword = Pick<IAuth, "password" | "token">;

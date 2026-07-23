@@ -16,5 +16,4 @@ export function readEventSnapshot(
   return ns.queryClient.getQueryData<CalendarEvent[]>(eventsListKey(query));
 }
 
-export const MODULE_QUERY_STALE_TIME = 60_000;
 export const calenderRootKey = queryKey.calendarRoot();

@@ -1,4 +1,12 @@
-import { useLogin, useLogout, useRegister } from './state/mutate';
+import {
+  useLogin,
+  useLogout,
+  useRegister,
+  useSendMagicLink,
+  useVerifyMagicLink,
+  useForgotPassword,
+  useResetPassword
+} from "./state/mutate";
 
 export const useAuth = () => {
   return {
@@ -6,6 +14,10 @@ export const useAuth = () => {
       login: useLogin,
       register: useRegister,
       logout: useLogout,
+      verifyMagicLink: useVerifyMagicLink,
+      sendMagicLink: useSendMagicLink,
+      forgotPassword: useForgotPassword,
+      resetPassword: useResetPassword,
     },
     query: {
       //

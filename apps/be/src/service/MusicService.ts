@@ -16,22 +16,38 @@ function mapPlaylist(playlist: {
 }
 
 class MusicService {
-  public async list(companyMemberId: string, page: number, limit: number) {
+  public async list(
+    companyMemberId: string,
+    query: {
+      search?: string;
+      page?: number;
+      limit?: number;
+      sortBy?: string;
+      sortOrder?: "asc" | "desc";
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
+    const where: Record<string, unknown> = { companyMemberId };
+
+    if (query.search) {
+      where.name = { contains: query.search, mode: "insensitive" };
+    }
+
+    const orderBy: Record<string, unknown> = {};
+    if (query.sortBy) {
+      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+    } else {
+      orderBy.createdAt = "asc";
+    }
+
     const [totalData, data] = await prisma.$transaction([
-      prisma.playlist.count({
-        where: {
-          companyMemberId,
-        },
-      }),
+      prisma.playlist.count({ where: where as any }),
       prisma.playlist.findMany({
-        where: {
-          companyMemberId,
-        },
-        orderBy: {
-          createdAt: "asc",
-        },
+        where: where as any,
+        orderBy,
         take: limit,
         skip: skip,
       }),

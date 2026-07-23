@@ -146,6 +146,29 @@ class SubscriptionController {
       return HttpResponse(c).badRequest(message);
     }
   }
+
+  public async list(c: AppContext) {
+    try {
+      const user = getUser(c);
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound("Company tidak ditemukan");
+      }
+
+      const result = await SubscriptionService.list(
+        user.companyId,
+        c.query as any,
+      );
+      return HttpResponse(c).ok(
+        result.data,
+        result.meta,
+        "Berhasil mengambil daftar langganan",
+      );
+    } catch (error) {
+      console.error(error);
+      return HttpResponse(c).internalError(error);
+    }
+  }
 }
 
 export default new SubscriptionController();

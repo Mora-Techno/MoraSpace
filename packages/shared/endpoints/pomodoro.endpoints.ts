@@ -3,6 +3,7 @@ import { buildEndpoint } from "../config/api.config";
 const mount = "/pomodoro";
 
 export const POMODORO_ENDPOINTS = {
+  LIST: buildEndpoint(mount, "/"),
   START: buildEndpoint(mount, "/start"),
   PAUSE: buildEndpoint(mount, "/pause"),
   RESUME: buildEndpoint(mount, "/resume"),

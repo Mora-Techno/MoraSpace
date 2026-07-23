@@ -1,30 +1,36 @@
-import prisma from 'prisma/client';
-import type { Prisma } from '@prisma/client';
-import StripeService from '@/service/StripeService';
-import XenditService from '@/service/XenditService';
-import { SUBSCRIPTION_PLANS, getPeriodEnd, getPlanPrice } from '@/config/subscriptionPlans';
-import { getWorkstationUserLimit } from '@/utils/tierLimits';
-import type { BillingCycle, SubscriptionTier } from '@repo/types/company.types';
+import prisma from "prisma/client";
+import type { Prisma } from "@prisma/client";
+import StripeService from "@/service/StripeService";
+import XenditService from "@/service/XenditService";
+import {
+  SUBSCRIPTION_PLANS,
+  getPeriodEnd,
+  getPlanPrice,
+} from "@/config/subscriptionPlans";
+import { getWorkstationUserLimit } from "@/utils/tierLimits";
+import type { BillingCycle, SubscriptionTier } from "@repo/types/company.types";
 import type {
   CheckoutData,
   PaymentProvider,
   PickCreateCheckout,
   SubscriptionDetail,
   SubscriptionStatus,
-} from '@repo/types/subscription.types';
+} from "@repo/types/subscription.types";
 import {
   ensurePlan,
   getCompanyTier,
   inferBillingCycle,
   mapPlanNameToTier,
-} from '@/utils/planHelper';
+} from "@/utils/planHelper";
 
 class SubscriptionService {
   public listPlans() {
     return SUBSCRIPTION_PLANS;
   }
 
-  public async getDetail(companyId: string): Promise<SubscriptionDetail | null> {
+  public async getDetail(
+    companyId: string,
+  ): Promise<SubscriptionDetail | null> {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: {
@@ -34,11 +40,11 @@ class SubscriptionService {
             plan: true,
             invoices: {
               include: { payments: true },
-              orderBy: { dueDate: 'desc' },
+              orderBy: { dueDate: "desc" },
               take: 10,
             },
           },
-          orderBy: { currentPeriodEnd: 'desc' },
+          orderBy: { currentPeriodEnd: "desc" },
         },
       },
     });
@@ -47,7 +53,8 @@ class SubscriptionService {
 
     const tier = await getCompanyTier(companyId);
     const billingCycle = inferBillingCycle(company.currentSubscription);
-    const activeSubscription = company.currentSubscription ?? company.subscriptions[0] ?? null;
+    const activeSubscription =
+      company.currentSubscription ?? company.subscriptions[0] ?? null;
 
     const recentPayments = company.subscriptions
       .flatMap((subscription) =>
@@ -73,8 +80,10 @@ class SubscriptionService {
         tier,
         billingCycle,
         subscriptionStartsAt:
-          activeSubscription?.currentPeriodStart?.toISOString() ?? company.createdAt.toISOString(),
-        subscriptionEndsAt: activeSubscription?.currentPeriodEnd?.toISOString() ?? null,
+          activeSubscription?.currentPeriodStart?.toISOString() ??
+          company.createdAt.toISOString(),
+        subscriptionEndsAt:
+          activeSubscription?.currentPeriodEnd?.toISOString() ?? null,
         maxWorkstationUsers: getWorkstationUserLimit(tier),
       },
       subscription: activeSubscription
@@ -84,10 +93,13 @@ class SubscriptionService {
             tier: mapPlanNameToTier(activeSubscription.plan.name),
             billingCycle: inferBillingCycle(activeSubscription),
             status: activeSubscription.status as SubscriptionStatus,
-            provider: (activeSubscription.provider as PaymentProvider | null) ?? null,
-            currentPeriodStart: activeSubscription.currentPeriodStart?.toISOString() ?? null,
-            currentPeriodEnd: activeSubscription.currentPeriodEnd?.toISOString() ?? null,
-            cancelAtPeriodEnd: activeSubscription.status === 'canceled',
+            provider:
+              (activeSubscription.provider as PaymentProvider | null) ?? null,
+            currentPeriodStart:
+              activeSubscription.currentPeriodStart?.toISOString() ?? null,
+            currentPeriodEnd:
+              activeSubscription.currentPeriodEnd?.toISOString() ?? null,
+            cancelAtPeriodEnd: activeSubscription.status === "canceled",
             maxWorkstationUsers: getWorkstationUserLimit(
               mapPlanNameToTier(activeSubscription.plan.name),
             ),
@@ -97,8 +109,8 @@ class SubscriptionService {
         id: payment.id,
         provider: payment.provider as PaymentProvider,
         amount: Number(payment.amount),
-        currency: 'usd',
-        status: payment.status as 'pending' | 'paid' | 'failed' | 'canceled',
+        currency: "usd",
+        status: payment.status as "pending" | "paid" | "failed" | "canceled",
         tier: mapPlanNameToTier(subscription.plan.name),
         billingCycle: inferBillingCycle(subscription),
         createdAt: payment.paidAt?.toISOString() ?? new Date().toISOString(),
@@ -126,7 +138,7 @@ class SubscriptionService {
 
       const existing = await tx.subscription.findFirst({
         where: { companyId: input.companyId },
-        orderBy: { currentPeriodEnd: 'desc' },
+        orderBy: { currentPeriodEnd: "desc" },
       });
 
       const subscription = existing
@@ -134,7 +146,7 @@ class SubscriptionService {
             where: { id: existing.id },
             data: {
               planId: plan.id,
-              status: 'active',
+              status: "active",
               provider: input.provider,
               providerSubscriptionId: input.providerSubscriptionId ?? null,
               currentPeriodStart: now,
@@ -145,7 +157,7 @@ class SubscriptionService {
             data: {
               companyId: input.companyId,
               planId: plan.id,
-              status: 'active',
+              status: "active",
               provider: input.provider,
               providerSubscriptionId: input.providerSubscriptionId ?? null,
               currentPeriodStart: now,
@@ -175,7 +187,7 @@ class SubscriptionService {
           provider: input.provider,
           transactionId: input.providerPaymentId ?? null,
           amount: input.amount,
-          status: 'paid',
+          status: "paid",
           paidAt: now,
         },
       });
@@ -199,7 +211,7 @@ class SubscriptionService {
 
     const subscription = await prisma.subscription.findFirst({
       where: { companyId: input.companyId },
-      orderBy: { currentPeriodEnd: 'desc' },
+      orderBy: { currentPeriodEnd: "desc" },
     });
 
     const activeSubscription =
@@ -208,7 +220,7 @@ class SubscriptionService {
         data: {
           companyId: input.companyId,
           planId: plan.id,
-          status: 'incomplete',
+          status: "incomplete",
         },
       }));
 
@@ -228,7 +240,7 @@ class SubscriptionService {
         provider: input.provider,
         transactionId: input.providerPaymentId,
         amount: input.amount,
-        status: 'pending',
+        status: "pending",
       },
     });
   }
@@ -238,12 +250,16 @@ class SubscriptionService {
     leader: { email: string; fullName: string },
     input: PickCreateCheckout,
   ): Promise<CheckoutData> {
-    if (input.tier === 'free') {
-      const { amount, currency } = getPlanPrice('free', input.billingCycle, input.provider);
+    if (input.tier === "free") {
+      const { amount, currency } = getPlanPrice(
+        "free",
+        input.billingCycle,
+        input.provider,
+      );
 
       await this.activateSubscription({
         companyId,
-        tier: 'free',
+        tier: "free",
         billingCycle: input.billingCycle,
         provider: input.provider,
         amount,
@@ -253,7 +269,7 @@ class SubscriptionService {
       return {
         provider: input.provider,
         checkoutUrl: null,
-        sessionId: 'free-tier',
+        sessionId: "free-tier",
         tier: input.tier,
         billingCycle: input.billingCycle,
         amount,
@@ -261,13 +277,15 @@ class SubscriptionService {
       };
     }
 
-    const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
     const successUrl = `${frontendUrl}/subscription/success?provider=${input.provider}`;
     const cancelUrl = `${frontendUrl}/subscription/cancel?provider=${input.provider}`;
 
-    if (input.provider === 'stripe') {
+    if (input.provider === "stripe") {
       if (!StripeService.isConfigured()) {
-        throw new Error('Stripe belum dikonfigurasi. Isi STRIPE_SECRET_KEY di .env');
+        throw new Error(
+          "Stripe belum dikonfigurasi. Isi STRIPE_SECRET_KEY di .env",
+        );
       }
 
       const session = await StripeService.createCheckoutSession({
@@ -283,14 +301,14 @@ class SubscriptionService {
         companyId,
         tier: input.tier,
         billingCycle: input.billingCycle,
-        provider: 'stripe',
+        provider: "stripe",
         providerPaymentId: session.sessionId,
         amount: session.amount,
         currency: session.currency,
       });
 
       return {
-        provider: 'stripe',
+        provider: "stripe",
         checkoutUrl: session.checkoutUrl,
         sessionId: session.sessionId,
         tier: input.tier,
@@ -301,7 +319,9 @@ class SubscriptionService {
     }
 
     if (!XenditService.isConfigured()) {
-      throw new Error('Xendit belum dikonfigurasi. Isi XENDIT_SECRET_KEY di .env');
+      throw new Error(
+        "Xendit belum dikonfigurasi. Isi XENDIT_SECRET_KEY di .env",
+      );
     }
 
     const invoice = await XenditService.createInvoice({
@@ -318,7 +338,7 @@ class SubscriptionService {
       companyId,
       tier: input.tier,
       billingCycle: input.billingCycle,
-      provider: 'xendit',
+      provider: "xendit",
       providerPaymentId: invoice.sessionId,
       amount: invoice.amount,
       currency: invoice.currency,
@@ -326,7 +346,7 @@ class SubscriptionService {
     });
 
     return {
-      provider: 'xendit',
+      provider: "xendit",
       checkoutUrl: invoice.checkoutUrl,
       sessionId: invoice.sessionId,
       tier: input.tier,
@@ -338,24 +358,24 @@ class SubscriptionService {
 
   public async cancelSubscription(companyId: string) {
     const subscription = await prisma.subscription.findFirst({
-      where: { companyId, status: 'active' },
-      orderBy: { currentPeriodEnd: 'desc' },
+      where: { companyId, status: "active" },
+      orderBy: { currentPeriodEnd: "desc" },
     });
 
     if (!subscription) {
-      throw new Error('Langganan aktif tidak ditemukan');
+      throw new Error("Langganan aktif tidak ditemukan");
     }
 
     return prisma.subscription.update({
       where: { id: subscription.id },
-      data: { status: 'canceled' },
+      data: { status: "canceled" },
     });
   }
 
   public async handleStripeWebhook(payload: string, signature: string | null) {
     const event = StripeService.constructWebhookEvent(payload, signature);
 
-    if (event.type === 'checkout.session.completed') {
+    if (event.type === "checkout.session.completed") {
       const session = event.data.object as {
         id: string;
         metadata?: Record<string, string>;
@@ -367,29 +387,31 @@ class SubscriptionService {
 
       const companyId = session.metadata?.companyId;
       const tier = session.metadata?.tier as SubscriptionTier | undefined;
-      const billingCycle = session.metadata?.billingCycle as BillingCycle | undefined;
+      const billingCycle = session.metadata?.billingCycle as
+        | BillingCycle
+        | undefined;
 
       if (!companyId || !tier || !billingCycle) {
-        throw new Error('Metadata checkout Stripe tidak lengkap');
+        throw new Error("Metadata checkout Stripe tidak lengkap");
       }
 
       await prisma.payment.updateMany({
         where: {
           transactionId: session.id,
-          provider: 'stripe',
+          provider: "stripe",
         },
-        data: { status: 'paid', paidAt: new Date() },
+        data: { status: "paid", paidAt: new Date() },
       });
 
       await this.activateSubscription({
         companyId,
         tier,
         billingCycle,
-        provider: 'stripe',
+        provider: "stripe",
         providerSubscriptionId: session.subscription ?? null,
         providerPaymentId: session.id,
         amount: session.amount_total ?? 0,
-        currency: session.currency ?? 'usd',
+        currency: session.currency ?? "usd",
         metadata: session.metadata,
       });
     }
@@ -397,40 +419,113 @@ class SubscriptionService {
     return { received: true, type: event.type };
   }
 
-  public async handleXenditWebhook(payload: Record<string, unknown>, callbackToken: string | null) {
+  public async handleXenditWebhook(
+    payload: Record<string, unknown>,
+    callbackToken: string | null,
+  ) {
     if (!XenditService.verifyWebhookToken(callbackToken)) {
-      throw new Error('Xendit webhook token tidak valid');
+      throw new Error("Xendit webhook token tidak valid");
     }
 
-    const status = String(payload.status ?? '');
+    const status = String(payload.status ?? "");
     const metadata = (payload.metadata ?? {}) as Record<string, string>;
     const companyId = metadata.companyId;
     const tier = metadata.tier as SubscriptionTier | undefined;
     const billingCycle = metadata.billingCycle as BillingCycle | undefined;
-    const invoiceId = String(payload.id ?? '');
+    const invoiceId = String(payload.id ?? "");
 
-    if (status.toUpperCase() === 'PAID' && companyId && tier && billingCycle) {
+    if (status.toUpperCase() === "PAID" && companyId && tier && billingCycle) {
       await prisma.payment.updateMany({
         where: {
           transactionId: invoiceId,
-          provider: 'xendit',
+          provider: "xendit",
         },
-        data: { status: 'paid', paidAt: new Date() },
+        data: { status: "paid", paidAt: new Date() },
       });
 
       await this.activateSubscription({
         companyId,
         tier,
         billingCycle,
-        provider: 'xendit',
+        provider: "xendit",
         providerPaymentId: invoiceId,
         amount: Number(payload.amount ?? 0),
-        currency: String(payload.currency ?? 'idr').toLowerCase(),
+        currency: String(payload.currency ?? "idr").toLowerCase(),
         metadata: payload,
       });
     }
 
     return { received: true, status };
+  }
+
+  public async list(
+    companyId: string,
+    query: {
+      search?: string;
+      status?: "active" | "inactive" | "expired" | "cancelled";
+      planId?: string;
+      startDate?: string;
+      endDate?: string;
+      page?: number;
+      limit?: number;
+    } = {},
+  ) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
+    const where: Record<string, unknown> = { companyId };
+
+    if (query.search) {
+      where.OR = [
+        { plan: { name: { contains: query.search, mode: "insensitive" } } },
+        { status: { contains: query.search, mode: "insensitive" } },
+      ];
+    }
+
+    if (query.status) {
+      where.status = query.status;
+    }
+
+    if (query.planId) {
+      where.planId = query.planId;
+    }
+
+    if (query.startDate || query.endDate) {
+      const dateFilter: Record<string, Date> = {};
+      if (query.startDate) dateFilter.gte = new Date(query.startDate);
+      if (query.endDate) dateFilter.lte = new Date(query.endDate);
+      where.currentPeriodStart = dateFilter;
+    }
+
+    const [totalData, data] = await prisma.$transaction([
+      prisma.subscription.count({ where: where as any }),
+      prisma.subscription.findMany({
+        where: where as any,
+        include: { plan: true },
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: { currentPeriodStart: "desc" },
+      }),
+    ]);
+
+    return {
+      data: data.map((sub) => ({
+        id: sub.id,
+        companyId: sub.companyId,
+        planId: sub.planId,
+        planName: sub.plan.name,
+        status: sub.status,
+        provider: sub.provider,
+        providerSubscriptionId: sub.providerSubscriptionId,
+        currentPeriodStart: sub.currentPeriodStart?.toISOString() ?? null,
+        currentPeriodEnd: sub.currentPeriodEnd?.toISOString() ?? null,
+      })),
+      meta: {
+        currentPage: page,
+        limit,
+        totalData,
+        totalPage: Math.ceil(totalData / limit),
+      },
+    };
   }
 }
 

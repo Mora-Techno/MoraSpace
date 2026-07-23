@@ -1,8 +1,8 @@
-import { NotificationLog } from '@repo/types';
-import { NotificationLogQuery } from '@repo/types';
+import type { NotificationLog } from '@repo/types';
+import type { NotificationLogQuery } from '@repo/types';
 
 import { queryKey } from '@/configs';
-import { AppNameSpace } from '@/hooks/useAppNameSpace';
+import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type NotificationCacheContext = {
   previousData?: NotificationLog[];

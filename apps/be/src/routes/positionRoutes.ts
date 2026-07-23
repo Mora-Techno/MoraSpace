@@ -3,9 +3,10 @@ import PositionController from "@/controllers/PositionController";
 import {
   CreatePositionDto,
   PositionParamsDto,
+  PositionQueryDto,
   UpdatePositionDto,
 } from "@/dto/position.dto";
-import { AppContext } from "@/contex";
+import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
 class PositionRouter {
@@ -24,6 +25,7 @@ class PositionRouter {
       "/",
       (c: AppContext) => PositionController.list(c),
       {
+        query: PositionQueryDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar jabatan",
@@ -40,7 +42,8 @@ class PositionRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Buat jabatan baru",
-          description: "Membuat jabatan baru di perusahaan beserta level jabatannya.",
+          description:
+            "Membuat jabatan baru di perusahaan beserta level jabatannya.",
           tags: ["Positions"],
         },
       },

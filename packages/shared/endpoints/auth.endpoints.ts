@@ -10,7 +10,10 @@ export const AUTH_ENDPOINTS = {
   SEND_MAGIC_LINK: buildEndpoint(mount, "/magic-link/send"),
   VERIFY_MAGIC_LINK: buildEndpoint(mount, "/magic-link/verify"),
   SEND_OTP: buildEndpoint(mount, "/otp/send"),
+  FORGOT_PASSWORD: buildEndpoint(mount, "/forgot-password"),
+  RESET_PASSWORD: buildEndpoint(mount, "/reset-password"),
   VERIFY_OTP: buildEndpoint(mount, "/otp/verify"),
+  USERS: buildEndpoint(mount, "/users"),
 } as const;
 
 export function listAuthEndpoints() {
