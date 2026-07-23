@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-import { clearTokens, saveTokens } from '@/server/auth-cookie';
-import Api from '@/services/api';
-import { clearAuthSession, loadAuthSession, syncAuthFromRefreshResponse } from '@/utils/storage';
+import { clearTokens, saveTokens } from "@/server/auth-cookie";
+import Api from "@/services/api";
+import {
+  clearAuthSession,
+  loadAuthSession,
+  syncAuthFromRefreshResponse,
+} from "@/utils/storage";
 
 async function restoreAuthSession(refreshToken: string) {
   try {
@@ -69,13 +73,14 @@ export default function PrivateProviders({
           if (!cancelled) {
             setIsAuthenticated(false);
             setIsReady(true);
-            router.replace('/login');
+            router.replace("/login");
           }
           return;
         }
 
         // Jika session baru saja diperbarui (misal setelah login), langsung izinkan masuk tanpa memanggil RefreshToken ulang
-        const isRecentlyUpdated = stored.updatedAt && Date.now() - stored.updatedAt < 5 * 60 * 1000;
+        const isRecentlyUpdated =
+          stored.updatedAt && Date.now() - stored.updatedAt < 5 * 60 * 1000;
 
         if (isRecentlyUpdated) {
           if (!cancelled) {
@@ -92,13 +97,13 @@ export default function PrivateProviders({
         setIsReady(true);
 
         if (!ok) {
-          router.replace('/login');
+          router.replace("/login");
         }
       } catch {
         if (!cancelled) {
           setIsAuthenticated(false);
           setIsReady(true);
-          router.replace('/login');
+          router.replace("/login");
         }
       }
     }

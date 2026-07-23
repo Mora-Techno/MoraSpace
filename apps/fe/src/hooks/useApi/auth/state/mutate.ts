@@ -12,7 +12,6 @@ import type {
   SafeAuthUser,
 } from "@repo/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import { saveTokens } from "@/server/auth-cookie";
@@ -38,12 +37,16 @@ export function useLogin() {
       const role = res?.data.user.companyRole;
 
       if (accessToken && role && refreshToken) {
-        await saveTokens({
-          role: role,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-        });
         persistAuthSessionFromResponse(data);
+        try {
+          await saveTokens({
+            role: role,
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+          });
+        } catch {
+          // Local session already exists; cookie persistence is best-effort here.
+        }
       }
 
       ns.alert.toast({
@@ -55,14 +58,16 @@ export function useLogin() {
       // setting routes berdasarkan role
       switch (role) {
         case "Admin":
-          ns.router.push("/admin/dashboard");
+          ns.router.replace("/admin/dashboard");
           break;
         case "Member":
-          ns.router.push("/member/dashboard");
+          ns.router.replace("/member/dashboard");
           break;
         case "Owner":
-          ns.router.push("");
+          ns.router.replace("/home");
           break;
+        default:
+          ns.router.replace("/home");
       }
     },
     onError: (err: Error) => {
@@ -77,7 +82,6 @@ export function useLogin() {
 
 export function useLogout() {
   const ns = useAppNameSpace();
-  const router = useRouter();
   return useMutation({
     mutationFn: async () => {
       try {
@@ -93,7 +97,7 @@ export function useLogout() {
         message: "Sampai jumpa lagi!",
         icon: "success",
       });
-      router.replace("/login");
+      ns.router.replace("/login");
     },
     onError: (err: Error) => {
       ns.alert.toast({
@@ -101,14 +105,13 @@ export function useLogout() {
         message: err.message,
         icon: "error",
       });
-      router.replace("/login");
+      ns.router.replace("/login");
     },
   });
 }
 
 export function useRegister() {
   const ns = useAppNameSpace();
-  const router = useRouter();
 
   return useMutation<
     TResponse<SafeAuthUser>,
@@ -123,7 +126,7 @@ export function useRegister() {
         message: res.message,
         icon: "success",
       });
-      router.replace("/");
+      ns.router.replace("/");
     },
     onError: (err: Error) => {
       ns.alert.toast({
@@ -188,7 +191,12 @@ export function useSendMagicLink() {
 export function useForgotPassword() {
   const ns = useAppNameSpace();
 
-  return useMutation<TResponse<null>,Error,PickForgotPassword,AuthCacheContext>({
+  return useMutation<
+    TResponse<null>,
+    Error,
+    PickForgotPassword,
+    AuthCacheContext
+  >({
     mutationFn: (payload) => Api.Auth.ForgotPassword(payload),
     onSuccess: (res) => {
       ns.alert.toast({
@@ -209,9 +217,13 @@ export function useForgotPassword() {
 
 export function useResetPassword() {
   const ns = useAppNameSpace();
-  const router = useRouter();
 
-  return useMutation<TResponse<null>,Error,PickResetPassword,AuthCacheContext>({
+  return useMutation<
+    TResponse<null>,
+    Error,
+    PickResetPassword,
+    AuthCacheContext
+  >({
     mutationFn: (payload) => Api.Auth.ResetPassword(payload),
     onSuccess: (res) => {
       ns.alert.toast({

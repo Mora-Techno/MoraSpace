@@ -1,5 +1,5 @@
-import DashboardMemberContainer from './_container/dashboard';
+import DashboardContainer from "./_containers/dashboard";
 
-export default function DashboardMember() {
-  return <DashboardMemberContainer />;
+export default function DashboardPage() {
+  return <DashboardContainer />;
 }
