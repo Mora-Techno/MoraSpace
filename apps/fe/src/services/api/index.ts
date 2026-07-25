@@ -1,4 +1,12 @@
-import ApiServicePackage from '@repo/services';
+import { setTokenProvider } from "@repo/services";
+
+import ApiServicePackage from "@repo/services";
+
+import { loadAuthSession } from "@/utils/storage";
+
+if (typeof window !== "undefined") {
+  setTokenProvider(() => loadAuthSession()?.accessToken);
+}
 
 const Api = {
   Auth: ApiServicePackage.Auth,
