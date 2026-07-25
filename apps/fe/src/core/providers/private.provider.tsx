@@ -80,7 +80,9 @@ export default function PrivateProviders({
 
         // Jika session baru saja diperbarui (misal setelah login), langsung izinkan masuk tanpa memanggil RefreshToken ulang
         const isRecentlyUpdated =
-          stored.updatedAt && Date.now() - stored.updatedAt < 5 * 60 * 1000;
+          stored.accessToken &&
+          stored.updatedAt &&
+          Date.now() - stored.updatedAt < 5 * 60 * 1000;
 
         if (isRecentlyUpdated) {
           if (!cancelled) {

@@ -2,6 +2,7 @@ import { getCookie } from "cookies-next";
 
 import { env } from "@/configs";
 import { APP_SESSION_COOKIE_KEY } from "@/configs";
+import { loadAuthSession } from "@/utils/storage";
 import type { TErrorResponse, TResponse } from "@/types/api/response";
 
 const BASE_URL = env.NEXT_PUBLIC_BACKEND_URL;
@@ -18,6 +19,12 @@ function getAuthHeaders(): Record<string, string> {
     "Content-Type": "application/json",
     "x-internal-api-key": internalApiKey,
   };
+
+  const sessionToken = loadAuthSession()?.accessToken;
+  if (sessionToken) {
+    headers.Authorization = `Bearer ${sessionToken}`;
+    return headers;
+  }
 
   const token = getCookie(APP_SESSION_COOKIE_KEY);
   if (typeof token === "string" && token) {
