@@ -1,11 +1,15 @@
-'use client';
+"use client";
 
-import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/atoms';
-import { AppSidebar } from '@/core/components/app-sidebar';
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/atoms";
+import { AppSidebar } from "@/core/components/app-sidebar";
 
-import LanguageDropdown from '../components/language.dropdown';
-import NotificationDropdown from '../components/notification.dropdown';
-import ThemeToggle from '../components/theme-toggle';
+import LanguageDropdown from "../components/language.dropdown";
+import NotificationDropdown from "../components/notification.dropdown";
+import ThemeToggle from "../components/theme-toggle";
 // import UserDropdown from '../components/user.dropdown';
 
 // import AppBar from "../components/app-bar";
@@ -38,7 +42,7 @@ export function SidebarLayout({ children }: AppLayoutProps) {
           <div className="flex h-full flex-col w-full">
             <div className="flex p-4 items-center gap-2 border-b w-full h-20">
               <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
-                <SidebarTrigger />
+                <SidebarTrigger className="hidden md:inline-flex" />
                 <div className="flex items-center gap-4">
                   <ThemeToggle />
                   <LanguageDropdown />
@@ -50,7 +54,9 @@ export function SidebarLayout({ children }: AppLayoutProps) {
 
             {/* Content */}
             <div className="flex-1 overflow-auto w-full">
-              <div className="container h-full max-w-7xl w-full mx-auto p-[1rem]">{children}</div>
+              <div className="container h-full max-w-7xl w-full mx-auto p-4">
+                {children}
+              </div>
             </div>
           </div>
         </SidebarInset>

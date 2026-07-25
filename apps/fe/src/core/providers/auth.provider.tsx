@@ -39,17 +39,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.replace("/login");
       return;
     }
-
-    // if (authenticated) {
-    //   if (role === "admin") {
-    //     router.replace("/admin/dashboard");
-    //   } else if (role === "member") {
-    //     router.replace("/member/dashboard");
-    //   } else {
-    //     router.replace("/home");
-    //   }
-    //   return;
-    // }
   }, [loading, authenticated, pathname, router, role]);
 
   if (loading) return null;
