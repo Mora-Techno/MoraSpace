@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { GoogleSvg } from "@/components/atoms/svg";
 import { RegisterCard } from "@/components/molecules";
 import { GhibliCard } from "@/components/molecules/ghibli-card";
 import { LoginFormSection } from "@/components/page/auth";

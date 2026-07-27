@@ -7,7 +7,7 @@ import {
   UpdateSubscriptionDto,
 } from "@/dto/company.dto";
 import type { AppContext } from "@/contex";
-import { verifyToken, requireRole } from "@/middlewares/auth";
+import { verifyToken } from "@/middlewares/auth";
 
 class CompanyRouter {
   public companyRouter;

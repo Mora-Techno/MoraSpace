@@ -1,10 +1,15 @@
 import Link from "next/link";
-
 import { PageHeader } from "@/components/molecules/page-header";
-
-import { QuickAddFab } from "@/components/page/private/member/dashboard/quick-add.fab";
+import { QuickAddFab } from "@/components/molecules/quick-add.fab";
 import { TodayTodosWidget } from "@/components/page/private/member/dashboard/today-todos.widget";
 import { UpcomingEventsWidget } from "@/components/page/private/member/dashboard/upcoming-events.widget";
+import {
+  PickCreateNote,
+  PickCreateTodo,
+  PickRegisterCompany,
+} from "@repo/types";
+import React from "react";
+import { modeQuick } from "@/app/(private)/member/dashboard/_containers/dashboard";
 
 interface DashboardMemberSectionProps {
   template: {
@@ -12,18 +17,66 @@ interface DashboardMemberSectionProps {
     message: string;
     gridRef: any;
   };
+  state: {
+    formCreateTodo: PickCreateTodo;
+    setFormCreateTodo: React.Dispatch<React.SetStateAction<PickCreateTodo>>;
+    formCreateNote: PickCreateNote;
+    setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
+    formCreateCompany: PickRegisterCompany;
+    setFormCreateCompany: React.Dispatch<
+      React.SetStateAction<PickRegisterCompany>
+    >;
+    mode: modeQuick;
+    setMode: React.Dispatch<React.SetStateAction<modeQuick>>;
+    showPasswordCompany: boolean;
+    setShowPasswordCompany: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  service: {
+    handleSubmit: (e: React.FormEvent) => void;
+    isPending: boolean;
+  };
 }
 const DashboardMemberSection: React.FC<DashboardMemberSectionProps> = ({
   template,
+  state,
+  service,
 }) => {
   const gridRef = template.gridRef;
+  const {
+    formCreateNote,
+    formCreateTodo,
+    setFormCreateNote,
+    setFormCreateTodo,
+    mode,
+    setMode,
+    setShowPasswordCompany,
+    showPasswordCompany,
+    formCreateCompany,
+    setFormCreateCompany,
+  } = state;
+  const { handleSubmit, isPending } = service;
   return (
     <section className="w-full min-h-screen ">
       <div className="animate-in fadei-n duration-700">
         <PageHeader
           title="Dashboard"
           description="Ringkasan produktivitasmu hari ini — seperti pagi di pedesaan Ghibli."
-          action={<QuickAddFab />}
+          action={
+            <QuickAddFab
+              formCreateNote={formCreateNote}
+              formCreateTodo={formCreateTodo}
+              setFormCreateNote={setFormCreateNote}
+              setFormCreateTodo={setFormCreateTodo}
+              mode={mode}
+              setMode={setMode}
+              handleSubmit={handleSubmit}
+              isPending={isPending}
+              formCreateCompany={formCreateCompany}
+              setFormCreateCompany={setFormCreateCompany}
+              setShowPasswordCompany={setShowPasswordCompany}
+              showPasswordCompany={showPasswordCompany}
+            />
+          }
         />
 
         <div

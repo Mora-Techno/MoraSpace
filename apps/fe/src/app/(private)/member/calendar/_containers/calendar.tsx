@@ -1,10 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-
 import { Calendar } from "@/components/atoms/calendar";
 import { PageHeader } from "@/components/molecules/page-header";
-
 import { EventFormSection } from "@/components/page/private/member/calendar/event-form.section";
 import { EventListSection } from "@/components/page/private/member/calendar/event-list.section";
 

@@ -1,0 +1,126 @@
+import { Plus } from "lucide-react";
+
+import { Button } from "@/components/atoms";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/atoms/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/atoms/sheet";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/utils/classname";
+import QuickAddForm from "./form/quick-form";
+import {
+  PickCreateNote,
+  PickCreateTodo,
+  PickRegisterCompany,
+} from "@repo/types";
+import { modeQuick } from "@/app/(private)/member/dashboard/_containers/dashboard";
+interface QuickAddFabProps {
+  formCreateTodo: PickCreateTodo;
+  setFormCreateTodo: React.Dispatch<React.SetStateAction<PickCreateTodo>>;
+  formCreateNote: PickCreateNote;
+  setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
+  formCreateCompany: PickRegisterCompany;
+  setFormCreateCompany: React.Dispatch<
+    React.SetStateAction<PickRegisterCompany>
+  >;
+  showPasswordCompany: boolean;
+  setShowPasswordCompany: React.Dispatch<React.SetStateAction<boolean>>;
+  mode: modeQuick;
+  setMode: React.Dispatch<React.SetStateAction<modeQuick>>;
+  handleSubmit: (e: React.FormEvent) => void;
+  isPending: boolean;
+}
+export function QuickAddFab({
+  formCreateNote,
+  formCreateTodo,
+  setFormCreateNote,
+  setFormCreateTodo,
+  mode,
+  setMode,
+  handleSubmit,
+  isPending,
+  setShowPasswordCompany,
+  showPasswordCompany,
+  formCreateCompany,
+  setFormCreateCompany,
+}: QuickAddFabProps) {
+  const isMobile = useIsMobile();
+  const title = "Tambah Cepat";
+
+  if (isMobile) {
+    return (
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            size="icon"
+            className={cn(
+              "ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg md:hidden",
+            )}
+          >
+            <Plus className="size-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetHeader>
+            <SheetTitle className="font-serif">{title}</SheetTitle>
+          </SheetHeader>
+          <div className="px-4 pb-6">
+            <QuickAddForm
+              formCreateNote={formCreateNote}
+              formCreateTodo={formCreateTodo}
+              setFormCreateNote={setFormCreateNote}
+              setFormCreateTodo={setFormCreateTodo}
+              mode={mode}
+              setMode={setMode}
+              handleSubmit={handleSubmit}
+              isPending={isPending}
+              formCreateCompany={formCreateCompany}
+              setFormCreateCompany={setFormCreateCompany}
+              setShowPasswordCompany={setShowPasswordCompany}
+              showPasswordCompany={showPasswordCompany}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button className="ghibli-btn hidden md:inline-flex">
+          <Plus className="size-4" /> Quick Add
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="ghibli-glass sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="font-serif">{title}</DialogTitle>
+        </DialogHeader>
+        <QuickAddForm
+          formCreateNote={formCreateNote}
+          formCreateTodo={formCreateTodo}
+          setFormCreateNote={setFormCreateNote}
+          setFormCreateTodo={setFormCreateTodo}
+          mode={mode}
+          setMode={setMode}
+          handleSubmit={handleSubmit}
+          isPending={isPending}
+          formCreateCompany={formCreateCompany}
+          setFormCreateCompany={setFormCreateCompany}
+          setShowPasswordCompany={setShowPasswordCompany}
+          showPasswordCompany={showPasswordCompany}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
