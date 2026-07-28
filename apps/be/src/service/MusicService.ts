@@ -4,9 +4,9 @@ import type { PickCreatePlaylist } from "@repo/types/music.types";
 function mapPlaylist(playlist: {
   id: string;
   name: string;
-  items: { title: string; youtubeUrl: string }[];
+  items?: { title: string; youtubeUrl: string }[];
 }) {
-  const firstItem = playlist.items[0];
+  const firstItem = playlist.items?.[0];
   return {
     id: playlist.id,
     title: firstItem?.title ?? playlist.name,
@@ -17,7 +17,8 @@ function mapPlaylist(playlist: {
 
 class MusicService {
   public async list(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     query: {
       search?: string;
       page?: number;
@@ -30,24 +31,26 @@ class MusicService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyMemberId };
+    const where: Record<string, unknown> = companyMemberId
+      ? { companyMemberId }
+      : { userId };
 
     if (query.search) {
       where.name = { contains: query.search, mode: "insensitive" };
     }
 
-    const orderBy: Record<string, unknown> = {};
+    const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
     } else {
-      orderBy.createdAt = "asc";
+      orderBy.push({ createdAt: "asc" });
     }
 
     const [totalData, data] = await prisma.$transaction([
       prisma.playlist.count({ where: where as any }),
       prisma.playlist.findMany({
         where: where as any,
-        orderBy,
+        orderBy: orderBy as any,
         take: limit,
         skip: skip,
       }),
@@ -66,27 +69,45 @@ class MusicService {
     };
   }
 
-  public async create(companyMemberId: string, input: PickCreatePlaylist) {
-    const playlist = await prisma.playlist.create({
-      data: {
-        companyMemberId,
-        name: input.title,
-        items: {
-          create: {
-            title: input.title,
-            youtubeUrl: input.url,
-          },
+  public async create(
+    companyMemberId: string | null,
+    userId: string,
+    input: PickCreatePlaylist,
+  ) {
+    const data: Record<string, unknown> = {
+      name: input.title,
+      items: {
+        create: {
+          title: input.title,
+          youtubeUrl: input.url,
         },
       },
+    };
+    if (companyMemberId) {
+      data.companyMemberId = companyMemberId;
+    } else {
+      data.userId = userId;
+    }
+
+    const playlist = await prisma.playlist.create({
+      data: data as any,
       include: { items: true },
     });
 
     return mapPlaylist(playlist);
   }
 
-  public async remove(id: string, companyMemberId: string) {
+  public async remove(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { id, companyMemberId }
+      : { id, userId };
+
     const existing = await prisma.playlist.findFirst({
-      where: { id, companyMemberId },
+      where: where as any,
       include: { items: true },
     });
     if (!existing) return null;

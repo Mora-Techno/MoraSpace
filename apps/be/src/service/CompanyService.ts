@@ -5,6 +5,7 @@ import { getPeriodEnd } from "@/config/subscriptionPlans";
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
+  PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import { sanitizeUser } from "@/utils/authTokens";
@@ -404,6 +405,27 @@ class CompanyService {
         data: { subscriptionId: subscription.id },
       });
     });
+  }
+
+  public async updateProfile(
+    companyId: string,
+    input: PickUpdateCompanyProfile,
+  ) {
+    const data: Record<string, string> = {};
+    if (input.logo !== undefined) data.logo = input.logo;
+    if (input.country !== undefined) data.country = input.country;
+
+    if (Object.keys(data).length === 0) {
+      throw new Error("Tidak ada data yang diperbarui");
+    }
+
+    const company = await prisma.company.update({
+      where: { id: companyId },
+      data,
+    });
+
+    if (!company) return null;
+    return company;
   }
 }
 

@@ -8,7 +8,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/atoms/dialog';
+} from '@/components/atoms/Dialog';
 import { ModalProps } from '@/types/ui';
 
 const iconMap = {

@@ -4,6 +4,7 @@ import {
   CompanyQueryDto,
   CreateAdminDto,
   RegisterCompanyDto,
+  UpdateCompanyProfileDto,
   UpdateSubscriptionDto,
 } from "@/dto/company.dto";
 import type { AppContext } from "@/contex";
@@ -26,7 +27,7 @@ class CompanyRouter {
       (c: AppContext) => CompanyController.register(c),
       {
         body: RegisterCompanyDto,
-        beforeHandle: [verifyToken().beforeHandle],
+
         detail: {
           summary: "Daftar company + leader",
           description:
@@ -68,6 +69,19 @@ class CompanyRouter {
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Profil company saat ini",
+          tags: ["Companies"],
+        },
+      },
+    );
+    this.companyRouter.patch(
+      "/profile",
+      (c: AppContext) => CompanyController.updateProfile(c),
+      {
+        body: UpdateCompanyProfileDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Update logo & country perusahaan",
+          description: "Memperbarui logo URL dan/atau negara perusahaan.",
           tags: ["Companies"],
         },
       },

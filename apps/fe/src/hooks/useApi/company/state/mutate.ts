@@ -4,15 +4,14 @@ import {
   CompanyProfile,
   PickCreateAdmin,
   PickRegisterCompany,
+  PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import { useMutation } from "@tanstack/react-query";
-
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import { saveTokens } from "@/server/auth-cookie";
 import Api from "@/services/api";
 import { persistAuthSessionFromResponse } from "@/utils/storage";
-
 import {
   CompanyCacheContext,
   companyRooyKey,
@@ -33,7 +32,6 @@ export function useRegisterCompany() {
       return { previousData: readCompanySnapshot(ns) };
     },
     onSuccess: async (res) => {
-      // Save new tokens with Owner role returned from BE
       const data = res.data as unknown as Record<string, unknown>;
       const accessToken =
         typeof data.accessToken === "string" ? data.accessToken : undefined;
@@ -57,10 +55,10 @@ export function useRegisterCompany() {
         title: res.message,
         message: res.message,
         icon: "success",
+        onVoid: () => {
+          ns.router.push("/addDoc");
+        },
       });
-
-      // Redirect to Owner dashboard
-      ns.router.replace("/owner/dashboard");
     },
     onSettled: async () => {
       await ns.queryClient.invalidateQueries({
@@ -142,4 +140,31 @@ export function useUpdateCompanySubscription() {
     },
   });
 }
+
+export function useUpdateCompanyProfile() {
+  const ns = useAppNameSpace();
+  return useMutation<
+    TResponse<CompanyProfile>,
+    Error,
+    PickUpdateCompanyProfile,
+    CompanyCacheContext
+  >({
+    mutationFn: (payload) => Api.Company.UpdateCompanyProfile(payload),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        title: res.message,
+        message: res.message,
+        icon: "success",
+      });
+    },
+    onError: (err) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
+      });
+    },
+  });
+}
+
 // all

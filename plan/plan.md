@@ -1,194 +1,66 @@
-# Plan: Menyamakan Fitur Owner dengan Member
+# ROLE & OBJECTIVE
 
-## Masalah
+You are an Principal Frontend Engineer and UI/UX Architect specializing in high-performance B2B SaaS applications.
+Your task is to build a visually stunning, responsive, and interactive "Owner Dashboard" (Company Command Center) for "Spaces"—an enterprise workspace and productivity platform.
 
-Saat ini setelah login, halaman owner hanya memiliki `dashboard/`, sedangkan member memiliki 6 fitur:
+# TECH STACK & LIBRARIES
 
-| Member                    | Owner           |
-| ------------------------- | --------------- |
-| `dashboard/`              | `dashboard/` ✅ |
-| `calendar/`               | ❌              |
-| `music/`                  | ❌              |
-| `notes/` (+ `notes/[id]`) | ❌              |
-| `settings/`               | ❌              |
-| `todos/`                  | ❌              |
+1. Framework: Next.js (App Router) / React with TypeScript.
+2. UI Component Library: shadcn/ui (using Tailwind CSS for styling).
+3. Icons: Lucide React.
+4. Charts & Analytics: Recharts.
+5. Smooth Scrolling: Studio Freight Lenis (`@studio-freight/react-lenis` or `@studio-freight/lenis`).
+6. Animations: GSAP (GreenSock Animation Platform) using `@gsap/react` hook (`useGSAP`) for memory-safe timeline animations.
+7. Tailwind Variabel & Theme Provinder
 
-## Analisis
+# DESIGN SYSTEM & AESTHETICS
 
-- **Backend API** sudah lengkap untuk semua fitur (todo, calendar, notes, music, settings, member).
-- **Shared components** di `components/page/private/member/*` sudah mature dan bisa di-reuse langsung oleh owner.
-- **Shared hooks & API** (`useApi`, `@repo/types`, `@repo/shared`) tidak terkait role — bisa dipakai siapa saja.
-- Satu-satunya perbedaan adalah **routing** (`/member/*` vs `/owner/*`) dan **authorization middleware** di level layout/guard.
+- Vibe: Executive, sleek, modern, clean, and highly professional (think Linear, Vercel, or Stripe dashboards).
+- Layout: Asymmetrical Bento Grid layout to maximize information density without feeling cluttered.
+- Visual Polish: Subtle glassmorphism, refined border grids (`border-border/40`), glowing accents for AI features, and clean typography.
+- UI Language: Indonesian (for dashboard labels, titles, and mock data content).
 
-## Strategi Pendekatan
+# REQUIRED WIDGETS & FEATURES
 
-Ada 2 opsi pendekatan:
+Please build the dashboard with realistic, rich mock data featuring these exact 6 modules:
 
-### Opsi A: Duplikasi Container → Reuse Component (Direkomendasikan ✅)
+1. Executive KPI Summary Cards (Top Row)
+   - 4 Stats Cards:
+     a. Seat Utilization (e.g., "32 / 40 Seats", with a shadcn Progress bar).
+     b. Company Productivity Rate (e.g., "88.4%", badge "+5.2% dari minggu lalu").
+     c. Task Health Overview (e.g., "142 Active, 12 Overdue").
+     d. Total Deep Work / Pomodoro Hours (e.g., "420 Jam minggu ini").
 
-Buat file container baru di `(private)/owner/*` yang **meng-import ulang komponen yang sama** dari member.
+2. AI Executive Insights Banner (High-Priority Widget)
+   - A distinct, visually highlighted callout card with subtle glowing borders or gradient background representing an AI Assistant briefing.
+   - Content: Automated business insight (e.g., "🤖 AI Briefing: Tim Engineering mencapai efisiensi 92%, namun Tim Marketing mengalami bottleneck pada 3 campaign utama. Disarankan meninjau ulang beban meeting mingguan.").
 
-**Kenapa?**
+3. Team & Department Analytics (Recharts Section)
+   - Widget A (Bar/Area Chart): "Produktivitas per Divisi" comparing tasks completed vs. pending across Engineering, Product, Marketing, HR, and Finance.
+   - Widget B (Donut/Pie Chart): "Distribusi Status Tugas" (Completed, In Progress, Review, Blocked) with a clean custom tooltip and legend.
+   - Must use `<ResponsiveContainer width="100%" height={300}>` for Recharts to ensure responsiveness.
 
-- Route terpisah → guard/permission owner bisa berbeda suatu saat nanti
-- Zero risk regresi ke member
-- Container file sangat kecil (~5-10 baris)
-- Komponen bisnis tetap DRY (semua logika di `components/page/private/*`)
+4. Financial & Subscription Status (Billing Widget)
+   - Display: Current Plan ("Pro Tier - Yearly"), Renewal Date, Total Monthly Spend, and an action button `<Button variant="outline">Upgrade Plan</Button>`.
 
-### Opsi B: Satu Layout dengan Role Guard
+5. Actionable Governance / Pending Approvals
+   - An interactive list of pending requests requiring the Owner's approval (e.g., Cuti bulanan, WFH request, Budget approval, Member invitation).
+   - Include quick-action buttons: "Approve" (primary/green accent) and "Reject" (destructive/outline).
 
-Satu route `/dashboard`, `/todos`, dll. lalu layout membaca role user.
+6. Live Company Activity Feed
+   - A scrollable, timeline-style list of system and user audit logs (e.g., "Budi menyelesaikan milestone Fluxo App", "Siti mengundang 2 engineer baru").
 
-**Tidak direkomendasikan** karena:
+# TECHNICAL & ANIMATION REQUIREMENTS (GSAP + LENIS)
 
-- Percampuran guard authorization di level routing jadi kompleks
-- Owner mungkin butuh fitur tambahan nanti (company management, teams, member CRUD)
-- Perubahan layout member bisa berdampak ke owner tanpa sengaja
+1. Lenis Setup: Wrap the dashboard view or main container with Lenis to ensure ultra-smooth inertia scrolling across the executive dashboard.
+2. GSAP Entrance Animations:
+   - Use the `useGSAP` hook from `@gsap/react`.
+   - Create a timeline (`gsap.timeline()`) that animates the layout on initial load.
+   - The KPI cards and Bento Grid items must enter using a `stagger` effect (e.g., `from({ opacity: 0, y: 30, scale: 0.98 })` to `to({ opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" })`).
+   - Assign a specific ref or class selector (e.g., `.gsap-widget`) to all card containers for clean staggering.
+3. Memory Management: Ensure all GSAP animations are properly scoped within `useGSAP` to prevent React re-render memory leaks.
+4. Component Structure: Write clean, modular code. Implement proper TypeScript interfaces for all mock data structures. Use standard shadcn components (`Card`, `CardHeader`, `CardTitle`, `CardContent`, `Button`, `Badge`, `Avatar`, `Progress`, `Separator`).
 
-## Langkah Implementasi
+# OUTPUT EXPECTATION
 
-### Langkah 1: Buat halaman owner yang mirip member
-
-Buat struktur folder owner mengikuti pola member:
-
-```
-apps/fe/src/app/(private)/owner/
-├── dashboard/             # ✅ sudah ada
-├── calendar/
-│   ├── page.tsx
-│   └── _containers/
-│       └── calendar.tsx
-├── music/
-│   ├── page.tsx
-│   └── _containers/
-│       └── music.tsx
-├── notes/
-│   ├── page.tsx
-│   ├── _containers/
-│   │   ├── notes.tsx
-│   │   └── note-detail.tsx
-│   └── [id]/
-│       └── page.tsx
-├── settings/
-│   ├── page.tsx
-│   └── _containers/
-│       └── settings.tsx
-└── todos/
-    ├── page.tsx
-    └── _containers/
-        └── todos.tsx
-```
-
-Setiap container owner akan **meng-import dan me-render langsung komponen member**.
-
-Contoh pola [`owner/calendar/_containers/calendar.tsx`](<Space/apps/fe/src/app/(private)/owner/calendar/_containers/calendar.tsx>):
-
-```tsx
-"use client";
-
-// Reuse member component
-export { default } from "@/app/(private)/member/calendar/_containers/calendar";
-```
-
-Atau jika ingin membungkus dengan layout/wrapper owner:
-
-```tsx
-"use client";
-
-import MemberCalendar from "@/app/(private)/member/calendar/_containers/calendar";
-
-export default function OwnerCalendarContainer() {
-  return (
-    <div data-role="owner">
-      <MemberCalendar />
-    </div>
-  );
-}
-```
-
-Untuk halaman yang komplex seperti [`dashboard`](<Space/apps/fe/src/app/(private)/owner/dashboard/_container/dashboard.tsx>), tetap bisa dibuat container sendiri yang meng-import [`DashboardMemberSection`](Space/apps/fe/src/components/page/private/member/dashboard/dashboard-section.tsx).
-
-### Langkah 2: Update Navigation Config
-
-File [`nav.config.ts`](Space/apps/fe/src/configs/nav.config.ts) saat ini hardcode ke `/member/*`. Perlu dibuat role-aware:
-
-```ts
-// Bisa menggunakan 2 strategi:
-
-// Strategi A — nav items terpisah per role
-export const OWNER_NAV_ITEMS: NavItem[] = [
-  { title: "Dashboard", url: "/owner/dashboard", icon: Home, mobile: true },
-  { title: "Todos", url: "/owner/todos", icon: CheckSquare, mobile: true },
-  { title: "Notes", url: "/owner/notes", icon: FileText, mobile: true },
-  { title: "Calendar", url: "/owner/calendar", icon: Calendar, mobile: true },
-  { title: "Music", url: "/owner/music", icon: Music2, mobile: false },
-  { title: "Settings", url: "/owner/settings", icon: Settings, mobile: true },
-];
-
-// Strategi B — dynamic URL berdasarkan role
-export const NAV_ITEMS = (role: "member" | "owner") => [
-  { title: "Dashboard", url: `/${role}/dashboard`, icon: Home, mobile: true },
-  { title: "Todos", url: `/${role}/todos`, icon: CheckSquare, mobile: true },
-  // ...etc
-];
-```
-
-### Langkah 3: Update Sidebar & BottomNav
-
-[`AppSidebar`](Space/apps/fe/src/core/components/app-sidebar.tsx) dan [`BottomNav`](Space/apps/fe/src/core/components/bottom-nav.tsx) perlu membaca role user (dari auth context / cookie) untuk memilih nav items yang sesuai.
-
-Contoh di sidebar:
-
-```tsx
-const { user } = useAuth(); // atau dari context
-const role = user?.role ?? "member";
-const items = role === "owner" ? OWNER_NAV_ITEMS : NAV_ITEMS;
-```
-
-### Langkah 4: Update Owner Dashboard (Opsional)
-
-[`OwnerDashboardContainer`](<Space/apps/fe/src/app/(private)/owner/dashboard/_container/dashboard.tsx>) saat ini hanya render [`OwnerDashboardSection`](Space/apps/fe/src/components/page/private/owner/dashboard/OwnerDashboardSection.tsx) yang masih placeholder (`<div>log</div>`).
-
-Bisa langsung direplace dengan container yang reuse [`DashboardMemberSection`](Space/apps/fe/src/components/page/private/member/dashboard/dashboard-section.tsx).
-
-### Langkah 5: Auth Guard / Middleware
-
-Pastikan route `/owner/*` hanya bisa diakses oleh user dengan role `owner`. Bisa via:
-
-- Middleware di level app
-- Guard di [`private.provider.tsx`](Space/apps/fe/src/core/providers/private.provider.tsx)
-- Layout-level check
-
-## Files yang Akan Dimodifikasi
-
-| File                                                                   | Perubahan                                 |
-| ---------------------------------------------------------------------- | ----------------------------------------- |
-| [`nav.config.ts`](Space/apps/fe/src/configs/nav.config.ts)             | Tambah owner nav items / jadikan function |
-| [`app-sidebar.tsx`](Space/apps/fe/src/core/components/app-sidebar.tsx) | Baca role untuk pilih nav items           |
-| [`bottom-nav.tsx`](Space/apps/fe/src/core/components/bottom-nav.tsx)   | Baca role untuk pilih mobile nav items    |
-
-## Files yang Akan Dibuat (Baru)
-
-| File                                      | Sumber                     |
-| ----------------------------------------- | -------------------------- |
-| `owner/calendar/page.tsx`                 | reuse pattern member       |
-| `owner/calendar/_containers/calendar.tsx` | re-export member container |
-| `owner/music/page.tsx`                    | re-export member           |
-| `owner/music/_containers/music.tsx`       | re-export member container |
-| `owner/notes/page.tsx`                    | re-export member           |
-| `owner/notes/_containers/notes.tsx`       | re-export member container |
-| `owner/notes/_containers/note-detail.tsx` | re-export member container |
-| `owner/notes/[id]/page.tsx`               | re-export member           |
-| `owner/settings/page.tsx`                 | re-export member           |
-| `owner/settings/_containers/settings.tsx` | re-export member container |
-| `owner/todos/page.tsx`                    | re-export member           |
-| `owner/todos/_containers/todos.tsx`       | re-export member container |
-
-## Ringkasan
-
-Pendekatan ini meminimalkan perubahan kode dengan:
-
-1. **Reuse** seluruh komponen member (tidak ada duplikasi logika)
-2. **Re-export** container owner yang tipis (hanya import ulang)
-3. **Role-aware nav** via satu config point
-4. **Route terpisah** untuk fleksibilitas guard/permission owner di masa depan
+Generate the complete, functional, and clean TypeScript React code for this Owner Dashboard page. The code should be ready to paste and render immediately with mock data included.

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { Button } from '@/components/atoms';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
 import { useCreateTodo } from '@/hooks/useApi/todo';
 
 export function TodoFormSection({

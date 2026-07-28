@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { PageHeader } from "@/components/molecules/page-header";
+import { PageHeader } from "@/components/molecules/PageHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useApi } from "@/hooks/useApi/useApi";
 

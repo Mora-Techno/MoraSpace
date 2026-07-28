@@ -4,12 +4,12 @@ import { HttpResponse } from "@/http";
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
+  PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import type { AppContext } from "@/contex";
 import { unauthorizedValidate } from "@/validation/auth.validate";
 import { CreateAdminValidate } from "@/validation/company.validate";
-import { isTransportResponse } from "@/utils/transportResponse";
 import { getUser } from "@/utils/authTokens";
 
 class CompanyController {
@@ -19,11 +19,10 @@ class CompanyController {
       const data = await CompanyService.registerLeader(body);
       const queryService = await AuthService.createSession(data.leader.id);
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).created(
-          { company: data.company, leader: data.leader, ...queryService },
-          "Company dan akun leader berhasil dibuat",
-        );
+      return HttpResponse(c).created(
+        { company: data.company, leader: data.leader, ...queryService },
+        "Company dan akun leader berhasil dibuat",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -54,8 +53,7 @@ class CompanyController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).created(queryService, "Admin berhasil dibuat");
+      return HttpResponse(c).created(queryService, "Admin berhasil dibuat");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -112,7 +110,29 @@ class CompanyController {
     }
   }
 
-  // Role [Admin]
+  public async updateProfile(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const body = c.body as PickUpdateCompanyProfile;
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound("Company tidak ditemukan");
+      }
+
+      const data = await CompanyService.updateProfile(user.companyId, body);
+
+      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
+
+      return HttpResponse(c).ok(data, "Profil company berhasil diperbarui");
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  // Role owner
   public async updateSubscription(c: AppContext) {
     try {
       const user = getUser(c);

@@ -5,23 +5,23 @@ import { cva, VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "@/components/atoms/button";
-import { Input } from "@/components/atoms/input";
-import { Separator } from "@/components/atoms/separator";
+import { Button } from "@/components/atoms/Button";
+import { Input } from "@/components/atoms/Input";
+import { Separator } from "@/components/atoms/Separator";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/atoms/sheet";
-import { Skeleton } from "@/components/atoms/skeleton";
+} from "@/components/atoms/Sheet";
+import { Skeleton } from "@/components/atoms/Skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/atoms/tooltip";
+} from "@/components/atoms/Tooltip";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/utils/classname";
 

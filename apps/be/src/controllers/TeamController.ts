@@ -12,7 +12,6 @@ import type {
   PickAddTeamMember,
 } from "@repo/types/team.types";
 import type { PickInviteMember } from "@repo/types/workstation.types";
-import { isTransportResponse } from "@/utils/transportResponse";
 
 class TeamController {
   public async list(c: AppContext) {
@@ -194,11 +193,10 @@ class TeamController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService,
-          "Karyawan berhasil diinvite ke workstation",
-        );
+      return HttpResponse(c).ok(
+        queryService,
+        "Karyawan berhasil diinvite ke workstation",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

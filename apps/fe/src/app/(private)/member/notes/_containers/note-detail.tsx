@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/page-header";
+import { PageHeader } from "@/components/molecules/PageHeader";
 
 import { NoteEditorSection } from "@/components/page/private/member/notes/note-editor.section";
 

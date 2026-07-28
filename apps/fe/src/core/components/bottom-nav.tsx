@@ -13,7 +13,7 @@ export function BottomNav() {
 
   const mobileNavItems = useMemo(() => {
     const role = loadAuthSession()?.role;
-    return getMobileNavItems(role);
+    return getMobileNavItems(role?.toLocaleLowerCase());
   }, []);
 
   return (

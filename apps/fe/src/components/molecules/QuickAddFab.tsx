@@ -7,34 +7,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/atoms/dialog";
+} from "@/components/atoms/Dialog";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/sheet";
+} from "@/components/atoms/Sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/utils/classname";
-import QuickAddForm from "./form/quick-form";
+import QuickAddForm from "./form/QuickForm";
 import {
   PickCreateNote,
   PickCreateTodo,
   PickRegisterCompany,
 } from "@repo/types";
-import { modeQuick } from "@/app/(private)/member/dashboard/_containers/dashboard";
+export type modeQuick = "todo" | "note";
+
 interface QuickAddFabProps {
   formCreateTodo: PickCreateTodo;
   setFormCreateTodo: React.Dispatch<React.SetStateAction<PickCreateTodo>>;
   formCreateNote: PickCreateNote;
   setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
-  formCreateCompany: PickRegisterCompany;
-  setFormCreateCompany: React.Dispatch<
-    React.SetStateAction<PickRegisterCompany>
-  >;
-  showPasswordCompany: boolean;
-  setShowPasswordCompany: React.Dispatch<React.SetStateAction<boolean>>;
+
   mode: modeQuick;
   setMode: React.Dispatch<React.SetStateAction<modeQuick>>;
   handleSubmit: (e: React.FormEvent) => void;
@@ -49,10 +45,6 @@ export function QuickAddFab({
   setMode,
   handleSubmit,
   isPending,
-  setShowPasswordCompany,
-  showPasswordCompany,
-  formCreateCompany,
-  setFormCreateCompany,
 }: QuickAddFabProps) {
   const isMobile = useIsMobile();
   const title = "Tambah Cepat";
@@ -84,10 +76,6 @@ export function QuickAddFab({
               setMode={setMode}
               handleSubmit={handleSubmit}
               isPending={isPending}
-              formCreateCompany={formCreateCompany}
-              setFormCreateCompany={setFormCreateCompany}
-              setShowPasswordCompany={setShowPasswordCompany}
-              showPasswordCompany={showPasswordCompany}
             />
           </div>
         </SheetContent>
@@ -115,10 +103,6 @@ export function QuickAddFab({
           setMode={setMode}
           handleSubmit={handleSubmit}
           isPending={isPending}
-          formCreateCompany={formCreateCompany}
-          setFormCreateCompany={setFormCreateCompany}
-          setShowPasswordCompany={setShowPasswordCompany}
-          showPasswordCompany={showPasswordCompany}
         />
       </DialogContent>
     </Dialog>

@@ -4,7 +4,7 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import { Button } from '@/components/atoms/button';
+import { Button } from '@/components/atoms/Button';
 
 const NotFound = () => {
   const router: AppRouterInstance = useRouter();

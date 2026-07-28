@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 
 import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { useCreateEvent } from "@/hooks/useApi/calendar";
 import type { EventQuery } from "@repo/types";
 

@@ -23,7 +23,8 @@ function mapTodo(todo: {
 
 class TodoService {
   public async list(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     query: TodoQuery & {
       search?: string;
       page?: number;
@@ -38,9 +39,12 @@ class TodoService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {
-      companyMemberId,
-    };
+    const where: Record<string, unknown> = {};
+    if (companyMemberId) {
+      where.companyMemberId = companyMemberId;
+    } else {
+      where.userId = userId;
+    }
 
     if (query.search) {
       where.title = { contains: query.search, mode: "insensitive" };
@@ -66,19 +70,19 @@ class TodoService {
       };
     }
 
-    const orderBy: Record<string, unknown> = {};
+    const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
     } else {
-      orderBy.completed = "asc";
-      orderBy.dueDate = "asc";
+      orderBy.push({ completed: "asc" });
+      orderBy.push({ dueDate: "asc" });
     }
 
     const [totalData, todos] = await prisma.$transaction([
       prisma.todo.count({ where: where as any }),
       prisma.todo.findMany({
         where: where as any,
-        orderBy,
+        orderBy: orderBy as any,
         take: limit,
         skip: skip,
       }),
@@ -97,13 +101,23 @@ class TodoService {
     };
   }
 
-  public async create(companyMemberId: string, input: PickCreateTodo) {
+  public async create(
+    companyMemberId: string | null,
+    userId: string,
+    input: PickCreateTodo,
+  ) {
+    const data: Record<string, unknown> = {
+      title: input.text,
+      dueDate: input.dueDate ? new Date(input.dueDate) : null,
+    };
+    if (companyMemberId) {
+      data.companyMemberId = companyMemberId;
+    } else {
+      data.userId = userId;
+    }
+
     const todo = await prisma.todo.create({
-      data: {
-        companyMemberId,
-        title: input.text,
-        dueDate: input.dueDate ? new Date(input.dueDate) : null,
-      },
+      data: data as any,
     });
 
     return mapTodo(todo);
@@ -111,11 +125,19 @@ class TodoService {
 
   public async update(
     id: string,
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     input: PickUpdateTodo,
   ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
     const existing = await prisma.todo.findFirst({
-      where: { id, companyMemberId },
+      where: whereFilter as any,
     });
     if (!existing) return null;
 
@@ -135,9 +157,20 @@ class TodoService {
     return mapTodo(todo);
   }
 
-  public async remove(id: string, companyMemberId: string) {
+  public async remove(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
     const existing = await prisma.todo.findFirst({
-      where: { id, companyMemberId },
+      where: whereFilter as any,
     });
     if (!existing) return null;
 

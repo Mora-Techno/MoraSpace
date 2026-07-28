@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Calendar } from "@/components/atoms/calendar";
-import { PageHeader } from "@/components/molecules/page-header";
+import { Calendar } from "@/components/atoms/Calendar";
+import { PageHeader } from "@/components/molecules/PageHeader";
 import { EventFormSection } from "@/components/page/private/member/calendar/event-form.section";
 import { EventListSection } from "@/components/page/private/member/calendar/event-list.section";
 
@@ -22,8 +22,8 @@ export default function CalendarContainer() {
         description="Jadwalkan agenda dan kelola acara harianmu."
       />
 
-      <div className="grid grid-cols-1 gap-6 md:flex md:gap-8">
-        <div className="ghibli-glass w-full shrink-0 rounded-2xl p-4 md:w-auto">
+      <div className="grid grid-cols-1 gap-6 md:flex md:gap-8 ">
+        <div className="ghibli-glass  w-full shrink-0 rounded-2xl p-4 md:w-auto ">
           <Calendar
             mode="single"
             selected={selectedDate}

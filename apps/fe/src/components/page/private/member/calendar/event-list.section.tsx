@@ -5,8 +5,8 @@ import { id as idLocale } from "date-fns/locale";
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
 import { useDeleteEvent, useEvents } from "@/hooks/useApi/calendar";
 import type { EventQuery } from "@repo/types";
 
