@@ -1,23 +1,30 @@
 /** Mirror Prisma model `MusicPlaylist` */
 export interface IMusicPlaylist {
   id: string;
-  title: string;
-  url: string;
+  name: string;
+  companyMemberId?: string;
+  description: string;
+  userId?: string;
   createdAt: Date;
   updatedAt: Date;
+  items: IMusicPlayListItem[];
 }
 
 export interface IMusicPlayListItem {
   id: string;
   playlistId: string;
+  trackCatalogId?: string | null;
   title: string;
   youtubeUrl: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type MusicPlaylist = Pick<IMusicPlaylist, "id" | "title" | "url"> & {
-  createdAt: string;
+export type MusicPlaylist = Pick<
+  IMusicPlaylist,
+  "id" | "name" | "description" | "createdAt" | "updatedAt"
+> & {
+  items: IMusicPlayListItem[];
 };
 
 export type MusicQuery = {
@@ -28,5 +35,6 @@ export type MusicQuery = {
   sortOrder?: "asc" | "desc";
 };
 
-export type PickCreatePlaylist = Pick<IMusicPlaylist, "title" | "url">;
+export type PickCreatePlaylist = Pick<IMusicPlaylist, "name" | "description">;
+export type PickAddMusicItem = Pick<IMusicPlayListItem, "title" | "youtubeUrl">;
 export type PlaylistParams = Pick<IMusicPlaylist, "id">;

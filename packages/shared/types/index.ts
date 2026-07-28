@@ -57,9 +57,11 @@ export type {
 } from "./calendar.types";
 export type {
   IMusicPlaylist,
+  IMusicPlayListItem,
   MusicPlaylist,
   MusicQuery,
   PickCreatePlaylist,
+  PickAddMusicItem,
   PlaylistParams,
 } from "./music.types";
 export type {
@@ -182,4 +184,12 @@ export type {
   PomodoroQuery,
 } from "./pomodoro.types";
 
+export type {
+  ITrackCatalog,
+  TrackCatalog,
+  TrackCatalogQuery,
+  TrackStatus,
+  PickSubmitTrack,
+  PickReviewTrack,
+} from "./trackCatalog.types";
 export type { RequestStore } from "../../../apps/be/src/types/request.types";

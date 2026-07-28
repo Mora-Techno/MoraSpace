@@ -70,7 +70,7 @@ export default function LoginContainer() {
           <h1 className="text-sm font-semibold text-muted-foreground">
             Atau Masuk Menggunakan
           </h1>
-          {/* Nanti Dipakein Service yang Benar */}
+
           <GoogleSignInButton onSuccess={googleLogin} disabled />
         </div>
         {RegisterConfigRoutes.map((items, key) => {

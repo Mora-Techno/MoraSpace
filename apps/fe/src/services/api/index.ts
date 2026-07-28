@@ -30,6 +30,7 @@ const Api = {
   Task: ApiServicePackage.Task,
   Pomodoro: ApiServicePackage.Pomodoro,
   System: ApiServicePackage.System,
+  TrackCatalog: ApiServicePackage.TrackCatalog,
 } as const;
 
 export default Api;

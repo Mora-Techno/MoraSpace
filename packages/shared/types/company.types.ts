@@ -1,6 +1,6 @@
 import type { IAuth } from "./auth.types";
 
-export type CompanyRole = "Owner" | "Admin" | "Member";
+export type CompanyRole = "Owner" | "Admin" | "Member" | "Developer";
 export type SubscriptionTier = "free" | "pro" | "enterprise";
 export type BillingCycle = "monthly" | "yearly";
 

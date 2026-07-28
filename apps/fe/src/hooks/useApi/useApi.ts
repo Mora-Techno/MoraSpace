@@ -16,6 +16,7 @@ import { useSubscription } from "./subscription/useSubcription";
 import { useTask } from "./task/useTask";
 import { useTeam } from "./team/useTeam";
 import { useTodo } from "./todo/useTodos";
+import { useTrackCatalog } from "./trackCatalog/useTrackCatalog";
 
 export function useApi() {
   return {
@@ -37,5 +38,6 @@ export function useApi() {
     pomodoro: usePomodoro(),
     session: useSession(),
     settings: useSettings(),
+    trackCatalog: useTrackCatalog(),
   };
 }

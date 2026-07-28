@@ -1,6 +1,7 @@
 import Elysia from "elysia";
 import MusicController from "@/controllers/MusicController";
 import {
+  AddItemToPlaylistDto,
   CreatePlaylistDto,
   MusicQueryDto,
   PlaylistParamsDto,
@@ -48,6 +49,34 @@ class MusicRouter {
         detail: {
           summary: "Hapus playlist",
           description: "Menghapus referensi musik dari daftar berdasarkan ID.",
+          tags: ["Music"],
+        },
+      },
+    );
+
+    // ✨ Add / remove music items inside a playlist
+    this.musicRouter.post(
+      "/:id/items",
+      (c: AppContext) => MusicController.addItem(c),
+      {
+        body: AddItemToPlaylistDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Tambah musik ke playlist",
+          description:
+            "Menambahkan lagu (title + youtubeUrl) ke dalam playlist.",
+          tags: ["Music"],
+        },
+      },
+    );
+    this.musicRouter.delete(
+      "/:id/items/:itemId",
+      (c: AppContext) => MusicController.removeItem(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Hapus musik dari playlist",
+          description: "Menghapus item lagu dari playlist berdasarkan ID item.",
           tags: ["Music"],
         },
       },

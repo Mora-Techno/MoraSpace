@@ -9,4 +9,5 @@ export * from "./PomodoroSection";
 export * from "./TodoListSection";
 export * from "./AgendaSection";
 export * from "./MusicSection";
+export * from "./FloatingMusicPlayer";
 export * from "./QuickNotesSection";

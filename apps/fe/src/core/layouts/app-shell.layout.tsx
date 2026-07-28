@@ -12,6 +12,8 @@ import { BottomNav } from "@/core/components/bottom-nav";
 import LanguageDropdown from "@/core/components/language.dropdown";
 import NotificationDropdown from "@/core/components/notification.dropdown";
 import ThemeToggle from "@/core/components/theme-toggle";
+import { FloatingMusicPlayer } from "@/components/organisms/FloatingMusicPlayer";
+import { useMusicPlayer } from "@/context/MusicPlayerContext";
 import Image from "next/image";
 
 interface AppShellProps {
@@ -19,6 +21,8 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
+  const { currentTrack } = useMusicPlayer();
+
   return (
     <SidebarProvider defaultOpen>
       <div className="flex min-h-screen w-full">
@@ -49,7 +53,13 @@ export function AppShell({ children }: AppShellProps) {
               </div>
             </header>
 
-            <main className="flex-1 overflow-auto pb-20 md:pb-6">
+            <main
+              className={
+                currentTrack
+                  ? "flex-1 overflow-auto pb-32 md:pb-6"
+                  : "flex-1 overflow-auto pb-20 md:pb-6"
+              }
+            >
               <div className="mx-auto w-full max-w-full p-4 md:p-8">
                 {children}
               </div>
@@ -57,6 +67,7 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </SidebarInset>
       </div>
+      <FloatingMusicPlayer />
       <BottomNav />
     </SidebarProvider>
   );
