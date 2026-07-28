@@ -36,5 +36,5 @@ export type MusicQuery = {
 };
 
 export type PickCreatePlaylist = Pick<IMusicPlaylist, "name" | "description">;
-export type PickAddMusicItem = Pick<IMusicPlayListItem, "title" | "youtubeUrl">;
+export type PickAddMusicItem = Pick<IMusicPlayListItem, "trackCatalogId">;
 export type PlaylistParams = Pick<IMusicPlaylist, "id">;

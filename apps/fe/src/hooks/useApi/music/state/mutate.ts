@@ -65,8 +65,8 @@ export function useAddPlaylistItem() {
     { playlistId: string } & PickAddMusicItem,
     MusicCacheContext
   >({
-    mutationFn: ({ playlistId, title, youtubeUrl }) =>
-      Api.Music.AddItemToPlaylist(playlistId, { title, youtubeUrl }),
+    mutationFn: ({ playlistId, trackCatalogId }) =>
+      Api.Music.AddItemToPlaylist(playlistId, { trackCatalogId }),
     onSuccess: (res) => {
       ns.alert.toast({
         title: res.message,

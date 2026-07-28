@@ -1,5 +1,7 @@
 import type { CompanyRole } from "./company.types";
 
+export type PlatformRole = "USER" | "DEVELOPER" | "SUPER_ADMIN";
+
 export interface IAuth {
   id: string;
   email: string;
@@ -33,6 +35,7 @@ export type SafeAuthUser = Pick<
   | "updatedAt"
 > & {
   companyMemberId?: string | null;
+  platformRole: PlatformRole;
 };
 
 export interface AuthTokensResponse {
@@ -47,6 +50,7 @@ export type AccessTokenPayload = Pick<
 > & {
   tokenType?: "access";
   companyMemberId?: string | null;
+  platformRole: PlatformRole;
 };
 
 export interface AuthSessionResponse extends AuthTokensResponse {

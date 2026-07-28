@@ -21,6 +21,7 @@ model User {
   lastLoginAt            DateTime?           @map("last_login_at")
   createdAt              DateTime            @default(now()) @map("created_at")
   updatedAt              DateTime            @updatedAt @map("updated_at")
+  platformRole           PlatformRole        @default(USER) @map("platform_role")
   calendarEvents         CalendarEvent[]
   ownedCompanies         Company[]           @relation("CompanyOwner")
   companyMembers         CompanyMember[]
@@ -696,8 +697,6 @@ model Playlist {
 model PlaylistItem {
   id             String        @id @default(uuid())
   playlistId     String        @map("playlist_id")
-  title          String
-  youtubeUrl     String        @map("youtube_url")
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
   trackCatalogId String?       @map("track_catalog_id")
@@ -965,6 +964,12 @@ model TrackCatalog {
 
   @@unique([companyId, youtubeVideoId])
   @@map("track_catalogs")
+}
+
+enum PlatformRole {
+  USER
+  DEVELOPER
+  SUPER_ADMIN
 }
 
 enum UserStatus {

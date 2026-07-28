@@ -29,7 +29,7 @@ interface MusicSectionProps {
   service: {
     handleAdd: (e: React.FormEvent) => void;
     createPlaylist: any;
-    addItem: (playlistId: string, title: string, youtubeUrl: string) => void;
+    addItem: (playlistId: string, trackCatalogId: string) => void;
     deleteItem?: (playlistId: string, itemId: string) => void;
   };
   state: {
@@ -69,6 +69,7 @@ function trackToPlayerItem(track: TrackCatalog): IMusicPlayListItem {
   return {
     id: track.id,
     playlistId: "",
+    trackCatalogId: track.id,
     title: track.title,
     youtubeUrl: track.youtubeUrl,
     createdAt: track.createdAt,
@@ -120,7 +121,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
     if (onAddTrackToPlaylist) {
       onAddTrackToPlaylist(playlistId, track);
     } else {
-      addItem(playlistId, track.title, track.youtubeUrl);
+      addItem(playlistId, track.id);
     }
   };
 

@@ -10,8 +10,7 @@ import { CreateMusicValidate } from "@/validation/music.validate";
 import { getUser } from "@/utils/authTokens";
 
 interface AddItemBody {
-  title: string;
-  youtubeUrl: string;
+  trackCatalogId: string;
 }
 
 class MusicController {
@@ -81,8 +80,8 @@ class MusicController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      if (!input?.title || !input?.youtubeUrl) {
-        return HttpResponse(c).badRequest("title dan youtubeUrl wajib diisi");
+      if (!input?.trackCatalogId) {
+        return HttpResponse(c).badRequest("trackCatalogId wajib diisi");
       }
 
       const queryService = await MusicService.addItem(

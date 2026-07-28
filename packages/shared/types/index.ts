@@ -15,6 +15,7 @@ export type {
   PickVerifyOtp,
   PickForgotPassword,
   PickResetPassword,
+  PlatformRole,
   SafeAuthUser,
   UserQuery,
 } from "./auth.types";

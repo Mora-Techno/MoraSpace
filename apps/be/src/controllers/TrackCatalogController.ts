@@ -117,19 +117,11 @@ class TrackCatalogController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      if (!user.companyMemberId) {
-        return HttpResponse(c).forbidden(
-          "Hanya Developer yang dapat menyetujui track",
-        );
-      }
-      if (!user.companyId) {
-        return HttpResponse(c).badRequest("Company context tidak ditemukan");
-      }
-
       const track = await TrackCatalogService.approve(
         params.id,
-        user.companyMemberId,
-        user.companyId,
+        user.companyMemberId ?? null,
+        user.companyId ?? null,
+        user.id,
       );
 
       if (!track) return HttpResponse(c).notFound("Track tidak ditemukan");
@@ -153,19 +145,11 @@ class TrackCatalogController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      if (!user.companyMemberId) {
-        return HttpResponse(c).forbidden(
-          "Hanya admin yang dapat menolak track",
-        );
-      }
-      if (!user.companyId) {
-        return HttpResponse(c).badRequest("Company context tidak ditemukan");
-      }
-
       const track = await TrackCatalogService.reject(
         params.id,
-        user.companyMemberId,
-        user.companyId,
+        user.companyMemberId ?? null,
+        user.companyId ?? null,
+        user.id,
         { rejectionReason: input?.rejectionReason },
       );
 

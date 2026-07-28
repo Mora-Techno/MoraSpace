@@ -27,21 +27,6 @@ import type {
 } from "@repo/types";
 import { cn } from "@/utils/classname";
 
-const DEFAULT_PLAYLISTS = [
-  {
-    title: "Joe Hisaishi — One Summer's Day",
-    url: "https://www.youtube.com/watch?v=TK1IjBko6kE",
-  },
-  {
-    title: "Ghibli Lo-Fi Beats",
-    url: "https://www.youtube.com/watch?v=BiqlZZddZEI",
-  },
-  {
-    title: "Merry-Go-Round of Life",
-    url: "https://www.youtube.com/watch?v=Ab8C8c7i15E",
-  },
-];
-
 export default function MusicContainer() {
   const api = useApi();
   const usePlaylists = api.music.query.getPlayList();
@@ -53,7 +38,6 @@ export default function MusicContainer() {
   const createPlaylist = useCreatePlaylist;
   const deletePlaylist = useDeletePlaylist;
   const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
   const gridRef = useGsapStagger<HTMLDivElement>([playlists.length]);
 
   // Track Catalog
@@ -91,44 +75,18 @@ export default function MusicContainer() {
   ) => {
     useAddItem.mutate({
       playlistId,
-      title: track.title,
-      youtubeUrl: track.youtubeUrl,
+      trackCatalogId: track.id,
     });
-  };
-
-  const handleAddDefaults = () => {
-    createPlaylist.mutate(
-      { name: "Ghibli Collection", description: "Playlist default Ghibli" },
-      {
-        onSuccess: (res) => {
-          const playlistId = res.data.id;
-          DEFAULT_PLAYLISTS.forEach((p) => {
-            useAddItem.mutate({
-              playlistId,
-              title: p.title,
-              youtubeUrl: p.url,
-            });
-          });
-        },
-      },
-    );
   };
 
   const handleAdd = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !url.trim()) return;
+    if (!title.trim()) return;
     createPlaylist.mutate(
       { name: title.trim(), description: title.trim() },
       {
-        onSuccess: (res) => {
-          const playlistId = res.data.id;
-          useAddItem.mutate({
-            playlistId,
-            title: title.trim(),
-            youtubeUrl: url.trim(),
-          });
+        onSuccess: () => {
           setTitle("");
-          setUrl("");
         },
       },
     );
@@ -323,25 +281,19 @@ export default function MusicContainer() {
 
       {/* Create Playlist Form */}
       <GhibliCard className="mb-6">
-        <form onSubmit={handleAdd} className="grid gap-3 sm:grid-cols-2">
+        <form onSubmit={handleAdd} className="flex gap-3">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nama playlist"
-            className="rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-          />
-          <input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="URL YouTube / Spotify"
-            className="rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            placeholder="Nama playlist baru"
+            className="flex-1 rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <Button
             type="submit"
-            className="ghibli-btn sm:col-span-2"
+            className="ghibli-btn shrink-0"
             disabled={createPlaylist.isPending}
           >
-            <Plus className="size-4" /> Tambah Playlist
+            <Plus className="size-4" /> Tambah
           </Button>
         </form>
       </GhibliCard>
@@ -357,12 +309,8 @@ export default function MusicContainer() {
         <GhibliEmptyState
           emoji="🎻"
           title="Belum ada playlist"
-          description="Tambahkan musik favoritmu atau muat playlist Ghibli default."
-        >
-          <Button onClick={handleAddDefaults} className="ghibli-btn mt-4">
-            Muat Playlist Ghibli
-          </Button>
-        </GhibliEmptyState>
+          description="Buat playlist baru lalu tambahkan track dari katalog."
+        />
       ) : (
         <div
           ref={gridRef}

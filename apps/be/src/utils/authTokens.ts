@@ -1,12 +1,16 @@
-import { randomBytes } from 'node:crypto';
-import type { CompanyRole } from '@repo/types/company.types';
-import type { AuthTokensResponse, SafeAuthUser } from '@repo/types/auth.types';
-import type { JwtPayload } from '@repo/types/auth.types';
-import jwt from 'jsonwebtoken';
-import { getJwtSecret } from './jwt.utils';
-import prisma from 'prisma/client';
-import bcryptjs from 'bcryptjs';
-import type { AppContext } from '@/contex';
+import { randomBytes } from "node:crypto";
+import type { CompanyRole } from "@repo/types/company.types";
+import type {
+  AuthTokensResponse,
+  SafeAuthUser,
+  PlatformRole,
+} from "@repo/types/auth.types";
+import type { JwtPayload } from "@repo/types/auth.types";
+import jwt from "jsonwebtoken";
+import { getJwtSecret } from "./jwt.utils";
+import prisma from "prisma/client";
+import bcryptjs from "bcryptjs";
+import type { AppContext } from "@/contex";
 
 const OTP_EXPIRY_MINUTES = 5;
 const MAGIC_LINK_EXPIRY_MINUTES = 15;
@@ -18,7 +22,7 @@ export function generateOtp(): string {
 }
 
 export function generateSecureToken(): string {
-  return randomBytes(32).toString('hex');
+  return randomBytes(32).toString("hex");
 }
 
 export function getOtpExpiry(): Date {
@@ -46,7 +50,7 @@ function getAccessTokenExpiry(): Date {
 }
 
 export const AUTH_EXPIRY = {
-  accessToken: '15m',
+  accessToken: "15m",
   refreshTokenDays: REFRESH_TOKEN_EXPIRY_DAYS,
   otpMinutes: OTP_EXPIRY_MINUTES,
   magicLinkMinutes: MAGIC_LINK_EXPIRY_MINUTES,
@@ -57,6 +61,7 @@ export function sanitizeUser(user: {
   email: string;
   phone?: string | null;
   fullName: string;
+  platformRole: PlatformRole;
   companyRole: CompanyRole;
   companyId?: string | null;
   companyMemberId?: string | null;
@@ -72,6 +77,7 @@ export function buildPayload(user: SafeAuthUser): JwtPayload {
     id: user.id,
     email: user.email,
     fullName: user.fullName,
+    platformRole: user.platformRole,
     companyRole: user.companyRole,
     companyId: user.companyId,
     companyMemberId: user.companyMemberId ?? null,
@@ -84,7 +90,9 @@ export function signAccessToken(payload: JwtPayload): string {
   });
 }
 
-export async function createTokenPair(user: SafeAuthUser): Promise<AuthTokensResponse> {
+export async function createTokenPair(
+  user: SafeAuthUser,
+): Promise<AuthTokensResponse> {
   const payload = buildPayload(user);
   const accessToken = signAccessToken(payload);
   const refreshToken = generateSecureToken();

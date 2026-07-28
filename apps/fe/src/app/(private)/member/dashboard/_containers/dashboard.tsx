@@ -201,12 +201,8 @@ export default function DashboardContainer() {
     createPlaylist.mutate(formCreatePlaylistMusic);
   };
 
-  const handleAddMusicItem = (
-    playlistId: string,
-    title: string,
-    youtubeUrl: string,
-  ) => {
-    useAddItemMusic.mutate({ playlistId, title, youtubeUrl });
+  const handleAddMusicItem = (playlistId: string, trackCatalogId: string) => {
+    useAddItemMusic.mutate({ playlistId, trackCatalogId });
   };
 
   const handleDeleteMusicItem = (playlistId: string, itemId: string) => {
@@ -329,8 +325,7 @@ export default function DashboardContainer() {
                 onAddTrackToPlaylist: (playlistId, track) => {
                   useAddItemMusic.mutate({
                     playlistId,
-                    title: track.title,
-                    youtubeUrl: track.youtubeUrl,
+                    trackCatalogId: track.id,
                   });
                 },
               }}

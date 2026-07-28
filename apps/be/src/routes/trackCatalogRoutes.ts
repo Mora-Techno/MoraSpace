@@ -8,6 +8,7 @@ import {
 } from "@/dto/trackCatalog.dto";
 import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
+import { requirePlatformRole } from "@/middlewares/platformRole";
 
 class TrackCatalogRouter {
   public trackCatalogRouter;
@@ -81,34 +82,40 @@ class TrackCatalogRouter {
       },
     );
 
-    // ── Admin: approve ──────────────────────────────────────────────
+    // ── Developer/Super Admin: approve ──────────────────────────────
     this.trackCatalogRouter.patch(
       "/:id/approve",
       (c: AppContext) => TrackCatalogController.approve(c),
       {
         params: TrackCatalogParamsDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [
+          verifyToken().beforeHandle,
+          requirePlatformRole(["DEVELOPER", "SUPER_ADMIN"]).beforeHandle,
+        ],
         detail: {
-          summary: "Setujui track (Admin)",
+          summary: "Setujui track (Developer/Super Admin)",
           description:
-            "Admin menyetujui track yang berstatus PENDING. Notifikasi + email dikirim ke submitter.",
+            "Developer atau Super Admin menyetujui track yang berstatus PENDING.",
           tags: ["Track Catalog"],
         },
       },
     );
 
-    // ── Admin: reject ───────────────────────────────────────────────
+    // ── Developer/Super Admin: reject ───────────────────────────────
     this.trackCatalogRouter.patch(
       "/:id/reject",
       (c: AppContext) => TrackCatalogController.reject(c),
       {
         params: TrackCatalogParamsDto,
         body: ReviewTrackDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [
+          verifyToken().beforeHandle,
+          requirePlatformRole(["DEVELOPER", "SUPER_ADMIN"]).beforeHandle,
+        ],
         detail: {
-          summary: "Tolak track (Admin)",
+          summary: "Tolak track (Developer/Super Admin)",
           description:
-            "Admin menolak track yang berstatus PENDING dengan alasan opsional. Notifikasi + email dikirim ke submitter.",
+            "Developer atau Super Admin menolak track yang berstatus PENDING dengan alasan opsional.",
           tags: ["Track Catalog"],
         },
       },

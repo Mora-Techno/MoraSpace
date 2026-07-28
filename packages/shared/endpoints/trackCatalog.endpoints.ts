@@ -5,6 +5,7 @@ const mount = "/music/tracks";
 export const TRACK_CATALOG_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   SUBMIT: buildEndpoint(mount),
+  PENDING: buildEndpoint(mount, "/pending"),
 } as const;
 
 export const trackCatalogById = (id: string) => buildEndpoint(mount, `/${id}`);

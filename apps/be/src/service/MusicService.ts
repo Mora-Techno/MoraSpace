@@ -3,15 +3,22 @@ import type { PickCreatePlaylist } from "@repo/types/music.types";
 
 function mapPlaylistItem(item: {
   id: string;
-  title: string;
-  youtubeUrl: string;
+  playlistId: string;
+  trackCatalogId: string | null;
   createdAt: Date;
   updatedAt: Date;
+  trackCatalog?: {
+    id: string;
+    title: string;
+    youtubeUrl: string;
+  } | null;
 }) {
   return {
     id: item.id,
-    title: item.title,
-    youtubeUrl: item.youtubeUrl,
+    playlistId: item.playlistId,
+    trackCatalogId: item.trackCatalogId,
+    title: item.trackCatalog?.title ?? "",
+    youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
   };
@@ -25,10 +32,15 @@ function mapPlaylist(playlist: {
   updatedAt: Date;
   items?: {
     id: string;
-    title: string;
-    youtubeUrl: string;
+    playlistId: string;
+    trackCatalogId: string | null;
     createdAt: Date;
     updatedAt: Date;
+    trackCatalog?: {
+      id: string;
+      title: string;
+      youtubeUrl: string;
+    } | null;
   }[];
 }) {
   return {
@@ -79,7 +91,15 @@ class MusicService {
         orderBy: orderBy as any,
         take: limit,
         skip: skip,
-        include: { items: true },
+        include: {
+          items: {
+            include: {
+              trackCatalog: {
+                select: { id: true, title: true, youtubeUrl: true },
+              },
+            },
+          },
+        },
       }),
     ]);
 
@@ -113,7 +133,15 @@ class MusicService {
 
     const playlist = await prisma.playlist.create({
       data: data as any,
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            trackCatalog: {
+              select: { id: true, title: true, youtubeUrl: true },
+            },
+          },
+        },
+      },
     });
 
     return mapPlaylist(playlist);
@@ -123,7 +151,7 @@ class MusicService {
     playlistId: string,
     companyMemberId: string | null,
     userId: string,
-    input: { title: string; youtubeUrl: string },
+    input: { trackCatalogId: string },
   ) {
     const where: Record<string, unknown> = companyMemberId
       ? { id: playlistId, companyMemberId }
@@ -134,19 +162,30 @@ class MusicService {
     });
     if (!existing) return null;
 
+    // Verify the TrackCatalog record exists
+    const track = await prisma.trackCatalog.findUnique({
+      where: { id: input.trackCatalogId },
+    });
+    if (!track) return null;
+
     const item = await prisma.playlistItem.create({
       data: {
         playlistId,
-        title: input.title,
-        youtubeUrl: input.youtubeUrl,
+        trackCatalogId: input.trackCatalogId,
+      },
+      include: {
+        trackCatalog: {
+          select: { id: true, title: true, youtubeUrl: true },
+        },
       },
     });
 
     return {
       id: item.id,
       playlistId: item.playlistId,
-      title: item.title,
-      youtubeUrl: item.youtubeUrl,
+      trackCatalogId: item.trackCatalogId,
+      title: item.trackCatalog?.title ?? "",
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
     };
@@ -169,6 +208,11 @@ class MusicService {
 
     const item = await prisma.playlistItem.findFirst({
       where: { id: itemId, playlistId },
+      include: {
+        trackCatalog: {
+          select: { id: true, title: true, youtubeUrl: true },
+        },
+      },
     });
     if (!item) return null;
 
@@ -176,8 +220,9 @@ class MusicService {
     return {
       id: item.id,
       playlistId: item.playlistId,
-      title: item.title,
-      youtubeUrl: item.youtubeUrl,
+      trackCatalogId: item.trackCatalogId,
+      title: item.trackCatalog?.title ?? "",
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
     };
@@ -194,7 +239,15 @@ class MusicService {
 
     const existing = await prisma.playlist.findFirst({
       where: where as any,
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            trackCatalog: {
+              select: { id: true, title: true, youtubeUrl: true },
+            },
+          },
+        },
+      },
     });
     if (!existing) return null;
 

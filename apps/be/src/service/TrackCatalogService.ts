@@ -276,13 +276,15 @@ class TrackCatalogService {
   }
 
   /**
-   * Admin: approve a pending track.
-   * Sends in-app notification + email to the submitter.
+   * Developer / Super Admin: approve a pending track.
+   * `adminMemberId` / `adminCompanyId` may be null for personal developers.
+   * Sends email notification to the submitter.
    */
   public async approve(
     id: string,
-    adminMemberId: string,
-    adminCompanyId: string,
+    adminMemberId: string | null,
+    adminCompanyId: string | null,
+    adminUserId: string,
   ) {
     const track = await prisma.trackCatalog.findUnique({
       where: { id },
@@ -313,22 +315,23 @@ class TrackCatalogService {
     const submitterMemberId = updated.companyMemberId;
     const trackTitle = updated.title;
 
-    // In-app notification
+    // In-app notification (company-scoped only)
     try {
-      if (submitterMemberId) {
+      if (submitterMemberId && adminCompanyId) {
         await prisma.notification.create({
           data: {
             companyId: adminCompanyId,
             companyMemberId: submitterMemberId,
             userId: submitterUserId ?? undefined,
             title: "Track Approved",
-            body: `Lagu "${trackTitle}" telah disetujui oleh admin dan sekarang tersedia di katalog.`,
+            body: `Lagu "${trackTitle}" telah disetujui dan sekarang tersedia di katalog.`,
             type: "track_catalog",
           },
         });
       }
     } catch {}
 
+    // Email notification to submitter
     try {
       if (submitterUserId) {
         const user = await prisma.user.findUnique({
@@ -340,7 +343,7 @@ class TrackCatalogService {
             to: user.email,
             subject: `[Mora] Track "${trackTitle}" Approved`,
             html: `<p>Halo ${user.fullName},</p>
-<p>Lagu <strong>"${trackTitle}"</strong> telah disetujui oleh admin dan sekarang tersedia untuk diputar di Track Catalog.</p>
+<p>Lagu <strong>"${trackTitle}"</strong> telah disetujui dan sekarang tersedia untuk diputar di Track Catalog.</p>
 <p>Selamat! 🎵</p>`,
           });
         }
@@ -351,13 +354,15 @@ class TrackCatalogService {
   }
 
   /**
-   * Developer: reject a pending track with optional reason.
-   * Sends in-app notification + email to the submitter.
+   * Developer / Super Admin: reject a pending track with optional reason.
+   * `adminMemberId` / `adminCompanyId` may be null for personal developers.
+   * Sends email notification to the submitter.
    */
   public async reject(
     id: string,
-    adminMemberId: string,
-    adminCompanyId: string,
+    adminMemberId: string | null,
+    adminCompanyId: string | null,
+    adminUserId: string,
     input: PickReviewTrack,
   ) {
     const track = await prisma.trackCatalog.findUnique({
@@ -394,16 +399,16 @@ class TrackCatalogService {
       ? `\nAlasan: ${input.rejectionReason}`
       : "";
 
-    // In-app notification
+    // In-app notification (company-scoped only)
     try {
-      if (submitterMemberId) {
+      if (submitterMemberId && adminCompanyId) {
         await prisma.notification.create({
           data: {
             companyId: adminCompanyId,
             companyMemberId: submitterMemberId,
             userId: submitterUserId ?? undefined,
             title: "Track Rejected",
-            body: `Lagu "${trackTitle}" ditolak oleh admin.${reason}`,
+            body: `Lagu "${trackTitle}" ditolak.${reason}`,
             type: "track_catalog",
           },
         });
@@ -412,11 +417,12 @@ class TrackCatalogService {
       // best-effort
     }
 
-    // Email notification
+    // Email notification to submitter
     try {
-      if (submitterUserId) {
+      const targetUserId = submitterUserId ?? adminUserId;
+      if (targetUserId) {
         const user = await prisma.user.findUnique({
-          where: { id: submitterUserId },
+          where: { id: targetUserId },
           select: { email: true, fullName: true },
         });
         if (user) {
@@ -424,7 +430,7 @@ class TrackCatalogService {
             to: user.email,
             subject: `[Mora] Track "${trackTitle}" Rejected`,
             html: `<p>Halo ${user.fullName},</p>
-<p>Lagu <strong>"${trackTitle}"</strong> telah ditolak oleh admin.</p>
+<p>Lagu <strong>"${trackTitle}"</strong> telah ditolak.</p>
 ${reason ? `<p>Alasan: <em>${input.rejectionReason}</em></p>` : ""}
 <p>Anda dapat mengirim ulang track lainnya kapan saja.</p>`,
           });
