@@ -3,7 +3,7 @@
 import { AlertDialog as AlertDialogPrimitive } from 'radix-ui';
 import * as React from 'react';
 
-import { Button } from '@/components/atoms/button';
+import { Button } from '@/components/atoms/Button';
 import { cn } from '@/utils/classname';
 
 function AlertDialog({ ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {

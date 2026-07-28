@@ -5,6 +5,7 @@ import type {
   CompanyQuery,
   PickCreateAdmin,
   PickRegisterCompany,
+  PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
 } from "../types/company.types";
 import type { TResponse } from "../types/response.types";
@@ -58,6 +59,18 @@ class CompanyService {
       message: "Profil company berhasil diambil",
     });
   }
+  public async UpdateCompanyProfile(
+    payload: PickUpdateCompanyProfile,
+  ): Promise<TResponse<CompanyProfile>> {
+    const res = await PatchResponse<CompanyProfile>(
+      COMPANY_ENDPOINTS.UPDATE_PROFILE,
+      payload,
+    );
+    return toServiceResponse(res, {
+      message: "Profil company berhasil diperbarui",
+    });
+  }
+
   public async UpdateCompanySubscription(
     payload: PickUpdateCompanySubscription,
   ): Promise<TResponse<CompanyProfile>> {

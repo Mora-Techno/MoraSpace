@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/skeleton";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { Skeleton } from "@/components/atoms/Skeleton";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { useNote, useUpdateNote } from "@/hooks/useApi/note";
 
 export function NoteEditorSection({ noteId }: { noteId: string }) {

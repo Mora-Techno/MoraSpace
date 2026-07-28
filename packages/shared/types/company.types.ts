@@ -7,6 +7,10 @@ export type BillingCycle = "monthly" | "yearly";
 export interface ICompany {
   id: string;
   name: string;
+  country: string;
+  currency: string;
+  logo: string;
+  slug: string;
   tier: SubscriptionTier;
   billingCycle: BillingCycle;
   subscriptionStartsAt: Date;
@@ -32,6 +36,8 @@ export type PickUpdateCompanySubscription = Pick<
   ICompany,
   "tier" | "billingCycle"
 >;
+
+export type PickUpdateCompanyProfile = Pick<ICompany, "logo" | "country">;
 
 export type CompanyParams = Pick<ICompany, "id">;
 

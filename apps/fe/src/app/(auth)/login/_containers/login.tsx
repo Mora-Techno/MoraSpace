@@ -6,9 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { GoogleSvg } from "@/components/atoms/svg";
 import { RegisterCard } from "@/components/molecules";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { LoginFormSection } from "@/components/page/auth";
 import { RegisterConfigRoutes } from "@/configs";
 import { useApi } from "@/hooks/useApi/useApi";

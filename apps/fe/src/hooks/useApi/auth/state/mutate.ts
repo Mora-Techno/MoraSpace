@@ -64,7 +64,7 @@ export function useLogin() {
           ns.router.replace("/member/dashboard");
           break;
         case "Owner":
-          ns.router.replace("/home");
+          ns.router.replace("/owner/dashboard");
           break;
         default:
           ns.router.replace("/home");

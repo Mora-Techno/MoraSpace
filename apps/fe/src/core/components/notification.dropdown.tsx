@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/atoms';
-import { Button } from '@/components/atoms/button';
+import { Button } from '@/components/atoms/Button';
 
 export default function NotificationDropdown() {
   return (

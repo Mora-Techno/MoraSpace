@@ -5,10 +5,9 @@ import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
 import { JwtPayload } from "@repo/types/auth.types";
 import {
   paramsValidate,
-  memberContextValidate,
+  personalContextValidate,
 } from "@/validation/auth.validate";
 import { CreateNoteValidation } from "@/validation/note.validate";
-import { isTransportResponse } from "@/utils/transportResponse";
 import { getUser } from "@/utils/authTokens";
 
 class NoteController {
@@ -16,11 +15,12 @@ class NoteController {
     try {
       const user = getUser(c);
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const queryService = await NoteService.list(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         c.query as any,
       );
 
@@ -28,12 +28,11 @@ class NoteController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService.data,
-          queryService.meta,
-          "Berhasil mengambil daftar catatan",
-        );
+      return HttpResponse(c).ok(
+        queryService.data,
+        queryService.meta,
+        "Berhasil mengambil daftar catatan",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -44,7 +43,7 @@ class NoteController {
       const user = getUser(c);
       const params = c.params as { id: string };
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateParams = await paramsValidate(params.id, c);
@@ -52,16 +51,16 @@ class NoteController {
 
       const queryService = await NoteService.getById(
         params.id,
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
       );
       if (!queryService)
         return HttpResponse(c).notFound("Catatan tidak ditemukan");
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService,
-          "Berhasil mengambil detail catatan",
-        );
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil mengambil detail catatan",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -72,24 +71,21 @@ class NoteController {
       const user = getUser(c);
       const input = c.body as PickCreateNote;
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateRespone = await CreateNoteValidation(c, input);
       if (validateRespone) return validateRespone;
 
       const queryService = await NoteService.create(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         input,
       );
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).created(
-          queryService,
-          "Catatan berhasil disimpan",
-        );
+      return HttpResponse(c).created(queryService, "Catatan berhasil disimpan");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -100,7 +96,7 @@ class NoteController {
       const user = getUser(c);
       const params = c.params as { id: string };
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateParams = await paramsValidate(params.id, c);
@@ -110,14 +106,14 @@ class NoteController {
 
       const queryService = await NoteService.update(
         params.id,
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         input,
       );
       if (!queryService)
         return HttpResponse(c).notFound("Catatan tidak ditemukan");
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(queryService, "Catatan berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, "Catatan berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -128,7 +124,7 @@ class NoteController {
       const user = getUser(c);
       const params = c.params as { id: string };
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const validateParams = await paramsValidate(params.id, c);
@@ -136,13 +132,13 @@ class NoteController {
 
       const queryService = await NoteService.remove(
         params.id,
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
       );
 
       if (!queryService)
         return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(queryService, "Catatan berhasil dihapus");
+      return HttpResponse(c).ok(queryService, "Catatan berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

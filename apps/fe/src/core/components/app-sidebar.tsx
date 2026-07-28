@@ -3,6 +3,7 @@
 import { Leaf } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 
 import {
   Sidebar,
@@ -16,13 +17,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/atoms";
-import { NAV_ITEMS } from "@/configs/nav.config";
+import { getNavItems } from "@/configs/nav.config";
+import { loadAuthSession } from "@/utils/storage";
 import { cn } from "@/utils/classname";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+
+  const navItems = useMemo(() => {
+    const role = loadAuthSession()?.role;
+    return getNavItems(role?.toLowerCase());
+  }, []);
 
   return (
     <Sidebar
@@ -44,7 +51,7 @@ export function AppSidebar() {
           <SidebarGroupLabel className="font-serif">Menu</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV_ITEMS.map((item) => {
+              {navItems.map((item) => {
                 const isActive =
                   pathname === item.url ||
                   (item.url !== "/" && pathname.startsWith(item.url));

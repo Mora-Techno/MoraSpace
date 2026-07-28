@@ -1,35 +1,34 @@
 "use client";
 
 import { useGoogleLogin } from "@react-oauth/google";
-import { PickRegister } from "@repo/types";
+import { PickRegisterCompany } from "@repo/types";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-
-import { GoogleSvg } from "@/components/atoms/svg";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { RegisterFormSection } from "@/components/page/auth";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { CompanyRegisterFormSection } from "@/components/page/auth";
 import { useApi } from "@/hooks/useApi/useApi";
 import GoogleSignInButton from "@/components/molecules/GoogleSignButton";
 
 export default function RegisterCompanyContainer() {
-  const Api = useApi();
+  const api = useApi();
 
-  const [formRegister, setFormRegister] = useState<PickRegister>({
-    companyRole: "Owner",
+  const [formRegister, setFormRegister] = useState<PickRegisterCompany>({
     email: "",
     fullName: "",
     password: "",
-    phone: "",
+    companyName: "",
+    tier: "free",
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const registerApi = Api.auth.mutate.register();
+
+  const registerCompany = api.company.mutate.registerCompany();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = formRegister;
-    registerApi.mutateAsync(payload);
+    registerCompany.mutateAsync(payload);
   };
 
   const googleLogin = useGoogleLogin({
@@ -61,9 +60,9 @@ export default function RegisterCompanyContainer() {
           </p>
         </div>
 
-        <RegisterFormSection
+        <CompanyRegisterFormSection
           service={{
-            isPending: registerApi.isPending,
+            isPending: registerCompany.isPending,
             onSubmit: handleSubmit,
           }}
           state={{
@@ -81,7 +80,7 @@ export default function RegisterCompanyContainer() {
           <GoogleSignInButton onSuccess={googleLogin} disabled />
         </div>
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          Daftar Sebagai Pekerja ? {""}
+          Daftar Sebagai User ? {""}
           <Link
             href="/register/employ"
             className="font-medium text-primary hover:underline"

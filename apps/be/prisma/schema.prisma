@@ -21,16 +21,22 @@ model User {
   lastLoginAt            DateTime?           @map("last_login_at")
   createdAt              DateTime            @default(now()) @map("created_at")
   updatedAt              DateTime            @updatedAt @map("updated_at")
+  calendarEvents         CalendarEvent[]
   ownedCompanies         Company[]           @relation("CompanyOwner")
   companyMembers         CompanyMember[]
   managedDepartments     Department[]        @relation("DepartmentManager")
   emailVerifications     EmailVerification[]
   sentInvitations        Invitation[]        @relation("InvitationInviter")
+  notes                  Note[]
+  notifications          Notification[]
   passwordResets         PasswordReset[]
+  playlists              Playlist[]
+  pomodoroSessions       PomodoroSession[]
   refreshTokens          RefreshToken[]
   employeeReportingLines ReportingLine[]     @relation("ReportingEmployee")
   managerReportingLines  ReportingLine[]     @relation("ReportingManager")
   ledTeams               Team[]              @relation("TeamLeader")
+  todos                  Todo[]
   sessions               UserSession[]
 
   @@map("users")
@@ -539,14 +545,16 @@ model TodoList {
 }
 
 model Todo {
-  id              String        @id @default(uuid())
-  companyMemberId String        @map("company_member_id")
-  completed       Boolean       @default(false)
-  dueDate         DateTime?     @map("due_date")
-  listId          String?       @map("list_id")
+  id              String         @id @default(uuid())
+  companyMemberId String?        @map("company_member_id")
+  completed       Boolean        @default(false)
+  dueDate         DateTime?      @map("due_date")
+  listId          String?        @map("list_id")
   title           String
-  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
-  list            TodoList?     @relation(fields: [listId], references: [id])
+  userId          String?        @map("user_id")
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  list            TodoList?      @relation(fields: [listId], references: [id])
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("todos")
 }
@@ -562,15 +570,17 @@ model NoteFolder {
 }
 
 model Note {
-  id              String        @id @default(uuid())
+  id              String         @id @default(uuid())
   title           String
   content         String?
-  companyMemberId String        @map("company_member_id")
-  folderId        String?       @map("folder_id")
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt @map("updated_at")
-  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
-  folder          NoteFolder?   @relation(fields: [folderId], references: [id])
+  companyMemberId String?        @map("company_member_id")
+  folderId        String?        @map("folder_id")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  userId          String?        @map("user_id")
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  folder          NoteFolder?    @relation(fields: [folderId], references: [id])
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notes")
 }
@@ -579,12 +589,14 @@ model CalendarEvent {
   id           String                @id @default(uuid())
   title        String
   description  String?
-  companyId    String                @map("company_id")
-  createdBy    String                @map("created_by")
+  companyId    String?               @map("company_id")
+  createdBy    String?               @map("created_by")
   endTime      DateTime              @map("end_time")
   startTime    DateTime              @map("start_time")
-  company      Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  creator      CompanyMember         @relation("CalendarEventCreator", fields: [createdBy], references: [id])
+  userId       String?               @map("user_id")
+  company      Company?              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator      CompanyMember?        @relation("CalendarEventCreator", fields: [createdBy], references: [id])
+  user         User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   participants CalendarParticipant[]
 
   @@map("calendar_events")
@@ -651,24 +663,28 @@ model MeetingNote {
 }
 
 model PomodoroSession {
-  id              String        @id @default(uuid())
-  companyMemberId String        @map("company_member_id")
-  startedAt       DateTime      @map("started_at")
-  endedAt         DateTime?     @map("ended_at")
+  id              String         @id @default(uuid())
+  companyMemberId String?        @map("company_member_id")
+  startedAt       DateTime       @map("started_at")
+  endedAt         DateTime?      @map("ended_at")
   duration        Int?
-  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  userId          String?        @map("user_id")
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("pomodoro_sessions")
 }
 
 model Playlist {
   id              String         @id @default(uuid())
-  companyMemberId String         @map("company_member_id")
+  companyMemberId String?        @map("company_member_id")
   name            String
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
+  userId          String?        @map("user_id")
   items           PlaylistItem[]
-  companyMember   CompanyMember  @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("playlists")
 }
@@ -687,17 +703,19 @@ model PlaylistItem {
 
 model Notification {
   id              String             @id @default(uuid())
-  companyId       String             @map("company_id")
-  companyMemberId String             @map("company_member_id")
+  companyId       String?            @map("company_id")
+  companyMemberId String?            @map("company_member_id")
   title           String
   body            String
   type            String
   readAt          DateTime?          @map("read_at")
   createdAt       DateTime           @default(now()) @map("created_at")
+  userId          String?            @map("user_id")
   logs            NotificationLog[]
   queue           NotificationQueue?
-  company         Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  companyMember   CompanyMember      @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  company         Company?           @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember?     @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  user            User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }

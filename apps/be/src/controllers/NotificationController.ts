@@ -7,7 +7,7 @@ import type {
 } from "@repo/types/notification.types";
 import { getUser } from "@/utils/authTokens";
 import {
-  memberContextValidate,
+  personalContextValidate,
   paramsValidate,
   unauthorizedValidate,
 } from "@/validation/auth.validate";
@@ -58,11 +58,12 @@ class NotificationController {
     try {
       const user = getUser(c);
 
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const result = await NotificationService.listInApp(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         c.query as any,
       );
       return HttpResponse(c).ok(
@@ -79,7 +80,7 @@ class NotificationController {
     try {
       const user = getUser(c);
       const params = c.params as { id: string };
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const validateParams = await paramsValidate(params.id, c);
@@ -87,7 +88,8 @@ class NotificationController {
 
       const data = await NotificationService.markRead(
         params.id,
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
       );
       if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
 
@@ -100,10 +102,13 @@ class NotificationController {
   public async markAllRead(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await NotificationService.markAllRead(user.companyMemberId!);
+      const data = await NotificationService.markAllRead(
+        user.companyMemberId ?? null,
+        user.id,
+      );
       return HttpResponse(c).ok(data, "Semua notifikasi ditandai sudah dibaca");
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -114,7 +119,7 @@ class NotificationController {
     try {
       const user = getUser(c);
 
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const result = await NotificationService.listQueue(c.query as any);

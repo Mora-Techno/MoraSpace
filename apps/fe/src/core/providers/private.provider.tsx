@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { clearTokens, saveTokens } from "@/server/auth-cookie";
@@ -53,14 +53,27 @@ async function restoreAuthSession(refreshToken: string) {
   }
 }
 
+function checkRoleAccess(pathname: string, role: string | null | undefined) {
+  const normalizedRole = role?.toLowerCase() ?? null;
+  if (pathname.startsWith("/owner")) {
+    return normalizedRole === "owner";
+  }
+  if (pathname.startsWith("/member")) {
+    return normalizedRole !== "owner";
+  }
+  return true;
+}
+
 export default function PrivateProviders({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -78,7 +91,6 @@ export default function PrivateProviders({
           return;
         }
 
-        // Jika session baru saja diperbarui (misal setelah login), langsung izinkan masuk tanpa memanggil RefreshToken ulang
         const isRecentlyUpdated =
           stored.accessToken &&
           stored.updatedAt &&
@@ -86,6 +98,7 @@ export default function PrivateProviders({
 
         if (isRecentlyUpdated) {
           if (!cancelled) {
+            setRole(stored.role ?? null);
             setIsAuthenticated(true);
             setIsReady(true);
           }
@@ -95,6 +108,9 @@ export default function PrivateProviders({
         const ok = await restoreAuthSession(stored.refreshToken);
         if (cancelled) return;
 
+        const refreshed = loadAuthSession();
+
+        setRole(refreshed?.role ?? null);
         setIsAuthenticated(ok);
         setIsReady(true);
 
@@ -115,6 +131,21 @@ export default function PrivateProviders({
       cancelled = true;
     };
   }, [router]);
+
+  // Role-based route guard — hanya jalankan sekali setelah session siap,
+  // pathname tidak diikutkan agar tidak redirect tiap navigasi
+  useEffect(() => {
+    if (!isReady || !isAuthenticated) return;
+
+    if (!checkRoleAccess(pathname, role)) {
+      const normalizedRole = role?.toLowerCase();
+      const redirectTo =
+        normalizedRole === "owner" ? "/owner/dashboard" : "/member/dashboard";
+      router.replace(redirectTo);
+    }
+    // Hanya depend pada isReady & isAuthenticated (single-run setelah bootstrap)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isReady, isAuthenticated]);
 
   return <>{isReady && isAuthenticated ? children : null}</>;
 }

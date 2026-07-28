@@ -10,8 +10,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/sheet";
-import { PageHeader } from "@/components/molecules/page-header";
+} from "@/components/atoms/Sheet";
+import { PageHeader } from "@/components/molecules/PageHeader";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 import { TodoFormSection } from "@/components/page/private/member/todos/todo-form.section";

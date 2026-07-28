@@ -4,9 +4,9 @@ import { ExternalLink, Music2, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { PageHeader } from "@/components/molecules/page-header";
-import { GhibliEmptyState } from "@/components/template/ghibli-empty-state";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { PageHeader } from "@/components/molecules/PageHeader";
+import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
 

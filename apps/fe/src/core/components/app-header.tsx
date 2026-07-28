@@ -8,7 +8,7 @@ import {
   NavigationMenu,
   NavigationMenuItem,
   NavigationMenuList,
-} from '@/components/atoms/navigation-menu';
+} from '@/components/atoms/NavigationMenu';
 import { navigationMenuConfig } from '@/configs/app.config';
 import { cn } from '@/utils/classname';
 

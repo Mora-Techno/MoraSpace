@@ -1,7 +1,7 @@
 import PomodoroService from "@/service/PomodoroService";
 import { HttpResponse } from "@/http";
 import { getUser } from "@/utils/authTokens";
-import { memberContextValidate } from "@/validation/auth.validate";
+import { personalContextValidate } from "@/validation/auth.validate";
 import type { AppContext } from "@/contex";
 import type {
   PickStartPomodoro,
@@ -12,12 +12,13 @@ class PomodoroController {
   public async start(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const body = (c.body || {}) as PickStartPomodoro;
       const data = await PomodoroService.start(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         body.metadata,
       );
       return HttpResponse(c).created(data, "Sesi pomodoro dimulai");
@@ -29,10 +30,13 @@ class PomodoroController {
   public async pause(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.pause(user.companyMemberId!);
+      const data = await PomodoroService.pause(
+        user.companyMemberId ?? null,
+        user.id,
+      );
       return HttpResponse(c).ok(
         data,
         "Sesi pomodoro diubah menjadi jeda (pause)",
@@ -46,10 +50,13 @@ class PomodoroController {
   public async resume(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.resume(user.companyMemberId!);
+      const data = await PomodoroService.resume(
+        user.companyMemberId ?? null,
+        user.id,
+      );
       return HttpResponse(c).ok(data, "Sesi pomodoro dilanjutkan (resume)");
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -59,12 +66,13 @@ class PomodoroController {
   public async stop(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const body = (c.body || {}) as PickStopPomodoro;
       const data = await PomodoroService.stop(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         body.sessionId,
         body.duration,
       );
@@ -79,10 +87,13 @@ class PomodoroController {
   public async getToday(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.getToday(user.companyMemberId!);
+      const data = await PomodoroService.getToday(
+        user.companyMemberId ?? null,
+        user.id,
+      );
       return HttpResponse(c).ok(
         data,
         undefined,
@@ -96,10 +107,13 @@ class PomodoroController {
   public async getStatistics(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.getStatistics(user.companyMemberId!);
+      const data = await PomodoroService.getStatistics(
+        user.companyMemberId ?? null,
+        user.id,
+      );
       return HttpResponse(c).ok(
         data,
         undefined,
@@ -113,11 +127,12 @@ class PomodoroController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
-      const authResponse = await memberContextValidate(user, c);
+      const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const result = await PomodoroService.list(
-        user.companyMemberId!,
+        user.companyMemberId ?? null,
+        user.id,
         c.query as any,
       );
       return HttpResponse(c).ok(

@@ -42,6 +42,7 @@ export type {
   CompanyRole,
   ICompany,
   PickRegisterCompany,
+  PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
   SafeUser,
   SubscriptionTier,

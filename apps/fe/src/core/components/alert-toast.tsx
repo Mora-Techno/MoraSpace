@@ -1,4 +1,4 @@
-import { gooeyToast } from '@/components/atoms/goey-toaster';
+import { gooeyToast } from '@/components/atoms/GoeyToaster';
 import type { ToastProps } from '@/types/ui';
 
 const TOAST_DURATION = 4000;

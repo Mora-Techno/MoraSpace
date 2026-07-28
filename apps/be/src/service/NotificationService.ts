@@ -130,7 +130,8 @@ class NotificationService {
   }
 
   public async listInApp(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     query: {
       search?: string;
       read?: "true" | "false";
@@ -145,7 +146,9 @@ class NotificationService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyMemberId };
+    const where: Record<string, unknown> = companyMemberId
+      ? { companyMemberId }
+      : { userId };
 
     if (query.search) {
       where.message = { contains: query.search, mode: "insensitive" };
@@ -177,7 +180,7 @@ class NotificationService {
       prisma.notification.count({ where: where as any }),
       prisma.notification.findMany({
         where: where as any,
-        orderBy: { createdAt: "desc" },
+        orderBy: [{ createdAt: "desc" }],
         take: limit,
         skip: skip,
       }),
@@ -218,7 +221,7 @@ class NotificationService {
       prisma.notificationQueue.findMany({
         where: where as any,
         include: { notification: true },
-        orderBy: { scheduledAt: "asc" },
+        orderBy: [{ scheduledAt: "asc" }],
         take: limit,
         skip: skip,
       }),
@@ -237,9 +240,17 @@ class NotificationService {
     };
   }
 
-  public async markRead(id: string, companyMemberId: string) {
+  public async markRead(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { id, companyMemberId }
+      : { id, userId };
+
     const existing = await prisma.notification.findFirst({
-      where: { id, companyMemberId },
+      where: where as any,
     });
     if (!existing) return null;
 
@@ -250,9 +261,13 @@ class NotificationService {
     return updated;
   }
 
-  public async markAllRead(companyMemberId: string) {
+  public async markAllRead(companyMemberId: string | null, userId: string) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { companyMemberId, readAt: null }
+      : { userId, readAt: null };
+
     await prisma.notification.updateMany({
-      where: { companyMemberId, readAt: null },
+      where: where as any,
       data: { readAt: new Date() },
     });
     return { success: true };

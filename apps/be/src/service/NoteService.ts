@@ -3,7 +3,8 @@ import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
 
 class NoteService {
   public async list(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     query: {
       search?: string;
       folderId?: string;
@@ -19,7 +20,12 @@ class NoteService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyMemberId };
+    const where: Record<string, unknown> = {};
+    if (companyMemberId) {
+      where.companyMemberId = companyMemberId;
+    } else {
+      where.userId = userId;
+    }
 
     if (query.search) {
       where.OR = [
@@ -44,11 +50,11 @@ class NoteService {
         );
     }
 
-    const orderBy: Record<string, unknown> = {};
+    const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
     } else {
-      orderBy.createdAt = "asc";
+      orderBy.push({ createdAt: "asc" });
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -60,7 +66,7 @@ class NoteService {
           title: true,
           content: true,
         },
-        orderBy,
+        orderBy: orderBy as any,
         skip: skip,
         take: limit,
       }),
@@ -78,38 +84,78 @@ class NoteService {
     };
   }
 
-  public async getById(id: string, companyMemberId: string) {
+  public async getById(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
     return prisma.note.findFirst({
-      where: { id, companyMemberId },
+      where: whereFilter as any,
     });
   }
 
-  public async create(companyMemberId: string, input: PickCreateNote) {
+  public async create(
+    companyMemberId: string | null,
+    userId: string,
+    input: PickCreateNote,
+  ) {
+    const data: Record<string, unknown> = {
+      title: input.title,
+      content: input.content,
+    };
+    if (companyMemberId) {
+      data.companyMemberId = companyMemberId;
+    } else {
+      data.userId = userId;
+    }
+
     return prisma.note.create({
-      data: {
-        companyMemberId,
-        title: input.title,
-        content: input.content,
-      },
+      data: data as any,
     });
   }
 
   public async update(
     id: string,
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     input: PickUpdateNote,
   ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
     const existing = await prisma.note.findFirst({
-      where: { id, companyMemberId },
+      where: whereFilter as any,
     });
     if (!existing) return null;
 
     return prisma.note.update({ where: { id }, data: input });
   }
 
-  public async remove(id: string, companyMemberId: string) {
+  public async remove(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
     const existing = await prisma.note.findFirst({
-      where: { id, companyMemberId },
+      where: whereFilter as any,
     });
     if (!existing) return null;
 

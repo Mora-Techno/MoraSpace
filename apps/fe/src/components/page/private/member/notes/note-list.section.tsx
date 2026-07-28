@@ -6,8 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/atoms';
-import { GhibliCard } from '@/components/molecules/ghibli-card';
-import { GhibliEmptyState } from '@/components/template/ghibli-empty-state';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { GhibliEmptyState } from '@/components/template/GhibliEmptyState';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useCreateNote, useDeleteNote, useNotes } from '@/hooks/useApi/note';
 import { useGsapStagger } from '@/hooks/useGsapStagger';
