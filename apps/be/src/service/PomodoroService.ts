@@ -1,22 +1,37 @@
 import prisma from "prisma/client";
 
 class PomodoroService {
+  private buildWhere(
+    companyMemberId: string | null,
+    userId: string,
+  ): Record<string, unknown> {
+    return companyMemberId ? { companyMemberId } : { userId };
+  }
+
   public async start(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     _metadata?: Record<string, unknown>,
   ) {
+    const data: Record<string, unknown> = {
+      startedAt: new Date(),
+    };
+    if (companyMemberId) {
+      data.companyMemberId = companyMemberId;
+    } else {
+      data.userId = userId;
+    }
+
     const session = await prisma.pomodoroSession.create({
-      data: {
-        companyMemberId,
-        startedAt: new Date(),
-      },
+      data: data as any,
     });
     return session;
   }
 
-  public async pause(companyMemberId: string) {
+  public async pause(companyMemberId: string | null, userId: string) {
+    const where = this.buildWhere(companyMemberId, userId);
     const active = await prisma.pomodoroSession.findFirst({
-      where: { companyMemberId, endedAt: null },
+      where: { ...where, endedAt: null } as any,
       orderBy: { startedAt: "desc" },
     });
     if (!active) throw new Error("Tidak ada sesi pomodoro yang aktif");
@@ -36,19 +51,21 @@ class PomodoroService {
     return session;
   }
 
-  public async resume(companyMemberId: string) {
-    return this.start(companyMemberId);
+  public async resume(companyMemberId: string | null, userId: string) {
+    return this.start(companyMemberId, userId);
   }
 
   public async stop(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     sessionId?: string,
     durationInput?: number,
   ) {
+    const where = this.buildWhere(companyMemberId, userId);
     const active = sessionId
       ? await prisma.pomodoroSession.findUnique({ where: { id: sessionId } })
       : await prisma.pomodoroSession.findFirst({
-          where: { companyMemberId, endedAt: null },
+          where: { ...where, endedAt: null } as any,
           orderBy: { startedAt: "desc" },
         });
 
@@ -69,15 +86,16 @@ class PomodoroService {
     return session;
   }
 
-  public async getToday(companyMemberId: string) {
+  public async getToday(companyMemberId: string | null, userId: string) {
     const startOfToday = new Date();
     startOfToday.setHours(0, 0, 0, 0);
 
+    const where = this.buildWhere(companyMemberId, userId);
     const sessions = await prisma.pomodoroSession.findMany({
       where: {
-        companyMemberId,
+        ...where,
         startedAt: { gte: startOfToday },
-      },
+      } as any,
       orderBy: { startedAt: "desc" },
     });
 
@@ -93,9 +111,10 @@ class PomodoroService {
     };
   }
 
-  public async getStatistics(companyMemberId: string) {
+  public async getStatistics(companyMemberId: string | null, userId: string) {
+    const where = this.buildWhere(companyMemberId, userId);
     const sessions = await prisma.pomodoroSession.findMany({
-      where: { companyMemberId },
+      where: where as any,
     });
 
     const totalSessions = sessions.length;
@@ -113,7 +132,8 @@ class PomodoroService {
   }
 
   public async list(
-    companyMemberId: string,
+    companyMemberId: string | null,
+    userId: string,
     query: {
       search?: string;
       status?: "active" | "completed" | "cancelled";
@@ -127,7 +147,9 @@ class PomodoroService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyMemberId };
+    const where: Record<string, unknown> = companyMemberId
+      ? { companyMemberId }
+      : { userId };
 
     if (query.status === "active") {
       where.endedAt = null;
@@ -151,7 +173,7 @@ class PomodoroService {
       prisma.pomodoroSession.count({ where: where as any }),
       prisma.pomodoroSession.findMany({
         where: where as any,
-        orderBy: { startedAt: "desc" },
+        orderBy: [{ startedAt: "desc" }],
         take: limit,
         skip: skip,
       }),

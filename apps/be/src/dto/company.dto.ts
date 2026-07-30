@@ -26,6 +26,11 @@ export const UpdateSubscriptionDto = t.Object({
   ),
 });
 
+export const UpdateCompanyProfileDto = t.Object({
+  logo: t.Optional(t.String({ description: "URL logo perusahaan" })),
+  country: t.Optional(t.String({ description: "Negara perusahaan" })),
+});
+
 export const CompanyQueryDto = t.Object({
   ...SearchDto.properties,
   ...PaginationDto.properties,

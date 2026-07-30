@@ -1,23 +1,37 @@
+import { ITrackCatalog } from "./trackCatalog.types";
+
 /** Mirror Prisma model `MusicPlaylist` */
 export interface IMusicPlaylist {
   id: string;
-  title: string;
-  url: string;
+  name: string;
+  companyMemberId?: string;
+  description: string;
+  userId?: string;
   createdAt: Date;
   updatedAt: Date;
+  items: IMusicPlayListItem[];
 }
 
 export interface IMusicPlayListItem {
   id: string;
   playlistId: string;
-  title: string;
-  youtubeUrl: string;
+  trackCatalogId?: string | null;
+  title?: string;
+  youtubeUrl?: string;
+  trackCatalog?: {
+    id: string;
+    title: string;
+    youtubeUrl: string;
+  } | null;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export type MusicPlaylist = Pick<IMusicPlaylist, "id" | "title" | "url"> & {
-  createdAt: string;
+export type MusicPlaylist = Pick<
+  IMusicPlaylist,
+  "id" | "name" | "description" | "createdAt" | "updatedAt"
+> & {
+  items: IMusicPlayListItem[];
 };
 
 export type MusicQuery = {
@@ -28,5 +42,6 @@ export type MusicQuery = {
   sortOrder?: "asc" | "desc";
 };
 
-export type PickCreatePlaylist = Pick<IMusicPlaylist, "title" | "url">;
+export type PickCreatePlaylist = Pick<IMusicPlaylist, "name" | "description">;
+export type PickAddMusicItem = Pick<IMusicPlayListItem, "trackCatalogId">;
 export type PlaylistParams = Pick<IMusicPlaylist, "id">;

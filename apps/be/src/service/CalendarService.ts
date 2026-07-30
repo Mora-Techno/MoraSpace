@@ -25,7 +25,8 @@ function mapEvent(event: {
 
 class CalendarService {
   public async list(
-    companyId: string,
+    companyId: string | null,
+    userId: string,
     query: EventQuery & {
       search?: string;
       page?: number;
@@ -41,7 +42,9 @@ class CalendarService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyId };
+    const where: Record<string, unknown> = companyId
+      ? { companyId }
+      : { userId };
 
     if (query.search) {
       where.title = { contains: query.search, mode: "insensitive" };
@@ -67,18 +70,18 @@ class CalendarService {
       where.createdBy = query.createdBy;
     }
 
-    const orderBy: Record<string, unknown> = {};
+    const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
     } else {
-      orderBy.startTime = "asc";
+      orderBy.push({ startTime: "asc" });
     }
 
     const [totalData, events] = await prisma.$transaction([
       prisma.calendarEvent.count({ where: where as any }),
       prisma.calendarEvent.findMany({
         where: where as any,
-        orderBy,
+        orderBy: orderBy as any,
         skip: skip,
         take: limit,
       }),
@@ -98,29 +101,47 @@ class CalendarService {
   }
 
   public async create(
-    companyId: string,
-    companyMemberId: string,
+    companyId: string | null,
+    companyMemberId: string | null,
+    userId: string,
     input: PickCreateEvent,
   ) {
+    const data: Record<string, unknown> = {
+      title: input.title,
+      description: input.description,
+      startTime: new Date(input.startDate),
+      endTime: input.endDate
+        ? new Date(input.endDate)
+        : new Date(input.startDate),
+    };
+    if (companyId) {
+      data.companyId = companyId;
+    } else {
+      data.userId = userId;
+    }
+    if (companyMemberId) {
+      data.createdBy = companyMemberId;
+    }
+
     const event = await prisma.calendarEvent.create({
-      data: {
-        companyId,
-        createdBy: companyMemberId,
-        title: input.title,
-        description: input.description,
-        startTime: new Date(input.startDate),
-        endTime: input.endDate
-          ? new Date(input.endDate)
-          : new Date(input.startDate),
-      },
+      data: data as any,
     });
 
     return mapEvent(event);
   }
 
-  public async update(id: string, companyId: string, input: PickUpdateEvent) {
+  public async update(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    input: PickUpdateEvent,
+  ) {
+    const where: Record<string, unknown> = companyId
+      ? { id, companyId }
+      : { id, userId };
+
     const existing = await prisma.calendarEvent.findFirst({
-      where: { id, companyId },
+      where: where as any,
     });
     if (!existing) return null;
 
@@ -143,9 +164,13 @@ class CalendarService {
     return mapEvent(event);
   }
 
-  public async remove(id: string, companyId: string) {
+  public async remove(id: string, companyId: string | null, userId: string) {
+    const where: Record<string, unknown> = companyId
+      ? { id, companyId }
+      : { id, userId };
+
     const existing = await prisma.calendarEvent.findFirst({
-      where: { id, companyId },
+      where: where as any,
     });
     if (!existing) return null;
 

@@ -1,21 +1,22 @@
-import { useAuth } from './auth/useAuth';
-import { useCalender } from './calendar/useCalender';
-import { useCompany } from './company/useCompany';
-import { useDepartment } from './department/useDepartment';
-import { useInvitation } from './invitation/useInvitation';
-import { useMember } from './member/useMember';
-import { useMusic } from './music/useMusic';
-import { useNotess } from './note/useNotes';
-import { useNotification } from './notification/useNotification';
-import { usePomodoro } from './pomodoro/usePomodoro';
-import { usePosition } from './position/usePosition';
-import { useRole } from './role/useRole';
-import { useSession } from './session/useSession';
-import { useSettings } from './settings/useSettings';
-import { useSubscription } from './subscription/useSubcription';
-import { useTask } from './task/useTask';
-import { useTeam } from './team/useTeam';
-import { useTodo } from './todo/useTodos';
+import { useAuth } from "./auth/useAuth";
+import { useCalender } from "./calendar/useCalender";
+import { useCompany } from "./company/useCompany";
+import { useDepartment } from "./department/useDepartment";
+import { useInvitation } from "./invitation/useInvitation";
+import { useMember } from "./member/useMember";
+import { useMusic } from "./music/useMusic";
+import { useNotess } from "./note/useNotes";
+import { useNotification } from "./notification/useNotification";
+import { usePomodoro } from "./pomodoro/usePomodoro";
+import { usePosition } from "./position/usePosition";
+import { useRole } from "./role/useRole";
+import { useSession } from "./session/useSession";
+import { useSettings } from "./settings/useSettings";
+import { useSubscription } from "./subscription/useSubcription";
+import { useTask } from "./task/useTask";
+import { useTeam } from "./team/useTeam";
+import { useTodo } from "./todo/useTodos";
+import { useTrackCatalog } from "./trackCatalog/useTrackCatalog";
 
 export function useApi() {
   return {
@@ -37,5 +38,6 @@ export function useApi() {
     pomodoro: usePomodoro(),
     session: useSession(),
     settings: useSettings(),
+    trackCatalog: useTrackCatalog(),
   };
 }

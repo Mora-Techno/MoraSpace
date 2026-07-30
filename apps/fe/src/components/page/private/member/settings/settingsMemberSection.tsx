@@ -7,9 +7,9 @@ import {
   SelectValue,
 } from "@/components/atoms";
 
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { GhibliSwitch } from "@/components/molecules/ghibli-switch";
-import { PageHeader } from "@/components/molecules/page-header";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { GhibliSwitch } from "@/components/molecules/GhibliSwitch";
+import { PageHeader } from "@/components/molecules/PageHeader";
 import { Language } from "@/configs";
 import { Theme } from "@/core/providers/theme.provider";
 import { AlertContexType } from "@/types/ui";

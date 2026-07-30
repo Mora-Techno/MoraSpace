@@ -6,7 +6,7 @@ import { useTheme } from "@/core/providers/theme.provider";
 import { useSendNotification } from "@/hooks/useApi/notification";
 import { useLanguage } from "@/hooks/useLanguage";
 import { useApi } from "@/hooks/useApi/useApi";
-import { Skeleton } from "@/components/atoms/skeleton";
+import { Skeleton } from "@/components/atoms/Skeleton";
 import SettingsSection from "@/components/page/private/member/settings/settingsMemberSection";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 export default function SettingsContainer() {

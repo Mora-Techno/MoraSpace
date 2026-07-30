@@ -1,24 +1,27 @@
-"use client";
-
-import { useEffect, useState } from "react";
-
 import { Button } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/skeleton";
-import { GhibliCard } from "@/components/molecules/ghibli-card";
-import { useNote, useUpdateNote } from "@/hooks/useApi/note";
+import { Skeleton } from "@/components/atoms/Skeleton";
+import { GhibliCard } from "@/components/molecules/GhibliCard";
+import type { Note } from "@repo/types";
 
-export function NoteEditorSection({ noteId }: { noteId: string }) {
-  const { data: note, isLoading } = useNote(noteId);
-  const updateNote = useUpdateNote();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+interface NoteEditorSectionProps {
+  service: {
+    handleSave: () => void;
+  };
+  state: {
+    note: Note | undefined;
+    isLoading: boolean;
+    title: string;
+    setTitle: (val: string) => void;
+    content: string;
+    setContent: (val: string) => void;
+    isPending: boolean;
+  };
+}
 
-  useEffect(() => {
-    if (note) {
-      setTitle(note.title);
-      setContent(note.content);
-    }
-  }, [note]);
+export function NoteEditorSection({ service, state }: NoteEditorSectionProps) {
+  const { handleSave } = service;
+  const { note, isLoading, title, setTitle, content, setContent, isPending } =
+    state;
 
   if (isLoading) {
     return (
@@ -36,13 +39,6 @@ export function NoteEditorSection({ noteId }: { noteId: string }) {
       </GhibliCard>
     );
   }
-
-  const handleSave = () => {
-    updateNote.mutate({
-      id: { id: noteId },
-      payload: { title: title.trim(), content: content.trim() },
-    });
-  };
 
   return (
     <GhibliCard className="h-full min-h-100">
@@ -62,10 +58,10 @@ export function NoteEditorSection({ noteId }: { noteId: string }) {
       <div className="flex justify-end">
         <Button
           onClick={handleSave}
-          disabled={updateNote.isPending}
+          disabled={isPending}
           className="ghibli-btn"
         >
-          Simpan Perubahan
+          {isPending ? "Menyimpan..." : "Simpan Perubahan"}
         </Button>
       </div>
     </GhibliCard>

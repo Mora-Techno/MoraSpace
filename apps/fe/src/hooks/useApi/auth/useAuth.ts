@@ -5,7 +5,7 @@ import {
   useSendMagicLink,
   useVerifyMagicLink,
   useForgotPassword,
-  useResetPassword
+  useResetPassword,
 } from "./state/mutate";
 
 export const useAuth = () => {

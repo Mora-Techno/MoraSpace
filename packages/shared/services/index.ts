@@ -17,6 +17,7 @@ import subscriptionService from "./subscription.service";
 import taskService from "./task.service";
 import teamService from "./team.service";
 import todoService from "./todo.service";
+import trackCatalogService from "./trackCatalog.service";
 export {
   setBaseURLProvider,
   setTokenProvider,
@@ -44,6 +45,7 @@ class ApiServicePackage {
   static Task = WrapApi(taskService);
   static Pomodoro = WrapApi(pomodoroService);
   static System = WrapApi(systemService);
+  static TrackCatalog = WrapApi(trackCatalogService);
 }
 
 export { default as AuthService } from "./auth.service";
@@ -65,6 +67,7 @@ export { default as RoleService } from "./role.service";
 export { default as TaskService } from "./task.service";
 export { default as PomodoroService } from "./pomodoro.service";
 export { default as SystemService } from "./system.service";
+export { default as TrackCatalogService } from "./trackCatalog.service";
 export { toServiceResponse } from "./service-response";
 export { ApiServicePackage as Api };
 export default ApiServicePackage;

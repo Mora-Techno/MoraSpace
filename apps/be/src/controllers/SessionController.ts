@@ -1,11 +1,10 @@
 import type { AppContext } from "@/contex";
 import { HttpResponse } from "@/http";
 import {
-  memberContextValidate,
+  personalContextValidate,
   paramsValidate,
 } from "@/validation/auth.validate";
 import SessionService from "@/service/SessionService";
-import { isTransportResponse } from "@/utils/transportResponse";
 import { getUser } from "@/utils/authTokens";
 
 class SessionController {
@@ -13,8 +12,7 @@ class SessionController {
     try {
       const user = getUser(c);
 
-      const authRespone = await memberContextValidate(user, c);
-
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const queryService = await SessionService.listService(
@@ -25,12 +23,11 @@ class SessionController {
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService.data,
-          queryService.meta,
-          "Berhasil mengambil session users",
-        );
+      return HttpResponse(c).ok(
+        queryService.data,
+        queryService.meta,
+        "Berhasil mengambil session users",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -40,8 +37,7 @@ class SessionController {
       const user = getUser(c);
       const params = c.params as { id: string };
 
-      const authRespone = await memberContextValidate(user, c);
-
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const queryService = await SessionService.getSessionByIdService(
@@ -52,11 +48,10 @@ class SessionController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService,
-          "Berhasil mengambil session berdasarkan id",
-        );
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil mengambil session berdasarkan id",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -66,7 +61,7 @@ class SessionController {
       const user = getUser(c);
       const params = c.params as { id: string };
 
-      const authRespone = await memberContextValidate(user, c);
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const paramsValidation = await paramsValidate(params.id, c);
@@ -78,11 +73,10 @@ class SessionController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService,
-          "Berhasil Delete History Session",
-        );
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil Delete History Session",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -91,8 +85,7 @@ class SessionController {
     try {
       const user = getUser(c);
 
-      const authRespone = await memberContextValidate(user, c);
-
+      const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
       const queryService = await SessionService.deleteAllSessionService(
@@ -103,11 +96,10 @@ class SessionController {
         return HttpResponse(c).badRequest();
       }
 
-      if (isTransportResponse(queryService))
-        return HttpResponse(c).ok(
-          queryService,
-          "Berhasil Menghapus Seluruh Session",
-        );
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil Menghapus Seluruh Session",
+      );
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

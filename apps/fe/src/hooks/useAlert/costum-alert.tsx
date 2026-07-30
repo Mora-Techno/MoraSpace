@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-import { GooeyToaster } from '@/components/atoms/goey-toaster';
+import { GooeyToaster } from '@/components/atoms/GoeyToaster';
 import { AlertModal } from '@/core/components/alert-modal';
 import { showAlertToast } from '@/core/components/alert-toast';
 import type { AlertContexType, ModalProps, ToastProps } from '@/types/ui';
