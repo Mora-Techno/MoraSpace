@@ -1,19 +1,16 @@
-"use client";
-
 import { Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliTabs } from "@/components/molecules/GhibliTabs";
 import { TodoCheckbox } from "@/components/molecules/TodoCheckbox";
 import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
-import type { Todo, TodoQuery } from "@repo/types";
+import type { Todo } from "@repo/types";
 import type { PickApiID } from "@repo/types/api.types";
+import { formatDateTime } from "@repo";
 
-type TabValue = "all" | "pending" | "completed";
+export type TabValue = "all" | "pending" | "completed";
 
 type TodoListItemProps = {
   todo: Todo;
@@ -48,20 +45,24 @@ function TodoListItem({
         disabled={disabled}
         onChange={handleToggleChange}
       />
-      <span
-        className={
-          todo.status === "completed"
-            ? "flex-1 text-sm text-muted-foreground line-through"
-            : "flex-1 text-sm"
-        }
-      >
-        {todo.text}
-      </span>
+      <div className="w-full flex flex-col items-start">
+        <span
+          className={
+            todo.status === "completed"
+              ? "flex-1 text-sm text-muted-foreground line-through"
+              : "flex-1 text-sm"
+          }
+        >
+          {todo.text}
+        </span>
+        <span className="">{formatDateTime(todo.dueDate!)}</span>
+      </div>
       <Button
         variant="ghost"
         size="icon"
         className="size-8 text-destructive"
         onClick={handleDeleteClick}
+        disabled={disabled}
       >
         <Trash2 className="size-4" />
       </Button>
@@ -69,31 +70,23 @@ function TodoListItem({
   );
 }
 
-export function TodoListSection() {
-  const api = useApi();
-  const [tab, setTab] = useState<TabValue>("all");
-  const query: TodoQuery | undefined =
-    tab === "all" ? undefined : { status: tab as "pending" | "completed" };
-  const useTodos = api.todo.query.get(query);
-  const useUpdateTodo = api.todo.mutate.update();
-  const useDeleteTodo = api.todo.mutate.delete();
-  const { data: todos = [], isLoading } = useTodos;
-  const updateTodo = useUpdateTodo;
-  const deleteTodo = useDeleteTodo;
-  const listRef = useGsapStagger<HTMLUListElement>([todos.length, tab]);
-
-  const handleToggleTodo = (id: PickApiID, checked: boolean) => {
-    updateTodo.mutate({
-      id,
-      payload: { status: checked ? "completed" : "pending" },
-    });
+interface TodoListSectionProps {
+  service: {
+    handleToggleTodo: (id: PickApiID, checked: boolean) => void;
+    handleDeleteTodo: (id: PickApiID) => void;
   };
-
-  const handleDeleteTodo = (id: PickApiID) => {
-    deleteTodo.mutate(id);
+  state: {
+    todos: Todo[];
+    isLoading: boolean;
+    isPending: boolean;
+    tab: TabValue;
+    setTab: (val: TabValue) => void;
   };
+}
 
-  // handlingnya terlalu jelek ish
+export function TodoListSection({ service, state }: TodoListSectionProps) {
+  const { handleToggleTodo, handleDeleteTodo } = service;
+  const { todos, isLoading, isPending, tab, setTab } = state;
 
   const tabs = useMemo(
     () => [
@@ -105,18 +98,17 @@ export function TodoListSection() {
   );
 
   return (
-    <GhibliCard>
+    <GhibliCard hover={false}>
       <GhibliTabs tabs={tabs} value={tab} onChange={setTab} />
 
       {isLoading ? (
         <div className="mt-4 space-y-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-12 animate-pulse rounded-xl bg-muted" />
+            <div key={i} className="h-12 rounded-xl bg-muted" />
           ))}
         </div>
       ) : todos.length === 0 ? (
         <GhibliEmptyState
-          emoji="✨"
           title={
             tab === "completed"
               ? "Belum ada tugas selesai"
@@ -125,12 +117,12 @@ export function TodoListSection() {
           description="Susuwatari sedang tidur — tambahkan tugas pertamamu!"
         />
       ) : (
-        <ul ref={listRef} className="mt-4 space-y-2">
+        <ul className="mt-4 space-y-2">
           {todos.map((todo) => (
             <TodoListItem
               key={todo.id}
               todo={todo}
-              disabled={updateTodo.isPending || deleteTodo.isPending}
+              disabled={isPending}
               onToggle={handleToggleTodo}
               onDelete={handleDeleteTodo}
             />

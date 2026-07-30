@@ -15,7 +15,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/atoms/Sheet";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/utils/classname";
 import QuickAddForm from "./form/QuickForm";
 import {
@@ -46,27 +45,55 @@ export function QuickAddFab({
   handleSubmit,
   isPending,
 }: QuickAddFabProps) {
-  const isMobile = useIsMobile();
   const title = "Tambah Cepat";
 
-  if (isMobile) {
-    return (
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button
-            size="icon"
-            className={cn(
-              "ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg md:hidden",
-            )}
-          >
-            <Plus className="size-6" />
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="bottom" className="rounded-t-3xl">
-          <SheetHeader>
-            <SheetTitle className="font-serif">{title}</SheetTitle>
-          </SheetHeader>
-          <div className="px-4 pb-6">
+  return (
+    <>
+      {/* Mobile: floating action button with bottom sheet */}
+      <div className="md:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              size="icon"
+              className={cn(
+                "ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg",
+              )}
+            >
+              <Plus className="size-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="bottom" className="rounded-t-3xl">
+            <SheetHeader>
+              <SheetTitle className="font-serif">{title}</SheetTitle>
+            </SheetHeader>
+            <div className="px-4 pb-6">
+              <QuickAddForm
+                formCreateNote={formCreateNote}
+                formCreateTodo={formCreateTodo}
+                setFormCreateNote={setFormCreateNote}
+                setFormCreateTodo={setFormCreateTodo}
+                mode={mode}
+                setMode={setMode}
+                handleSubmit={handleSubmit}
+                isPending={isPending}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop: inline dialog trigger */}
+      <div className="hidden md:block">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="ghibli-btn">
+              <Plus className="size-4" /> Quick Add
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="ghibli-glass sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-serif">{title}</DialogTitle>
+            </DialogHeader>
             <QuickAddForm
               formCreateNote={formCreateNote}
               formCreateTodo={formCreateTodo}
@@ -77,34 +104,9 @@ export function QuickAddFab({
               handleSubmit={handleSubmit}
               isPending={isPending}
             />
-          </div>
-        </SheetContent>
-      </Sheet>
-    );
-  }
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="ghibli-btn hidden md:inline-flex">
-          <Plus className="size-4" /> Quick Add
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="ghibli-glass sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-serif">{title}</DialogTitle>
-        </DialogHeader>
-        <QuickAddForm
-          formCreateNote={formCreateNote}
-          formCreateTodo={formCreateTodo}
-          setFormCreateNote={setFormCreateNote}
-          setFormCreateTodo={setFormCreateTodo}
-          mode={mode}
-          setMode={setMode}
-          handleSubmit={handleSubmit}
-          isPending={isPending}
-        />
-      </DialogContent>
-    </Dialog>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </>
   );
 }

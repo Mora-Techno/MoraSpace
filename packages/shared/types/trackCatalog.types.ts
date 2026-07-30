@@ -1,7 +1,5 @@
-/** Mirrors the Prisma TrackStatus enum */
 export type TrackStatus = "PENDING" | "APPROVED" | "REJECTED";
 
-/** Mirrors the Prisma TrackCatalog model */
 export interface ITrackCatalog {
   id: string;
   companyId: string | null;
@@ -17,7 +15,6 @@ export interface ITrackCatalog {
   updatedAt: Date;
 }
 
-/** Safe API response shape for a track catalog entry */
 export type TrackCatalog = Pick<
   ITrackCatalog,
   | "id"
@@ -30,19 +27,15 @@ export type TrackCatalog = Pick<
   | "createdAt"
   | "updatedAt"
 > & {
-  /** Display name of the submitter */
   submittedBy?: string;
 };
 
-/** Payload for submitting a new track */
 export type PickSubmitTrack = Pick<ITrackCatalog, "title" | "youtubeUrl">;
 
-/** Payload for approving / rejecting a track */
 export type PickReviewTrack = {
   rejectionReason?: string;
 };
 
-/** Query parameters for listing track catalog entries */
 export type TrackCatalogQuery = {
   search?: string;
   status?: TrackStatus;

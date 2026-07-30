@@ -1,28 +1,27 @@
-"use client";
-
-import { format, isSameDay } from "date-fns";
+import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
-import { useDeleteEvent, useEvents } from "@/hooks/useApi/calendar";
-import type { EventQuery } from "@repo/types";
+import type { CalendarEvent } from "@repo/types";
+import type { PickApiID } from "@repo/types/api.types";
 
-export function EventListSection({
-  selectedDate,
-  query,
-}: {
-  selectedDate: Date;
-  query?: EventQuery;
-}) {
-  const { data: events = [], isLoading } = useEvents(query);
-  const deleteEvent = useDeleteEvent();
+interface EventListSectionProps {
+  service: {
+    handleDelete: (id: PickApiID) => void;
+  };
+  state: {
+    dayEvents: CalendarEvent[];
+    isLoading: boolean;
+    selectedDate: Date;
+  };
+}
 
-  const dayEvents = events.filter((e) =>
-    isSameDay(new Date(e.startDate), selectedDate),
-  );
+export function EventListSection({ service, state }: EventListSectionProps) {
+  const { handleDelete } = service;
+  const { dayEvents, isLoading, selectedDate } = state;
 
   return (
     <GhibliCard>
@@ -38,7 +37,6 @@ export function EventListSection({
         </div>
       ) : dayEvents.length === 0 ? (
         <GhibliEmptyState
-          emoji="🌸"
           title="Tidak ada agenda"
           description="Hari ini bebas — tambahkan jadwal jika perlu."
         />
@@ -62,7 +60,7 @@ export function EventListSection({
                 variant="ghost"
                 size="icon"
                 className="size-8"
-                onClick={() => deleteEvent.mutate({ id: event.id })}
+                onClick={() => handleDelete({ id: event.id })}
               >
                 <Trash2 className="size-4 text-destructive" />
               </Button>

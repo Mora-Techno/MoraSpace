@@ -1,3 +1,5 @@
+import { ITrackCatalog } from "./trackCatalog.types";
+
 /** Mirror Prisma model `MusicPlaylist` */
 export interface IMusicPlaylist {
   id: string;
@@ -14,8 +16,13 @@ export interface IMusicPlayListItem {
   id: string;
   playlistId: string;
   trackCatalogId?: string | null;
-  title: string;
-  youtubeUrl: string;
+  title?: string;
+  youtubeUrl?: string;
+  trackCatalog?: {
+    id: string;
+    title: string;
+    youtubeUrl: string;
+  } | null;
   createdAt: Date;
   updatedAt: Date;
 }

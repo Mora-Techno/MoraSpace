@@ -10,10 +10,8 @@ export const CreatePlaylistDto = t.Object({
 });
 
 export const AddItemToPlaylistDto = t.Object({
-  title: t.String({ minLength: 1, description: "Judul lagu" }),
-  youtubeUrl: t.String({ minLength: 1, description: "URL YouTube" }),
+  trackCatalogId: t.String({ format: "uuid", description: "ID Track id" }),
 });
-
 export const MusicQueryDto = t.Object({
   ...SearchDto.properties,
   ...PaginationDto.properties,

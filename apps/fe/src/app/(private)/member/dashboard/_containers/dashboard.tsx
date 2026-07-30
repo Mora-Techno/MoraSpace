@@ -112,7 +112,6 @@ export default function DashboardContainer() {
 
   const useStartSession = usePodomoroEntry.mutate.start();
   const useStopSession = usePodomoroEntry.mutate.stop();
-
   const startSession = useStartSession;
   const stopSession = useStopSession;
 
@@ -166,6 +165,17 @@ export default function DashboardContainer() {
 
   const { data: playlists = [], isLoading: musicLoading } = useMusicPlaylist;
 
+  const mappedPlaylists = useMemo(() => {
+    return playlists.map((playlist) => ({
+      ...playlist,
+      items: (playlist.items ?? []).map((item) => ({
+        ...item,
+        title: item.title || item.trackCatalog?.title || "",
+        youtubeUrl: item.youtubeUrl || item.trackCatalog?.youtubeUrl || "",
+      })),
+    }));
+  }, [playlists]);
+
   const createPlaylist = useCreatePlaylistMusic;
 
   // Track Catalog
@@ -202,7 +212,9 @@ export default function DashboardContainer() {
   };
 
   const handleAddMusicItem = (playlistId: string, trackCatalogId: string) => {
-    useAddItemMusic.mutate({ playlistId, trackCatalogId });
+    const payload = { playlistId, trackCatalogId };
+
+    useAddItemMusic.mutate(payload);
   };
 
   const handleDeleteMusicItem = (playlistId: string, itemId: string) => {
@@ -301,12 +313,12 @@ export default function DashboardContainer() {
             <MusicSection
               service={{
                 handleAdd: handleAddPlaylist,
-                createPlaylist,
+                isPending: createPlaylist.isPending,
                 addItem: handleAddMusicItem,
                 deleteItem: handleDeleteMusicItem,
               }}
               state={{
-                playlists,
+                playlists: mappedPlaylists,
                 isLoading: musicLoading,
                 formCreatePlaylistMusic,
                 setFormCreatePlaylistMusic,

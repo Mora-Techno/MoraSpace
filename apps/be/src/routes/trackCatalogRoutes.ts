@@ -66,7 +66,6 @@ class TrackCatalogRouter {
       },
     );
 
-    // ── Submit a new track ──────────────────────────────────────────
     this.trackCatalogRouter.post(
       "/",
       (c: AppContext) => TrackCatalogController.submit(c),
@@ -82,7 +81,6 @@ class TrackCatalogRouter {
       },
     );
 
-    // ── Developer/Super Admin: approve ──────────────────────────────
     this.trackCatalogRouter.patch(
       "/:id/approve",
       (c: AppContext) => TrackCatalogController.approve(c),
@@ -101,7 +99,6 @@ class TrackCatalogRouter {
       },
     );
 
-    // ── Developer/Super Admin: reject ───────────────────────────────
     this.trackCatalogRouter.patch(
       "/:id/reject",
       (c: AppContext) => TrackCatalogController.reject(c),
@@ -121,7 +118,6 @@ class TrackCatalogRouter {
       },
     );
 
-    // ── Delete a track ──────────────────────────────────────────────
     this.trackCatalogRouter.delete(
       "/:id",
       (c: AppContext) => TrackCatalogController.remove(c),

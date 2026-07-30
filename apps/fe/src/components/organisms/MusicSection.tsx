@@ -28,7 +28,7 @@ import { cn } from "@/utils/classname";
 interface MusicSectionProps {
   service: {
     handleAdd: (e: React.FormEvent) => void;
-    createPlaylist: any;
+    isPending: boolean;
     addItem: (playlistId: string, trackCatalogId: string) => void;
     deleteItem?: (playlistId: string, itemId: string) => void;
   };
@@ -53,32 +53,15 @@ interface MusicSectionProps {
     onPause: () => void;
     onToggleShuffle: () => void;
     onAddToQueue: (track: IMusicPlayListItem) => void;
-
-    /** Track catalog data */
     tracks?: TrackCatalog[];
     isTracksLoading?: boolean;
-    /** Play a single track from catalog */
     onPlayTrack?: (track: TrackCatalog) => void;
-    /** Add a catalog track to a specific playlist */
     onAddTrackToPlaylist?: (playlistId: string, track: TrackCatalog) => void;
   };
 }
 
-/** Convert a TrackCatalog entry to IMusicPlayListItem for the player */
-function trackToPlayerItem(track: TrackCatalog): IMusicPlayListItem {
-  return {
-    id: track.id,
-    playlistId: "",
-    trackCatalogId: track.id,
-    title: track.title,
-    youtubeUrl: track.youtubeUrl,
-    createdAt: track.createdAt,
-    updatedAt: track.updatedAt,
-  };
-}
-
 export function MusicSection({ service, state }: MusicSectionProps) {
-  const { handleAdd, createPlaylist, addItem, deleteItem } = service;
+  const { handleAdd, isPending, addItem, deleteItem } = service;
   const {
     playlists,
     isLoading,
@@ -161,7 +144,6 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                     : "border-border/30 bg-background/30",
                 )}
               >
-                {/* Playlist header */}
                 <div className="flex w-full items-center gap-3 p-3 text-left">
                   <button
                     type="button"
@@ -220,7 +202,6 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                       </>
                     )}
 
-                    {/* Add from catalog */}
                     <button
                       type="button"
                       onClick={() => {
@@ -281,7 +262,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                               isCurrentTrack && "text-primary font-medium",
                             )}
                           >
-                            {item.title}
+                            {item.title || "No Title"}
                           </p>
 
                           <button
@@ -435,7 +416,6 @@ export function MusicSection({ service, state }: MusicSectionProps) {
         </div>
       )}
 
-      {/* Create playlist form */}
       <form onSubmit={handleAdd} className="mt-auto flex flex-col gap-2">
         <div className="flex gap-2">
           <input
@@ -448,7 +428,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
               }))
             }
             className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
-            disabled={createPlaylist.isPending}
+            disabled={isPending}
           />
           <input
             placeholder="Keterangan"
@@ -460,14 +440,14 @@ export function MusicSection({ service, state }: MusicSectionProps) {
               }))
             }
             className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
-            disabled={createPlaylist.isPending}
+            disabled={isPending}
           />
           <Button
             type="submit"
             size="sm"
             className="h-8 px-3 shrink-0"
             disabled={
-              createPlaylist.isPending ||
+              isPending ||
               !formCreatePlaylistMusic.name.trim() ||
               !formCreatePlaylistMusic.description.trim()
             }

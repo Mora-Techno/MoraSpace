@@ -22,7 +22,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/atoms/Tooltip";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/utils/classname";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -31,6 +30,20 @@ const SIDEBAR_WIDTH = "16rem";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+
+function useMediaQuery(query: string): boolean {
+  const [matches, setMatches] = React.useState(false);
+
+  React.useEffect(() => {
+    const mql = window.matchMedia(query);
+    setMatches(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, [query]);
+
+  return matches;
+}
 
 type SidebarContextProps = {
   state: "expanded" | "collapsed";
@@ -66,7 +79,7 @@ function SidebarProvider({
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
-  const isMobile = useIsMobile();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.

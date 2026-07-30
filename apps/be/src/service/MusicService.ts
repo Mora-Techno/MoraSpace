@@ -106,7 +106,7 @@ class MusicService {
     const totalPage = Math.ceil(totalData / limit);
 
     return {
-      data: data,
+      data: data.map(mapPlaylist),
       meta: {
         currentPage: page,
         limit: limit,
@@ -162,7 +162,6 @@ class MusicService {
     });
     if (!existing) return null;
 
-    // Verify the TrackCatalog record exists
     const track = await prisma.trackCatalog.findUnique({
       where: { id: input.trackCatalogId },
     });

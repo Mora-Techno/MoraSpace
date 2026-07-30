@@ -54,7 +54,6 @@ class MusicRouter {
       },
     );
 
-    // ✨ Add / remove music items inside a playlist
     this.musicRouter.post(
       "/:id/items",
       (c: AppContext) => MusicController.addItem(c),
