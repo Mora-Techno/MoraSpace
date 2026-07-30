@@ -72,6 +72,7 @@ class AuthController {
         email: newUser.email,
         phone: newUser.phone,
         fullName: newUser.fullName,
+        platformRole: "USER" as const,
         companyRole: (auth.companyRole ?? "Member") as CompanyRole,
         companyId: null,
         companyMemberId: null,

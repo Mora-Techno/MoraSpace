@@ -21,6 +21,7 @@ model User {
   lastLoginAt            DateTime?           @map("last_login_at")
   createdAt              DateTime            @default(now()) @map("created_at")
   updatedAt              DateTime            @updatedAt @map("updated_at")
+  platformRole           PlatformRole        @default(USER) @map("platform_role")
   calendarEvents         CalendarEvent[]
   ownedCompanies         Company[]           @relation("CompanyOwner")
   companyMembers         CompanyMember[]
@@ -37,6 +38,7 @@ model User {
   managerReportingLines  ReportingLine[]     @relation("ReportingManager")
   ledTeams               Team[]              @relation("TeamLeader")
   todos                  Todo[]
+  trackCatalogs          TrackCatalog[]
   sessions               UserSession[]
 
   @@map("users")
@@ -124,6 +126,7 @@ model Company {
   taskPriorities      TaskPriority[]
   taskStatuses        TaskStatus[]
   tasks               Task[]
+  trackCatalogs       TrackCatalog[]
   webhooks            Webhook[]
 
   @@map("companies")
@@ -273,6 +276,7 @@ model CompanyMember {
   teamLinks         TeamMember[]
   todoLists         TodoList[]
   todos             Todo[]
+  trackCatalogs     TrackCatalog[]
   settings          UserSetting?
 
   @@unique([companyId, userId])
@@ -682,6 +686,7 @@ model Playlist {
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
   userId          String?        @map("user_id")
+  description     String         @map("description")
   items           PlaylistItem[]
   companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
   user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -690,13 +695,13 @@ model Playlist {
 }
 
 model PlaylistItem {
-  id         String   @id @default(uuid())
-  playlistId String   @map("playlist_id")
-  title      String
-  youtubeUrl String   @map("youtube_url")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  id             String        @id @default(uuid())
+  playlistId     String        @map("playlist_id")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  trackCatalogId String?       @map("track_catalog_id")
+  playlist       Playlist      @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  trackCatalog   TrackCatalog? @relation(fields: [trackCatalogId], references: [id])
 
   @@map("playlist_items")
 }
@@ -939,6 +944,34 @@ model UserSetting {
   @@map("user_settings")
 }
 
+model TrackCatalog {
+  id              String         @id @default(uuid())
+  companyId       String?        @map("company_id")
+  companyMemberId String?        @map("company_member_id")
+  userId          String?        @map("user_id")
+  title           String
+  youtubeUrl      String         @map("youtube_url")
+  youtubeVideoId  String         @map("youtube_video_id")
+  status          TrackStatus    @default(PENDING)
+  rejectionReason String?        @map("rejection_reason")
+  reviewedAt      DateTime?      @map("reviewed_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  playlistItems   PlaylistItem[]
+  company         Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, youtubeVideoId])
+  @@map("track_catalogs")
+}
+
+enum PlatformRole {
+  USER
+  DEVELOPER
+  SUPER_ADMIN
+}
+
 enum UserStatus {
   active
   pending
@@ -949,4 +982,10 @@ enum CompanyMemberStatus {
   active
   leave
   suspended
+}
+
+enum TrackStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

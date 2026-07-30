@@ -9,6 +9,10 @@ import {
 import { CreateMusicValidate } from "@/validation/music.validate";
 import { getUser } from "@/utils/authTokens";
 
+interface AddItemBody {
+  trackCatalogId: string;
+}
+
 class MusicController {
   public async list(c: AppContext) {
     try {
@@ -58,6 +62,72 @@ class MusicController {
       return HttpResponse(c).created(
         queryService,
         "Playlist berhasil ditambahkan",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async addItem(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string };
+      const input = c.body as AddItemBody;
+
+      const authRespone = await personalContextValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      if (!input?.trackCatalogId) {
+        return HttpResponse(c).badRequest("trackCatalogId wajib diisi");
+      }
+
+      const queryService = await MusicService.addItem(
+        params.id,
+        user.companyMemberId ?? null,
+        user.id,
+        input,
+      );
+
+      if (!queryService)
+        return HttpResponse(c).notFound("Playlist tidak ditemukan");
+
+      return HttpResponse(c).created(
+        queryService,
+        "Musik berhasil ditambahkan ke playlist",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async removeItem(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string; itemId: string };
+
+      const authRespone = await personalContextValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const queryService = await MusicService.removeItem(
+        params.itemId,
+        params.id,
+        user.companyMemberId ?? null,
+        user.id,
+      );
+
+      if (!queryService)
+        return HttpResponse(c).notFound("Item tidak ditemukan");
+
+      return HttpResponse(c).ok(
+        queryService,
+        undefined,
+        "Musik berhasil dihapus dari playlist",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

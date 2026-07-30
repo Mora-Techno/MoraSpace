@@ -1,17 +1,55 @@
 import prisma from "prisma/client";
 import type { PickCreatePlaylist } from "@repo/types/music.types";
 
+function mapPlaylistItem(item: {
+  id: string;
+  playlistId: string;
+  trackCatalogId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  trackCatalog?: {
+    id: string;
+    title: string;
+    youtubeUrl: string;
+  } | null;
+}) {
+  return {
+    id: item.id,
+    playlistId: item.playlistId,
+    trackCatalogId: item.trackCatalogId,
+    title: item.trackCatalog?.title ?? "",
+    youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+    createdAt: item.createdAt.toISOString(),
+    updatedAt: item.updatedAt.toISOString(),
+  };
+}
+
 function mapPlaylist(playlist: {
   id: string;
   name: string;
-  items?: { title: string; youtubeUrl: string }[];
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+  items?: {
+    id: string;
+    playlistId: string;
+    trackCatalogId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    trackCatalog?: {
+      id: string;
+      title: string;
+      youtubeUrl: string;
+    } | null;
+  }[];
 }) {
-  const firstItem = playlist.items?.[0];
   return {
     id: playlist.id,
-    title: firstItem?.title ?? playlist.name,
-    url: firstItem?.youtubeUrl ?? "",
-    createdAt: new Date().toISOString(),
+    name: playlist.name,
+    description: playlist.description,
+    items: playlist.items?.map(mapPlaylistItem) ?? [],
+    createdAt: playlist.createdAt.toISOString(),
+    updatedAt: playlist.updatedAt.toISOString(),
   };
 }
 
@@ -53,13 +91,22 @@ class MusicService {
         orderBy: orderBy as any,
         take: limit,
         skip: skip,
+        include: {
+          items: {
+            include: {
+              trackCatalog: {
+                select: { id: true, title: true, youtubeUrl: true },
+              },
+            },
+          },
+        },
       }),
     ]);
 
     const totalPage = Math.ceil(totalData / limit);
 
     return {
-      data: data,
+      data: data.map(mapPlaylist),
       meta: {
         currentPage: page,
         limit: limit,
@@ -75,13 +122,8 @@ class MusicService {
     input: PickCreatePlaylist,
   ) {
     const data: Record<string, unknown> = {
-      name: input.title,
-      items: {
-        create: {
-          title: input.title,
-          youtubeUrl: input.url,
-        },
-      },
+      name: input.name,
+      description: input.description,
     };
     if (companyMemberId) {
       data.companyMemberId = companyMemberId;
@@ -91,10 +133,98 @@ class MusicService {
 
     const playlist = await prisma.playlist.create({
       data: data as any,
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            trackCatalog: {
+              select: { id: true, title: true, youtubeUrl: true },
+            },
+          },
+        },
+      },
     });
 
     return mapPlaylist(playlist);
+  }
+
+  public async addItem(
+    playlistId: string,
+    companyMemberId: string | null,
+    userId: string,
+    input: { trackCatalogId: string },
+  ) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { id: playlistId, companyMemberId }
+      : { id: playlistId, userId };
+
+    const existing = await prisma.playlist.findFirst({
+      where: where as any,
+    });
+    if (!existing) return null;
+
+    const track = await prisma.trackCatalog.findUnique({
+      where: { id: input.trackCatalogId },
+    });
+    if (!track) return null;
+
+    const item = await prisma.playlistItem.create({
+      data: {
+        playlistId,
+        trackCatalogId: input.trackCatalogId,
+      },
+      include: {
+        trackCatalog: {
+          select: { id: true, title: true, youtubeUrl: true },
+        },
+      },
+    });
+
+    return {
+      id: item.id,
+      playlistId: item.playlistId,
+      trackCatalogId: item.trackCatalogId,
+      title: item.trackCatalog?.title ?? "",
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+      createdAt: item.createdAt.toISOString(),
+      updatedAt: item.updatedAt.toISOString(),
+    };
+  }
+
+  public async removeItem(
+    itemId: string,
+    playlistId: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const playlistWhere: Record<string, unknown> = companyMemberId
+      ? { id: playlistId, companyMemberId }
+      : { id: playlistId, userId };
+
+    const existing = await prisma.playlist.findFirst({
+      where: playlistWhere as any,
+    });
+    if (!existing) return null;
+
+    const item = await prisma.playlistItem.findFirst({
+      where: { id: itemId, playlistId },
+      include: {
+        trackCatalog: {
+          select: { id: true, title: true, youtubeUrl: true },
+        },
+      },
+    });
+    if (!item) return null;
+
+    await prisma.playlistItem.delete({ where: { id: itemId } });
+    return {
+      id: item.id,
+      playlistId: item.playlistId,
+      trackCatalogId: item.trackCatalogId,
+      title: item.trackCatalog?.title ?? "",
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+      createdAt: item.createdAt.toISOString(),
+      updatedAt: item.updatedAt.toISOString(),
+    };
   }
 
   public async remove(
@@ -108,7 +238,15 @@ class MusicService {
 
     const existing = await prisma.playlist.findFirst({
       where: where as any,
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            trackCatalog: {
+              select: { id: true, title: true, youtubeUrl: true },
+            },
+          },
+        },
+      },
     });
     if (!existing) return null;
 

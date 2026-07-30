@@ -14,6 +14,8 @@ export function PlaylistItemCard({
   onClick,
   isActive,
 }: PlaylistItemCardProps) {
+  const itemCount = playlist.items?.length ?? 0;
+
   return (
     <button
       type="button"
@@ -30,8 +32,10 @@ export function PlaylistItemCard({
         )}
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium">{playlist.title}</p>
-        {/* You can display the host/domain or just let it be clean */}
+        <p className="truncate text-sm font-medium">{playlist.name}</p>
+        {itemCount > 0 && (
+          <p className="text-xs text-muted-foreground">{itemCount} lagu</p>
+        )}
       </div>
     </button>
   );

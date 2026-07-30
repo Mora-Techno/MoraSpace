@@ -1,66 +1,98 @@
-# ROLE & OBJECTIVE
+Markdown
 
-You are an Principal Frontend Engineer and UI/UX Architect specializing in high-performance B2B SaaS applications.
-Your task is to build a visually stunning, responsive, and interactive "Owner Dashboard" (Company Command Center) for "Spaces"—an enterprise workspace and productivity platform.
+# TASK: Implement Dual-Layer Authorization (Platform Role & Company Role)
 
-# TECH STACK & LIBRARIES
+## 1. CONTEXT & ARCHITECTURAL PHILOSOPHY
 
-1. Framework: Next.js (App Router) / React with TypeScript.
-2. UI Component Library: shadcn/ui (using Tailwind CSS for styling).
-3. Icons: Lucide React.
-4. Charts & Analytics: Recharts.
-5. Smooth Scrolling: Studio Freight Lenis (`@studio-freight/react-lenis` or `@studio-freight/lenis`).
-6. Animations: GSAP (GreenSock Animation Platform) using `@gsap/react` hook (`useGSAP`) for memory-safe timeline animations.
-7. Tailwind Variabel & Theme Provinder
+We are refactoring our SaaS backend authorization into a **Dual-Layer Authorization System**:
 
-# DESIGN SYSTEM & AESTHETICS
+- **Layer 1: Platform Role (Global/SaaS Level)** -> Governs platform-wide internal access (e.g., Developer Console, global monitoring, approving `TrackCatalog` submissions). This is attached directly to the `User` model.
+- **Layer 2: Company Role (Tenant/Workspace Level)** -> Governs access within a specific company (`Company -> Role -> MemberRole -> CompanyMember`).
 
-- Vibe: Executive, sleek, modern, clean, and highly professional (think Linear, Vercel, or Stripe dashboards).
-- Layout: Asymmetrical Bento Grid layout to maximize information density without feeling cluttered.
-- Visual Polish: Subtle glassmorphism, refined border grids (`border-border/40`), glowing accents for AI features, and clean typography.
-- UI Language: Indonesian (for dashboard labels, titles, and mock data content).
+**CRITICAL RULE:** A Platform Developer/Super Admin must be able to access global internal endpoints WITHOUT needing a `companyId` or becoming a `CompanyMember`. Do NOT mix Platform Roles into the `Role` or `CompanyMember` tables!
 
-# REQUIRED WIDGETS & FEATURES
+---
 
-Please build the dashboard with realistic, rich mock data featuring these exact 6 modules:
+## 2. PRISMA SCHEMA REQUIREMENTS
 
-1. Executive KPI Summary Cards (Top Row)
-   - 4 Stats Cards:
-     a. Seat Utilization (e.g., "32 / 40 Seats", with a shadcn Progress bar).
-     b. Company Productivity Rate (e.g., "88.4%", badge "+5.2% dari minggu lalu").
-     c. Task Health Overview (e.g., "142 Active, 12 Overdue").
-     d. Total Deep Work / Pomodoro Hours (e.g., "420 Jam minggu ini").
+Modify `prisma/schema.prisma` to introduce the global platform role on the `User` model.
 
-2. AI Executive Insights Banner (High-Priority Widget)
-   - A distinct, visually highlighted callout card with subtle glowing borders or gradient background representing an AI Assistant briefing.
-   - Content: Automated business insight (e.g., "🤖 AI Briefing: Tim Engineering mencapai efisiensi 92%, namun Tim Marketing mengalami bottleneck pada 3 campaign utama. Disarankan meninjau ulang beban meeting mingguan.").
+1. Create the new enum:
 
-3. Team & Department Analytics (Recharts Section)
-   - Widget A (Bar/Area Chart): "Produktivitas per Divisi" comparing tasks completed vs. pending across Engineering, Product, Marketing, HR, and Finance.
-   - Widget B (Donut/Pie Chart): "Distribusi Status Tugas" (Completed, In Progress, Review, Blocked) with a clean custom tooltip and legend.
-   - Must use `<ResponsiveContainer width="100%" height={300}>` for Recharts to ensure responsiveness.
+```prisma
+enum PlatformRole {
+  MEMBER
+  DEVELOPER
+  SUPER_ADMIN
+}
 
-4. Financial & Subscription Status (Billing Widget)
-   - Display: Current Plan ("Pro Tier - Yearly"), Renewal Date, Total Monthly Spend, and an action button `<Button variant="outline">Upgrade Plan</Button>`.
+    Add the platformRole field to the existing User model with a default value of USER:
 
-5. Actionable Governance / Pending Approvals
-   - An interactive list of pending requests requiring the Owner's approval (e.g., Cuti bulanan, WFH request, Budget approval, Member invitation).
-   - Include quick-action buttons: "Approve" (primary/green accent) and "Reject" (destructive/outline).
+Cuplikan kode
 
-6. Live Company Activity Feed
-   - A scrollable, timeline-style list of system and user audit logs (e.g., "Budi menyelesaikan milestone Fluxo App", "Siti mengundang 2 engineer baru").
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String       @map("password_hash")
+  platformRole PlatformRole @default(USER) // <-- ADD THIS FIELD
+  // ... keep all existing fields and relations intact
+}
 
-# TECHNICAL & ANIMATION REQUIREMENTS (GSAP + LENIS)
+Do NOT alter existing Company, Role, MemberRole, or CompanyMember models.
+3. MIGRATION & DEFAULT VALUES
 
-1. Lenis Setup: Wrap the dashboard view or main container with Lenis to ensure ultra-smooth inertia scrolling across the executive dashboard.
-2. GSAP Entrance Animations:
-   - Use the `useGSAP` hook from `@gsap/react`.
-   - Create a timeline (`gsap.timeline()`) that animates the layout on initial load.
-   - The KPI cards and Bento Grid items must enter using a `stagger` effect (e.g., `from({ opacity: 0, y: 30, scale: 0.98 })` to `to({ opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: "power3.out" })`).
-   - Assign a specific ref or class selector (e.g., `.gsap-widget`) to all card containers for clean staggering.
-3. Memory Management: Ensure all GSAP animations are properly scoped within `useGSAP` to prevent React re-render memory leaks.
-4. Component Structure: Write clean, modular code. Implement proper TypeScript interfaces for all mock data structures. Use standard shadcn components (`Card`, `CardHeader`, `CardTitle`, `CardContent`, `Button`, `Badge`, `Avatar`, `Progress`, `Separator`).
+    Generate and apply the Prisma migration.
 
-# OUTPUT EXPECTATION
+    Ensure that all existing user records in the database automatically receive platformRole = USER as their default value.
 
-Generate the complete, functional, and clean TypeScript React code for this Owner Dashboard page. The code should be ready to paste and render immediately with mock data included.
+4. AUTHENTICATION & JWT PAYLOAD UPDATE
+
+Update the authentication/login service:
+
+    When generating the JWT Access Token (and UserSession data), include platformRole in the token payload.
+
+    Example JWT Payload structure:
+
+JSON
+
+{
+  "sub": "user-uuid-here",
+  "email": "user@example.com",
+  "platformRole": "DEVELOPER"
+}
+
+    Ensure the login flow works seamlessly for regular users (USER) without requiring any company selection at the authentication stage.
+
+5. MIDDLEWARE / GUARD IMPLEMENTATION
+
+Create a new middleware/guard named requirePlatformRole specifically for Global Authorization.
+
+Requirements for requirePlatformRole(allowedRoles: PlatformRole[]):
+
+    Extract and verify the JWT from the authorization header.
+
+    Read the platformRole from the decoded token.
+
+    Check if the user's platformRole is included in the allowedRoles array.
+
+    If valid, proceed to the handler (next()).
+
+    If invalid (e.g., a USER trying to access a DEVELOPER endpoint), immediately return an HTTP 403 Forbidden error with a clear message: "Access denied. Global platform authorization required."
+
+    Important: This middleware must NEVER query or check CompanyMember, companyId, or Role.
+
+Note: Do NOT delete or modify any existing company-level middleware (e.g., verifyToken, requireRole, requirePermission). Keep them completely separate.
+6. REAL-WORLD IMPLEMENTATION: TRACK CATALOG APPROVAL
+
+To prove and test this architecture, implement/update the endpoint for reviewing and approving music tracks (TrackCatalog). According to our schema, TrackCatalog has status: TrackStatus (PENDING, APPROVED, REJECTED), rejectionReason, and reviewedAt.
+
+Create an internal developer endpoint protected by our new global layer:
+
+    Route: PATCH /api/internal/track-catalogs/:id/review (or adjust route prefix to match current project standards)
+
+    Middleware: requirePlatformRole(['DEVELOPER', 'SUPER_ADMIN'])
+
+    Request Body:
+
+JSON
+```

@@ -47,3 +47,10 @@ export {
   listPomodoroEndpoints,
 } from "./pomodoro.endpoints";
 export { SYSTEM_ENDPOINTS, listSystemEndpoints } from "./system.endpoints";
+export {
+  TRACK_CATALOG_ENDPOINTS,
+  listTrackCatalogEndpoints,
+  trackCatalogById,
+  trackCatalogApprove,
+  trackCatalogReject,
+} from "./trackCatalog.endpoints";

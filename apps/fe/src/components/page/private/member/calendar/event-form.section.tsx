@@ -1,43 +1,36 @@
-"use client";
-
 import { format } from "date-fns";
-import { useState } from "react";
 
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { useCreateEvent } from "@/hooks/useApi/calendar";
-import type { EventQuery } from "@repo/types";
 
-export function EventFormSection({
-  selectedDate,
-  query,
-}: {
-  selectedDate?: Date;
-  query?: EventQuery;
-}) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const createEvent = useCreateEvent();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !startDate) return;
-    createEvent.mutate(
-      {
-        title: title.trim(),
-        description: description.trim() || null,
-        startDate: new Date(startDate).toISOString(),
-      },
-      {
-        onSuccess: () => {
-          setTitle("");
-          setDescription("");
-          setStartDate("");
-        },
-      },
-    );
+interface EventFormSectionProps {
+  service: {
+    handleSubmit: (e: React.FormEvent) => void;
   };
+  state: {
+    selectedDate?: Date;
+    title: string;
+    setTitle: (val: string) => void;
+    description: string;
+    setDescription: (val: string) => void;
+    startDate: string;
+    setStartDate: (val: string) => void;
+    isPending: boolean;
+  };
+}
+
+export function EventFormSection({ service, state }: EventFormSectionProps) {
+  const { handleSubmit } = service;
+  const {
+    selectedDate,
+    title,
+    setTitle,
+    description,
+    setDescription,
+    startDate,
+    setStartDate,
+    isPending,
+  } = state;
 
   return (
     <GhibliCard>
@@ -70,9 +63,9 @@ export function EventFormSection({
         <Button
           type="submit"
           className="ghibli-btn w-full"
-          disabled={createEvent.isPending}
+          disabled={isPending}
         >
-          Simpan Jadwal
+          {isPending ? "Menyimpan..." : "Simpan Jadwal"}
         </Button>
       </form>
     </GhibliCard>

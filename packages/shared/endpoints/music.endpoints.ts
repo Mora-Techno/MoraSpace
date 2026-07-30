@@ -1,6 +1,6 @@
-import { buildEndpoint } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/music/playlists';
+const mount = "/music/playlists";
 
 export const MUSIC_ENDPOINTS = {
   LIST: buildEndpoint(mount),
@@ -8,6 +8,10 @@ export const MUSIC_ENDPOINTS = {
 } as const;
 
 export const musicPlaylistById = (id: string) => buildEndpoint(mount, `/${id}`);
+export const musicPlaylistItems = (id: string) =>
+  buildEndpoint(mount, `/${id}/items`);
+export const musicPlaylistItemById = (id: string, itemId: string) =>
+  buildEndpoint(mount, `/${id}/items/${itemId}`);
 
 export function listMusicEndpoints() {
   return Object.keys(MUSIC_ENDPOINTS).map((key) => ({

@@ -12,7 +12,12 @@ import { MusicSection } from "@/components/organisms/MusicSection";
 import { QuickNotesSection } from "@/components/organisms/QuickNotesSection";
 import { loadAuthSession } from "@/utils/storage";
 import { useApi } from "@/hooks/useApi/useApi";
-import { PickCreatePlaylist } from "@repo/types";
+import { useMusicPlayer } from "@/context/MusicPlayerContext";
+import type {
+  PickCreatePlaylist,
+  TrackCatalog,
+  IMusicPlayListItem,
+} from "@repo/types";
 
 export default function DashboardContainer() {
   const api = useApi();
@@ -85,9 +90,9 @@ export default function DashboardContainer() {
   const { data: events = [], isLoading: calendarLoading } = useCalender;
 
   const upcomingEvents = events
-    .filter((e: any) => new Date(e.startDate) >= now)
+    .filter((e) => new Date(e.startDate) >= now)
     .sort(
-      (a: any, b: any) =>
+      (a, b) =>
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
     )
     .slice(0, 4);
@@ -107,7 +112,6 @@ export default function DashboardContainer() {
 
   const useStartSession = usePodomoroEntry.mutate.start();
   const useStopSession = usePodomoroEntry.mutate.stop();
-
   const startSession = useStartSession;
   const stopSession = useStopSession;
 
@@ -156,28 +160,68 @@ export default function DashboardContainer() {
   const useMusicEntry = api.music;
   const useMusicPlaylist = useMusicEntry.query.getPlayList();
   const useCreatePlaylistMusic = useMusicEntry.mutate.create();
+  const useAddItemMusic = useMusicEntry.mutate.addItem();
+  const useDeleteItemMusic = useMusicEntry.mutate.deleteItem();
 
   const { data: playlists = [], isLoading: musicLoading } = useMusicPlaylist;
 
+  const mappedPlaylists = useMemo(() => {
+    return playlists.map((playlist) => ({
+      ...playlist,
+      items: (playlist.items ?? []).map((item) => ({
+        ...item,
+        title: item.title || item.trackCatalog?.title || "",
+        youtubeUrl: item.youtubeUrl || item.trackCatalog?.youtubeUrl || "",
+      })),
+    }));
+  }, [playlists]);
+
   const createPlaylist = useCreatePlaylistMusic;
+
+  // Track Catalog
+  const useTrackCatalogEntry = api.trackCatalog;
+  const { data: trackCatalogTracks = [], isLoading: tracksLoading } =
+    useTrackCatalogEntry.query.list();
+
+  const handlePlayCatalogTrack = (track: TrackCatalog) => {
+    const playerItem: IMusicPlayListItem = {
+      id: track.id,
+      playlistId: "",
+      title: track.title,
+      youtubeUrl: track.youtubeUrl,
+      createdAt: track.createdAt,
+      updatedAt: track.updatedAt,
+    };
+    musicPlayer.play(playerItem, "Katalog Track");
+  };
 
   const [formCreatePlaylistMusic, setFormCreatePlaylistMusic] =
     useState<PickCreatePlaylist>({
-      title: "",
-      url: "",
+      name: "",
+      description: "",
     });
-
-  const [activeId, setActiveId] = useState<string | null>(null);
 
   const handleAddPlaylist = (e: React.FormEvent) => {
     e.preventDefault();
     if (
-      !formCreatePlaylistMusic.title.trim() ||
-      !formCreatePlaylistMusic.url.trim()
+      !formCreatePlaylistMusic.name.trim() ||
+      !formCreatePlaylistMusic.description.trim()
     )
       return;
     createPlaylist.mutate(formCreatePlaylistMusic);
   };
+
+  const handleAddMusicItem = (playlistId: string, trackCatalogId: string) => {
+    const payload = { playlistId, trackCatalogId };
+
+    useAddItemMusic.mutate(payload);
+  };
+
+  const handleDeleteMusicItem = (playlistId: string, itemId: string) => {
+    useDeleteItemMusic.mutate({ playlistId, itemId });
+  };
+
+  const musicPlayer = useMusicPlayer();
 
   const noteApi = api.note;
   const { data: notes = [], isLoading: notesLoading } = noteApi.query.get();
@@ -269,15 +313,33 @@ export default function DashboardContainer() {
             <MusicSection
               service={{
                 handleAdd: handleAddPlaylist,
-                createPlaylist,
+                isPending: createPlaylist.isPending,
+                addItem: handleAddMusicItem,
+                deleteItem: handleDeleteMusicItem,
               }}
               state={{
-                playlists,
+                playlists: mappedPlaylists,
                 isLoading: musicLoading,
                 formCreatePlaylistMusic,
                 setFormCreatePlaylistMusic,
-                activeId,
-                setActiveId,
+                currentTrack: musicPlayer.currentTrack,
+                isPlaying: musicPlayer.isPlaying,
+                queue: musicPlayer.queue,
+                isShuffle: musicPlayer.isShuffle,
+                onPlayPlaylist: musicPlayer.playPlaylist,
+                onTogglePlay: musicPlayer.toggle,
+                onPause: musicPlayer.pause,
+                onToggleShuffle: musicPlayer.toggleShuffle,
+                onAddToQueue: musicPlayer.addToQueue,
+                tracks: trackCatalogTracks,
+                isTracksLoading: tracksLoading,
+                onPlayTrack: handlePlayCatalogTrack,
+                onAddTrackToPlaylist: (playlistId, track) => {
+                  useAddItemMusic.mutate({
+                    playlistId,
+                    trackCatalogId: track.id,
+                  });
+                },
               }}
             />
           }
