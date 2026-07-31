@@ -1,8 +1,6 @@
-import * as React from "react";
+import { formatTimeOnly } from "@repo";
 import { Note } from "@repo/types";
 import { Edit2, FileText } from "lucide-react";
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
 
 interface QuickNoteCardProps {
   note: Note;
@@ -27,7 +25,7 @@ export function QuickNoteCard({ note, onClick }: QuickNoteCardProps) {
         {note.content}
       </p>
       <span className="text-[10px] text-muted-foreground/70">
-        {format(new Date(note.createdAt), "dd MMM yyyy", { locale: idLocale })}
+        {formatTimeOnly(note.createdAt)}
       </span>
     </button>
   );

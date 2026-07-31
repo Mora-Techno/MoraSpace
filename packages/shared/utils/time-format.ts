@@ -13,7 +13,7 @@ export const formatDateTime = (isoString: string): string => {
 };
 
 /**
- * Format tanggal saja (cocok untuk tabel atau card)
+ * Format tanggal saja
  * Output: "31 Jul 2026"
  */
 export const formatDateOnly = (isoString: string): string => {
