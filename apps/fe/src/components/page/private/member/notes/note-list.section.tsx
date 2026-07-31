@@ -5,14 +5,17 @@ import Link from "next/link";
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { NoteModal } from "@/components/molecules/modal/NoteModal";
 import { cn } from "@/utils/classname";
-import type { Note } from "@repo/types";
+import type { Note, PickCreateNote } from "@repo/types";
+import { formatDateOnly } from "@repo";
 
 interface NoteListSectionProps {
   service: {
-    handleCreate: () => void;
     handleDelete: (id: string) => void;
     handleSelect: (id: string) => void;
+    isPending: boolean;
+    handleSubmit: (e: React.FormEvent) => void;
   };
   state: {
     notes: Note[];
@@ -21,19 +24,23 @@ interface NoteListSectionProps {
     showModal: boolean;
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
     gridRef: React.RefObject<HTMLDivElement | null>;
+    formCreateNote: PickCreateNote;
+    setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
   };
 }
 
 export function NoteListSection({ service, state }: NoteListSectionProps) {
-  const { handleCreate, handleDelete, handleSelect } = service;
+  const { handleDelete, handleSelect, isPending, handleSubmit } = service;
   const {
     notes,
     isLoading,
-    // not show
     showModal,
     setShowModal,
     activeId,
+    setFormCreateNote,
+
     gridRef,
+    formCreateNote,
   } = state;
 
   return (
@@ -44,6 +51,15 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
       >
         <Plus className="size-4" /> Catatan Baru
       </Button>
+
+      <NoteModal
+        open={showModal}
+        onOpenChange={setShowModal}
+        formCreateNote={formCreateNote}
+        setFormCreateNote={setFormCreateNote}
+        isPending={isPending}
+        handleSubmit={handleSubmit}
+      />
 
       {isLoading ? (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-1">
@@ -77,7 +93,7 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
                     {note.content || "Kosong..."}
                   </p>
                   <p className="mt-2 text-[10px] text-muted-foreground">
-                    {format(new Date(note.updatedAt), "d MMM yyyy")}
+                    {formatDateOnly(note.createdAt)}
                   </p>
                 </div>
                 <Button

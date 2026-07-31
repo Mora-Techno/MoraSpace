@@ -1,21 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
-
 import { NoteEditorSection } from "@/components/page/private/member/notes/note-editor.section";
 import { NoteListSection } from "@/components/page/private/member/notes/note-list.section";
 import { PickCreateNote } from "@repo";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 
 export default function NotesContainer() {
-  const router = useRouter();
   const api = useApi();
-  const ns = useAppNameSpace();
 
   const useNote = api.note.query.get();
   const { data: notes = [], isLoading } = useNote;
@@ -27,13 +21,8 @@ export default function NotesContainer() {
   const selectedId = activeId ?? notes[0]?.id;
   const gridRef = useGsapStagger<HTMLDivElement>([notes.length]);
 
-  // Selected note detail for editor
   const { data: selectedNote, isLoading: isNoteLoading } =
     api.note.query.getByID(selectedId ?? "");
-
-  // Editor state
-  const [editorTitle, setEditorTitle] = useState("");
-  const [editorContent, setEditorContent] = useState("");
 
   const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
     content: "",
@@ -41,46 +30,30 @@ export default function NotesContainer() {
   });
   const [showModal, setShowModal] = useState<boolean>(false);
 
-  // Sync editor state when selected note changes
-  useEffect(() => {
-    if (selectedNote) {
-      setEditorTitle(selectedNote.title);
-      setEditorContent(selectedNote.content);
-    }
-  }, [selectedNote]);
-
   const handleSave = () => {
     if (!selectedId) return;
+    const payload = formCreateNote;
+
     updateNote.mutate({
       id: { id: selectedId },
-      payload: {
-        title: editorTitle.trim(),
-        content: editorContent.trim(),
-      },
+      payload,
     });
   };
 
-  const handleCreate = () => {
-    createNote.mutate(formCreateNote, {
+  const handleModalSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = formCreateNote;
+    createNote.mutate(payload, {
       onSuccess: (res) => {
         const id = res.data.id;
-        const isMobile = window.matchMedia("(max-width: 767px)").matches;
-        if (isMobile) router.push(`/notes/${id}`);
-        else {
-          setActiveId(id);
-          setEditorTitle("Catatan Baru");
-          setEditorContent("");
-        }
+        setShowModal(false);
+
+        setActiveId(id);
       },
     });
   };
 
   const handleSelect = (id: string) => {
-    const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (isMobile) {
-      router.push(`/notes/${id}`);
-      return;
-    }
     setActiveId(id);
   };
 
@@ -94,38 +67,20 @@ export default function NotesContainer() {
         title="Notes"
         description="Simpan ide, jurnal harian, dan snippet kode."
       />
-
-      {/* Mobile: standalone list */}
-      <div className="md:hidden">
-        <NoteListSection
-          service={{
-            handleCreate,
-            handleDelete,
-            handleSelect,
-          }}
-          state={{
-            notes,
-            isLoading,
-            setShowModal,
-            showModal,
-            activeId,
-            gridRef,
-          }}
-        />
-      </div>
-
-      {/* Desktop: grid with list + editor */}
-      <div className="hidden md:grid md:grid-cols-4 md:gap-6">
+      <div className=" md:grid md:grid-cols-4 md:gap-6">
         <div className="md:col-span-1">
           <NoteListSection
             service={{
-              handleCreate,
               handleDelete,
               handleSelect,
+              handleSubmit: handleModalSubmit,
+              isPending: createNote.isPending,
             }}
             state={{
               notes,
               setShowModal,
+              formCreateNote,
+              setFormCreateNote,
               showModal,
               isLoading,
               activeId,
@@ -140,10 +95,8 @@ export default function NotesContainer() {
               state={{
                 note: selectedNote,
                 isLoading: isNoteLoading,
-                title: editorTitle,
-                setTitle: setEditorTitle,
-                content: editorContent,
-                setContent: setEditorContent,
+                formCreateNote,
+                setFormCreateNote,
                 isPending: updateNote.isPending,
               }}
             />
