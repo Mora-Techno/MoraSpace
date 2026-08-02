@@ -1,37 +1,61 @@
 "use client";
 
-import { format, isSameDay } from "date-fns";
-import { useMemo, useState } from "react";
+import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-import { Calendar } from "@/components/atoms/Calendar";
+import { Button } from "@/components/atoms";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/atoms/Sheet";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { EventFormSection } from "@/components/page/private/member/calendar/event-form.section";
 import { EventListSection } from "@/components/page/private/member/calendar/event-list.section";
-import {
-  useCreateEvent,
-  useDeleteEvent,
-  useEvents,
-} from "@/hooks/useApi/calendar";
+import { useApi } from "@/hooks/useApi/useApi";
 import type { EventQuery } from "@repo/types";
 
 export default function CalendarContainer() {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [open, setOpen] = useState(false);
+  const api = useApi();
+  const router = useRouter();
 
-  const query: EventQuery | undefined = useMemo(() => {
-    const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
-    const year = String(selectedDate.getFullYear());
-    return { month, year };
-  }, [selectedDate]);
+  // Calendar List State
+  const [listQuery, setListQuery] = useState<EventQuery>({
+    page: 1,
+    limit: 10,
+    search: "",
+  });
 
-  const { data: events = [], isLoading } = useEvents(query);
-  const deleteEvent = useDeleteEvent();
-  const createEvent = useCreateEvent();
+  const query: EventQuery = listQuery;
 
-  const dayEvents = events.filter((e) =>
-    isSameDay(new Date(e.startDate), selectedDate),
-  );
+  const { data: events = [], isLoading } =
+    api.calender.query.getCalender(query);
+  const deleteEvent = api.calender.mutate.delete();
+  const createEvent = api.calender.mutate.create();
 
-  // Form state
+  const handleDeleteEvent = (id: { id: string }) => {
+    deleteEvent.mutate(id);
+  };
+
+  const handleSearch = (search: string) => {
+    setListQuery((prev) => ({ ...prev, search, page: 1 }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setListQuery((prev) => ({ ...prev, page }));
+  };
+
+  const handleSelectEvent = (id: string) => {
+    router.push(`/member/calendar/${id}`);
+  };
+
+  const isListPending = deleteEvent.isPending;
+
+  // Event Form State
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -50,51 +74,64 @@ export default function CalendarContainer() {
           setTitle("");
           setDescription("");
           setStartDate("");
+          setOpen(false);
         },
       },
     );
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
+    <div className="">
       <PageHeader
         title="Kalender"
         description="Jadwalkan agenda dan kelola acara harianmu."
+        action={
+          <div className="lg:hidden">
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button size="icon" className="ghibli-btn rounded-full">
+                  <Plus className="size-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="bottom" className="rounded-t-3xl">
+                <SheetHeader>
+                  <SheetTitle className="font-serif">Jadwal Baru</SheetTitle>
+                </SheetHeader>
+                <div className="px-4 pb-6">
+                  <EventFormSection
+                    service={{ handleSubmit }}
+                    state={{
+                      title,
+                      setTitle,
+                      description,
+                      setDescription,
+                      startDate,
+                      setStartDate,
+                      isPending: createEvent.isPending,
+                    }}
+                  />
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
+        }
       />
 
-      <div className="grid grid-cols-1 gap-6 md:flex md:gap-8 ">
-        <div className="ghibli-glass w-full shrink-0 rounded-2xl p-4 md:w-auto ">
-          <Calendar
-            mode="single"
-            selected={selectedDate}
-            onSelect={(date) => date && setSelectedDate(date)}
-            className="w-full"
-          />
-        </div>
-
-        <div className="flex flex-1 flex-col gap-4">
-          <EventListSection
-            service={{ handleDelete: (id) => deleteEvent.mutate(id) }}
-            state={{
-              dayEvents,
-              isLoading,
-              selectedDate,
-            }}
-          />
-          <EventFormSection
-            service={{ handleSubmit }}
-            state={{
-              title,
-              setTitle,
-              description,
-              setDescription,
-              startDate,
-              setStartDate,
-              selectedDate,
-              isPending: createEvent.isPending,
-            }}
-          />
-        </div>
+      <div className="w-full">
+        <EventListSection
+          service={{
+            handleDelete: handleDeleteEvent,
+            onSearch: handleSearch,
+            onPageChange: handlePageChange,
+            handleSelect: handleSelectEvent,
+          }}
+          state={{
+            events,
+            isLoading,
+            isPending: isListPending,
+            query: listQuery,
+          }}
+        />
       </div>
     </div>
   );

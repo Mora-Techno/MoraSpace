@@ -1,5 +1,6 @@
 import { NOTIFICATION_ENDPOINTS } from "../endpoints/notification.endpoints";
 import type {
+  NotificationInApp,
   NotificationInAppQuery,
   NotificationLog,
   NotificationLogQuery,
@@ -37,8 +38,8 @@ class NotificationService {
 
   public async ListInAppNotifications(
     query?: NotificationInAppQuery,
-  ): Promise<TResponse<NotificationLog[]>> {
-    const res = await GetResponse<NotificationLog[]>(
+  ): Promise<TResponse<NotificationInApp[]>> {
+    const res = await GetResponse<NotificationInApp[]>(
       withQuery(NOTIFICATION_ENDPOINTS.LIST, query),
     );
     return toServiceResponse(res, {
@@ -46,8 +47,19 @@ class NotificationService {
     });
   }
 
-  public async MarkRead(id: string): Promise<TResponse<NotificationLog>> {
-    const res = await PatchResponse<NotificationLog>(
+  public async GetNotification(
+    id: string,
+  ): Promise<TResponse<NotificationInApp>> {
+    const res = await GetResponse<NotificationInApp>(
+      NOTIFICATION_ENDPOINTS.GET(id),
+    );
+    return toServiceResponse(res, {
+      message: "Detail notifikasi berhasil diambil",
+    });
+  }
+
+  public async MarkRead(id: string): Promise<TResponse<NotificationInApp>> {
+    const res = await PatchResponse<NotificationInApp>(
       NOTIFICATION_ENDPOINTS.MARK_READ(id),
       {},
     );

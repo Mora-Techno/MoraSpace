@@ -1,16 +1,21 @@
 import type { EventQuery } from "../types/calendar.types";
-import type { NotificationLogQuery } from "../types/notification.types";
+import type {
+  NotificationInAppQuery,
+  NotificationLogQuery,
+} from "../types/notification.types";
 import type { TodoQuery } from "../types/todo.types";
 
 export const queryKey = {
   todosRoot: () => ["todos"] as const,
   todos: {
     list: (filters?: TodoQuery) => ["todos", "list", filters ?? {}] as const,
+    detail: (id: string) => ["todos", "detail", id] as const,
   },
 
   notesRoot: () => ["notes"] as const,
   notes: {
-    list: () => ["notes", "list"] as const,
+    list: (filters?: import("../types/note.types").NoteQuery) =>
+      ["notes", "list", filters ?? {}] as const,
     detail: (id: string) => ["notes", "detail", id] as const,
   },
 
@@ -18,6 +23,7 @@ export const queryKey = {
   calendar: {
     list: (query?: EventQuery) =>
       ["calendar", "events", "list", query ?? {}] as const,
+    detail: (id: string) => ["calendar", "events", "detail", id] as const,
   },
 
   musicRoot: () => ["music", "playlists"] as const,
@@ -35,7 +41,9 @@ export const queryKey = {
   notifications: {
     logs: (query?: NotificationLogQuery) =>
       ["notifications", "logs", query ?? {}] as const,
-    list: () => ["notifications", "list"] as const,
+    list: (query?: NotificationInAppQuery) =>
+      ["notifications", "list", query ?? {}] as const,
+    detail: (id: string) => ["notifications", "detail", id] as const,
     queue: () => ["notifications", "queue"] as const,
   },
 

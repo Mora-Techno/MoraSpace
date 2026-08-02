@@ -1,5 +1,5 @@
-import { useCreateEvent, useDeleteEvent, useUpdateEvent } from './state/mutate';
-import { useEvents } from './state/query';
+import { useCreateEvent, useDeleteEvent, useUpdateEvent } from "./state/mutate";
+import { useEvent, useEvents } from "./state/query";
 
 export const useCalender = () => {
   return {
@@ -10,6 +10,7 @@ export const useCalender = () => {
     },
     query: {
       getCalender: useEvents,
+      getByID: useEvent,
     },
   };
 };

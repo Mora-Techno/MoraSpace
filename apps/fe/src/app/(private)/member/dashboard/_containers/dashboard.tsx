@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { MemberDashboardTemplate } from "@/components/templates/MemberDashboardTemplate";
@@ -14,6 +14,8 @@ import { loadAuthSession } from "@/utils/storage";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useMusicPlayer } from "@/context/MusicPlayerContext";
 import type {
+  Note,
+  PickCreateNote,
   PickCreatePlaylist,
   TrackCatalog,
   IMusicPlayListItem,
@@ -24,6 +26,19 @@ export default function DashboardContainer() {
   const [name, setName] = useState("Member");
   const [greeting, setGreeting] = useState("Selamat Pagi");
   const [currentDate, setCurrentDate] = useState("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [showCatalog, setShowCatalog] = useState<boolean>(false);
+
+  const [expandedPlaylistId, setExpandedPlaylistId] = useState<string | null>(
+    null,
+  );
+  const [selectedPlaylistForAdd, setSelectedPlaylistForAdd] = useState<
+    string | null
+  >(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedPlaylistId((prev) => (prev === id ? null : id));
+  };
 
   useEffect(() => {
     const session = loadAuthSession() as any;
@@ -222,28 +237,74 @@ export default function DashboardContainer() {
   };
 
   const musicPlayer = useMusicPlayer();
-
   const noteApi = api.note;
   const { data: notes = [], isLoading: notesLoading } = noteApi.query.get();
   const createNote = noteApi.mutate.create();
+  const updateNote = noteApi.mutate.update();
+  const deleteNote = noteApi.mutate.delete();
 
-  const [newNoteTitle, setNewNoteTitle] = useState("");
-  const [newContent, setNewContent] = useState("");
+  const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
+    title: "",
+    content: "",
+  });
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [formEditNote, setFormEditNote] = useState<PickCreateNote>({
+    title: "",
+    content: "",
+  });
+
+  useEffect(() => {
+    if (selectedNote) {
+      setFormEditNote({
+        title: selectedNote.title,
+        content: selectedNote.content,
+      });
+    }
+  }, [selectedNote]);
 
   const recentNotes = notes.slice(0, 3);
 
   const handleAddNote = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newNoteTitle.trim() || !newContent.trim()) return;
+    if (!formCreateNote.title.trim() || !formCreateNote.content.trim()) return;
     createNote.mutate(
-      { title: newNoteTitle.trim(), content: newContent.trim() },
+      {
+        title: formCreateNote.title.trim(),
+        content: formCreateNote.content.trim(),
+      },
       {
         onSuccess: () => {
-          setNewNoteTitle("");
-          setNewContent("");
+          setFormCreateNote({ title: "", content: "" });
         },
       },
     );
+  };
+
+  const handleSaveEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !selectedNote ||
+      !formEditNote.title.trim() ||
+      !formEditNote.content.trim()
+    )
+      return;
+    updateNote.mutate(
+      {
+        id: { id: selectedNote.id },
+        payload: {
+          title: formEditNote.title.trim(),
+          content: formEditNote.content.trim(),
+        },
+      },
+      { onSuccess: () => setSelectedNote(null) },
+    );
+  };
+
+  const handleDeleteNote = () => {
+    if (!selectedNote) return;
+    deleteNote.mutate(selectedNote.id, {
+      onSuccess: () => setSelectedNote(null),
+    });
   };
 
   return (
@@ -321,6 +382,7 @@ export default function DashboardContainer() {
                 playlists: mappedPlaylists,
                 isLoading: musicLoading,
                 formCreatePlaylistMusic,
+                expandedPlaylistId,
                 setFormCreatePlaylistMusic,
                 currentTrack: musicPlayer.currentTrack,
                 isPlaying: musicPlayer.isPlaying,
@@ -331,15 +393,16 @@ export default function DashboardContainer() {
                 onPause: musicPlayer.pause,
                 onToggleShuffle: musicPlayer.toggleShuffle,
                 onAddToQueue: musicPlayer.addToQueue,
+                setShowModal,
+                showModal,
+                setShowCatalog,
+                showCatalog,
+                toggleExpand,
+                selectedPlaylistForAdd,
+                setSelectedPlaylistForAdd,
                 tracks: trackCatalogTracks,
                 isTracksLoading: tracksLoading,
                 onPlayTrack: handlePlayCatalogTrack,
-                onAddTrackToPlaylist: (playlistId, track) => {
-                  useAddItemMusic.mutate({
-                    playlistId,
-                    trackCatalogId: track.id,
-                  });
-                },
               }}
             />
           }
@@ -347,15 +410,21 @@ export default function DashboardContainer() {
             <QuickNotesSection
               service={{
                 handleAdd: handleAddNote,
+                handleSaveEdit,
+                handleDeleteNote,
                 createNote,
+                updateNote,
+                deleteNote,
               }}
               state={{
                 recentNotes,
                 isLoading: notesLoading,
-                newTitle: newNoteTitle,
-                setNewTitle: setNewNoteTitle,
-                newContent,
-                setNewContent,
+                formCreateNote,
+                setFormCreateNote,
+                selectedNote,
+                setSelectedNote,
+                formEditNote,
+                setFormEditNote,
               }}
             />
           }

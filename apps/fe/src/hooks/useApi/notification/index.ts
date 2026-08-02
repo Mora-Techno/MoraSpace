@@ -1,2 +1,10 @@
-export { useSendNotification } from "./state/mutate";
-export { useNotificationLogs } from "./state/query";
+export {
+  useSendNotification,
+  useMarkRead,
+  useMarkAllRead,
+} from "./state/mutate";
+export {
+  useNotificationLogs,
+  useNotifications,
+  useNotification as useNotificationQuery,
+} from "./state/query";
