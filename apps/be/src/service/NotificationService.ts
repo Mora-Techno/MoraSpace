@@ -272,6 +272,23 @@ class NotificationService {
     });
     return { success: true };
   }
+
+  public async getById(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { id, companyMemberId }
+      : { id, userId };
+
+    const notification = await prisma.notification.findFirst({
+      where: where as any,
+    });
+    if (!notification) return null;
+
+    return notification;
+  }
 }
 
 export default new NotificationService();

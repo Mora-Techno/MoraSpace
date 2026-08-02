@@ -101,6 +101,26 @@ class TodoService {
     };
   }
 
+  public async getById(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+  ) {
+    const whereFilter: Record<string, unknown> = { id };
+    if (companyMemberId) {
+      whereFilter.companyMemberId = companyMemberId;
+    } else {
+      whereFilter.userId = userId;
+    }
+
+    const todo = await prisma.todo.findFirst({
+      where: whereFilter as any,
+    });
+    if (!todo) return null;
+
+    return mapTodo(todo);
+  }
+
   public async create(
     companyMemberId: string | null,
     userId: string,

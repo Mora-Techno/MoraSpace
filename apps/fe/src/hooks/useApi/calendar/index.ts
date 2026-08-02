@@ -1,2 +1,2 @@
 export { useCreateEvent, useDeleteEvent, useUpdateEvent } from "./state/mutate";
-export { useEvents } from "./state/query";
+export { useEvent, useEvents } from "./state/query";

@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/atoms";
@@ -12,6 +13,10 @@ import { PickCreateNote } from "@repo";
 
 export default function NoteDetailContainer({ id }: { id: string }) {
   const api = useApi();
+  const pathname = usePathname();
+  const listRoute = pathname.includes("/owner/")
+    ? "/owner/notes"
+    : "/member/notes";
   const { data: note, isLoading } = api.note.query.getByID(id);
   const updateNote = api.note.mutate.update();
   const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
@@ -47,7 +52,7 @@ export default function NoteDetailContainer({ id }: { id: string }) {
         title="Editor Catatan"
         action={
           <Button variant="outline" size="sm" asChild className="ghibli-btn">
-            <Link href="/notes">
+            <Link href={listRoute}>
               <ArrowLeft className="size-4" /> Kembali
             </Link>
           </Button>

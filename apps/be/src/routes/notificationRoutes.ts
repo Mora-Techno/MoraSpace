@@ -22,6 +22,7 @@ class NotificationRouter {
   }
 
   private routes() {
+    // by developer platform
     this.notificationRouter.post(
       "/send",
       (c: AppContext) => NotificationController.send(c),
@@ -100,6 +101,20 @@ class NotificationRouter {
           summary: "Antrean notifikasi tertunda",
           description:
             "Menampilkan daftar antrean notifikasi (NotificationQueue) yang dijadwalkan atau tertunda.",
+          tags: ["Notifications"],
+        },
+      },
+    );
+    this.notificationRouter.get(
+      "/:id",
+      (c: AppContext) => NotificationController.getById(c),
+      {
+        params: NotificationParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Detail notifikasi",
+          description:
+            "Mengambil detail satu notifikasi in-app berdasarkan ID.",
           tags: ["Notifications"],
         },
       },

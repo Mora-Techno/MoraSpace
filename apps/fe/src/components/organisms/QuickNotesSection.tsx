@@ -1,35 +1,55 @@
-import * as React from "react";
 import { GlassCard } from "@/components/molecules/GlassCard";
 import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { FileEdit, SendHorizontal } from "lucide-react";
+import { FileEdit, Save, SendHorizontal, Trash2 } from "lucide-react";
 import { QuickNoteCard } from "@/components/molecules/QuickNoteCard";
 import { Skeleton } from "@/components/atoms/Skeleton";
-import { Button, Input } from "@/components/atoms";
+import { Button, Input, Textarea } from "@/components/atoms";
+import type { Note, PickCreateNote } from "@repo/types";
+import type {
+  useCreateNote,
+  useUpdateNote,
+  useDeleteNote,
+} from "@/hooks/useApi/note/state/mutate";
 
 interface QuickNotesSectionProps {
   service: {
     handleAdd: (e: React.FormEvent) => void;
-    createNote: any;
+    handleSaveEdit: (e: React.FormEvent) => void;
+    handleDeleteNote: () => void;
+    createNote: ReturnType<typeof useCreateNote>;
+    updateNote?: ReturnType<typeof useUpdateNote>;
+    deleteNote?: ReturnType<typeof useDeleteNote>;
   };
   state: {
-    recentNotes: any[];
+    recentNotes: Note[];
     isLoading: boolean;
-    newTitle: string;
-    setNewTitle: React.Dispatch<React.SetStateAction<string>>;
-    newContent: string;
-    setNewContent: React.Dispatch<React.SetStateAction<string>>;
+    formCreateNote: PickCreateNote;
+    setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
+    selectedNote: Note | null;
+    setSelectedNote: React.Dispatch<React.SetStateAction<Note | null>>;
+    formEditNote: PickCreateNote;
+    setFormEditNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
   };
 }
 
 export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
-  const { handleAdd, createNote } = service;
+  const {
+    handleAdd,
+    handleSaveEdit,
+    handleDeleteNote,
+    createNote,
+    updateNote,
+    deleteNote,
+  } = service;
   const {
     recentNotes,
     isLoading,
-    newTitle,
-    setNewTitle,
-    newContent,
-    setNewContent,
+    formCreateNote,
+    setFormCreateNote,
+    selectedNote,
+    setSelectedNote,
+    formEditNote,
+    setFormEditNote,
   } = state;
 
   return (
@@ -55,8 +75,12 @@ export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
             </p>
           </div>
         ) : (
-          recentNotes.map((note: any) => (
-            <QuickNoteCard key={note.id} note={note} onClick={() => {}} />
+          recentNotes.map((note: Note) => (
+            <QuickNoteCard
+              key={note.id}
+              note={note}
+              onClick={() => setSelectedNote(note)}
+            />
           ))
         )}
       </div>
@@ -67,16 +91,23 @@ export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
       >
         <Input
           placeholder="Judul catatan..."
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
+          value={formCreateNote.title}
+          onChange={(e) =>
+            setFormCreateNote((prev) => ({ ...prev, title: e.target.value }))
+          }
           className="bg-transparent h-8 border-none focus-visible:ring-0 px-1 font-medium placeholder:text-muted-foreground/60 text-sm"
           disabled={createNote.isPending}
         />
         <div className="flex items-end gap-2">
           <Input
             placeholder="Tulis idemu disini..."
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
+            value={formCreateNote.content}
+            onChange={(e) =>
+              setFormCreateNote((prev) => ({
+                ...prev,
+                content: e.target.value,
+              }))
+            }
             className="flex-1 bg-transparent h-8 border-none focus-visible:ring-0 px-1 text-sm"
             disabled={createNote.isPending}
           />
@@ -86,13 +117,102 @@ export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
             variant="ghost"
             className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/20 shrink-0"
             disabled={
-              createNote.isPending || !newTitle.trim() || !newContent.trim()
+              createNote.isPending ||
+              !formCreateNote.title.trim() ||
+              !formCreateNote.content.trim()
             }
           >
             <SendHorizontal className="size-4" />
           </Button>
         </div>
       </form>
+
+      {selectedNote && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <form
+            onSubmit={handleSaveEdit}
+            className="mx-4 w-full max-w-lg overflow-hidden rounded-2xl border border-border/50 bg-background shadow-2xl"
+          >
+            {/* Modal header */}
+            <div className="flex items-center justify-between border-b border-border/30 px-4 py-3">
+              <div className="flex items-center gap-2">
+                <FileEdit className="size-4 text-yellow-600" />
+                <h3 className="text-sm font-medium">Edit Catatan</h3>
+              </div>
+              <div className="flex items-center gap-1">
+                {deleteNote && (
+                  <button
+                    type="button"
+                    onClick={handleDeleteNote}
+                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/50 hover:text-destructive"
+                    title="Hapus catatan"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setSelectedNote(null)}
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/50"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            {/* Modal body */}
+            <div className="flex flex-col gap-3 p-4">
+              <Input
+                placeholder="Judul catatan..."
+                value={formEditNote.title}
+                onChange={(e) =>
+                  setFormEditNote((prev) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
+                className="bg-transparent border-none focus-visible:ring-0 px-1 font-medium placeholder:text-muted-foreground/60 text-sm"
+              />
+              <Textarea
+                placeholder="Tulis idemu disini..."
+                value={formEditNote.content}
+                onChange={(e) =>
+                  setFormEditNote((prev) => ({
+                    ...prev,
+                    content: e.target.value,
+                  }))
+                }
+                rows={5}
+                className="bg-transparent border-none focus-visible:ring-0 px-1 text-sm resize-none"
+              />
+            </div>
+
+            {/* Modal footer */}
+            <div className="flex items-center justify-end gap-2 border-t border-border/30 px-4 py-3">
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setSelectedNote(null)}
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={
+                  updateNote?.isPending ||
+                  !formEditNote.title.trim() ||
+                  !formEditNote.content.trim()
+                }
+              >
+                <Save className="size-4" />
+                Simpan
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
     </GlassCard>
   );
 }

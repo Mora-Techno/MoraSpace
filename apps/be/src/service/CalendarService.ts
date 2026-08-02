@@ -100,6 +100,19 @@ class CalendarService {
     };
   }
 
+  public async getById(id: string, companyId: string | null, userId: string) {
+    const where: Record<string, unknown> = companyId
+      ? { id, companyId }
+      : { id, userId };
+
+    const event = await prisma.calendarEvent.findFirst({
+      where: where as any,
+    });
+    if (!event) return null;
+
+    return mapEvent(event);
+  }
+
   public async create(
     companyId: string | null,
     companyMemberId: string | null,

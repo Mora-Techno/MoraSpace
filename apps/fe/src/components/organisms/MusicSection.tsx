@@ -1,6 +1,3 @@
-"use client";
-
-import * as React from "react";
 import { GlassCard } from "@/components/molecules/GlassCard";
 import { WidgetHeader } from "@/components/atoms/WidgetHeader";
 import {
@@ -16,7 +13,7 @@ import {
   Disc3,
 } from "lucide-react";
 import { Skeleton } from "@/components/atoms/Skeleton";
-import { Button } from "@/components/atoms";
+import { Button, Input } from "@/components/atoms";
 import type {
   PickCreatePlaylist,
   MusicPlaylist,
@@ -35,6 +32,16 @@ interface MusicSectionProps {
   state: {
     playlists: MusicPlaylist[];
     isLoading: boolean;
+    showModal: boolean;
+    setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    showCatalog: boolean;
+    setShowCatalog: React.Dispatch<React.SetStateAction<boolean>>;
+    expandedPlaylistId: string | null;
+
+    selectedPlaylistForAdd: string | null;
+    setSelectedPlaylistForAdd: React.Dispatch<
+      React.SetStateAction<string | null>
+    >;
     formCreatePlaylistMusic: PickCreatePlaylist;
     setFormCreatePlaylistMusic: React.Dispatch<
       React.SetStateAction<PickCreatePlaylist>
@@ -56,7 +63,7 @@ interface MusicSectionProps {
     tracks?: TrackCatalog[];
     isTracksLoading?: boolean;
     onPlayTrack?: (track: TrackCatalog) => void;
-    onAddTrackToPlaylist?: (playlistId: string, track: TrackCatalog) => void;
+    toggleExpand: (id: string) => void;
   };
 }
 
@@ -69,7 +76,14 @@ export function MusicSection({ service, state }: MusicSectionProps) {
     setFormCreatePlaylistMusic,
     currentTrack,
     isPlaying,
+    setShowModal,
+    showModal,
+    selectedPlaylistForAdd,
+    setSelectedPlaylistForAdd,
     queue,
+    setShowCatalog,
+    showCatalog,
+    expandedPlaylistId,
     isShuffle,
     onPlayPlaylist,
     onTogglePlay,
@@ -79,34 +93,8 @@ export function MusicSection({ service, state }: MusicSectionProps) {
     tracks = [],
     isTracksLoading = false,
     onPlayTrack,
-    onAddTrackToPlaylist,
+    toggleExpand,
   } = state;
-
-  const [expandedPlaylistId, setExpandedPlaylistId] = React.useState<
-    string | null
-  >(null);
-  const [showCatalog, setShowCatalog] = React.useState(false);
-  const [selectedPlaylistForAdd, setSelectedPlaylistForAdd] = React.useState<
-    string | null
-  >(null);
-
-  const toggleExpand = (id: string) => {
-    setExpandedPlaylistId((prev) => (prev === id ? null : id));
-  };
-
-  const handlePlayCatalogTrack = (track: TrackCatalog) => {
-    if (onPlayTrack) {
-      onPlayTrack(track);
-    }
-  };
-
-  const handleAddToPlaylist = (playlistId: string, track: TrackCatalog) => {
-    if (onAddTrackToPlaylist) {
-      onAddTrackToPlaylist(playlistId, track);
-    } else {
-      addItem(playlistId, track.id);
-    }
-  };
 
   return (
     <GlassCard className="p-6 flex flex-col h-[420px]" data-stagger-item>
@@ -300,9 +288,52 @@ export function MusicSection({ service, state }: MusicSectionProps) {
             );
           })
         )}
+        {/* Initial */}
+        <form
+          onSubmit={handleAdd}
+          className="mt-auto w-full flex  flex-col gap-2"
+        >
+          <div className="w-full justify-center items-center gap-2 ">
+            <Input
+              placeholder="Nama playlist"
+              value={formCreatePlaylistMusic.name}
+              onChange={(e) =>
+                setFormCreatePlaylistMusic((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+              className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+              disabled={isPending}
+            />
+            <Input
+              placeholder="Keterangan"
+              value={formCreatePlaylistMusic.description}
+              onChange={(e) =>
+                setFormCreatePlaylistMusic((prev) => ({
+                  ...prev,
+                  description: e.target.value,
+                }))
+              }
+              className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
+              disabled={isPending}
+            />
+            <Button
+              type="submit"
+              size="sm"
+              className="h-8 px-3 shrink-0"
+              disabled={
+                isPending ||
+                !formCreatePlaylistMusic.name.trim() ||
+                !formCreatePlaylistMusic.description.trim()
+              }
+            >
+              <Plus className="size-4" />
+            </Button>
+          </div>
+        </form>
       </div>
 
-      {/* Track Catalog Popup */}
       {showCatalog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
           <div className="mx-4 w-full max-w-lg max-h-[80vh] overflow-hidden rounded-2xl border border-border/50 bg-background shadow-2xl">
@@ -364,7 +395,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                       {/* Play button */}
                       <button
                         type="button"
-                        onClick={() => handlePlayCatalogTrack(track)}
+                        onClick={() => onPlayTrack!(track)}
                         className={cn(
                           "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
                           isCurrentTrackPlaying
@@ -399,7 +430,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                         <button
                           type="button"
                           onClick={() =>
-                            handleAddToPlaylist(selectedPlaylistForAdd, track)
+                            addItem(selectedPlaylistForAdd, track.id)
                           }
                           className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
                           title="Tambah ke playlist"
@@ -415,47 +446,6 @@ export function MusicSection({ service, state }: MusicSectionProps) {
           </div>
         </div>
       )}
-
-      <form onSubmit={handleAdd} className="mt-auto flex flex-col gap-2">
-        <div className="flex gap-2">
-          <input
-            placeholder="Nama playlist"
-            value={formCreatePlaylistMusic.name}
-            onChange={(e) =>
-              setFormCreatePlaylistMusic((prev) => ({
-                ...prev,
-                name: e.target.value,
-              }))
-            }
-            className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
-            disabled={isPending}
-          />
-          <input
-            placeholder="Keterangan"
-            value={formCreatePlaylistMusic.description}
-            onChange={(e) =>
-              setFormCreatePlaylistMusic((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }
-            className="flex-1 rounded-lg border border-input bg-background/80 px-3 py-1.5 text-sm outline-none focus:ring-1 focus:ring-ring"
-            disabled={isPending}
-          />
-          <Button
-            type="submit"
-            size="sm"
-            className="h-8 px-3 shrink-0"
-            disabled={
-              isPending ||
-              !formCreatePlaylistMusic.name.trim() ||
-              !formCreatePlaylistMusic.description.trim()
-            }
-          >
-            <Plus className="size-4" />
-          </Button>
-        </div>
-      </form>
     </GlassCard>
   );
 }
