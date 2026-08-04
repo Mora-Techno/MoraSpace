@@ -66,7 +66,9 @@ export type {
   PlaylistParams,
 } from "./music.types";
 export type {
+  INotification,
   INotificationLog,
+  NotificationInApp,
   NotificationInAppQuery,
   NotificationLog,
   NotificationLogQuery,

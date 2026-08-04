@@ -38,7 +38,7 @@ export type PickCreateEvent = Pick<ICalendarEvent, "title" | "description"> & {
 };
 
 export type PickUpdateEvent = Partial<
-  Pick<ICalendarEvent, "title" | "description" | "startDate" | "endDate">
+  Pick<ICalendarEvent, "title" | "description">
 > & {
   startDate?: string;
   endDate?: string | null;

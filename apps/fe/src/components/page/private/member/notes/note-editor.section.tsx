@@ -1,7 +1,8 @@
-import { Button } from "@/components/atoms";
+import { Button, Textarea } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import type { Note } from "@repo/types";
+import { DecoratedInput } from "@/components/wrapper";
+import type { Note, PickCreateNote } from "@repo/types";
 
 interface NoteEditorSectionProps {
   service: {
@@ -10,17 +11,15 @@ interface NoteEditorSectionProps {
   state: {
     note: Note | undefined;
     isLoading: boolean;
-    title: string;
-    setTitle: (val: string) => void;
-    content: string;
-    setContent: (val: string) => void;
+    formCreateNote: PickCreateNote;
+    setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
     isPending: boolean;
   };
 }
 
 export function NoteEditorSection({ service, state }: NoteEditorSectionProps) {
   const { handleSave } = service;
-  const { note, isLoading, title, setTitle, content, setContent, isPending } =
+  const { note, isLoading, formCreateNote, setFormCreateNote, isPending } =
     state;
 
   if (isLoading) {
@@ -41,16 +40,26 @@ export function NoteEditorSection({ service, state }: NoteEditorSectionProps) {
   }
 
   return (
-    <GhibliCard className="h-full min-h-100">
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+    <GhibliCard className="h-full min-h-full" hover={false}>
+      <DecoratedInput
+        value={formCreateNote.title}
+        onChange={(e) =>
+          setFormCreateNote((prev) => ({
+            ...prev,
+            title: e.target.value,
+          }))
+        }
         className="w-full border-none bg-transparent font-serif text-xl font-semibold outline-none"
         placeholder="Judul catatan"
       />
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
+      <Textarea
+        value={formCreateNote.content}
+        onChange={(e) =>
+          setFormCreateNote((prev) => ({
+            ...prev,
+            content: e.target.value,
+          }))
+        }
         rows={16}
         className="mt-4 w-full flex-1 resize-none rounded-xl border border-input bg-background/60 px-4 py-3 text-sm leading-relaxed outline-none focus:ring-2 focus:ring-ring"
         placeholder="Tulis catatanmu di sini..."

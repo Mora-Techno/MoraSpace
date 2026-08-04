@@ -132,6 +132,30 @@ class NotificationController {
       return HttpResponse(c).internalError(error);
     }
   }
+
+  public async getById(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string };
+
+      const authResponse = await personalContextValidate(user, c);
+      if (authResponse) return authResponse;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const data = await NotificationService.getById(
+        params.id,
+        user.companyMemberId ?? null,
+        user.id,
+      );
+      if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
+
+      return HttpResponse(c).ok(data, "Berhasil mengambil detail notifikasi");
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
 }
 
 export default new NotificationController();

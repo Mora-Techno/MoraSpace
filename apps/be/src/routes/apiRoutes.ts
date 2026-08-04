@@ -42,6 +42,7 @@ class ApiRouter {
       .use(InternalApiKey)
       .use(loggerPlugin)
       .use(errorPlugin)
+      .use(metricsPlugin)
       .use(authRoutes)
       .use(companyRoutes)
       .use(subscriptionRoutes)

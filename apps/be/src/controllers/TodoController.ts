@@ -38,6 +38,35 @@ class TodoController {
     }
   }
 
+  public async getById(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string };
+
+      const authRespone = await personalContextValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const queryService = await TodoService.getById(
+        params.id,
+        user.companyMemberId ?? null,
+        user.id,
+      );
+      if (!queryService)
+        return HttpResponse(c).notFound("Tugas tidak ditemukan");
+
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil mengambil detail tugas",
+      );
+    } catch (error) {
+      console.error(error);
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
   public async create(c: AppContext) {
     try {
       const user = getUser(c);

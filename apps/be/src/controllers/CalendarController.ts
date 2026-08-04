@@ -38,6 +38,34 @@ class CalendarController {
     }
   }
 
+  public async getById(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string };
+
+      const authRespone = await personalContextValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const validateParams = await paramsValidate(params.id, c);
+      if (validateParams) return validateParams;
+
+      const queryService = await CalendarService.getById(
+        params.id,
+        user.companyId ?? null,
+        user.id,
+      );
+      if (!queryService) {
+        return HttpResponse(c).notFound("Jadwal tidak ditemukan");
+      }
+      return HttpResponse(c).ok(
+        queryService,
+        "Berhasil mengambil detail jadwal",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
   public async create(c: AppContext) {
     try {
       const user = getUser(c);

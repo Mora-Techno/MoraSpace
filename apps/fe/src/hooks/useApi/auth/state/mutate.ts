@@ -31,22 +31,25 @@ export function useLogin() {
     mutationFn: (payload: PickLogin) => Api.Auth.Login(payload),
     onSuccess: async (res) => {
       const data = res.data;
-      // save LoginAccount Nantik
+
       const accessToken = res?.data.accessToken;
       const refreshToken = res?.data.refreshToken;
-      const role = res?.data.user.companyRole;
+      const role =
+        (res?.data.user as Record<string, any>)?.companyRole ??
+        (res?.data.user as Record<string, any>)?.role ??
+        (res?.data as Record<string, any>)?.role ??
+        "";
 
-      if (accessToken && role && refreshToken) {
+      if (accessToken && refreshToken) {
         persistAuthSessionFromResponse(data);
+
         try {
           await saveTokens({
-            role: role,
+            role: role || undefined,
             accessToken: accessToken,
             refreshToken: refreshToken,
           });
-        } catch {
-          // Local session already exists; cookie persistence is best-effort here.
-        }
+        } catch {}
       }
 
       ns.alert.toast({
@@ -55,19 +58,19 @@ export function useLogin() {
         icon: "success",
       });
 
-      // setting routes berdasarkan role
-      switch (role) {
-        case "Admin":
+      const normalizedRole = role?.toLowerCase();
+      switch (normalizedRole) {
+        case "admin":
           ns.router.replace("/admin/dashboard");
           break;
-        case "Member":
-          ns.router.replace("/member/dashboard");
-          break;
-        case "Owner":
+        case "owner":
           ns.router.replace("/owner/dashboard");
           break;
+        case "member":
+        case "developer":
         default:
-          ns.router.replace("/home");
+          ns.router.replace("/member/dashboard");
+          break;
       }
     },
     onError: (err: Error) => {

@@ -86,7 +86,10 @@ export default function PrivateProviders({
           if (!cancelled) {
             setIsAuthenticated(false);
             setIsReady(true);
-            router.replace("/login");
+
+            if (window.location.pathname !== "/login") {
+              router.replace("/login");
+            }
           }
           return;
         }
@@ -114,14 +117,16 @@ export default function PrivateProviders({
         setIsAuthenticated(ok);
         setIsReady(true);
 
-        if (!ok) {
+        if (!ok && window.location.pathname !== "/login") {
           router.replace("/login");
         }
       } catch {
         if (!cancelled) {
           setIsAuthenticated(false);
           setIsReady(true);
-          router.replace("/login");
+          if (window.location.pathname !== "/login") {
+            router.replace("/login");
+          }
         }
       }
     }
@@ -132,8 +137,6 @@ export default function PrivateProviders({
     };
   }, [router]);
 
-  // Role-based route guard — hanya jalankan sekali setelah session siap,
-  // pathname tidak diikutkan agar tidak redirect tiap navigasi
   useEffect(() => {
     if (!isReady || !isAuthenticated) return;
 
@@ -143,8 +146,6 @@ export default function PrivateProviders({
         normalizedRole === "owner" ? "/owner/dashboard" : "/member/dashboard";
       router.replace(redirectTo);
     }
-    // Hanya depend pada isReady & isAuthenticated (single-run setelah bootstrap)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, isAuthenticated]);
 
   return <>{isReady && isAuthenticated ? children : null}</>;

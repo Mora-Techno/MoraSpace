@@ -1,46 +1,85 @@
-import * as React from "react";
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { FileEdit, SendHorizontal } from "lucide-react";
-import { QuickNoteCard } from "@/components/molecules/QuickNoteCard";
+import type { Note, PickCreateNote } from "@repo/types";
+import { FileEdit, Plus, Save } from "lucide-react";
+
+import { Button, Input, Textarea } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
-import { Button, Input } from "@/components/atoms";
+import { WidgetHeader } from "@/components/atoms/WidgetHeader";
+import { GlassCard } from "@/components/molecules/GlassCard";
+import { QuickNoteCard } from "@/components/molecules/QuickNoteCard";
+import type {
+  useCreateNote,
+  useUpdateNote,
+} from "@/hooks/useApi/note/state/mutate";
+import { AlertContexType } from "@/types/ui";
+import EditNoteDialog from "../molecules/modal/EditNoteModal";
+import QuickNoteModal from "../molecules/modal/QuickNotesModal";
 
 interface QuickNotesSectionProps {
   service: {
     handleAdd: (e: React.FormEvent) => void;
-    createNote: any;
+    handleSaveEdit: (e: React.FormEvent) => void;
+    handleDeleteNote: () => void;
+    createNote: ReturnType<typeof useCreateNote>;
+    updateNote: ReturnType<typeof useUpdateNote>;
   };
   state: {
-    recentNotes: any[];
+    recentNotes: Note[];
     isLoading: boolean;
-    newTitle: string;
-    setNewTitle: React.Dispatch<React.SetStateAction<string>>;
-    newContent: string;
-    setNewContent: React.Dispatch<React.SetStateAction<string>>;
+    showModalNotes: boolean;
+    setShowModalNotes: React.Dispatch<React.SetStateAction<boolean>>;
+    formCreateNote: PickCreateNote;
+    setFormCreateNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
+    selectedNote: Note | null;
+    setSelectedNote: React.Dispatch<React.SetStateAction<Note | null>>;
+    formEditNote: PickCreateNote;
+    setFormEditNote: React.Dispatch<React.SetStateAction<PickCreateNote>>;
+    alertType: AlertContexType;
   };
 }
 
 export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
-  const { handleAdd, createNote } = service;
+  const {
+    handleAdd,
+    handleSaveEdit,
+    handleDeleteNote,
+    createNote,
+    updateNote,
+  } = service;
   const {
     recentNotes,
     isLoading,
-    newTitle,
-    setNewTitle,
-    newContent,
-    setNewContent,
+    formCreateNote,
+    setFormCreateNote,
+    selectedNote,
+    setSelectedNote,
+    setShowModalNotes,
+    showModalNotes,
+    alertType,
+    formEditNote,
+    setFormEditNote,
   } = state;
 
   return (
     <GlassCard
-      className="bg-amber-50/10 dark:bg-amber-950/20 p-6 flex flex-col h-[420px]"
+      className="bg-amber-50/10 dark:bg-amber-950/20 p-6 flex flex-col h-105"
       data-stagger-item
     >
-      <WidgetHeader
-        title="Catatan Pintas"
-        icon={<FileEdit className="size-5" />}
-      />
+      <div className="w-full flex justify-between">
+        <WidgetHeader
+          title="Catatan Pintas"
+          icon={<FileEdit className="size-5" />}
+        />
+        <Button
+          size="sm"
+          className="h-8 px-3 shrink-0"
+          type="button"
+          onClick={() => {
+            setShowModalNotes(true);
+          }}
+        >
+          <Plus className="size-4" />
+        </Button>
+      </div>
 
       <div className="flex-1 overflow-y-auto mb-4 space-y-3 pr-2">
         {isLoading ? (
@@ -49,50 +88,44 @@ export function QuickNotesSection({ service, state }: QuickNotesSectionProps) {
           ))
         ) : recentNotes.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground opacity-70">
-            <span className="text-4xl mb-2">📝</span>
             <p className="text-sm">
               Kosong. Catat ide yang terlintas secepat hembusan angin.
             </p>
           </div>
         ) : (
-          recentNotes.map((note: any) => (
-            <QuickNoteCard key={note.id} note={note} onClick={() => {}} />
+          recentNotes.map((note: Note) => (
+            <QuickNoteCard
+              key={note.id}
+              note={note}
+              onClick={() => setSelectedNote(note)}
+              alertType={alertType}
+              handleDeleteNote={handleDeleteNote}
+            />
           ))
         )}
       </div>
 
-      <form
-        onSubmit={handleAdd}
-        className="mt-auto flex flex-col gap-2 rounded-xl bg-background/40 p-3 ring-1 ring-border/50"
-      >
-        <Input
-          placeholder="Judul catatan..."
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          className="bg-transparent h-8 border-none focus-visible:ring-0 px-1 font-medium placeholder:text-muted-foreground/60 text-sm"
-          disabled={createNote.isPending}
+      <QuickNoteModal
+        formCreateNote={formCreateNote}
+        setFormCreateNote={setFormCreateNote}
+        isPending={createNote.isPending}
+        handleAdd={handleAdd}
+        onOpenChange={setShowModalNotes}
+        open={showModalNotes}
+      />
+
+      {selectedNote && (
+        <EditNoteDialog
+          formEditNote={formEditNote}
+          handleSaveEdit={handleSaveEdit}
+          setFormEditNote={setFormEditNote}
+          isPending={updateNote.isPending}
+          onOpenChange={(open) => {
+            if (!open) setSelectedNote(null);
+          }}
+          open={selectedNote !== null}
         />
-        <div className="flex items-end gap-2">
-          <Input
-            placeholder="Tulis idemu disini..."
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            className="flex-1 bg-transparent h-8 border-none focus-visible:ring-0 px-1 text-sm"
-            disabled={createNote.isPending}
-          />
-          <Button
-            type="submit"
-            size="sm"
-            variant="ghost"
-            className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/20 shrink-0"
-            disabled={
-              createNote.isPending || !newTitle.trim() || !newContent.trim()
-            }
-          >
-            <SendHorizontal className="size-4" />
-          </Button>
-        </div>
-      </form>
+      )}
     </GlassCard>
   );
 }

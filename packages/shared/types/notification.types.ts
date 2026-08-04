@@ -1,5 +1,23 @@
 export type NotificationStatus = "success" | "failed";
 
+/** Mirror Prisma model `Notification` (in-app) */
+export interface INotification {
+  id: string;
+  title: string;
+  body: string;
+  type: string;
+  readAt: Date | null;
+  createdAt: Date;
+}
+
+export type NotificationInApp = Pick<
+  INotification,
+  "id" | "title" | "body" | "type"
+> & {
+  readAt: string | null;
+  createdAt: string;
+};
+
 /** Mirror Prisma model `NotificationLog` */
 export interface INotificationLog {
   id: string;

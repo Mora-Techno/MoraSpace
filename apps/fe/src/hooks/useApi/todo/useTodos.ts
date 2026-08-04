@@ -1,5 +1,5 @@
 import { useCreateTodo, useDeleteTodo, useUpdateTodo } from "./state/mutate";
-import { useTodos } from "./state/query";
+import { useTodo as useTodoQuery, useTodos } from "./state/query";
 
 export const useTodo = () => {
   return {
@@ -10,6 +10,7 @@ export const useTodo = () => {
     },
     query: {
       get: useTodos,
+      getByID: useTodoQuery,
     },
   };
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/atoms";
@@ -25,11 +26,21 @@ import type { PickApiID } from "@repo/types/api.types";
 export default function TodosContainer() {
   const [open, setOpen] = useState(false);
   const api = useApi();
+  const router = useRouter();
 
   // Todo List State
   const [tab, setTab] = useState<TabValue>("all");
-  const query: TodoQuery | undefined =
-    tab === "all" ? undefined : { status: tab as "pending" | "completed" };
+  const [listQuery, setListQuery] = useState<TodoQuery>({
+    page: 1,
+    limit: 10,
+    search: "",
+  });
+
+  const query: TodoQuery = {
+    ...listQuery,
+    status: tab === "all" ? undefined : (tab as "pending" | "completed"),
+  };
+
   const useTodos = api.todo.query.get(query);
   const updateTodo = api.todo.mutate.update();
   const deleteTodo = api.todo.mutate.delete();
@@ -45,6 +56,18 @@ export default function TodosContainer() {
 
   const handleDeleteTodo = (id: PickApiID) => {
     deleteTodo.mutate(id);
+  };
+
+  const handleSearch = (search: string) => {
+    setListQuery((prev) => ({ ...prev, search, page: 1 }));
+  };
+
+  const handlePageChange = (page: number) => {
+    setListQuery((prev) => ({ ...prev, page }));
+  };
+
+  const handleSelectTodo = (id: string) => {
+    router.push(`/member/todos/${id}`);
   };
 
   const isListPending = updateTodo.isPending || deleteTodo.isPending;
@@ -108,31 +131,24 @@ export default function TodosContainer() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <TodoListSection
-            service={{ handleToggleTodo, handleDeleteTodo }}
-            state={{
-              todos,
-              isLoading,
-              isPending: isListPending,
-              tab,
-              setTab,
-            }}
-          />
-        </div>
-        <div className="hidden lg:block">
-          <TodoFormSection
-            service={{ handleSubmit }}
-            state={{
-              text,
-              setText,
-              dueDate,
-              setDueDate,
-              isPending: createTodo.isPending,
-            }}
-          />
-        </div>
+      <div className="w-full">
+        <TodoListSection
+          service={{
+            handleToggleTodo,
+            handleDeleteTodo,
+            onSearch: handleSearch,
+            onPageChange: handlePageChange,
+            handleSelectTodo,
+          }}
+          state={{
+            todos,
+            isLoading,
+            isPending: isListPending,
+            tab,
+            setTab,
+            query: listQuery,
+          }}
+        />
       </div>
     </div>
   );

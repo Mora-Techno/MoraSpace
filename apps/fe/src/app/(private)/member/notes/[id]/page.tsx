@@ -1,4 +1,4 @@
-import NoteDetailContainer from '../_containers/note-detail';
+import NoteDetailContainer from "./_container/noteDetail";
 
 export default async function NoteDetailPage({
   params,
