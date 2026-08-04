@@ -121,24 +121,26 @@ export function NotificationListSection({
           </ul>
         )}
 
-        <div className="mt-6 flex justify-center gap-2 border-t border-border/50 pt-4">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => service.onPageChange(currentPage - 1)}
-            disabled={currentPage === 1 || isLoading || isPending}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => service.onPageChange(currentPage + 1)}
-            disabled={disableNext || isLoading || isPending}
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
+        {!notifications.slice(0, 5) ? (
+          <div className="mt-6 flex justify-center gap-2 border-t border-border/50 pt-4">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => service.onPageChange(currentPage - 1)}
+              disabled={currentPage === 1 || isLoading || isPending}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => service.onPageChange(currentPage + 1)}
+              disabled={disableNext || isLoading || isPending}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : null}
       </GhibliCard>
     </div>
   );

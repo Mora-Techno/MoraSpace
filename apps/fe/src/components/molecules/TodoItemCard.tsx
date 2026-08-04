@@ -20,7 +20,7 @@ export function TodoItemCard({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 rounded-xl bg-background/50 px-3 py-2 transition-opacity",
+        "flex items-center gap-3 rounded-xl mt-2 bg-background/50 px-3 py-2 transition-opacity",
         isUpdating && "opacity-50",
       )}
     >

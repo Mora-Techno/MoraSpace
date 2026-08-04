@@ -36,7 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const onAuth = isAuthRoute(pathname);
 
     if (!authenticated && !onPublic && !onAuth) {
-      router.replace("/login");
+      const stored = loadAuthSession();
+      const isRecentlyUpdated =
+        stored?.updatedAt != null &&
+        Date.now() - stored.updatedAt < 5 * 60 * 1000;
+
+      if (!isRecentlyUpdated) {
+        router.replace("/login");
+      }
       return;
     }
   }, [loading, authenticated, pathname, router, role]);

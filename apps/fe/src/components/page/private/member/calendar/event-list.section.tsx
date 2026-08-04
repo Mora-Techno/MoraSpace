@@ -5,7 +5,6 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
@@ -109,27 +108,29 @@ export function EventListSection({ service, state }: EventListSectionProps) {
         </ul>
       )}
 
-      <div className="mt-6 flex justify-center gap-2 border-t border-border/50 pt-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange((query.page || 1) - 1)}
-          disabled={(query.page || 1) <= 1}
-        >
-          <ChevronLeft />
-        </Button>
-        <div className="flex items-center px-4 text-sm font-medium">
-          {query.page || 1}
+      {!events.slice(0, 5) ? (
+        <div className="mt-6 flex justify-center gap-2 border-t border-border/50 pt-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange((query.page || 1) - 1)}
+            disabled={(query.page || 1) <= 1}
+          >
+            <ChevronLeft />
+          </Button>
+          <div className="flex items-center px-4 text-sm font-medium">
+            {query.page || 1}
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange((query.page || 1) + 1)}
+            disabled={events.length < (query.limit || 10)}
+          >
+            <ChevronRight />
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange((query.page || 1) + 1)}
-          disabled={events.length < (query.limit || 10)}
-        >
-          <ChevronRight />
-        </Button>
-      </div>
+      ) : null}
     </GhibliCard>
   );
 }

@@ -1,11 +1,16 @@
-import { setTokenProvider } from "@repo/services";
-
+import { setAuthErrorHandler, setTokenProvider } from "@repo/services";
 import ApiServicePackage from "@repo/services";
-
-import { loadAuthSession } from "@/utils/storage";
+import { clearAuthSession, loadAuthSession } from "@/utils/storage";
 
 if (typeof window !== "undefined") {
   setTokenProvider(() => loadAuthSession()?.accessToken);
+  setAuthErrorHandler(() => {
+    clearAuthSession();
+    const currentPath = window.location.pathname;
+    if (!currentPath.startsWith("/login")) {
+      window.location.href = "/login";
+    }
+  });
 }
 
 const Api = {

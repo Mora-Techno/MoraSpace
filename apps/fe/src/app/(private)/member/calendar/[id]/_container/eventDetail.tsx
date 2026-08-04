@@ -4,7 +4,6 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-
 import { Button } from "@/components/atoms";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { EventDetailSection } from "@/components/page/private/member/calendar/event-detail.section";
