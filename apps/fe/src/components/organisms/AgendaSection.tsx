@@ -17,7 +17,7 @@ export function AgendaSection({ state }: AgendaSectionProps) {
   const { upcomingEvents, isLoading } = state;
 
   return (
-    <GlassCard className="p-6 flex flex-col h-[420px]" data-stagger-item>
+    <GlassCard className="p-6 flex flex-col h-[480px]" data-stagger-item>
       <WidgetHeader
         title="Agenda Hari Ini"
         icon={<CalendarIcon className="size-5" />}

@@ -18,9 +18,11 @@ type ClientFetchOptions = {
 
 type TokenProvider = () => string | undefined | Promise<string | undefined>;
 type BaseURLProvider = () => string | undefined | Promise<string | undefined>;
+type AuthErrorHandler = (status: number) => void;
 
 let _tokenProvider: TokenProvider | null = null;
 let _baseURLProvider: BaseURLProvider | null = null;
+let _authErrorHandler: AuthErrorHandler | null = null;
 
 export const setTokenProvider = (provider: TokenProvider) => {
   _tokenProvider = provider;
@@ -28,6 +30,15 @@ export const setTokenProvider = (provider: TokenProvider) => {
 
 export const setBaseURLProvider = (provider: BaseURLProvider) => {
   _baseURLProvider = provider;
+};
+
+/**
+ * Override the default 401 handling (hard `window.location.href = "/login"`).
+ * The handler is responsible for clearing the stale session and navigating.
+ * Pass `null` to restore the default behavior.
+ */
+export const setAuthErrorHandler = (handler: AuthErrorHandler | null) => {
+  _authErrorHandler = handler;
 };
 
 async function buildApiUrl(path: string): Promise<string> {
@@ -125,9 +136,13 @@ async function clientCoreFetchResponse<T>(
 
   if (!res.ok || json?.success === false) {
     if (res.status === 401 && typeof window !== "undefined") {
-      const currentPath = window.location.pathname;
-      if (!currentPath.startsWith("/login")) {
-        window.location.href = "/login";
+      if (_authErrorHandler) {
+        _authErrorHandler(res.status);
+      } else {
+        const currentPath = window.location.pathname;
+        if (!currentPath.startsWith("/login")) {
+          window.location.href = "/login";
+        }
       }
     }
 

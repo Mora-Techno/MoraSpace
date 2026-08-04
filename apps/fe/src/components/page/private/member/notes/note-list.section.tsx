@@ -147,27 +147,29 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
             ))}
           </div>
 
-          <div className="mt-8 flex justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange((query.page || 1) - 1)}
-              disabled={(query.page || 1) <= 1}
-            >
-              <ChevronLeft />
-            </Button>
-            <div className="flex items-center px-4 text-sm font-medium">
-              {query.page || 1}
+          {!notes.slice(0, 5) ? (
+            <div className="mt-8 flex justify-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange((query.page || 1) - 1)}
+                disabled={(query.page || 1) <= 1}
+              >
+                <ChevronLeft />
+              </Button>
+              <div className="flex items-center px-4 text-sm font-medium">
+                {query.page || 1}
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onPageChange((query.page || 1) + 1)}
+                disabled={notes.length < (query.limit || 10)}
+              >
+                <ChevronRight />
+              </Button>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onPageChange((query.page || 1) + 1)}
-              disabled={notes.length < (query.limit || 10)}
-            >
-              <ChevronRight />
-            </Button>
-          </div>
+          ) : null}
         </div>
       )}
     </div>

@@ -19,6 +19,7 @@ import teamService from "./team.service";
 import todoService from "./todo.service";
 import trackCatalogService from "./trackCatalog.service";
 export {
+  setAuthErrorHandler,
   setBaseURLProvider,
   setTokenProvider,
 } from "../api/client/client-http";
