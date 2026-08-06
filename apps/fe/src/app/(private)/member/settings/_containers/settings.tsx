@@ -9,6 +9,8 @@ import { useApi } from "@/hooks/useApi/useApi";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import SettingsSection from "@/components/page/private/member/settings/settingsMemberSection";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import type { Language } from "@/configs";
+
 export default function SettingsContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
@@ -30,15 +32,34 @@ export default function SettingsContainer() {
     });
   };
 
-  const handleChangeTimeFormat = (value: string) => {
+  const handleChangeLanguage = (lang: Language) => {
+    changeLanguage(lang);
     updateSettings.mutate({
-      timeFormat: value,
+      language: lang,
     });
   };
 
-  const handleChangeNotification = (value: string) => {
+  const handleChangeNotification = (checked: boolean) => {
     updateSettings.mutate({
-      timeFormat: value,
+      notificationEnabled: checked,
+    });
+  };
+
+  const handleChangeEnableMusic = (checked: boolean) => {
+    updateSettings.mutate({
+      enableMusic: checked,
+    });
+  };
+
+  const handleChangeFocusMode = (checked: boolean) => {
+    updateSettings.mutate({
+      focusMode: checked,
+    });
+  };
+
+  const handleChangeTimezone = (value: string) => {
+    updateSettings.mutate({
+      timezone: value,
     });
   };
 
@@ -69,8 +90,11 @@ export default function SettingsContainer() {
         isLoading: isLoading,
         settings: settings ?? null,
         handleChangeTheme: handleChangeTheme,
-        handleChangeTimeFormat: handleChangeTimeFormat,
+        handleChangeLanguage: handleChangeLanguage,
         handleChangeNotification: handleChangeNotification,
+        handleChangeEnableMusic: handleChangeEnableMusic,
+        handleChangeFocusMode: handleChangeFocusMode,
+        handleChangeTimezone: handleChangeTimezone,
         isPending: sendNotification.isPending || useLogout.isPending,
         handleLogout: handleLogout,
         handleSendNotification: handleSendNotification,

@@ -89,7 +89,6 @@ export type {
   PickUpdateSettings,
   Settings,
   ThemePreference,
-  TimeFormat,
 } from "./settings.types";
 export type {
   ITodo,

@@ -19,6 +19,7 @@ import taskRoutes from "./taskRoutes";
 import pomodoroRoutes from "./pomodoroRoutes";
 import systemRoutes from "./systemRoutes";
 import trackCatalogRoutes from "./trackCatalogRoutes";
+import settingsRoutes from "./settingsRoutes";
 import { InternalApiKey } from "@/middlewares/apiKey";
 import { errorPlugin, loggerPlugin, metricsPlugin } from "@/plugins";
 
@@ -62,7 +63,8 @@ class ApiRouter {
       .use(taskRoutes)
       .use(pomodoroRoutes)
       .use(systemRoutes)
-      .use(trackCatalogRoutes);
+      .use(trackCatalogRoutes)
+      .use(settingsRoutes);
   }
 }
 

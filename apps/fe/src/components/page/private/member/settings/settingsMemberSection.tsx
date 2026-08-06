@@ -15,6 +15,15 @@ import { Theme } from "@/core/providers/theme.provider";
 import { AlertContexType } from "@/types/ui";
 import { Settings } from "@repo/types";
 
+const TIMEZONE_OPTIONS: { value: string; label: string }[] = [
+  { value: "Asia/Jakarta", label: "WIB (Jakarta)" },
+  { value: "Asia/Makassar", label: "WITA (Makassar)" },
+  { value: "Asia/Jayapura", label: "WIT (Jayapura)" },
+  { value: "Asia/Singapore", label: "Singapore" },
+  { value: "Asia/Tokyo", label: "Tokyo" },
+  { value: "UTC", label: "UTC" },
+];
+
 interface SettingsSectionProps {
   state: {
     theme: Theme;
@@ -31,8 +40,11 @@ interface SettingsSectionProps {
     isLoading: boolean;
     handleChangeTheme: () => void;
     handleLogout: () => void;
-    handleChangeTimeFormat: (value: string) => void;
-    handleChangeNotification: (value: any) => void;
+    handleChangeLanguage: (lang: Language) => void;
+    handleChangeNotification: (checked: boolean) => void;
+    handleChangeEnableMusic: (checked: boolean) => void;
+    handleChangeFocusMode: (checked: boolean) => void;
+    handleChangeTimezone: (value: string) => void;
     isPending: boolean;
     handleSendNotification: () => void;
   };
@@ -59,8 +71,11 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
     handleSendNotification,
     settings,
     handleChangeTheme,
-    handleChangeTimeFormat,
+    handleChangeLanguage,
     handleChangeNotification,
+    handleChangeEnableMusic,
+    handleChangeFocusMode,
+    handleChangeTimezone,
   } = service;
   return (
     <div className="animate-in fade-in max-w-full duration-700">
@@ -89,26 +104,58 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
                 }}
               />
             </div>
+          </div>
+        </GhibliCard>
+
+        <GhibliCard>
+          <h2 className="font-serif text-lg font-semibold">Preferensi</h2>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium">Musik</p>
+                <p className="text-xs text-muted-foreground">
+                  Aktifkan musik di dalam aplikasi
+                </p>
+              </div>
+              <GhibliSwitch
+                checked={settings?.enableMusic ?? false}
+                onCheckedChange={(checked) => handleChangeEnableMusic(checked)}
+              />
+            </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-sm font-medium">Format Jam</p>
+                <p className="text-sm font-medium">Mode Fokus</p>
                 <p className="text-xs text-muted-foreground">
-                  12 jam atau 24 jam
+                  Aktifkan mode fokus agar terhindar dari gangguan
+                </p>
+              </div>
+              <GhibliSwitch
+                checked={settings?.focusMode ?? false}
+                onCheckedChange={(checked) => handleChangeFocusMode(checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium">Zona Waktu</p>
+                <p className="text-xs text-muted-foreground">
+                  Pilih zona waktu yang digunakan
                 </p>
               </div>
               <Select
-                value={settings?.timeFormat ?? "24h"}
-                onValueChange={(value: "12h" | "24h") =>
-                  handleChangeTimeFormat(value)
-                }
+                value={settings?.timezone ?? "Asia/Jakarta"}
+                onValueChange={(value) => handleChangeTimezone(value)}
               >
-                <SelectTrigger className="w-28 rounded-xl">
+                <SelectTrigger className="w-44 rounded-xl">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="24h">24 jam</SelectItem>
-                  <SelectItem value="12h">12 jam</SelectItem>
+                  {TIMEZONE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -125,7 +172,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
               </p>
             </div>
             <GhibliSwitch
-              checked={settings?.defaultNotifications ?? true}
+              checked={settings?.notificationEnabled ?? true}
               onCheckedChange={(checked) => handleChangeNotification(checked)}
             />
           </div>
@@ -158,7 +205,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
                 variant={currentLanguage === lang ? "default" : "outline"}
                 size="sm"
                 className="ghibli-btn"
-                onClick={() => changeLanguage(lang)}
+                onClick={() => {
+                  changeLanguage(lang);
+                  handleChangeLanguage(lang);
+                }}
               >
                 {lang.toUpperCase()}
               </Button>
