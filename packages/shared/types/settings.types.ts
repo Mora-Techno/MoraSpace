@@ -1,24 +1,39 @@
 /**
- * Belum ada model Prisma — kontrak API untuk fitur settings UI.
- * Pisahkan di file ini agar tidak tercampur dengan domain productivity Prisma.
+ * Kontrak API untuk fitur settings — berdasarkan model Prisma `UserSetting`.
+ * Setiap user (company member) memiliki pengaturan yang berbeda-beda,
+ * sehingga endpoint settings selalu di-scope berdasarkan companyMemberId.
  */
-export type TimeFormat = '24h' | '12h';
-export type ThemePreference = 'light' | 'dark' | 'system';
+export type ThemePreference = "light" | "dark" | "system";
 
 export interface ISettings {
   id: string;
-  timeFormat: TimeFormat;
-  defaultNotifications: boolean;
-  theme: ThemePreference;
-  createdAt: Date;
-  updatedAt: Date;
+  theme: string | null;
+  language: string | null;
+  timezone: string | null;
+  enableMusic: boolean;
+  focusMode: boolean;
+  notificationEnabled: boolean;
 }
 
-export type Settings = Pick<ISettings, 'id' | 'timeFormat' | 'defaultNotifications' | 'theme'> & {
-  createdAt: string;
-  updatedAt: string;
-};
+export type Settings = Pick<
+  ISettings,
+  | "id"
+  | "theme"
+  | "language"
+  | "timezone"
+  | "enableMusic"
+  | "focusMode"
+  | "notificationEnabled"
+>;
 
 export type PickUpdateSettings = Partial<
-  Pick<ISettings, 'timeFormat' | 'defaultNotifications' | 'theme'>
+  Pick<
+    ISettings,
+    | "theme"
+    | "language"
+    | "timezone"
+    | "enableMusic"
+    | "focusMode"
+    | "notificationEnabled"
+  >
 >;

@@ -9,10 +9,6 @@ import React, {
 } from "react";
 import type { IMusicPlayListItem } from "@repo/types";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 export interface MusicPlayerState {
   /** The track currently playing (null = nothing playing) */
   currentTrack: IMusicPlayListItem | null;
