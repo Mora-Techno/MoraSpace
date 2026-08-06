@@ -13,6 +13,7 @@ import type {
 } from "@repo/types/auth.types";
 import { useMutation } from "@tanstack/react-query";
 
+import { queryKey } from "@/configs";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import { saveTokens } from "@/server/auth-cookie";
 import Api from "@/services/api";
@@ -34,11 +35,7 @@ export function useLogin() {
 
       const accessToken = res?.data.accessToken;
       const refreshToken = res?.data.refreshToken;
-      const role =
-        (res?.data.user as Record<string, any>)?.companyRole ??
-        (res?.data.user as Record<string, any>)?.role ??
-        (res?.data as Record<string, any>)?.role ??
-        "";
+      const role = res?.data.user?.companyRole ?? "";
 
       if (accessToken && refreshToken) {
         persistAuthSessionFromResponse(data);
@@ -48,6 +45,17 @@ export function useLogin() {
             role: role || undefined,
             accessToken: accessToken,
             refreshToken: refreshToken,
+          });
+        } catch {}
+
+        // Muat pengaturan milik user yang login (tiap user berbeda-beda).
+        try {
+          await ns.queryClient.prefetchQuery({
+            queryKey: queryKey.settings.detail(),
+            queryFn: async () => {
+              const res = await Api.Settings.GetSettings();
+              return res.data;
+            },
           });
         } catch {}
       }

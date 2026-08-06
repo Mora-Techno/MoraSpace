@@ -40,6 +40,7 @@ model User {
   todos                  Todo[]
   trackCatalogs          TrackCatalog[]
   sessions               UserSession[]
+  setting                UserSetting?
 
   @@map("users")
 }
@@ -931,15 +932,18 @@ model BackgroundJob {
 }
 
 model UserSetting {
-  id                  String        @id @default(uuid())
-  companyMemberId     String        @unique @map("company_member_id")
+  id                  String  @id @default(uuid())
+  companyMemberId     String? @unique @map("company_member_id")
+  userId              String? @unique @map("user_id")
   theme               String?
   language            String?
   timezone            String?
-  enableMusic         Boolean       @default(false) @map("enable_music")
-  focusMode           Boolean       @default(false) @map("focus_mode")
-  notificationEnabled Boolean       @default(true) @map("notification_enabled")
-  companyMember       CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  enableMusic         Boolean @default(false) @map("enable_music")
+  focusMode           Boolean @default(false) @map("focus_mode")
+  notificationEnabled Boolean @default(true) @map("notification_enabled")
+
+  companyMember CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  user          User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_settings")
 }
