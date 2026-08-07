@@ -12,3 +12,7 @@ export const UpdateSettingsDto = t.Object({
     t.Boolean({ description: "Aktifkan notifikasi" }),
   ),
 });
+
+export const TestEmailDto = t.Object({
+  email: t.String({ description: "Email Wajib Diisi" }),
+});

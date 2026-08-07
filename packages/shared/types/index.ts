@@ -89,6 +89,7 @@ export type {
   PickUpdateSettings,
   Settings,
   ThemePreference,
+  TestEmail,
 } from "./settings.types";
 export type {
   ITodo,

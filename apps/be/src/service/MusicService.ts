@@ -69,6 +69,7 @@ class MusicService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
+    // condision
     const where: Record<string, unknown> = companyMemberId
       ? { companyMemberId }
       : { userId };

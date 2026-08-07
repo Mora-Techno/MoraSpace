@@ -1,47 +1,83 @@
-import { format } from "date-fns";
-import { id as idLocale } from "date-fns/locale";
-import { StatusCheckbox } from "@/components/atoms/StatusCheckbox";
 import { Todo } from "@repo/types";
-import { cn } from "@/utils/classname";
+import { formatDateTime } from "@repo";
+import { TodoCheckbox } from "@/components/molecules/TodoCheckbox";
+import { Button } from "../atoms";
+import { Trash2 } from "lucide-react";
+import { AlertContexType } from "@/types/ui";
 
-interface TodoItemCardProps {
+type TodoListItemProps = {
   todo: Todo;
-  isUpdating: boolean;
-  onToggle: (checked: boolean) => void;
-}
+  alert: AlertContexType;
+  disabled: boolean;
+  onToggle: (id: string, checked: boolean) => void;
+  onDelete: (id: string) => void;
+  onClick: (id: string) => void;
+};
 
-export function TodoItemCard({
+export function TodoListItem({
   todo,
-  isUpdating,
+  disabled,
   onToggle,
-}: TodoItemCardProps) {
-  const isCompleted = todo.status === "completed";
+  alert,
+  onDelete,
+  onClick,
+}: TodoListItemProps) {
+  const todoId = { id: todo.id };
+
+  const handleToggleChange = (checked: boolean) => {
+    onToggle(todoId.id, checked);
+  };
+
+  const handleDeleteClick = () => {
+    onDelete(todoId.id);
+  };
 
   return (
-    <div
-      className={cn(
-        "flex items-center gap-3 rounded-xl mt-2 bg-background/50 px-3 py-2 transition-opacity",
-        isUpdating && "opacity-50",
-      )}
+    <li
+      data-stagger-item
+      className="flex cursor-pointer items-center gap-3  rounded-xl bg-background/50 px-3 py-3 transition-colors hover:bg-background/80"
+      onClick={() => onClick(todo.id)}
     >
-      <StatusCheckbox
-        checked={isCompleted}
-        disabled={isUpdating}
-        onCheckedChange={onToggle}
-      />
-      <span
-        className={cn(
-          "flex-1 text-sm transition-all",
-          isCompleted && "text-muted-foreground line-through",
-        )}
-      >
-        {todo.text}
-      </span>
-      {todo.dueDate && (
-        <span className="text-xs text-muted-foreground">
-          {format(new Date(todo.dueDate), "HH:mm", { locale: idLocale })}
+      <div onClick={(e) => e.stopPropagation()}>
+        <TodoCheckbox
+          checked={todo.status === "completed"}
+          disabled={disabled}
+          onChange={handleToggleChange}
+        />
+      </div>
+      <div className="flex w-full flex-col items-start">
+        <span
+          className={
+            todo.status === "completed"
+              ? "flex-1 text-sm text-muted-foreground line-through"
+              : "flex-1 text-sm"
+          }
+        >
+          {todo.text}
         </span>
-      )}
-    </div>
+        <span className="text-xs text-muted-foreground">
+          {todo.dueDate ? formatDateTime(todo.dueDate) : "Tanpa tenggat"}
+        </span>
+      </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-8 shrink-0 text-destructive"
+        onClick={(e) => {
+          e.stopPropagation();
+          alert.confirm({
+            title: "Hapus ?",
+            deskripsi: "Apakah anda yakin menghapus todo ini ?",
+            icon: "info",
+            onConfirm: () => {
+              handleDeleteClick();
+            },
+          });
+        }}
+        disabled={disabled}
+      >
+        <Trash2 className="size-4" />
+      </Button>
+    </li>
   );
 }

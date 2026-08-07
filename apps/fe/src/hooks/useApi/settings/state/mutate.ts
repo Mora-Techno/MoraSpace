@@ -1,9 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
-
-import { queryKey } from "@/configs";
+import { SettingsRoot } from "./utils";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import Api from "@/services/api";
-import type { PickUpdateSettings, Settings, TResponse } from "@repo/types";
+import type {
+  PickUpdateSettings,
+  Settings,
+  TestEmail,
+  TResponse,
+} from "@repo/types";
 
 export function useUpdateSettings() {
   const ns = useAppNameSpace();
@@ -19,7 +23,33 @@ export function useUpdateSettings() {
     },
     onSettled: async () => {
       await ns.queryClient.invalidateQueries({
-        queryKey: queryKey.settingsRoot(),
+        queryKey: SettingsRoot,
+      });
+    },
+    onError: (err: Error) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
+      });
+    },
+  });
+}
+
+export function useTestingEmail() {
+  const ns = useAppNameSpace();
+  return useMutation<TResponse<{ email: string }>, Error, TestEmail>({
+    mutationFn: (payload) => Api.Settings.TestingEmail(payload),
+    onSuccess: (res) => {
+      ns.alert.toast({
+        title: res.message,
+        message: res.message,
+        icon: "success",
+      });
+    },
+    onSettled: async () => {
+      await ns.queryClient.invalidateQueries({
+        queryKey: SettingsRoot,
       });
     },
     onError: (err: Error) => {

@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/molecules/PageHeader";
 import { Language } from "@/configs";
 import { Theme } from "@/core/providers/theme.provider";
 import { AlertContexType } from "@/types/ui";
-import { Settings } from "@repo/types";
+import { Settings, TestEmail } from "@repo/types";
 
 const TIMEZONE_OPTIONS: { value: string; label: string }[] = [
   { value: "Asia/Jakarta", label: "WIB (Jakarta)" },
@@ -31,13 +31,14 @@ interface SettingsSectionProps {
     languages: readonly Language[];
     currentLanguage: Language;
     changeLanguage: (lang: Language) => void;
-    formTestEmail: string;
-    setFormTestEmail: React.Dispatch<React.SetStateAction<string>>;
+    formTestEmail: TestEmail;
+    setFormTestEmail: React.Dispatch<React.SetStateAction<TestEmail>>;
     alert: AlertContexType;
   };
   service: {
     settings: Settings | null;
     isLoading: boolean;
+    handleSendTestingEmail: (e: React.FormEvent) => void;
     handleChangeTheme: () => void;
     handleLogout: () => void;
     handleChangeLanguage: (lang: Language) => void;
@@ -46,7 +47,6 @@ interface SettingsSectionProps {
     handleChangeFocusMode: (checked: boolean) => void;
     handleChangeTimezone: (value: string) => void;
     isPending: boolean;
-    handleSendNotification: () => void;
   };
 }
 
@@ -67,8 +67,9 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
   const {
     isLoading,
     isPending,
+    handleSendTestingEmail,
     handleLogout,
-    handleSendNotification,
+
     settings,
     handleChangeTheme,
     handleChangeLanguage,
@@ -177,23 +178,31 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             />
           </div>
 
-          <div className="mt-4 space-y-2 border-t border-border/50 pt-4">
+          <form
+            className="mt-4 space-y-2 border-t border-border/50 pt-4"
+            onSubmit={handleSendTestingEmail}
+          >
             <p className="text-sm font-medium">Test Email SMTP</p>
             <input
               type="email"
-              value={formTestEmail}
-              onChange={(e) => setFormTestEmail(e.target.value)}
+              value={formTestEmail.email}
+              onChange={(e) =>
+                setFormTestEmail((prev) => ({
+                  ...prev,
+                  email: e.target.value,
+                }))
+              }
               placeholder="email@contoh.com"
               className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
             <Button
               className="ghibli-btn"
               disabled={!formTestEmail || isPending}
-              onClick={() => handleSendNotification()}
+              type="submit"
             >
               Kirim Test Email
             </Button>
-          </div>
+          </form>
         </GhibliCard>
 
         <GhibliCard>
