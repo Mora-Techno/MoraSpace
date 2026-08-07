@@ -1,21 +1,22 @@
 import { PickUpdateTodo, Todo } from "@repo/types";
 import { CheckSquare, Plus } from "lucide-react";
 import * as React from "react";
-
 import { Button } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { WidgetHeader } from "@/components/atoms/WidgetHeader";
 import { GlassCard } from "@/components/molecules/GlassCard";
-import { TodoItemCard } from "@/components/molecules/TodoItemCard";
-import { useCreateTodo, useUpdateTodo } from "@/hooks/useApi/todo";
-
+import { TodoListItem } from "../molecules";
+import { useCreateTodo } from "@/hooks/useApi/todo";
 import TodoCreateModal from "../molecules/modal/TodoCreateModal";
+import { AlertContexType } from "@/types/ui";
 
 interface TodoListSectionProps {
   service: {
     handleToggle: (id: string, checked: boolean) => void;
     handleAdd: (e: React.FormEvent) => void;
-    updateTodo: ReturnType<typeof useUpdateTodo>;
+    handleSelectTodo: (id: string) => void;
+    isPending: boolean;
+    handleDeleteTodo: (id: string) => void;
     createTodo: ReturnType<typeof useCreateTodo>;
   };
   state: {
@@ -26,13 +27,22 @@ interface TodoListSectionProps {
     isLoading: boolean;
     formUpdateTodo: PickUpdateTodo;
     setFormUpdateTodo: React.Dispatch<React.SetStateAction<PickUpdateTodo>>;
+    alert: AlertContexType;
   };
 }
 
 export function TodoListSection({ service, state }: TodoListSectionProps) {
-  const { handleToggle, handleAdd, updateTodo, createTodo } = service;
+  const {
+    handleToggle,
+    handleAdd,
+    handleDeleteTodo,
+    handleSelectTodo,
+    createTodo,
+    isPending,
+  } = service;
   const {
     Todos,
+    alert,
     uncompletedTodosCount,
     isLoading,
     formUpdateTodo,
@@ -77,16 +87,16 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
             <p className="text-sm">Semua tugas prioritas selesai!</p>
           </div>
         ) : (
-          <div className="w-full my-2">
-            {Todos.map((todo: Todo) => (
-              <TodoItemCard
+          <div className="w-full my-2 flex gap-1 flex-col">
+            {Todos.map((todo) => (
+              <TodoListItem
                 key={todo.id}
                 todo={todo}
-                isUpdating={
-                  updateTodo.variables?.id?.id === todo.id &&
-                  updateTodo.isPending
-                }
-                onToggle={(checked: boolean) => handleToggle(todo.id, checked)}
+                onDelete={handleDeleteTodo}
+                onToggle={handleToggle}
+                alert={alert}
+                onClick={handleSelectTodo}
+                disabled={isPending}
               />
             ))}
           </div>

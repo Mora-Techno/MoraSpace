@@ -23,7 +23,6 @@ const Api = {
   Music: ApiServicePackage.Music,
   Notification: ApiServicePackage.Notification,
   Settings: ApiServicePackage.Setting,
-  Setting: ApiServicePackage.Setting,
   Company: ApiServicePackage.Company,
   Subscription: ApiServicePackage.Subscription,
   Department: ApiServicePackage.Department,

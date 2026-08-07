@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
-import { GooeyToaster } from '@/components/atoms/GoeyToaster';
-import { AlertModal } from '@/core/components/alert-modal';
-import { showAlertToast } from '@/core/components/alert-toast';
-import type { AlertContexType, ModalProps, ToastProps } from '@/types/ui';
+import { GooeyToaster } from "@/components/atoms/GoeyToaster";
+import { AlertModal } from "@/core/components/alert-modal";
+import { showAlertToast } from "@/core/components/alert-toast";
+import type { AlertContexType, ModalProps, ToastProps } from "@/types/ui";
 
 const AlertContex = createContext<AlertContexType | undefined>(undefined);
 
 export const useAlert = (): AlertContexType => {
   const contex = useContext(AlertContex);
   if (!contex) {
-    throw new Error('useAlert must be used within an AlertProvider');
+    throw new Error("useAlert must be used within an AlertProvider");
   }
 
   return contex;
@@ -20,7 +20,9 @@ export const useAlert = (): AlertContexType => {
 
 export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
   const [modal, setModal] = useState<ModalProps | null>(null);
-  const [resolver, setResolver] = useState<((res: boolean) => void) | null>(null);
+  const [resolver, setResolver] = useState<((res: boolean) => void) | null>(
+    null,
+  );
 
   const toastAlert = (payload: ToastProps) => {
     showAlertToast(payload);
@@ -59,7 +61,9 @@ export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
   const isConfirmDialog = Boolean(resolver);
 
   return (
-    <AlertContex.Provider value={{ toast: toastAlert, modal: showModal, confirm }}>
+    <AlertContex.Provider
+      value={{ toast: toastAlert, modal: showModal, confirm }}
+    >
       {children}
       <GooeyToaster />
       {modal ? (
@@ -73,10 +77,10 @@ export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
           title={modal.title}
           deskripsi={modal.deskripsi}
           icon={modal.icon}
-          confirmButtonText={modal.confirmButtonText || 'OK'}
-          confirmButtonColor={modal.confirmButtonColor || 'bg-primary'}
+          confirmButtonText={modal.confirmButtonText || "OK"}
+          confirmButtonColor={modal.confirmButtonColor || "bg-primary"}
           onConfirm={handleConfirm}
-          cancelText={isConfirmDialog ? 'Batal' : undefined}
+          cancelText={isConfirmDialog ? "Batal" : undefined}
           onCancel={isConfirmDialog ? handleCancel : undefined}
         />
       ) : null}

@@ -3,8 +3,9 @@ import { HttpResponse } from "@/http";
 import SettingsService from "@/service/SettingsService";
 import { getUser } from "@/utils/authTokens";
 import { personalContextValidate } from "@/validation/auth.validate";
+import { TestEmailValidation } from "@/validation/settings.validate";
 import type { PickUpdateSettings } from "@repo/types/settings.types";
-
+import { TestEmail } from "@repo/types/settings.types";
 class SettingsController {
   public async get(c: AppContext) {
     try {
@@ -60,6 +61,31 @@ class SettingsController {
         settings,
         undefined,
         "Pengaturan berhasil diperbarui",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+  public async TestingEmail(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const input = c.body as TestEmail;
+
+      const authRespone = await personalContextValidate(user, c);
+
+      if (authRespone) return authRespone;
+      const validateBody = await TestEmailValidation(c, input);
+
+      if (validateBody) return validateBody;
+
+      const queryService = await SettingsService.TestEmail(input);
+
+      if (!queryService) {
+        return HttpResponse(c).badRequest();
+      }
+      return HttpResponse(c).ok(
+        queryService,
+        "Testing Email Berhasil Dilakukan",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

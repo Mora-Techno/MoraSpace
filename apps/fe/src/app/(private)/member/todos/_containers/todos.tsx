@@ -13,7 +13,6 @@ import {
   SheetTrigger,
 } from "@/components/atoms/Sheet";
 import { PageHeader } from "@/components/molecules/PageHeader";
-
 import { TodoFormSection } from "@/components/page/private/member/todos/todo-form.section";
 import {
   TodoListSection,
@@ -22,11 +21,13 @@ import {
 import { useApi } from "@/hooks/useApi/useApi";
 import type { TodoQuery } from "@repo/types";
 import type { PickApiID } from "@repo/types/api.types";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 
 export default function TodosContainer() {
   const [open, setOpen] = useState(false);
   const api = useApi();
   const router = useRouter();
+  const ns = useAppNameSpace();
 
   // Todo List State
   const [tab, setTab] = useState<TabValue>("all");
@@ -47,14 +48,14 @@ export default function TodosContainer() {
 
   const { data: todos = [], isLoading } = useTodos;
 
-  const handleToggleTodo = (id: PickApiID, checked: boolean) => {
+  const handleToggleTodo = (id: string, checked: boolean) => {
     updateTodo.mutate({
       id,
       payload: { status: checked ? "completed" : "pending" },
     });
   };
 
-  const handleDeleteTodo = (id: PickApiID) => {
+  const handleDeleteTodo = (id: string) => {
     deleteTodo.mutate(id);
   };
 
@@ -141,6 +142,7 @@ export default function TodosContainer() {
             handleSelectTodo,
           }}
           state={{
+            alert: ns.alert,
             todos,
             isLoading,
             isPending: isListPending,

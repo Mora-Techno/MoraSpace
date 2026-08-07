@@ -1,6 +1,6 @@
 import prisma from "prisma/client";
-import type { PickUpdateSettings } from "@repo/types/settings.types";
-
+import type { PickUpdateSettings, TestEmail } from "@repo/types/settings.types";
+import NotificationService from "./NotificationService";
 function mapSettings(settings: {
   id: string;
   theme: string | null;
@@ -79,6 +79,14 @@ class SettingsService {
     });
 
     return mapSettings(settings);
+  }
+  public async TestEmail(payload: TestEmail) {
+    const sender = await NotificationService.send({
+      body: "Halo,\n\nIni adalah email uji coba (test email) dari sistem. Jika Anda menerima email ini, berarti fitur pengiriman email untuk akun Anda telah berfungsi dengan baik.\n\nAnda tidak perlu membalas email ini.\n\nTerima kasih,\nTim Support",
+      recipient: payload.email,
+      subject: "Tester Email Akun",
+    });
+    return sender;
   }
 }
 

@@ -1,10 +1,11 @@
-import { buildEndpoint } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/settings';
+const mount = "/settings";
 
 export const SETTINGS_ENDPOINTS = {
   GET: buildEndpoint(mount),
   UPDATE: buildEndpoint(mount),
+  SEND_EMAIL: buildEndpoint(mount, "/send-mailer"),
 } as const;
 
 export function listSettingsEndpoints() {

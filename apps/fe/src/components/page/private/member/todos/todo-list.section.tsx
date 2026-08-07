@@ -1,15 +1,12 @@
 import { ChevronLeft, ChevronRight, Search, Trash2 } from "lucide-react";
-
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliTabs } from "@/components/molecules/GhibliTabs";
-import { TodoCheckbox } from "@/components/molecules/TodoCheckbox";
 import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
 import type { Todo, TodoQuery } from "@repo/types";
-import type { PickApiID } from "@repo/types/api.types";
-import { formatDateTime } from "@repo";
-
+import { TodoListItem } from "@/components/molecules";
+import { AlertContexType } from "@/types/ui";
 export type TabValue = "all" | "pending" | "completed";
 
 const TABS: { value: TabValue; label: string }[] = [
@@ -18,84 +15,17 @@ const TABS: { value: TabValue; label: string }[] = [
   { value: "completed", label: "Selesai" },
 ];
 
-type TodoListItemProps = {
-  todo: Todo;
-  disabled: boolean;
-  onToggle: (id: PickApiID, checked: boolean) => void;
-  onDelete: (id: PickApiID) => void;
-  onClick: (id: string) => void;
-};
-
-function TodoListItem({
-  todo,
-  disabled,
-  onToggle,
-  onDelete,
-  onClick,
-}: TodoListItemProps) {
-  const todoId = { id: todo.id };
-
-  const handleToggleChange = (checked: boolean) => {
-    onToggle(todoId, checked);
-  };
-
-  const handleDeleteClick = () => {
-    onDelete(todoId);
-  };
-
-  return (
-    <li
-      data-stagger-item
-      className="flex cursor-pointer items-center gap-3 rounded-xl bg-background/50 px-3 py-3 transition-colors hover:bg-background/80"
-      onClick={() => onClick(todo.id)}
-    >
-      <div onClick={(e) => e.stopPropagation()}>
-        <TodoCheckbox
-          checked={todo.status === "completed"}
-          disabled={disabled}
-          onChange={handleToggleChange}
-        />
-      </div>
-      <div className="flex w-full flex-col items-start">
-        <span
-          className={
-            todo.status === "completed"
-              ? "flex-1 text-sm text-muted-foreground line-through"
-              : "flex-1 text-sm"
-          }
-        >
-          {todo.text}
-        </span>
-        <span className="text-xs text-muted-foreground">
-          {todo.dueDate ? formatDateTime(todo.dueDate) : "Tanpa tenggat"}
-        </span>
-      </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-8 shrink-0 text-destructive"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleDeleteClick();
-        }}
-        disabled={disabled}
-      >
-        <Trash2 className="size-4" />
-      </Button>
-    </li>
-  );
-}
-
 interface TodoListSectionProps {
   service: {
-    handleToggleTodo: (id: PickApiID, checked: boolean) => void;
-    handleDeleteTodo: (id: PickApiID) => void;
+    handleToggleTodo: (id: string, checked: boolean) => void;
+    handleDeleteTodo: (id: string) => void;
     onSearch: (search: string) => void;
     onPageChange: (page: number) => void;
     handleSelectTodo: (id: string) => void;
   };
   state: {
     todos: Todo[];
+    alert: AlertContexType;
     isLoading: boolean;
     isPending: boolean;
     tab: TabValue;
@@ -112,7 +42,7 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
     onPageChange,
     handleSelectTodo,
   } = service;
-  const { todos, isLoading, isPending, tab, setTab, query } = state;
+  const { todos, isLoading, isPending, tab, setTab, query, alert } = state;
 
   return (
     <GhibliCard hover={false}>
@@ -150,6 +80,7 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
             <TodoListItem
               key={todo.id}
               todo={todo}
+              alert={alert}
               disabled={isPending}
               onToggle={handleToggleTodo}
               onDelete={handleDeleteTodo}
