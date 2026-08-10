@@ -25,7 +25,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
   const router = useRouter();
   const pathname = usePathname();
   const listRoute = pathname.includes("/owner/")
-    ? "/owner/todos"
+    ? "/owner/member/todos"
     : "/member/todos";
   const { data: todo, isLoading } = api.todo.query.getByID(id);
   const updateTodo = api.todo.mutate.update();
@@ -48,7 +48,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
   const handleToggle = () => {
     if (!todo) return;
     updateTodo.mutate({
-      id: { id: todo.id },
+      id: todo.id,
       payload: {
         status: todo.status === "completed" ? "pending" : "completed",
       },
@@ -59,7 +59,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
     e.preventDefault();
     if (!todo) return;
     updateTodo.mutate({
-      id: { id: todo.id },
+      id: todo.id,
       payload: {
         text: form.text?.trim() || todo.text,
         ...(form.dueDate
@@ -71,12 +71,9 @@ export default function TodoDetailContainer({ id }: { id: string }) {
 
   const handleDelete = () => {
     if (!todo) return;
-    deleteTodo.mutate(
-      { id: todo.id },
-      {
-        onSuccess: () => router.push(listRoute),
-      },
-    );
+    deleteTodo.mutate(todo.id, {
+      onSuccess: () => router.push(listRoute),
+    });
   };
 
   return (

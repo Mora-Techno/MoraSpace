@@ -1,5 +1,5 @@
-import MusicContainer from "./_containers/music";
+import { redirect } from "next/navigation";
 
 export default function OwnerMusicPage() {
-  return <MusicContainer />;
+  redirect("/owner/member/music");
 }
