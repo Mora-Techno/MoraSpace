@@ -1,4 +1,4 @@
-import EventDetailContainer from "../_containers/event-detail";
+import { redirect } from "next/navigation";
 
 export default async function OwnerCalendarEventDetailPage({
   params,
@@ -6,5 +6,5 @@ export default async function OwnerCalendarEventDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <EventDetailContainer id={id} />;
+  redirect(`/owner/member/calendar/${id}`);
 }

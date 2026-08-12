@@ -1,13 +1,12 @@
-import { buildEndpoint } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/calendar/events';
+const mount = "/calendar/events";
 
 export const CALENDAR_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
+  BY_ID: (id: string) => buildEndpoint(mount, `/${id}`),
 } as const;
-
-export const calendarEventById = (id: string) => buildEndpoint(mount, `/${id}`);
 
 export function listCalendarEndpoints() {
   return Object.keys(CALENDAR_ENDPOINTS).map((key) => ({

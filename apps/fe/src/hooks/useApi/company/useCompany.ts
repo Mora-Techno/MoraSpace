@@ -1,5 +1,6 @@
 import {
   useCreateAdmin,
+  useDeleteAdmin,
   useRegisterCompany,
   useUpdateCompanyProfile,
   useUpdateCompanySubscription,
@@ -11,6 +12,7 @@ export const useCompany = () => {
     mutate: {
       registerCompany: useRegisterCompany,
       createAdmin: useCreateAdmin,
+      deleteAdmin: useDeleteAdmin,
       updateSubrationCompany: useUpdateCompanySubscription,
       updateProfile: useUpdateCompanyProfile,
     },

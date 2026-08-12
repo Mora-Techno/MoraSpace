@@ -10,6 +10,7 @@ import type {
 } from "../types/company.types";
 import type { TResponse } from "../types/response.types";
 import {
+  DeleteResponse,
   GetResponse,
   PatchResponse,
   PostResponse,
@@ -41,6 +42,15 @@ class CompanyService {
     return toServiceResponse(res, {
       message: "Admin berhasil dibuat",
       statusCode: 201,
+    });
+  }
+  public async DeleteAdmin(id: string): Promise<TResponse<AdminUser>> {
+    const res = await DeleteResponse<AdminUser>(
+      COMPANY_ENDPOINTS.DELETE_ADMIN(id),
+    );
+    return toServiceResponse(res, {
+      message: "Admin berhasil dihapus",
+      statusCode: 200,
     });
   }
   public async ListAdmins(

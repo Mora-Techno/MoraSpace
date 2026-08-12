@@ -1,6 +1,7 @@
 import Elysia from "elysia";
 import CompanyController from "@/controllers/CompanyController";
 import {
+  CompanyParamsDto,
   CompanyQueryDto,
   CreateAdminDto,
   RegisterCompanyDto,
@@ -46,6 +47,19 @@ class CompanyRouter {
         detail: {
           summary: "Buat akun admin",
           description: "Leader membuat akun admin untuk mengelola workstation.",
+          tags: ["Companies"],
+        },
+      },
+    );
+    this.companyRouter.delete(
+      "/admins/:id",
+      (c: AppContext) => CompanyController.deleteAdmin(c),
+      {
+        params: CompanyParamsDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Berhasil Delete",
+          description: "Leader menghapus admin",
           tags: ["Companies"],
         },
       },

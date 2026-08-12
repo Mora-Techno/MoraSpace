@@ -48,7 +48,6 @@ export function useLogin() {
           });
         } catch {}
 
-        // Muat pengaturan milik user yang login (tiap user berbeda-beda).
         try {
           await ns.queryClient.prefetchQuery({
             queryKey: queryKey.settings.detail(),

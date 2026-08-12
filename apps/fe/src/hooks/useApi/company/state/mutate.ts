@@ -108,6 +108,39 @@ export function useCreateAdmin() {
   });
 }
 
+export function useDeleteAdmin() {
+  const ns = useAppNameSpace();
+  return useMutation<
+    TResponse<AdminUser>,
+    Error,
+    { id: string },
+    CompanyCacheContext
+  >({
+    mutationFn: ({ id }) => Api.Company.DeleteAdmin(id),
+    onMutate: async () => {
+      await ns.queryClient.cancelQueries({ queryKey: companyRooyKey });
+      return { previousData: readCompanySnapshot(ns) };
+    },
+    onSuccess: (res) => {
+      ns.alert.toast({
+        title: res.message,
+        message: res.message,
+        icon: "success",
+      });
+    },
+    onSettled: async () => {
+      await ns.queryClient.invalidateQueries({ queryKey: companyRooyKey });
+    },
+    onError: (err) => {
+      ns.alert.toast({
+        title: err.message,
+        message: err.message,
+        icon: "error",
+      });
+    },
+  });
+}
+
 export function useUpdateCompanySubscription() {
   const ns = useAppNameSpace();
   return useMutation<

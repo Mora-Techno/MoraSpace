@@ -27,7 +27,6 @@ export default function SettingsContainer() {
   const { currentLanguage, changeLanguage, languages } = useLanguage();
   const useLogout = api.auth.mutate.logout();
 
-  // no endpoint for this
   const [formTestEmail, setFormTestEmail] = useState<TestEmail>({
     email: "",
   });

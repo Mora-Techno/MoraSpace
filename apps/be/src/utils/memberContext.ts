@@ -42,7 +42,7 @@ export function toSafeAuthUser(
     email: string;
     phone?: string | null;
     fullName: string;
-    platformRole: string;
+    platformRole?: string;
     emailVerifiedAt?: Date | null;
     createdAt?: Date;
     updatedAt?: Date;
@@ -50,7 +50,7 @@ export function toSafeAuthUser(
   member?: {
     id: string;
     companyId: string;
-    roles: { role: { name: string } }[];
+    roles?: { role: { name: string } }[];
     company: { ownerId: string };
   } | null,
 ): SafeAuthUser {
@@ -58,7 +58,7 @@ export function toSafeAuthUser(
     ? resolveCompanyRole(
         user.id,
         member.company.ownerId,
-        member.roles.map((item) => item.role.name),
+        member.roles!.map((item) => item.role.name),
       )
     : "Member";
 

@@ -1,12 +1,12 @@
-import { buildEndpoint } from '../config/api.config';
+import { buildEndpoint } from "../config/api.config";
 
-const mount = '/invitations';
+const mount = "/invitations";
 
 export const INVITATION_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
-  ACCEPT: buildEndpoint(mount, '/accept'),
-  REJECT: buildEndpoint(mount, '/reject'),
+  ACCEPT: buildEndpoint(mount, "/accept"),
+  REJECT: buildEndpoint(mount, "/reject"),
   DELETE: (id: string) => buildEndpoint(mount, `/${id}`),
 } as const;
 

@@ -1,5 +1,5 @@
-import TodosContainer from "./_containers/todos";
+import { redirect } from "next/navigation";
 
 export default function OwnerTodosPage() {
-  return <TodosContainer />;
+  redirect("/owner/member/todos");
 }
