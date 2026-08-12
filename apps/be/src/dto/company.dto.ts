@@ -43,5 +43,5 @@ export const CompanyQueryDto = t.Object({
 });
 
 export const CompanyParamsDto = t.Object({
-  id: t.String({ format: "uuid", description: "ID company" }),
+  id: t.String({ description: "ID company" }),
 });

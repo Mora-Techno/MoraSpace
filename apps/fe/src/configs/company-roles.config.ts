@@ -53,7 +53,7 @@ export const COMPANY_ROLE_REGISTRY: CompanyRoleOption[] = [
     label: "Member",
     description: "Anggota tim/workstation perusahaan.",
     icon: User,
-    manageable: false,
+    manageable: true,
   },
   {
     value: "Developer",

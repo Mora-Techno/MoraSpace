@@ -1,8 +1,9 @@
-import { MODULE_QUERY } from '@repo/config/query-stale';
-import { useQuery } from '@tanstack/react-query';
+import { MODULE_QUERY } from "@repo/config/query-stale";
+import { useQuery } from "@tanstack/react-query";
 
-import { queryKey } from '@/configs';
-import Api from '@/services/api';
+import { queryKey } from "@/configs";
+import Api from "@/services/api";
+import { CompanyQuery } from "@repo";
 
 export function useGetMyCompany() {
   return useQuery({
@@ -15,9 +16,9 @@ export function useGetMyCompany() {
   });
 }
 
-export function useListAdmins() {
+export function useListAdmins(query?: CompanyQuery) {
   return useQuery({
-    queryKey: queryKey.companies.admins(),
+    queryKey: [queryKey.companies.admins(), query],
     queryFn: async () => {
       const res = await Api.Company.ListAdmins();
       return res.data;

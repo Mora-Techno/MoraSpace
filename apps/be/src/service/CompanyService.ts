@@ -208,6 +208,56 @@ class CompanyService {
     return sanitizeUser(authUser);
   }
 
+  public async deleteAdmin(companyId: string, userId: string) {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!company) {
+      throw new Error("Company tidak ditemukan");
+    }
+
+    const targetMember = await prisma.companyMember.findUnique({
+      where: {
+        companyId_userId: {
+          companyId,
+          userId,
+        },
+      },
+    });
+
+    if (!targetMember) {
+      throw new Error(
+        "User tidak ditemukan atau bukan member dari company ini",
+      );
+    }
+
+    if (targetMember.userId === company.ownerId) {
+      throw new Error("Owner tidak dapat dihapus");
+    }
+
+    const query = await prisma.$transaction(async (tx) => {
+      const member = await tx.companyMember.delete({
+        where: {
+          id: targetMember.id,
+        },
+      });
+      const user = await tx.user.delete({
+        where: {
+          id: userId,
+        },
+      });
+      return { user, member };
+    });
+    const authUser = toSafeAuthUser(query.user, {
+      companyId,
+      id: query.member.id,
+      roles: [],
+      company: { ownerId: company.ownerId },
+    });
+    return sanitizeUser(authUser);
+  }
+
   public async listAdmins(
     companyId: string,
     query: {

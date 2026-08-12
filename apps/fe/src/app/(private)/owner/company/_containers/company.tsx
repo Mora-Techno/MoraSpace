@@ -129,7 +129,6 @@ export default function CompanyContainer() {
         </CardContent>
       </Card>
 
-      {/* Kelola role */}
       <Card>
         <CardHeader>
           <CardAction>

@@ -8,7 +8,10 @@ import type {
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
 import type { AppContext } from "@/contex";
-import { unauthorizedValidate } from "@/validation/auth.validate";
+import {
+  paramsValidate,
+  unauthorizedValidate,
+} from "@/validation/auth.validate";
 import { CreateAdminValidate } from "@/validation/company.validate";
 import { getUser } from "@/utils/authTokens";
 
@@ -54,6 +57,37 @@ class CompanyController {
       }
 
       return HttpResponse(c).created(queryService, "Admin berhasil dibuat");
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async deleteAdmin(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const params = c.params as { id: string };
+
+      const authRespone = await unauthorizedValidate(user, c);
+      const validateParams = await paramsValidate(params.id, c);
+
+      if (validateParams) return validateParams;
+
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound("Company tidak ditemukan");
+      }
+
+      const queryService = await CompanyService.deleteAdmin(
+        user.companyId,
+        params.id,
+      );
+
+      if (!queryService) {
+        return HttpResponse(c).badRequest();
+      }
+
+      return HttpResponse(c).ok(queryService, "Admin Berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

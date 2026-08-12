@@ -120,11 +120,6 @@ export function getMobileNavItems(
   });
 }
 
-/**
- * Item navigasi mobile yang mempertahankan struktur grup (sub-laman tidak
- * di-flatten). Grup dirender sebagai tombol induk di BottomNav; sub-laman
- * baru muncul setelah tombol induk diklik.
- */
 export function getMobileNavGroups(role?: Role | string | null): NavItem[] {
   return getNavItems(role).filter((item) => {
     if (item.children?.length) return item.mobile;
@@ -132,7 +127,6 @@ export function getMobileNavGroups(role?: Role | string | null): NavItem[] {
   });
 }
 
-// Legacy exports for backward compatibility
 export const NAV_ITEMS: NavItem[] = ALL_NAV_ITEMS.member;
 export const MOBILE_NAV_ITEMS: NavItem[] = ALL_NAV_ITEMS.member.filter(
   (item) => item.mobile && item.url,

@@ -1,8 +1,5 @@
 import type { PickApiID } from "@repo/types/api.types";
-import {
-  CALENDAR_ENDPOINTS,
-  calendarEventById,
-} from "../endpoints/calendar.endpoints";
+import { CALENDAR_ENDPOINTS } from "../endpoints/calendar.endpoints";
 import type {
   CalendarEvent,
   EventQuery,
@@ -31,7 +28,7 @@ class CalendarService {
     });
   }
   public async GetEvent(id: string): Promise<TResponse<CalendarEvent>> {
-    const res = await GetResponse<CalendarEvent>(calendarEventById(id));
+    const res = await GetResponse<CalendarEvent>(CALENDAR_ENDPOINTS.BY_ID(id));
     return toServiceResponse(res, {
       message: "Detail jadwal berhasil diambil",
     });
@@ -53,13 +50,15 @@ class CalendarService {
     payload: PickUpdateEvent,
   ): Promise<TResponse<CalendarEvent>> {
     const res = await PatchResponse<CalendarEvent>(
-      calendarEventById(id.id),
+      CALENDAR_ENDPOINTS.BY_ID(id.id),
       payload,
     );
     return toServiceResponse(res, { message: "Jadwal berhasil diperbarui" });
   }
   public async DeleteEvent(id: PickApiID): Promise<TResponse<CalendarEvent>> {
-    const res = await DeleteResponse<CalendarEvent>(calendarEventById(id.id));
+    const res = await DeleteResponse<CalendarEvent>(
+      CALENDAR_ENDPOINTS.BY_ID(id.id),
+    );
     return toServiceResponse(res, { message: "Jadwal berhasil dihapus" });
   }
 }
