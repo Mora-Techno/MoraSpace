@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import type {
   IMusicPlayListItem,
@@ -7,35 +7,39 @@ import type {
   PickCreatePlaylist,
   PickUpdateTodo,
   TrackCatalog,
-} from '@repo/types';
-import { format } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-import { useEffect, useMemo, useState } from 'react';
+} from "@repo/types";
+import { format } from "date-fns";
+import { id as idLocale } from "date-fns/locale";
+import { useEffect, useMemo, useState } from "react";
 
-import { AgendaSection } from '@/components/organisms/AgendaSection';
-import { DailyGreetingSection } from '@/components/organisms/DailyGreetingSection';
-import { MusicSection } from '@/components/organisms/MusicSection';
-import { PomodoroSection } from '@/components/organisms/PomodoroSection';
-import { QuickNotesSection } from '@/components/organisms/QuickNotesSection';
-import { TodoListSection } from '@/components/organisms/TodoListSection';
-import { MemberDashboardTemplate } from '@/components/templates/MemberDashboardTemplate';
-import { useMusicPlayer } from '@/context/MusicPlayerContext';
-import { useApi } from '@/hooks/useApi/useApi';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import { loadAuthSession } from '@/utils/storage';
+import { AgendaSection } from "@/components/organisms/AgendaSection";
+import { DailyGreetingSection } from "@/components/organisms/DailyGreetingSection";
+import { MusicSection } from "@/components/organisms/MusicSection";
+import { PomodoroSection } from "@/components/organisms/PomodoroSection";
+import { QuickNotesSection } from "@/components/organisms/QuickNotesSection";
+import { TodoListSection } from "@/components/organisms/TodoListSection";
+import { MemberDashboardTemplate } from "@/components/templates/MemberDashboardTemplate";
+import { useMusicPlayer } from "@/context/MusicPlayerContext";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { loadAuthSession } from "@/utils/storage";
 
 export default function DashboardContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
-  const [name, setName] = useState('Member');
-  const [greeting, setGreeting] = useState('Selamat Pagi');
-  const [currentDate, setCurrentDate] = useState('');
+  const [name, setName] = useState("Member");
+  const [greeting, setGreeting] = useState("Selamat Pagi");
+  const [currentDate, setCurrentDate] = useState("");
   const [showModalPlayList, setShowModalPlayList] = useState<boolean>(false);
   const [showModalNotes, setShowModalNotes] = useState<boolean>(false);
   const [showCatalog, setShowCatalog] = useState<boolean>(false);
   const [showModalTodo, setShowModalTodo] = useState<boolean>(false);
-  const [expandedPlaylistId, setExpandedPlaylistId] = useState<string | null>(null);
-  const [selectedPlaylistForAdd, setSelectedPlaylistForAdd] = useState<string | null>(null);
+  const [expandedPlaylistId, setExpandedPlaylistId] = useState<string | null>(
+    null,
+  );
+  const [selectedPlaylistForAdd, setSelectedPlaylistForAdd] = useState<
+    string | null
+  >(null);
 
   const toggleExpand = (id: string) => {
     setExpandedPlaylistId((prev) => (prev === id ? null : id));
@@ -50,36 +54,58 @@ export default function DashboardContainer() {
     }
 
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Selamat Pagi');
-    else if (hour < 15) setGreeting('Selamat Siang');
-    else if (hour < 18) setGreeting('Selamat Sore');
-    else setGreeting('Selamat Malam');
+    if (hour < 12) setGreeting("Selamat Pagi");
+    else if (hour < 15) setGreeting("Selamat Siang");
+    else if (hour < 18) setGreeting("Selamat Sore");
+    else setGreeting("Selamat Malam");
 
-    setCurrentDate(format(new Date(), 'EEEE, d MMMM yyyy', { locale: idLocale }));
+    setCurrentDate(
+      format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale }),
+    );
   }, []);
 
   // Todo
   const useTodoEntry = api.todo;
-  const useTodo = useTodoEntry.query.get({ status: 'pending' });
+  const useTodo = useTodoEntry.query.get({ status: "pending" });
   const useTodoUpdate = useTodoEntry.mutate.update();
   const useTodoCreate = useTodoEntry.mutate.create();
+  const useDeleteTodo = useTodoEntry.mutate.delete();
+  // not use todo id
+  const [todoId, setTodoId] = useState<{ id: string }>({
+    id: "",
+  });
 
   const { data: pendingTodosOverview = [] } = useTodo;
   const updateTodo = useTodoUpdate;
   const createTodo = useTodoCreate;
+  const deleteTodo = useDeleteTodo;
   const [formUpdateTodo, setFormUpdateTodo] = useState<PickUpdateTodo>({
-    text: '',
+    text: "",
   });
 
-  const Todos = pendingTodosOverview.filter((t) => t.status !== 'completed').slice(0, 7);
+  const handleSelectTodo = (id: string) => {
+    if (!id) return null;
+    setTodoId({ id });
+  };
 
-  const uncompletedTodosCount = pendingTodosOverview.filter((t) => t.status === 'pending').length;
+  const Todos = pendingTodosOverview
+    .filter((t) => t.status !== "completed")
+    .slice(0, 7);
+
+  const uncompletedTodosCount = pendingTodosOverview.filter(
+    (t) => t.status === "pending",
+  ).length;
 
   const handleToggleTodo = (id: string, checked: boolean) => {
     updateTodo.mutate({
-      id: { id },
-      payload: { status: checked ? 'completed' : 'pending' },
+      id,
+      payload: { status: checked ? "completed" : "pending" },
     });
+  };
+
+  const handleDeleteTodo = (id: string) => {
+    if (!id) return null;
+    deleteTodo.mutate(id);
   };
 
   const handleAddTodo = (e: React.FormEvent) => {
@@ -91,7 +117,7 @@ export default function DashboardContainer() {
         onSuccess: () => {
           setFormUpdateTodo((prev) => ({
             ...prev,
-            text: '',
+            text: "",
           }));
           setShowModalTodo(false);
         },
@@ -103,7 +129,7 @@ export default function DashboardContainer() {
   const now = new Date();
 
   const useCalender = useCalenderEntry.query.getCalender({
-    month: String(now.getMonth() + 1).padStart(2, '0'),
+    month: String(now.getMonth() + 1).padStart(2, "0"),
     year: String(now.getFullYear()),
   });
 
@@ -111,14 +137,19 @@ export default function DashboardContainer() {
 
   const upcomingEvents = events
     .filter((e) => new Date(e.startDate) >= now)
-    .sort((a, b) => new Date(a.startDate).getTime() - new Date(b.startDate).getTime())
+    .sort(
+      (a, b) =>
+        new Date(a.startDate).getTime() - new Date(b.startDate).getTime(),
+    )
     .slice(0, 4);
 
   const stats = useMemo(
     () => ({
       completedTodos: uncompletedTodosCount,
       pomodoroMinutes: 0,
-      totalMeetings: events.filter((e) => new Date(e.startDate).getDate() === now.getDate()).length,
+      totalMeetings: events.filter(
+        (e) => new Date(e.startDate).getDate() === now.getDate(),
+      ).length,
     }),
     [uncompletedTodosCount, events, now.getDate()],
   );
@@ -155,7 +186,7 @@ export default function DashboardContainer() {
 
   const handleStartPomodoro = () => {
     setIsActive(true);
-    startSession.mutate({ metadata: { type: 'work', duration: 25 * 60 } });
+    startSession.mutate({ metadata: { type: "work", duration: 25 * 60 } });
   };
 
   const handlePausePomodoro = () => {
@@ -185,8 +216,8 @@ export default function DashboardContainer() {
       ...playlist,
       items: (playlist.items ?? []).map((item) => ({
         ...item,
-        title: item.title || item.trackCatalog?.title || '',
-        youtubeUrl: item.youtubeUrl || item.trackCatalog?.youtubeUrl || '',
+        title: item.title || item.trackCatalog?.title || "",
+        youtubeUrl: item.youtubeUrl || item.trackCatalog?.youtubeUrl || "",
       })),
     }));
   }, [playlists]);
@@ -201,23 +232,28 @@ export default function DashboardContainer() {
   const handlePlayCatalogTrack = (track: TrackCatalog) => {
     const playerItem: IMusicPlayListItem = {
       id: track.id,
-      playlistId: '',
+      playlistId: "",
       title: track.title,
       youtubeUrl: track.youtubeUrl,
       createdAt: track.createdAt,
       updatedAt: track.updatedAt,
     };
-    musicPlayer.play(playerItem, 'Katalog Track');
+    musicPlayer.play(playerItem, "Katalog Track");
   };
 
-  const [formCreatePlaylistMusic, setFormCreatePlaylistMusic] = useState<PickCreatePlaylist>({
-    name: '',
-    description: '',
-  });
+  const [formCreatePlaylistMusic, setFormCreatePlaylistMusic] =
+    useState<PickCreatePlaylist>({
+      name: "",
+      description: "",
+    });
 
   const handleAddPlaylist = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formCreatePlaylistMusic.name.trim() || !formCreatePlaylistMusic.description.trim()) return;
+    if (
+      !formCreatePlaylistMusic.name.trim() ||
+      !formCreatePlaylistMusic.description.trim()
+    )
+      return;
     createPlaylist.mutate(formCreatePlaylistMusic, {
       onSuccess: () => {
         setShowModalPlayList(false);
@@ -243,13 +279,13 @@ export default function DashboardContainer() {
   const deleteNote = noteApi.mutate.delete();
 
   const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
   });
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [formEditNote, setFormEditNote] = useState<PickCreateNote>({
-    title: '',
-    content: '',
+    title: "",
+    content: "",
   });
 
   useEffect(() => {
@@ -273,7 +309,7 @@ export default function DashboardContainer() {
       },
       {
         onSuccess: () => {
-          setFormCreateNote({ title: '', content: '' });
+          setFormCreateNote({ title: "", content: "" });
         },
       },
     );
@@ -281,7 +317,12 @@ export default function DashboardContainer() {
 
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedNote || !formEditNote.title.trim() || !formEditNote.content.trim()) return;
+    if (
+      !selectedNote ||
+      !formEditNote.title.trim() ||
+      !formEditNote.content.trim()
+    )
+      return;
     updateNote.mutate(
       {
         id: { id: selectedNote.id },
@@ -303,13 +344,13 @@ export default function DashboardContainer() {
 
   return (
     <div
-      className={`transition-all duration-700 ${isFocused ? 'ring-4 ring-primary/20 bg-background/50' : ''}`}
+      className={`transition-all duration-700 ${isFocused ? "ring-4 ring-primary/20 bg-background/50" : ""}`}
     >
       {isFocused && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 pointer-events-none transition-all duration-700" />
       )}
 
-      <div className={isFocused ? 'relative z-50' : ''}>
+      <div className={isFocused ? "relative z-50" : ""}>
         <MemberDashboardTemplate
           dailyGreeting={
             <DailyGreetingSection
@@ -344,7 +385,9 @@ export default function DashboardContainer() {
               service={{
                 handleToggle: handleToggleTodo,
                 handleAdd: handleAddTodo,
-                updateTodo,
+                handleDeleteTodo,
+                handleSelectTodo,
+                isPending: updateTodo.isPending || deleteTodo.isPending,
                 createTodo,
               }}
               state={{
@@ -352,6 +395,7 @@ export default function DashboardContainer() {
                 uncompletedTodosCount,
                 isLoading: useTodo.isPending,
                 formUpdateTodo,
+                alert: ns.alert,
                 setShowModalTodo,
                 showModalTodo,
                 setFormUpdateTodo,

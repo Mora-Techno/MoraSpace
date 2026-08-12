@@ -1,5 +1,5 @@
-import NotesContainer from "./_containers/notes";
+import { redirect } from "next/navigation";
 
 export default function OwnerNotesPage() {
-  return <NotesContainer />;
+  redirect("/owner/member/notes");
 }

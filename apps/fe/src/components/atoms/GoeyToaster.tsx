@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import 'goey-toast/styles.css';
+import "goey-toast/styles.css";
 
-import type { GooeyToasterProps } from 'goey-toast';
-import { gooeyToast, GooeyToaster as GooeyToasterPrimitive } from 'goey-toast';
-import { useTheme } from 'next-themes';
+import type { GooeyToasterProps } from "goey-toast";
+import { gooeyToast, GooeyToaster as GooeyToasterPrimitive } from "goey-toast";
+import { useTheme } from "next-themes";
 
 export { gooeyToast };
 export type { GooeyToasterProps };
@@ -14,7 +14,7 @@ export type {
   GooeyToastClassNames,
   GooeyToastOptions,
   GooeyToastTimings,
-} from 'goey-toast';
+} from "goey-toast";
 
 function GooeyToaster(props: GooeyToasterProps) {
   const { resolvedTheme } = useTheme();
@@ -22,7 +22,7 @@ function GooeyToaster(props: GooeyToasterProps) {
   return (
     <GooeyToasterPrimitive
       position="top-right"
-      theme={resolvedTheme === 'dark' ? 'dark' : 'light'}
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
       preset="bouncy"
       showProgress
       {...props}

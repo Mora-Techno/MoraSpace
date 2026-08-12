@@ -91,9 +91,8 @@ export function ActivityFeedWidget() {
         {activityLogs.map((log, idx) => (
           <div key={log.id} className="relative">
             <div className="flex items-start gap-3 rounded-xl p-2.5 transition-colors hover:bg-muted/30">
-              {/* Timeline dot */}
               {idx < activityLogs.length - 1 && (
-                <div className="absolute left-[19px] top-10 bottom-0 w-px bg-border/50" />
+                <div className="absolute left-6 top-10 bottom-0 w-px bg-border/50" />
               )}
               <Avatar className="size-8 shrink-0 rounded-lg ring-1 ring-border/30">
                 <AvatarFallback className="rounded-lg bg-muted text-[10px] font-medium text-muted-foreground">

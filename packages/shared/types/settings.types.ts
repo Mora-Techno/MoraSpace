@@ -37,3 +37,7 @@ export type PickUpdateSettings = Partial<
     | "notificationEnabled"
   >
 >;
+
+export interface TestEmail {
+  email: string;
+}

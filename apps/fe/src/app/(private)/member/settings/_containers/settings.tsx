@@ -10,12 +10,16 @@ import { Skeleton } from "@/components/atoms/Skeleton";
 import SettingsSection from "@/components/page/private/member/settings/settingsMemberSection";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import type { Language } from "@/configs";
+import { TestEmail } from "@repo";
 
 export default function SettingsContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
+
   const useGetSettings = api.settings.query.detail();
   const useUpdateSettings = api.settings.mutate.update();
+  const useTestingEmail = api.settings.mutate.Testing();
+
   const { data: settings, isLoading } = useGetSettings;
   const updateSettings = useUpdateSettings;
   const sendNotification = useSendNotification();
@@ -23,8 +27,15 @@ export default function SettingsContainer() {
   const { currentLanguage, changeLanguage, languages } = useLanguage();
   const useLogout = api.auth.mutate.logout();
 
-  // no endpoint for this
-  const [formTestEmail, setFormTestEmail] = useState("");
+  const [formTestEmail, setFormTestEmail] = useState<TestEmail>({
+    email: "",
+  });
+
+  const handleTestingEmail = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = formTestEmail;
+    useTestingEmail.mutate(payload);
+  };
 
   const handleChangeTheme = () => {
     updateSettings.mutate({
@@ -63,14 +74,6 @@ export default function SettingsContainer() {
     });
   };
 
-  const handleSendNotification = () => {
-    sendNotification.mutate({
-      body: "Email test dari Website Produktivitas",
-      recipient: formTestEmail,
-      subject: "Test Notifikasi MoraSpace",
-    });
-  };
-
   const handleLogout = () => {
     useLogout.mutate();
   };
@@ -97,7 +100,7 @@ export default function SettingsContainer() {
         handleChangeTimezone: handleChangeTimezone,
         isPending: sendNotification.isPending || useLogout.isPending,
         handleLogout: handleLogout,
-        handleSendNotification: handleSendNotification,
+        handleSendTestingEmail: handleTestingEmail,
       }}
       state={{
         languages: languages ?? [],

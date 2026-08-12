@@ -5,13 +5,11 @@ const mount = "/music/playlists";
 export const MUSIC_ENDPOINTS = {
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
+  PLAYLIST_ID: (id: string) => buildEndpoint(mount, `/:${id}`),
+  PLAYLIST_ITEM: (id: string) => buildEndpoint(mount, `/${id}/items`),
+  PLAYLIST_ITEM_ID: (id: string, itemId: string) =>
+    buildEndpoint(mount, `/${id}/items/${itemId}`),
 } as const;
-
-export const musicPlaylistById = (id: string) => buildEndpoint(mount, `/${id}`);
-export const musicPlaylistItems = (id: string) =>
-  buildEndpoint(mount, `/${id}/items`);
-export const musicPlaylistItemById = (id: string, itemId: string) =>
-  buildEndpoint(mount, `/${id}/items/${itemId}`);
 
 export function listMusicEndpoints() {
   return Object.keys(MUSIC_ENDPOINTS).map((key) => ({

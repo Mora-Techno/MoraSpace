@@ -1,5 +1,5 @@
-import NotificationsContainer from "./_containers/notifications";
+import { redirect } from "next/navigation";
 
 export default function OwnerNotificationsPage() {
-  return <NotificationsContainer />;
+  redirect("/owner/member/notifications");
 }

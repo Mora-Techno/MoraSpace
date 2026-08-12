@@ -1,5 +1,5 @@
-import CalendarContainer from "./_containers/calendar";
+import { redirect } from "next/navigation";
 
 export default function OwnerCalendarPage() {
-  return <CalendarContainer />;
+  redirect("/owner/member/calendar");
 }

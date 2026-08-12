@@ -21,7 +21,7 @@ export default function NotificationDropdown() {
   const router = useRouter();
   const pathname = usePathname();
   const listRoute = pathname.includes("/owner/")
-    ? "/owner/notifications"
+    ? "/owner/member/notifications"
     : "/member/notifications";
 
   const { data: notifications = [] } = api.notification.query.get({ limit: 5 });

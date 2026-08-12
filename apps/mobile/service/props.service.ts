@@ -1,4 +1,4 @@
-import ApiServicePackage from '@repo/services';
+import ApiServicePackage from "@repo/services";
 
 const Api = {
   Auth: ApiServicePackage.Auth,

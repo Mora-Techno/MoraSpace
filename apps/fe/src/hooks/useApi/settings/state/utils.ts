@@ -9,3 +9,5 @@ export type SettingsCacheContext = {
 export function readSettingsSnapshot(ns: AppNameSpace): Settings | undefined {
   return ns.queryClient.getQueryData<Settings>(queryKey.settings.detail());
 }
+
+export const SettingsRoot = queryKey.settingsRoot();

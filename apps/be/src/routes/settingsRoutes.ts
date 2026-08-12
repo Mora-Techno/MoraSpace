@@ -1,6 +1,6 @@
 import Elysia from "elysia";
 import SettingsController from "@/controllers/SettingsController";
-import { UpdateSettingsDto } from "@/dto/settings.dto";
+import { TestEmailDto, UpdateSettingsDto } from "@/dto/settings.dto";
 import type { AppContext } from "@/contex";
 import { verifyToken } from "@/middlewares/auth";
 
@@ -36,6 +36,19 @@ class SettingsRouter {
           summary: "Perbarui pengaturan user",
           description:
             "Memperbarui pengaturan (tema, bahasa, timezone, musik, fokus, notifikasi) milik user yang sedang login.",
+          tags: ["Settings"],
+        },
+      },
+    );
+    this.settingsRouter.post(
+      "/send-mailer",
+      (c: AppContext) => SettingsController.TestingEmail(c),
+      {
+        body: TestEmailDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Testing Send mail",
+          description: "Mengirim Email Testing Ke User",
           tags: ["Settings"],
         },
       },
