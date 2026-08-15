@@ -12,32 +12,32 @@ function getInitials(name: string): string {
     .join("");
 }
 
-interface AdminRowProps {
-  admin?: AdminUser & { status?: string }; // Extends for status
+interface MemberRowProps {
+  user?: AdminUser & { status?: string };
   alert?: AlertContexType;
   onDelete?: (id: string) => void;
   onUpdateStatus?: (status: string) => void;
   isPending?: boolean;
 }
 
-export function AdminRow({
-  admin,
+export function MemberRow({
+  user,
   alert,
   onDelete,
   onUpdateStatus,
   isPending,
-}: AdminRowProps) {
+}: MemberRowProps) {
   return (
     <div className="flex items-center gap-3 rounded-xl border bg-card p-4">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-        {admin ? getInitials(admin.fullName) : ""}
+        {user ? getInitials(user.fullName) : ""}
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold">
-          {admin?.fullName ?? "Nama Admin"}
+          {user?.fullName ?? "Nama user"}
         </p>
         <p className="truncate text-xs text-muted-foreground">
-          {admin?.email ?? "admin@company.com"}
+          {user?.email ?? "user@company.com"}
         </p>
       </div>
 
@@ -50,20 +50,20 @@ export function AdminRow({
             onClick={() =>
               alert?.modal({
                 title:
-                  admin?.status === "active" ? "Nonaktifkan ?" : "Aktifkan ?",
+                  user?.status === "active" ? "Nonaktifkan ?" : "Aktifkan ?",
                 deskripsi: `Apakah Anda yakin ingin ${
-                  admin?.status === "active" ? "menonaktifkan" : "mengaktifkan"
-                } admin ini?`,
+                  user?.status === "active" ? "menonaktifkan" : "mengaktifkan"
+                } anggota ini?`,
                 icon: "warning",
                 onConfirm: () => {
                   onUpdateStatus(
-                    admin?.status === "active" ? "inactive" : "active",
+                    user?.status === "active" ? "inactive" : "active",
                   );
                 },
               })
             }
           >
-            {admin?.status === "active" ? (
+            {user?.status === "active" ? (
               <UserX className="size-4 text-red-500" />
             ) : (
               <UserCheck className="size-4 text-green-500" />
@@ -77,10 +77,10 @@ export function AdminRow({
           onClick={() =>
             alert?.modal({
               title: "Hapus ?",
-              deskripsi: "Apakah Anda Yakin Menghapus Admin ini",
+              deskripsi: "Apakah Anda Yakin Menghapus user ini",
               icon: "warning",
               onConfirm: () => {
-                onDelete!(admin?.id!);
+                onDelete!(user?.id!);
               },
             })
           }

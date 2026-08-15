@@ -1,5 +1,5 @@
-import SettingsContainer from "./_containers/settings";
+import CompanySettingsContainer from "./_container/settings";
 
-export default function OwnerSettingsPage() {
-  return <SettingsContainer />;
+export default function SettingsPage() {
+  return <CompanySettingsContainer />;
 }
