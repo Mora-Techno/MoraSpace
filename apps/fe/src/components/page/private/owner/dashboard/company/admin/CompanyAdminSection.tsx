@@ -39,6 +39,7 @@ interface CompanyAdminSectionProps {
     isLoading: boolean;
     admins: AdminUser[];
     handleDelete: (id: string) => void;
+    handleUpdateStatus: (id: string, status: string) => void;
   };
 }
 const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
@@ -54,7 +55,14 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
     setSearchTerm,
     alert,
   } = state;
-  const { handleSubmit, isPending, admins, isLoading, handleDelete } = service;
+  const {
+    handleSubmit,
+    isPending,
+    admins,
+    isLoading,
+    handleDelete,
+    handleUpdateStatus,
+  } = service;
   return (
     <div className="w-full space-y-6">
       <PageHeader
@@ -170,9 +178,13 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
               {admins.map((admin) => (
                 <AdminRow
                   key={admin.id}
-                  admin={admin}
+                  admin={admin as any}
                   alert={alert}
                   onDelete={handleDelete}
+                  onUpdateStatus={(status) =>
+                    handleUpdateStatus(admin.id, status)
+                  }
+                  isPending={isPending}
                 />
               ))}
             </div>

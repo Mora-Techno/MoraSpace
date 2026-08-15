@@ -20,6 +20,7 @@ export default function CompanyAdminContainer() {
   });
   const useCreateAdmin = api.company.mutate.createAdmin();
   const userDeleteAdmin = api.company.mutate.deleteAdmin();
+  const updateMember = api.member.mutate.update();
 
   const [open, setOpen] = useState<boolean>(false);
   const [formCreateAdmin, setFormCreateAdmin] = useState<PickCreateAdmin>({
@@ -48,12 +49,21 @@ export default function CompanyAdminContainer() {
     userDeleteAdmin.mutate({ id });
   };
 
+  const handleUpdateStatus = (id: string, status: string) => {
+    if (!id) return;
+    updateMember.mutate({ id, payload: { status } as any });
+  };
+
   return (
     <CompanyAdminSection
       service={{
         handleSubmit,
-        isPending: useCreateAdmin.isPending || userDeleteAdmin.isPending,
+        isPending:
+          useCreateAdmin.isPending ||
+          userDeleteAdmin.isPending ||
+          updateMember.isPending,
         handleDelete: handleDeleteAdmin,
+        handleUpdateStatus,
         admins,
         isLoading,
       }}
