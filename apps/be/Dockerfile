@@ -6,13 +6,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y nodejs
 
 
-RUN bun add -g turbo
+RUN bun add -g turbo@1.13.4
 
 
 COPY . .
 
 
-RUN turbo prune be --docker
+RUN /root/.bun/bin/turbo prune be --docker
 
 
 FROM oven/bun:1.1.45 AS installer
