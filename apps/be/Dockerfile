@@ -2,9 +2,15 @@
 FROM oven/bun:1.1.45 AS pruner
 WORKDIR /app
 
+
+RUN apt-get update && apt-get install -y nodejs
+
+
 RUN bun add -g turbo
 
+
 COPY . .
+
 
 RUN turbo prune be --docker
 
@@ -12,14 +18,19 @@ RUN turbo prune be --docker
 FROM oven/bun:1.1.45 AS installer
 WORKDIR /app
 
+
+
 COPY package.json bun.lockb* ./
 
 
 COPY --from=pruner /app/out/json/ .
 
+
 RUN bun install
 
+
 COPY --from=pruner /app/out/full/ .
+
 
 RUN cd apps/be && bunx prisma generate
 
@@ -31,4 +42,5 @@ COPY --from=installer /app .
 
 EXPOSE 5000
 
+# Jalankan server
 CMD ["bun", "run", "apps/be/src/serve.ts"]
