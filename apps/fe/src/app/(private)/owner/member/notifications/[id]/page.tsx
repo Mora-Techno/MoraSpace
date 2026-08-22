@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import NotificationDetailContainer from "../_containers/notification-detail";
 
 export default async function OwnerNotificationDetailPage({
   params,
@@ -6,5 +6,5 @@ export default async function OwnerNotificationDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  redirect(`/owner/member/notifications/${id}`);
+  return <NotificationDetailContainer id={id} />;
 }

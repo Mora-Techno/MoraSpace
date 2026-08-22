@@ -342,6 +342,8 @@ export default function DashboardContainer() {
     });
   };
 
+  console.log("Datas", trackCatalogTracks);
+
   return (
     <div
       className={`transition-all duration-700 ${isFocused ? "ring-4 ring-primary/20 bg-background/50" : ""}`}
@@ -416,6 +418,7 @@ export default function DashboardContainer() {
                 handleAdd: handleAddPlaylist,
                 isPending: createPlaylist.isPending,
                 addItem: handleAddMusicItem,
+                track: trackCatalogTracks,
                 deleteItem: handleDeleteMusicItem,
               }}
               state={{
