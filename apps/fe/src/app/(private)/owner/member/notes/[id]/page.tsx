@@ -1,6 +1,6 @@
-import NoteDetailContainer from "./_containers/note-detail";
+import NoteDetailContainer from "../_containers/note-detail";
 
-export default async function OwnerMemberNoteDetailPage({
+export default async function OwnerNoteDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;

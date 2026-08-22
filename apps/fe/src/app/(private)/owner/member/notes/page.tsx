@@ -1,5 +1,5 @@
 import NotesContainer from "./_containers/notes";
 
-export default function OwnerMemberNotesPage() {
+export default function OwnerNotesPage() {
   return <NotesContainer />;
 }

@@ -1,5 +1,5 @@
 import NotificationsContainer from "./_containers/notifications";
 
-export default function OwnerMemberNotificationsPage() {
+export default function OwnerNotificationsPage() {
   return <NotificationsContainer />;
 }

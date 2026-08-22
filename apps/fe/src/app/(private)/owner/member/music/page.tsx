@@ -1,5 +1,5 @@
-import MusicContainer from "./_containers/music";
+import MusicContainer from "@/app/(private)/member/music/_containers/music";
 
-export default function OwnerMemberMusicPage() {
+export default function OwnerMusicPage() {
   return <MusicContainer />;
 }

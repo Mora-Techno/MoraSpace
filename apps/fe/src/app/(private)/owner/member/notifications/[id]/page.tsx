@@ -1,6 +1,6 @@
-import NotificationDetailContainer from "./_containers/notification-detail";
+import NotificationDetailContainer from "../_containers/notification-detail";
 
-export default async function OwnerMemberNotificationDetailPage({
+export default async function OwnerNotificationDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;

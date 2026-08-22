@@ -9,6 +9,7 @@ import {
   Music2,
   Settings,
   Users,
+  KeyRound,
 } from "lucide-react";
 
 export type NavItem = {
@@ -16,7 +17,6 @@ export type NavItem = {
   url?: string;
   icon?: LucideIcon;
   mobile?: boolean;
-  /** Sub-pages (rendered as a nested group inside the sidebar). */
   children?: NavItem[];
 };
 
@@ -82,10 +82,17 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
   ],
   owner: [
     { title: "Dashboard", url: "/owner/dashboard", icon: Home, mobile: true },
+
     {
       title: "Company",
       url: "/owner/company",
       icon: Building2,
+      mobile: true,
+    },
+    {
+      title: "Kelola Permission",
+      url: "/owner/permission",
+      icon: KeyRound,
       mobile: true,
     },
     {

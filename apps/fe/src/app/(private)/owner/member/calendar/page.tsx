@@ -1,5 +1,5 @@
 import CalendarContainer from "./_containers/calendar";
 
-export default function OwnerMemberCalendarPage() {
+export default function OwnerCalenderPage() {
   return <CalendarContainer />;
 }
