@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import NoteDetailContainer from "../_containers/note-detail";
 
 export default async function OwnerNoteDetailPage({
   params,
@@ -6,5 +6,5 @@ export default async function OwnerNoteDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  redirect(`/owner/member/notes/${id}`);
+  return <NoteDetailContainer id={id} />;
 }

@@ -30,6 +30,7 @@ interface MusicSectionProps {
     isPending: boolean;
     addItem: (playlistId: string, trackCatalogId: string) => void;
     deleteItem?: (playlistId: string, itemId: string) => void;
+    track: TrackCatalog[];
   };
   state: {
     playlists: MusicPlaylist[];
@@ -70,7 +71,7 @@ interface MusicSectionProps {
 }
 
 export function MusicSection({ service, state }: MusicSectionProps) {
-  const { handleAdd, isPending, addItem, deleteItem } = service;
+  const { handleAdd, isPending, addItem, deleteItem, track } = service;
   const {
     playlists,
     isLoading,
@@ -315,6 +316,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
         addItem={addItem}
         currentTrack={currentTrack}
         isPlaying={isPlaying}
+        tracks={track}
         onOpenChange={setShowCatalog}
         open={showCatalog}
         playlists={playlists}

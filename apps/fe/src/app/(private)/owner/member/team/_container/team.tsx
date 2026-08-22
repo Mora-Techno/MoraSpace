@@ -20,8 +20,11 @@ export default function CompanyTeamContainer() {
   const deleteTeam = api.team.mutate.delete();
 
   const [open, setOpen] = useState<boolean>(false);
+
   const [formCreate, setFormCreate] = useState<PickCreateTeam>({
     name: "",
+    description: "",
+    leaderId: "",
     departmentId: "",
   });
 

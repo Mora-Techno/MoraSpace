@@ -14,18 +14,10 @@ class SettingsController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const companyMemberId = user.companyMemberId;
-      if (!companyMemberId) {
-        return HttpResponse(c).badRequest(
-          "Konteks anggota company tidak ditemukan",
-        );
-      }
-
-      const settings =
-        await SettingsService.getByCompanyMember(companyMemberId);
-      if (!settings) {
-        return HttpResponse(c).notFound("Pengaturan tidak ditemukan");
-      }
+      const settings = await SettingsService.getByCompanyMember(
+        user.companyMemberId ?? null,
+        user.id,
+      );
 
       return HttpResponse(c).ok(
         settings,

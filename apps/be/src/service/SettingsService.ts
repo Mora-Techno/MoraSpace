@@ -1,6 +1,8 @@
 import prisma from "prisma/client";
 import type { PickUpdateSettings, TestEmail } from "@repo/types/settings.types";
 import NotificationService from "./NotificationService";
+import { AppContext } from "@/contex";
+import { HttpResponse } from "@/http";
 function mapSettings(settings: {
   id: string;
   theme: string | null;
@@ -22,15 +24,21 @@ function mapSettings(settings: {
 }
 
 class SettingsService {
-  public async getByCompanyMember(companyMemberId: string) {
-    let settings = await prisma.userSetting.findUnique({
-      where: { companyMemberId },
+  public async getByCompanyMember(
+    companyMemberId: string | null,
+    userId: string,
+    c: AppContext,
+  ) {
+    const where: Record<string, unknown> = companyMemberId
+      ? { companyMemberId }
+      : { userId };
+
+    let settings = await prisma.userSetting.findFirst({
+      where: where as any,
     });
 
     if (!settings) {
-      settings = await prisma.userSetting.create({
-        data: { companyMemberId },
-      });
+      return null;
     }
 
     return mapSettings(settings);
