@@ -6,13 +6,14 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y nodejs
 
 
-RUN bun add -g turbo@1.13.4
+# Use bunx to run turbo without relying on global installation paths
+RUN bun i -g turbo@1.13.4
 
 
 COPY . .
 
 
-RUN /root/.bun/bin/turbo prune be --docker
+RUN bunx turbo prune be --docker
 
 
 FROM oven/bun:1.1.45 AS installer
