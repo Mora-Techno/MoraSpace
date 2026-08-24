@@ -3,7 +3,7 @@ import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliTabs } from "@/components/molecules/GhibliTabs";
-import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import type { Todo, TodoQuery } from "@repo/types";
 import { TodoListItem } from "@/components/molecules";
 import { AlertContexType } from "@/types/ui";

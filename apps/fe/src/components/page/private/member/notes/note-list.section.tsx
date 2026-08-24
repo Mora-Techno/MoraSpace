@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import { NoteModal } from "@/components/molecules/modal/NoteModal";
 import { cn } from "@/utils/classname";
 import type { Note, NoteQuery, PickCreateNote } from "@repo/types";

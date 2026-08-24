@@ -56,11 +56,11 @@ export const COMPANY_ROLE_REGISTRY: CompanyRoleOption[] = [
     manageable: true,
   },
   {
-    value: "Developer",
-    slug: "developer",
-    label: "Developer",
-    description: "Akses teknis dan integrasi dengan sistem eksternal.",
-    icon: Wrench,
+    value: "Chief",
+    slug: "chief",
+    label: "Chief",
+    description: "C-Level Perusahaan",
+    icon: User,
     manageable: false,
   },
 ];

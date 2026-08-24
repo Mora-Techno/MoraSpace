@@ -4,7 +4,7 @@ import { ChevronLeft, ChevronRight, MailOpen, Search } from "lucide-react";
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules";
-import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 
 interface NotificationListSectionProps {
   service: {
