@@ -16,7 +16,7 @@ import { useState } from "react";
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { PageHeader } from "@/components/molecules/PageHeader";
-import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
 import { useMusicPlayer } from "@/context/MusicPlayerContext";
