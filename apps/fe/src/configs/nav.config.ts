@@ -10,6 +10,7 @@ import {
   Settings,
   Users,
   KeyRound,
+  Group,
 } from "lucide-react";
 
 export type NavItem = {
@@ -93,6 +94,12 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
       title: "Kelola Permission",
       url: "/owner/permission",
       icon: KeyRound,
+      mobile: true,
+    },
+    {
+      title: "Kelola Team",
+      url: "/owner/team",
+      icon: Group,
       mobile: true,
     },
     {

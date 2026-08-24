@@ -1,8 +1,6 @@
 import prisma from "prisma/client";
 import type { PickUpdateSettings, TestEmail } from "@repo/types/settings.types";
 import NotificationService from "./NotificationService";
-import { AppContext } from "@/contex";
-import { HttpResponse } from "@/http";
 function mapSettings(settings: {
   id: string;
   theme: string | null;
@@ -27,7 +25,6 @@ class SettingsService {
   public async getByCompanyMember(
     companyMemberId: string | null,
     userId: string,
-    c: AppContext,
   ) {
     const where: Record<string, unknown> = companyMemberId
       ? { companyMemberId }

@@ -8,7 +8,7 @@ import {
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliEmptyState } from "@/components/template/GhibliEmptyState";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import type { CalendarEvent, EventQuery } from "@repo/types";
 import type { PickApiID } from "@repo/types/api.types";
 import { formatDateTime } from "@repo";
