@@ -1,35 +1,37 @@
-FROM oven/bun:1.1.45 AS pruner
+FROM oven/bun:1.3.10 AS pruner
 
 WORKDIR /app
 
-RUN bun add -g turbo@1.13.4
+RUN bun add -g turbo@2.10.3
 
 COPY . .
 
-# Prune hanya workspace BE
-RUN turbo prune be --docker
+RUN turbo prune api --docker
 
 
-FROM oven/bun:1.1.45 AS installer
+FROM oven/bun:1.3.10 AS installer
 
 WORKDIR /app
 
-COPY --from=pruner /app/out/json/ .
-
-COPY --from=pruner /app/out/bun.lockb ./bun.lockb
+COPY --from=pruner /app/out/json/ ./
 
 RUN bun install --frozen-lockfile
 
-COPY --from=pruner /app/out/full/ .
+COPY --from=pruner /app/out/full/ ./
 
-RUN cd apps/be && bunx prisma generate
+RUN bun run --filter=api prisma:generate
 
-FROM oven/bun:1.1.45 AS runner
+
+FROM oven/bun:1.3.10 AS runner
 
 WORKDIR /app
 
-COPY --from=installer /app .
+ENV NODE_ENV=production
+
+COPY --from=installer /app ./
+
+WORKDIR /app/apps/be
 
 EXPOSE 5000
 
-CMD ["bun", "run", "apps/be/src/serve.ts"]
+CMD ["bun", "run", "start"]
