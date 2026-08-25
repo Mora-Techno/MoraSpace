@@ -1,15 +1,15 @@
-FROM oven/bun:1.3.10 AS pruner
+FROM oven/bun:1.3.1 AS pruner
 
 WORKDIR /app
 
-RUN bun add -g turbo@2.10.3
+RUN bun add -g turbo@2.6.3
 
 COPY . .
 
 RUN turbo prune api --docker
 
 
-FROM oven/bun:1.3.10 AS installer
+FROM oven/bun:1.3.1 AS installer
 
 WORKDIR /app
 
@@ -22,7 +22,7 @@ COPY --from=pruner /app/out/full/ ./
 RUN bun run --filter=api prisma:generate
 
 
-FROM oven/bun:1.3.10 AS runner
+FROM oven/bun:1.3.1 AS runner
 
 WORKDIR /app
 
