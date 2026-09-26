@@ -1,60 +1,34 @@
-import type { TResponse } from "@repo/types";
 import type {
   AuthSessionResponse,
   PickLogin,
   PickRegister,
 } from "@repo/types/auth.types";
-import { useMutation } from "@tanstack/react-query";
-import { router } from "expo-router";
-import { Alert } from "react-native";
-
+import { useAppMutation } from "@/hooks/useAppMutation";
 import Api from "@/service/props.service";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 
 export function useLogin() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<AuthSessionResponse>, Error, PickLogin>({
+  return useAppMutation<AuthSessionResponse, PickLogin>({
     mutationFn: (payload) => Api.Auth.Login(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
 
 export function useRegister() {
-  return useMutation<TResponse<unknown>, Error, PickRegister>({
+  return useAppMutation<unknown, PickRegister>({
     mutationFn: (payload) => Api.Auth.Register(payload),
-    onSuccess: (res) => {
-      Alert.alert("Sukses", res.message ?? "Register berhasil!");
-      router.push("/(public)/home/_container/home");
-    },
-    onError: (err) => {
-      Alert.alert("Error", err.message ?? "Register gagal");
+    onSuccess: (_res, _vars, _ctx, ns) => {
+      ns.router.push("/(public)/home/_container/home");
     },
   });
 }
 
 export function useLogout() {
-  return useMutation<TResponse<null>, Error, void>({
+  return useAppMutation<null, void>({
     mutationFn: () => Api.Auth.Logout(),
-    onSuccess: () => {
-      Alert.alert("Sukses", "Logout berhasil!");
-      router.replace("/");
+    onSuccess: (_res, _vars, _ctx, ns) => {
+      ns.router.replace("/");
     },
-    onError: (err) => {
-      Alert.alert("Error", err.message ?? "Logout gagal");
-      router.replace("/");
+    onError: (_err, _vars, _ctx, ns) => {
+      ns.router.replace("/");
     },
   });
 }

@@ -1,5 +1,4 @@
-import { TResponse } from "@repo/types";
-import {
+import type {
   AdminUser,
   CompanyProfile,
   PickCreateAdmin,
@@ -7,31 +6,27 @@ import {
   PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
 } from "@repo/types/company.types";
-import { useMutation } from "@tanstack/react-query";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+
+import { useAppMutation } from "@/hooks/useAppMutation";
 import { saveTokens } from "@/server/auth-cookie";
 import Api from "@/services/api";
 import { persistAuthSessionFromResponse } from "@/utils/storage";
 import {
-  CompanyCacheContext,
+  type CompanyCacheContext,
   companyRooyKey,
   readCompanySnapshot,
 } from "./utils";
 
 export function useRegisterCompany() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<CompanyProfile>,
-    Error,
+  return useAppMutation<
+    CompanyProfile,
     PickRegisterCompany,
     CompanyCacheContext
   >({
     mutationFn: (payload) => Api.Company.RegisterCompany(payload),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: companyRooyKey });
-      return { previousData: readCompanySnapshot(ns) };
-    },
-    onSuccess: async (res) => {
+    invalidateKeys: [companyRooyKey],
+    optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
+    onSuccess: async (res, _vars, _ctx, ns) => {
       const data = res.data as unknown as Record<string, unknown>;
       const accessToken =
         typeof data.accessToken === "string" ? data.accessToken : undefined;
@@ -46,9 +41,7 @@ export function useRegisterCompany() {
             refreshToken,
             role: "Owner",
           });
-        } catch {
-          // best-effort
-        }
+        } catch {}
       }
 
       ns.alert.toast({
@@ -60,144 +53,44 @@ export function useRegisterCompany() {
         },
       });
     },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: companyRooyKey,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    showSuccessToast: false,
   });
 }
 
 export function useCreateAdmin() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<AdminUser>,
-    Error,
-    PickCreateAdmin,
-    CompanyCacheContext
-  >({
+  return useAppMutation<AdminUser, PickCreateAdmin, CompanyCacheContext>({
     mutationFn: (payload) => Api.Company.CreateAdmin(payload),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: companyRooyKey });
-      return { previousData: readCompanySnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({ queryKey: companyRooyKey });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    invalidateKeys: [companyRooyKey],
+    optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
   });
 }
 
 export function useDeleteAdmin() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<AdminUser>,
-    Error,
-    { id: string },
-    CompanyCacheContext
-  >({
+  return useAppMutation<AdminUser, { id: string }, CompanyCacheContext>({
     mutationFn: ({ id }) => Api.Company.DeleteAdmin(id),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: companyRooyKey });
-      return { previousData: readCompanySnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({ queryKey: companyRooyKey });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    invalidateKeys: [companyRooyKey],
+    optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
   });
 }
 
 export function useUpdateCompanySubscription() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<CompanyProfile>,
-    Error,
+  return useAppMutation<
+    CompanyProfile,
     PickUpdateCompanySubscription,
     CompanyCacheContext
   >({
     mutationFn: (payload) => Api.Company.UpdateCompanySubscription(payload),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: companyRooyKey });
-      return { previousData: readCompanySnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({ queryKey: companyRooyKey });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    invalidateKeys: [companyRooyKey],
+    optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
   });
 }
 
 export function useUpdateCompanyProfile() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<CompanyProfile>,
-    Error,
+  return useAppMutation<
+    CompanyProfile,
     PickUpdateCompanyProfile,
     CompanyCacheContext
   >({
     mutationFn: (payload) => Api.Company.UpdateCompanyProfile(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
-
-// all

@@ -1,46 +1,29 @@
 import type {
-  MusicPlaylist,
-  PickCreatePlaylist,
-  PickAddMusicItem,
   IMusicPlayListItem,
+  MusicPlaylist,
+  PickAddMusicItem,
+  PickCreatePlaylist,
 } from "@repo/types";
-import { useMutation } from "@tanstack/react-query";
 
 import { queryKey } from "@/configs";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useAppMutation } from "@/hooks/useAppMutation";
 import Api from "@/services/api";
-import type { TResponse } from "@/types/api/response";
 
-import type { MusicCacheContext } from "./utils";
-import { readPlaylistSnapshot } from "./utils";
+import {
+  type MusicCacheContext,
+  readPlaylistSnapshot,
+} from "./utils";
 
 export function useCreatePlaylist() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<MusicPlaylist>,
-    Error,
+  return useAppMutation<
+    MusicPlaylist,
     PickCreatePlaylist,
     MusicCacheContext
   >({
     mutationFn: (payload) => Api.Music.CreatePlaylist(payload),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: queryKey.musicRoot() });
-      return { previousData: readPlaylistSnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: queryKey.musicRoot(),
-      });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [queryKey.musicRoot()],
+    optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
         ns.queryClient.setQueryData(
           queryKey.music.list(),
@@ -57,98 +40,35 @@ export function useCreatePlaylist() {
 }
 
 export function useAddPlaylistItem() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<IMusicPlayListItem>,
-    Error,
+  return useAppMutation<
+    IMusicPlayListItem,
     { playlistId: string } & PickAddMusicItem,
     MusicCacheContext
   >({
     mutationFn: ({ playlistId, trackCatalogId }) =>
       Api.Music.AddItemToPlaylist(playlistId, { trackCatalogId }),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: queryKey.musicRoot(),
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    invalidateKeys: [queryKey.musicRoot()],
   });
 }
 
 export function useDeletePlaylistItem() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<IMusicPlayListItem>,
-    Error,
+  return useAppMutation<
+    IMusicPlayListItem,
     { playlistId: string; itemId: string },
     MusicCacheContext
   >({
     mutationFn: ({ playlistId, itemId }) =>
       Api.Music.DeletePlaylistItem(playlistId, itemId),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: queryKey.musicRoot(),
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
+    invalidateKeys: [queryKey.musicRoot()],
   });
 }
 
 export function useDeletePlaylist() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<MusicPlaylist>,
-    Error,
-    string,
-    MusicCacheContext
-  >({
+  return useAppMutation<MusicPlaylist, string, MusicCacheContext>({
     mutationFn: (id) => Api.Music.DeletePlaylist(id),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: queryKey.musicRoot() });
-      return { previousData: readPlaylistSnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: queryKey.musicRoot(),
-      });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [queryKey.musicRoot()],
+    optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
         ns.queryClient.setQueryData(
           queryKey.music.list(),

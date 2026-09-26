@@ -1,85 +1,76 @@
-import type { PickCreateTodo, PickUpdateTodo, Todo, TodoQuery } from '@repo/types';
-import type { TResponse } from '@repo/types/response.types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Alert } from 'react-native';
-
-import Api from '@/service/props.service';
-
-import { readTodoSnapshot, type TodoCacheContext, todoRootKey, todosListKey } from './utils';
+import type {
+  PickCreateTodo,
+  PickUpdateTodo,
+  Todo,
+  TodoQuery,
+} from "@repo/types";
+import { useAppMutation } from "@/hooks/useAppMutation";
+import Api from "@/service/props.service";
+import {
+  readTodoSnapshot,
+  type TodoCacheContext,
+  todoRootKey,
+  todosListKey,
+} from "./utils";
 
 export function useCreateTodo(filters?: TodoQuery) {
-  const queryClient = useQueryClient();
-
-  return useMutation<TResponse<Todo>, Error, PickCreateTodo, TodoCacheContext>({
+  return useAppMutation<Todo, PickCreateTodo, TodoCacheContext>({
     mutationFn: (payload) => Api.Todo.CreateTodo(payload),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: todoRootKey });
-      return { previousData: readTodoSnapshot(queryClient, filters) };
-    },
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: todoRootKey });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [todoRootKey],
+    optimistic: (ns) => ({ previousData: readTodoSnapshot(ns, filters) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        queryClient.setQueryData(todosListKey(filters), context.previousData);
+        ns.queryClient.setQueryData(todosListKey(filters), context.previousData);
       }
-      Alert.alert('Error', err.message);
+      ns.alert.toast({
+        title: "Error",
+        message: err.message,
+        icon: "error",
+      });
     },
   });
 }
 
 export function useDeleteTodo() {
-  const queryClient = useQueryClient();
-
-  return useMutation<TResponse<Todo>, Error, string, TodoCacheContext>({
+  return useAppMutation<Todo, string, TodoCacheContext>({
     mutationFn: (id) => Api.Todo.DeleteTodo(id),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: todoRootKey });
-      return { previousData: readTodoSnapshot(queryClient) };
-    },
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: todoRootKey });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [todoRootKey],
+    optimistic: (ns) => ({ previousData: readTodoSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        queryClient.setQueryData(todoRootKey, context.previousData);
+        ns.queryClient.setQueryData(todoRootKey, context.previousData);
       }
-      Alert.alert('Error', err.message);
+      ns.alert.toast({
+        title: "Error",
+        message: err.message,
+        icon: "error",
+      });
     },
   });
 }
 
-export function useUpdateTodo() {
-  const queryClient = useQueryClient();
-
-  return useMutation<
-    TResponse<Todo>,
-    Error,
-    { id: string; payload: PickUpdateTodo },
+export function useUpdateTodo(filters?: TodoQuery) {
+  return useAppMutation<
+    Todo,
+    ({ id: string } & PickUpdateTodo) | { id: string; payload: PickUpdateTodo },
     TodoCacheContext
   >({
-    mutationFn: ({ id, payload }) => Api.Todo.UpdateTodo(id, payload),
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: todoRootKey });
-      return { previousData: readTodoSnapshot(queryClient) };
+    mutationFn: (variables) => {
+      const id = variables.id;
+      const payload = "payload" in variables ? variables.payload : variables;
+      return Api.Todo.UpdateTodo(id, payload);
     },
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: todoRootKey });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [todoRootKey],
+    optimistic: (ns) => ({ previousData: readTodoSnapshot(ns, filters) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        queryClient.setQueryData(todoRootKey, context.previousData);
+        ns.queryClient.setQueryData(todosListKey(filters), context.previousData);
       }
-      Alert.alert('Error', err.message);
+      ns.alert.toast({
+        title: "Error",
+        message: err.message,
+        icon: "error",
+      });
     },
   });
 }

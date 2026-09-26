@@ -1,49 +1,25 @@
-import type { TResponse } from '@repo/types/response.types';
-import type { PickCreateCheckout } from '@repo/types/subscription.types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import * as Linking from 'expo-linking';
-import { Alert } from 'react-native';
-
-import { queryKey } from '@/config/query-key';
-import Api from '@/service/props.service';
+import type { PickCreateCheckout } from "@repo/types/subscription.types";
+import * as Linking from "expo-linking";
+import { queryKey } from "@/config/query-key";
+import { useAppMutation } from "@/hooks/useAppMutation";
+import Api from "@/service/props.service";
 
 export function useCancelSubscription() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
+  return useAppMutation<unknown, void>({
     mutationFn: () => Api.Subscription.CancelSubscription(),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: queryKey.subscriptionsRoot(),
-      });
-    },
-    onError: (err: Error) => {
-      Alert.alert('Error', err.message);
-    },
+    invalidateKeys: [queryKey.subscriptionsRoot()],
   });
 }
 
 export function useCreateCheckout() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (payload: PickCreateCheckout) => Api.Subscription.Checkout(payload),
+  return useAppMutation<{ checkoutUrl?: string | null }, PickCreateCheckout>({
+    mutationFn: (payload: PickCreateCheckout) =>
+      Api.Subscription.Checkout(payload),
+    invalidateKeys: [queryKey.subscriptionsRoot()],
     onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-
-      if (res.data.checkoutUrl) {
+      if (res.data?.checkoutUrl) {
         Linking.openURL(res.data.checkoutUrl);
-      } else {
-        void queryClient.invalidateQueries({
-          queryKey: queryKey.subscriptionsRoot(),
-        });
       }
-    },
-    onError: (err: Error) => {
-      Alert.alert('Error', err.message);
     },
   });
 }

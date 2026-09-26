@@ -1,109 +1,42 @@
-import { IPosition, PickCreatePosition, PickUpdatePosition, TResponse } from '@repo/types';
-import { useMutation } from '@tanstack/react-query';
+import type {
+  IPosition,
+  PickCreatePosition,
+  PickUpdatePosition,
+} from "@repo/types";
 
-import { queryKey } from '@/configs';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import Api from '@/services/api';
+import { useAppMutation } from "@/hooks/useAppMutation";
+import Api from "@/services/api";
 
-import { PositionCacheContext, positionsRoot, readPositionSnapshot } from './utils';
+import {
+  type PositionCacheContext,
+  positionsRoot,
+  readPositionSnapshot,
+} from "./utils";
 
 export function useCreatePosition() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPosition>, Error, PickCreatePosition, PositionCacheContext>({
+  return useAppMutation<IPosition, PickCreatePosition, PositionCacheContext>({
     mutationFn: (payload) => Api.Position.CreatePosition(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: positionsRoot,
-      });
-      return { previousData: readPositionSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: positionsRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [positionsRoot],
+    optimistic: (ns) => ({ previousData: readPositionSnapshot(ns) }),
   });
 }
 
 export function useUpdatePosition() {
-  const ns = useAppNameSpace();
-  return useMutation<
-    TResponse<IPosition>,
-    Error,
+  return useAppMutation<
+    IPosition,
     { id: string; payload: PickUpdatePosition },
     PositionCacheContext
   >({
     mutationFn: ({ id, payload }) => Api.Position.UpdatePosition(id, payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: positionsRoot,
-      });
-      return { previousData: readPositionSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: positionsRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [positionsRoot],
+    optimistic: (ns) => ({ previousData: readPositionSnapshot(ns) }),
   });
 }
 
 export function useDeletePosition() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPosition>, Error, { id: string }, PositionCacheContext>({
+  return useAppMutation<IPosition, { id: string }, PositionCacheContext>({
     mutationFn: ({ id }) => Api.Position.DeletePosition(id),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: positionsRoot,
-      });
-      return { previousData: readPositionSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: positionsRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [positionsRoot],
+    optimistic: (ns) => ({ previousData: readPositionSnapshot(ns) }),
   });
 }

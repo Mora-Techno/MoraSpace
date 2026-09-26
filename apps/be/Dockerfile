@@ -15,7 +15,7 @@ WORKDIR /app
 
 COPY --from=pruner /app/out/json/ ./
 
-RUN bun install --frozen-lockfile
+RUN bun install
 
 COPY --from=pruner /app/out/full/ ./
 
