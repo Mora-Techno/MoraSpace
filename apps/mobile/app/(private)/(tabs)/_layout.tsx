@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, Settings, User } from 'lucide-react-native';
+import { Home, Settings, User, CheckSquare, Calendar, FileText, Music } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { useTheme } from '@/core/providers/theme.provinder';
@@ -36,6 +36,58 @@ export default function TabsLayout() {
               className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
             >
               <Home size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="todos"
+        options={{
+          title: 'Todos',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <CheckSquare size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: 'Calendar',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <Calendar size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="notes"
+        options={{
+          title: 'Notes',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <FileText size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="music"
+        options={{
+          title: 'Music',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <Music size={size} color={color} />
             </View>
           ),
         }}

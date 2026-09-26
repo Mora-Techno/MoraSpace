@@ -1,18 +1,20 @@
-import { createEnv } from '@t3-oss/env-nextjs';
-import { NEVER, z } from 'zod';
+import { createEnv } from "@t3-oss/env-nextjs";
+import { NEVER, z } from "zod";
 
-const requiredString = z.string().trim().min(1, 'This field is required');
+const requiredString = z.string().trim().min(1, "This field is required");
 
 export const env = createEnv({
   // Server Environment Variables Configuration
   server: {
-    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+    NODE_ENV: z
+      .enum(["development", "production", "test"])
+      .default("development"),
     AUTH_SECRET_KEY: requiredString,
     NEXT_INTERNAL_API_SECRET: requiredString,
     GOOGLE_CLIENT_SECRET: requiredString,
-    NEXT_CLOUDINARY_CLOUD_NAME: requiredString,
-    NEXT_CLOUDINARY_API_KEY: requiredString,
-    NEXT_CLOUDINARY_API_SECRET: requiredString,
+    NEXT_CLOUDFLARE_ACCOUNT_ID: requiredString,
+    NEXT_ACCESS_KEY_ID: requiredString,
+    NEXT_SECRET_ACCESS_KEY: requiredString,
   },
 
   // Client Environment Variables Configuration
@@ -24,6 +26,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GATE_API: requiredString,
     NEXT_PUBLIC_VERSION_API: requiredString,
     NEXT_PUBLIC_INTERNAL_API_SECRET: requiredString,
+    NEXT_PUBLIC_R2_URL: requiredString.url(),
   },
 
   // Runtime Environment Variables Configuration
@@ -33,16 +36,17 @@ export const env = createEnv({
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
     NEXT_PUBLIC_BASEPATH: process.env.NEXT_PUBLIC_BASEPATH,
-
+    NEXT_PUBLIC_R2_URL: process.env.NEXT_PUBLIC_R2_URL,
+    NEXT_CLOUDFLARE_ACCOUNT_ID: process.env.NEXT_CLOUDFLARE_ACCOUNT_ID,
+    NEXT_ACCESS_KEY_ID: process.env.NEXT_ACCESS_KEY_ID,
+    NEXT_SECRET_ACCESS_KEY: process.env.NEXT_SECRET_ACCESS_KEY,
     NEXT_INTERNAL_API_SECRET: process.env.NEXT_INTERNAL_API_SECRET,
-    NEXT_PUBLIC_INTERNAL_API_SECRET: process.env.NEXT_PUBLIC_INTERNAL_API_SECRET,
+    NEXT_PUBLIC_INTERNAL_API_SECRET:
+      process.env.NEXT_PUBLIC_INTERNAL_API_SECRET,
     NEXT_PUBLIC_GATE_API: process.env.NEXT_PUBLIC_GATE_API,
     NEXT_PUBLIC_VERSION_API: process.env.NEXT_PUBLIC_VERSION_API,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-    NEXT_CLOUDINARY_CLOUD_NAME: process.env.NEXT_CLOUDINARY_CLOUD_NAME,
-    NEXT_CLOUDINARY_API_KEY: process.env.NEXT_CLOUDINARY_API_KEY,
-    NEXT_CLOUDINARY_API_SECRET: process.env.NEXT_CLOUDINARY_API_SECRET,
   },
 
   // Skip Validation for the following Environment Variables

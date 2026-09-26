@@ -1,5 +1,9 @@
 import app from './app';
 import { connectWithRetry, disconnectDatabase } from './config/databases';
+import {
+  startNotificationQueueRunner,
+  stopNotificationQueueRunner,
+} from './service/NotificationQueueWorker';
 import { verifyMailTransport } from './utils/mail.utils';
 
 let isShuttingDown = false;
@@ -9,6 +13,7 @@ async function shutdown(signal: string) {
   isShuttingDown = true;
 
   console.log(` Shutting down (${signal})...`);
+  stopNotificationQueueRunner();
 
   try {
     await disconnectDatabase();
@@ -51,6 +56,7 @@ connectWithRetry()
     const port = process.env.PORT ? Number(process.env.PORT) : 5000;
     app.listen(port);
     console.log(` Elysia running at in port:${port}`);
+    startNotificationQueueRunner();
   })
   .catch((err) => {
     console.error(' Could not connect to database after retries:', err);
