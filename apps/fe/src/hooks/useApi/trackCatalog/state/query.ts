@@ -15,3 +15,14 @@ export function useTrackCatalogList(filters?: TrackCatalogQuery) {
     staleTime: MODULE_QUERY,
   });
 }
+
+export function usePendingTracks(filters?: TrackCatalogQuery) {
+  return useQuery({
+    queryKey: ["music", "tracks", "pending", filters ?? {}],
+    queryFn: async () => {
+      const res = await Api.TrackCatalog.ListPendingTracks(filters);
+      return res.data;
+    },
+    staleTime: MODULE_QUERY,
+  });
+}
