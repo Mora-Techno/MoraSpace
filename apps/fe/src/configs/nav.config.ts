@@ -11,6 +11,10 @@ import {
   Users,
   KeyRound,
   Group,
+  Kanban,
+  Timer,
+  CreditCard,
+  Radio,
 } from "lucide-react";
 
 export type NavItem = {
@@ -30,6 +34,18 @@ type Role = "member" | "owner";
  * laman utama milik owner.
  */
 const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
+  {
+    title: "Tasks",
+    url: "/owner/member/tasks",
+    icon: Kanban,
+    mobile: true,
+  },
+  {
+    title: "Pomodoro",
+    url: "/owner/member/pomodoro",
+    icon: Timer,
+    mobile: true,
+  },
   {
     title: "Todos",
     url: "/owner/member/todos",
@@ -65,6 +81,8 @@ const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
 const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
   member: [
     { title: "Dashboard", url: "/member/dashboard", icon: Home, mobile: true },
+    { title: "Tasks", url: "/member/tasks", icon: Kanban, mobile: true },
+    { title: "Pomodoro", url: "/member/pomodoro", icon: Timer, mobile: true },
     { title: "Todos", url: "/member/todos", icon: CheckSquare, mobile: true },
     { title: "Notes", url: "/member/notes", icon: FileText, mobile: true },
     {
@@ -84,6 +102,18 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
   owner: [
     { title: "Dashboard", url: "/owner/dashboard", icon: Home, mobile: true },
 
+    {
+      title: "Billing & Plans",
+      url: "/owner/billing",
+      icon: CreditCard,
+      mobile: true,
+    },
+    {
+      title: "Review Tracks",
+      url: "/owner/catalog",
+      icon: Radio,
+      mobile: false,
+    },
     {
       title: "Company",
       url: "/owner/company",
