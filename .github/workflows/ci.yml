@@ -1,0 +1,91 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  pull_request:
+    branches:
+      - main
+      - staging
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Quality & Test Stage
+  # ---------------------------------------------------------------------------
+  test-and-lint:
+    name: Lint, Typecheck & Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.3
+
+      - name: Install Monorepo Dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: bun run --filter=api prisma:generate
+
+      - name: Run Backend Tests
+        run: bun test --cwd apps/be
+
+      - name: Typecheck Backend (Elysia API)
+        run: bun run --filter=api build
+
+      - name: Typecheck & Build Web (Next.js)
+        run: bun run --filter=next-shadcn-base build
+        env:
+          SKIP_ENV_VALIDATION: 1
+          NODE_ENV: production
+
+  # ---------------------------------------------------------------------------
+  # Deployment Stage: Staging / Preview (Branch: staging)
+  # ---------------------------------------------------------------------------
+  deploy-staging:
+    name: Deploy to Staging (Preview)
+    needs: test-and-lint
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: staging
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Staging Stack via SSH / Docker
+        run: |
+          echo "🚀 Deploying to Staging Environment..."
+          echo "Target Branch: staging (preview)"
+          echo "Instances: 2 Web, 2 API behind Nginx Load Balancer"
+          # Dokploy / VPS / SSH trigger command:
+          # ssh ${{ secrets.STAGING_SSH_USER }}@${{ secrets.STAGING_SERVER_IP }} \
+          #   "cd /app/spaces && git pull origin staging && docker compose up -d --build"
+
+  # ---------------------------------------------------------------------------
+  # Deployment Stage: Production (Branch: main)
+  # ---------------------------------------------------------------------------
+  deploy-production:
+    name: Deploy to Production
+    needs: test-and-lint
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy Production Stack via SSH / Docker
+        run: |
+          echo "🌟 Deploying to Production Environment..."
+          echo "Target Branch: main (production)"
+          echo "Instances: 2 Web, 2 API behind Nginx Load Balancer"
+          # Dokploy / VPS / SSH trigger command:
+          # ssh ${{ secrets.PROD_SSH_USER }}@${{ secrets.PROD_SERVER_IP }} \
+          #   "cd /app/spaces && git pull origin main && docker compose up -d --build"
