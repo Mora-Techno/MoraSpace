@@ -3,49 +3,28 @@ import type {
   NotificationLog,
   PickSendNotification,
 } from "@repo/types";
-import type { TResponse } from "@repo/types/response.types";
-import { useMutation } from "@tanstack/react-query";
 
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useAppMutation } from "@/hooks/useAppMutation";
 import Api from "@/services/api";
 
-import { notificationsRootKey } from "./utils";
 import {
   type NotificationCacheContext,
   type NotificationListCacheContext,
+  notificationsRootKey,
   readNotificationLogsSnapshot,
   readNotificationsSnapshot,
 } from "./utils";
 
 export function useSendNotification() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<NotificationLog>,
-    Error,
+  return useAppMutation<
+    NotificationLog,
     PickSendNotification,
     NotificationCacheContext
   >({
     mutationFn: (payload) => Api.Notification.SendNotification(payload),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: notificationsRootKey,
-      });
-      return { previousData: readNotificationLogsSnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: notificationsRootKey,
-      });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [notificationsRootKey],
+    optimistic: (ns) => ({ previousData: readNotificationLogsSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
         ns.queryClient.setQueryData(notificationsRootKey, context.previousData);
       }
@@ -59,34 +38,15 @@ export function useSendNotification() {
 }
 
 export function useMarkRead() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<NotificationInApp>,
-    Error,
+  return useAppMutation<
+    NotificationInApp,
     string,
     NotificationListCacheContext
   >({
     mutationFn: (id) => Api.Notification.MarkRead(id),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: notificationsRootKey,
-      });
-      return { previousData: readNotificationsSnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: notificationsRootKey,
-      });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [notificationsRootKey],
+    optimistic: (ns) => ({ previousData: readNotificationsSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
         ns.queryClient.setQueryData(notificationsRootKey, context.previousData);
       }
@@ -100,34 +60,15 @@ export function useMarkRead() {
 }
 
 export function useMarkAllRead() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<unknown>,
-    Error,
+  return useAppMutation<
+    unknown,
     void,
     NotificationListCacheContext
   >({
     mutationFn: () => Api.Notification.MarkAllRead(),
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: notificationsRootKey,
-      });
-      return { previousData: readNotificationsSnapshot(ns) };
-    },
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: notificationsRootKey,
-      });
-    },
-    onError: (err, _variables, context) => {
+    invalidateKeys: [notificationsRootKey],
+    optimistic: (ns) => ({ previousData: readNotificationsSnapshot(ns) }),
+    onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
         ns.queryClient.setQueryData(notificationsRootKey, context.previousData);
       }

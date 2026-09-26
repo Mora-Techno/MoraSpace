@@ -36,6 +36,8 @@ export { useMutationWrapper } from "./react-query/mutation-wrapper";
 export { transformParams } from "./react-query/query-params";
 export type { QueryParams } from "./react-query/query-params.type";
 export { queryKey } from "./react-query/query-key";
+export * from "./react-query/cache";
+export * from "./react-query/useAppMutation";
 export {
   formatDateOnly,
   formatDateTime,

@@ -3,147 +3,64 @@ import type {
   PickAddTeamMember,
   PickCreateTeam,
   PickUpdateTeam,
-  TResponse,
-} from '@repo/types';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Alert } from 'react-native';
-
-import { queryKey } from '@/config/query-key';
-import Api from '@/service/props.service';
-
-import { readTeamSnapshot,TeamCacheContext } from './utils';
+} from "@repo/types";
+import { useAppMutation } from "@/hooks/useAppMutation";
+import Api from "@/service/props.service";
+import {
+  readTeamSnapshot,
+  type TeamCacheContext,
+  teamsRoot,
+} from "./utils";
 
 export function useCreateTeam() {
-  const queryClient = useQueryClient();
-  return useMutation<TResponse<ITeam>, Error, PickCreateTeam, TeamCacheContext>({
+  return useAppMutation<ITeam, PickCreateTeam, TeamCacheContext>({
     mutationFn: (payload) => Api.Team.CreateTeam(payload),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
+    invalidateKeys: [teamsRoot],
+    optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });
 }
 
 export function useUpdateTeam() {
-  const queryClient = useQueryClient();
-  return useMutation<
-    TResponse<ITeam>,
-    Error,
+  return useAppMutation<
+    ITeam,
     { id: string; payload: PickUpdateTeam },
     TeamCacheContext
   >({
     mutationFn: ({ id, payload }) => Api.Team.UpdateTeam(id, payload),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
+    invalidateKeys: [teamsRoot],
+    optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });
 }
 
 export function useDeleteTeam() {
-  const queryClient = useQueryClient();
-  return useMutation<TResponse<ITeam>, Error, string, TeamCacheContext>({
+  return useAppMutation<ITeam, string, TeamCacheContext>({
     mutationFn: (id) => Api.Team.DeleteTeam(id),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
+    invalidateKeys: [teamsRoot],
+    optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });
 }
 
 export function useAddTeamMember() {
-  const queryClient = useQueryClient();
-  return useMutation<
-    TResponse<unknown>,
-    Error,
+  return useAppMutation<
+    unknown,
     { teamId: string; payload: PickAddTeamMember },
     TeamCacheContext
   >({
     mutationFn: ({ teamId, payload }) => Api.Team.AddMember(teamId, payload),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
+    invalidateKeys: [teamsRoot],
+    optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });
 }
 
 export function useRemoveTeamMember() {
-  const queryClient = useQueryClient();
-  return useMutation<
-    TResponse<unknown>,
-    Error,
+  return useAppMutation<
+    unknown,
     { teamId: string; memberId: string },
     TeamCacheContext
   >({
-    mutationFn: ({ teamId, memberId }) => Api.Team.RemoveMember(teamId, memberId),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
-  });
-}
-
-export function useInviteTeamMember() {
-  const queryClient = useQueryClient();
-  return useMutation<TResponse<unknown>, Error, unknown, TeamCacheContext>({
-    mutationFn: (payload) => Api.Team.InviteMember(payload),
-    onSuccess: (res) => {
-      Alert.alert('Sukses', res.message);
-    },
-    onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: queryKey.teamsRoot() });
-      return { previousData: readTeamSnapshot(queryClient) };
-    },
-    onSettled: async () => {
-      await queryClient.invalidateQueries({ queryKey: queryKey.teamsRoot() });
-    },
-    onError: (err) => {
-      Alert.alert('Error', err.message);
-    },
+    mutationFn: ({ teamId, memberId }) =>
+      Api.Team.RemoveMember(teamId, memberId),
+    invalidateKeys: [teamsRoot],
+    optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });
 }
