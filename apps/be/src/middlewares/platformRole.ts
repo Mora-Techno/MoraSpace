@@ -14,9 +14,15 @@ export const requirePlatformRole = (allowedRoles: PlatformRole[]) => ({
     const user = c.user as { platformRole?: string } | undefined;
 
     if (!user) {
-      return c.json(
-        { status: 401, message: "Unauthorized. Token tidak ditemukan." },
-        401,
+      if (c.json) {
+        return c.json(
+          { status: 401, message: "Unauthorized. Token tidak ditemukan." },
+          401,
+        );
+      }
+      return new Response(
+        JSON.stringify({ status: 401, message: "Unauthorized. Token tidak ditemukan." }),
+        { status: 401, headers: { "Content-Type": "application/json" } },
       );
     }
 
@@ -24,12 +30,21 @@ export const requirePlatformRole = (allowedRoles: PlatformRole[]) => ({
       !user.platformRole ||
       !allowedRoles.includes(user.platformRole as PlatformRole)
     ) {
-      return c.json(
-        {
+      if (c.json) {
+        return c.json(
+          {
+            status: 403,
+            message: "Access denied. Global platform authorization required.",
+          },
+          403,
+        );
+      }
+      return new Response(
+        JSON.stringify({
           status: 403,
           message: "Access denied. Global platform authorization required.",
-        },
-        403,
+        }),
+        { status: 403, headers: { "Content-Type": "application/json" } },
       );
     }
   },

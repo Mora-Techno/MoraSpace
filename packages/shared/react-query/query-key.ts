@@ -6,6 +6,11 @@ import type {
 import type { TodoQuery } from "../types/todo.types";
 
 export const queryKey = {
+  authRoot: () => ["auth"] as const,
+  auth: {
+    me: () => ["auth", "me"] as const,
+  },
+
   todosRoot: () => ["todos"] as const,
   todos: {
     list: (filters?: TodoQuery) => ["todos", "list", filters ?? {}] as const,
@@ -19,6 +24,7 @@ export const queryKey = {
     detail: (id: string) => ["notes", "detail", id] as const,
   },
 
+  calendersRoot: () => ["calendar", "events"] as const,
   calendarRoot: () => ["calendar", "events"] as const,
   calendar: {
     list: (query?: EventQuery) =>
@@ -111,6 +117,7 @@ export const queryKey = {
 
   pomodoroRoot: () => ["pomodoro"] as const,
   pomodoro: {
+    active: () => ["pomodoro", "active"] as const,
     today: () => ["pomodoro", "today"] as const,
     statistics: () => ["pomodoro", "statistics"] as const,
   },

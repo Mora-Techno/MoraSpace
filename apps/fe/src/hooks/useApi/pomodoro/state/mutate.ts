@@ -1,132 +1,54 @@
-import { IPomodoroSession, PickStartPomodoro, PickStopPomodoro, TResponse } from '@repo/types';
-import { useMutation } from '@tanstack/react-query';
+import type {
+  IPomodoroSession,
+  PickStartPomodoro,
+  PickStopPomodoro,
+} from "@repo/types";
 
-import { queryKey } from '@/configs';
-import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import Api from '@/services/api';
+import { useAppMutation } from "@/hooks/useAppMutation";
+import Api from "@/services/api";
 
-import { podomoroRoot, PomodoroCacheContext, readPomodoroSnapshot } from './utils';
+import {
+  type PomodoroCacheContext,
+  podomoroRoot,
+  readPomodoroSnapshot,
+} from "./utils";
 
 export function useStartPomodoroSession() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPomodoroSession>, Error, PickStartPomodoro, PomodoroCacheContext>({
+  return useAppMutation<
+    IPomodoroSession,
+    PickStartPomodoro | undefined,
+    PomodoroCacheContext
+  >({
     mutationFn: (payload?) => Api.Pomodoro.StartSession(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: podomoroRoot });
-      return { previousData: readPomodoroSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: podomoroRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [podomoroRoot],
+    optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),
   });
 }
 
 export function usePausePomodoroSession() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPomodoroSession>, Error, void, PomodoroCacheContext>({
+  return useAppMutation<IPomodoroSession, void, PomodoroCacheContext>({
     mutationFn: () => Api.Pomodoro.PauseSession(),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({ queryKey: podomoroRoot });
-      return { previousData: readPomodoroSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: podomoroRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [podomoroRoot],
+    optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),
   });
 }
 
 export function useResumePomodoroSession() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPomodoroSession>, Error, void, PomodoroCacheContext>({
+  return useAppMutation<IPomodoroSession, void, PomodoroCacheContext>({
     mutationFn: () => Api.Pomodoro.ResumeSession(),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: podomoroRoot,
-      });
-      return { previousData: readPomodoroSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: podomoroRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [podomoroRoot],
+    optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),
   });
 }
 
 export function useStopPomodoroSession() {
-  const ns = useAppNameSpace();
-  return useMutation<TResponse<IPomodoroSession>, Error, PickStopPomodoro, PomodoroCacheContext>({
+  return useAppMutation<
+    IPomodoroSession,
+    PickStopPomodoro | undefined,
+    PomodoroCacheContext
+  >({
     mutationFn: (payload?) => Api.Pomodoro.StopSession(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: 'success',
-      });
-    },
-    onMutate: async () => {
-      await ns.queryClient.cancelQueries({
-        queryKey: podomoroRoot,
-      });
-      return { previousData: readPomodoroSnapshot(ns) };
-    },
-    onSettled: async () => {
-      await ns.queryClient.invalidateQueries({
-        queryKey: podomoroRoot,
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: 'error',
-      });
-    },
+    invalidateKeys: [podomoroRoot],
+    optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),
   });
 }

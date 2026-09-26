@@ -2,11 +2,10 @@ import {
   useAddTeamMember,
   useCreateTeam,
   useDeleteTeam,
-  useInviteTeamMember,
   useRemoveTeamMember,
   useUpdateTeam,
-} from './state/mutate';
-import { useListTeamMembers, useListTeams } from './state/query';
+} from "./state/mutate";
+import { useListTeamMembers, useListTeams } from "./state/query";
 
 export const useTeam = () => {
   return {
@@ -16,7 +15,6 @@ export const useTeam = () => {
       delete: useDeleteTeam,
       addMember: useAddTeamMember,
       removeMember: useRemoveTeamMember,
-      inviteMember: useInviteTeamMember,
     },
     query: {
       list: useListTeams,

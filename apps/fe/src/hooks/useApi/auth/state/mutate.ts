@@ -11,28 +11,19 @@ import type {
   PickSendMagicLink,
   SafeAuthUser,
 } from "@repo/types/auth.types";
-import { useMutation } from "@tanstack/react-query";
 
 import { queryKey } from "@/configs";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useAppMutation } from "@/hooks/useAppMutation";
 import { saveTokens } from "@/server/auth-cookie";
 import Api from "@/services/api";
 import { persistAuthSessionFromResponse } from "@/utils/storage";
-import { AuthCacheContext } from "./utils";
+import type { AuthCacheContext } from "./utils";
 
 export function useLogin() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<AuthSessionResponse>,
-    Error,
-    PickLogin,
-    AuthCacheContext
-  >({
+  return useAppMutation<AuthSessionResponse, PickLogin, AuthCacheContext>({
     mutationFn: (payload: PickLogin) => Api.Auth.Login(payload),
-    onSuccess: async (res) => {
+    onSuccess: async (res, _vars, _ctx, ns) => {
       const data = res.data;
-
       const accessToken = res?.data.accessToken;
       const refreshToken = res?.data.refreshToken;
       const role = res?.data.user?.companyRole ?? "";
@@ -43,8 +34,8 @@ export function useLogin() {
         try {
           await saveTokens({
             role: role || undefined,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
+            accessToken,
+            refreshToken,
           });
         } catch {}
 
@@ -52,18 +43,12 @@ export function useLogin() {
           await ns.queryClient.prefetchQuery({
             queryKey: queryKey.settings.detail(),
             queryFn: async () => {
-              const res = await Api.Settings.GetSettings();
-              return res.data;
+              const settingsRes = await Api.Settings.GetSettings();
+              return settingsRes.data;
             },
           });
         } catch {}
       }
-
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
 
       const normalizedRole = role?.toLowerCase();
       switch (normalizedRole) {
@@ -80,174 +65,63 @@ export function useLogin() {
           break;
       }
     },
-    onError: (err: Error) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
 
 export function useLogout() {
-  const ns = useAppNameSpace();
-  return useMutation({
+  return useAppMutation<void, void>({
     mutationFn: async () => {
       try {
         await Api.Auth.Logout();
-      } catch {
-        // Tetap logout lokal meski BE gagal
-      }
+      } catch {}
       await fetch("/api/session/delete", { method: "POST" });
-    },
-    onSuccess: () => {
-      ns.alert.toast({
+      return {
+        data: undefined as unknown as void,
+        message: "Logout berhasil",
+        statusCode: 200,
+        status: 200,
         title: "Logout berhasil",
-        message: "Sampai jumpa lagi!",
-        icon: "success",
-      });
+      } as unknown as TResponse<void>;
+    },
+    onSuccess: (_data, _vars, _ctx, ns) => {
       ns.router.replace("/login");
     },
-    onError: (err: Error) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
+    onError: (_err, _vars, _ctx, ns) => {
       ns.router.replace("/login");
     },
   });
 }
 
 export function useRegister() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<SafeAuthUser>,
-    Error,
-    PickRegister,
-    AuthCacheContext
-  >({
+  return useAppMutation<SafeAuthUser, PickRegister, AuthCacheContext>({
     mutationFn: (payload: PickRegister) => Api.Auth.Register(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        title: res.message,
-        message: res.message,
-        icon: "success",
-      });
+    onSuccess: (_res, _vars, _ctx, ns) => {
       ns.router.replace("/");
-    },
-    onError: (err: Error) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
     },
   });
 }
 
 export function useVerifyMagicLink() {
-  const ns = useAppNameSpace();
-
-  return useMutation({
+  return useAppMutation<AuthSessionResponse, PickVerifyMagicLink>({
     mutationFn: (payload: PickVerifyMagicLink) =>
       Api.Auth.VerifyMagicLink(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        message: res.message,
-        title: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
 
 export function useSendMagicLink() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<{ email: string }>,
-    Error,
-    PickSendMagicLink,
-    AuthCacheContext
-  >({
+  return useAppMutation<{ email: string }, PickSendMagicLink, AuthCacheContext>({
     mutationFn: (payload) => Api.Auth.SendMagicLink(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        message: res.message,
-        title: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
 
 export function useForgotPassword() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<null>,
-    Error,
-    PickForgotPassword,
-    AuthCacheContext
-  >({
+  return useAppMutation<null, PickForgotPassword, AuthCacheContext>({
     mutationFn: (payload) => Api.Auth.ForgotPassword(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        message: res.message,
-        title: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
 
 export function useResetPassword() {
-  const ns = useAppNameSpace();
-
-  return useMutation<
-    TResponse<null>,
-    Error,
-    PickResetPassword,
-    AuthCacheContext
-  >({
+  return useAppMutation<null, PickResetPassword, AuthCacheContext>({
     mutationFn: (payload) => Api.Auth.ResetPassword(payload),
-    onSuccess: (res) => {
-      ns.alert.toast({
-        message: res.message,
-        title: res.message,
-        icon: "success",
-      });
-    },
-    onError: (err) => {
-      ns.alert.toast({
-        title: err.message,
-        message: err.message,
-        icon: "error",
-      });
-    },
   });
 }
