@@ -1,23 +1,23 @@
-import type { CompanyRole } from "@repo/types/company.types";
-import type { SafeAuthUser } from "@repo/types/auth.types";
-import prisma from "prisma/client";
+import type { CompanyRole } from '@repo/types/company.types';
+import type { SafeAuthUser } from '@repo/types/auth.types';
+import prisma from 'prisma/client';
 
 export function slugify(value: string): string {
   return value
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
 export async function uniqueCompanySlug(base: string): Promise<string> {
-  let slug = slugify(base) || "company";
+  let slug = slugify(base) || 'company';
   let counter = 0;
 
   while (await prisma.company.findUnique({ where: { slug } })) {
     counter += 1;
-    slug = `${slugify(base) || "company"}-${counter}`;
+    slug = `${slugify(base) || 'company'}-${counter}`;
   }
 
   return slug;
@@ -28,12 +28,12 @@ export function resolveCompanyRole(
   ownerId: string,
   roleNames: string[],
 ): CompanyRole {
-  if (userId === ownerId) return "Owner";
+  if (userId === ownerId) return 'Owner';
 
   const normalized = roleNames.map((name) => name.toLowerCase());
-  if (normalized.includes("admin")) return "Admin";
-  if (normalized.includes("owner")) return "Owner";
-  return "Member";
+  if (normalized.includes('owner')) return 'Owner';
+  // v0.0.1: hanya Owner & Member — role lain (Admin/Chief legacy) = Member.
+  return 'Member';
 }
 
 export function toSafeAuthUser(
@@ -60,14 +60,14 @@ export function toSafeAuthUser(
         member.company.ownerId,
         member.roles!.map((item) => item.role.name),
       )
-    : "Member";
+    : 'Member';
 
   return {
     id: user.id,
     email: user.email,
     phone: user.phone,
     fullName: user.fullName,
-    platformRole: user.platformRole as SafeAuthUser["platformRole"],
+    platformRole: user.platformRole as SafeAuthUser['platformRole'],
     companyRole,
     companyId: member?.companyId ?? null,
     companyMemberId: member?.id ?? null,
@@ -93,12 +93,12 @@ export async function resolveAuthUser(
         },
       })
     : await prisma.companyMember.findFirst({
-        where: { userId, status: "active" },
+        where: { userId, status: 'active' },
         include: {
           roles: { include: { role: true } },
           company: { select: { ownerId: true } },
         },
-        orderBy: { joinedAt: "asc" },
+        orderBy: { joinedAt: 'asc' },
       });
 
   return toSafeAuthUser(user, member);
@@ -107,9 +107,7 @@ export async function resolveAuthUser(
 export async function requireCompanyMember(
   userId: string,
   companyId: string,
-): Promise<
-  NonNullable<Awaited<ReturnType<typeof prisma.companyMember.findUnique>>>
-> {
+): Promise<NonNullable<Awaited<ReturnType<typeof prisma.companyMember.findUnique>>>> {
   const member = await prisma.companyMember.findUnique({
     where: { companyId_userId: { companyId, userId } },
     include: {
@@ -119,7 +117,7 @@ export async function requireCompanyMember(
   });
 
   if (!member) {
-    throw new Error("Anggota company tidak ditemukan");
+    throw new Error('Anggota company tidak ditemukan');
   }
 
   return member;

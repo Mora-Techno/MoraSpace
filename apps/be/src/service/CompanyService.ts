@@ -1,26 +1,23 @@
-import bcryptjs from "bcryptjs";
-import { DEFAULT_TASK_STATUSES, DEFAULT_TASK_PRIORITIES, DEFAULT_EMPLOYMENT_TYPES } from '@/config/companyDefaults';
-import prisma from "prisma/client";
-import { getWorkstationUserLimit } from "@/utils/tierLimits";
-import { getPeriodEnd } from "@/config/subscriptionPlans";
+import bcryptjs from 'bcryptjs';
+import {
+  DEFAULT_TASK_STATUSES,
+  DEFAULT_TASK_PRIORITIES,
+  DEFAULT_EMPLOYMENT_TYPES,
+} from '@/config/companyDefaults';
+import prisma from 'prisma/client';
+import { getWorkstationUserLimit } from '@/utils/tierLimits';
+import { getPeriodEnd } from '@/config/subscriptionPlans';
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
+  PickUpdateCompanySettings,
   PickUpdateCompanySubscription,
-} from "@repo/types/company.types";
-import { sanitizeUser } from "@/utils/authTokens";
-import {
-  resolveAuthUser,
-  toSafeAuthUser,
-  uniqueCompanySlug,
-} from "@/utils/memberContext";
-import {
-  ensurePlan,
-  getCompanyTier,
-  inferBillingCycle,
-} from "@/utils/planHelper";
-import { ensureDefaultRoles } from "@/utils/roleHelper";
+} from '@repo/types/company.types';
+import { sanitizeUser } from '@/utils/authTokens';
+import { resolveAuthUser, toSafeAuthUser, uniqueCompanySlug } from '@/utils/memberContext';
+import { ensurePlan, getCompanyTier, inferBillingCycle } from '@/utils/planHelper';
+import { ensureDefaultRoles } from '@/utils/roleHelper';
 
 class CompanyService {
   public async registerLeader(input: PickRegisterCompany) {
@@ -29,11 +26,11 @@ class CompanyService {
     });
 
     if (existing) {
-      throw new Error("Email sudah terdaftar");
+      throw new Error('Email sudah terdaftar');
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
-    const tier = input.tier ?? "free";
+    const tier = input.tier ?? 'free';
     const now = new Date();
     const slug = await uniqueCompanySlug(input.companyName);
 
@@ -43,7 +40,7 @@ class CompanyService {
           email: input.email,
           fullName: input.fullName,
           passwordHash: hashedPassword,
-          status: "active",
+          status: 'active',
           emailVerifiedAt: now,
         },
       });
@@ -66,13 +63,13 @@ class CompanyService {
       await tx.employmentType.createMany({
         data: DEFAULT_EMPLOYMENT_TYPES.map((name) => ({ name, companyId: company.id })),
       });
-      const ownerRole = roles.find((role) => role.name === "Owner");
+      const ownerRole = roles.find((role) => role.name === 'Owner');
 
       const member = await tx.companyMember.create({
         data: {
           companyId: company.id,
           userId: leader.id,
-          status: "active",
+          status: 'active',
           joinedAt: now,
         },
       });
@@ -89,13 +86,13 @@ class CompanyService {
       await tx.companySetting.create({
         data: {
           companyId: company.id,
-          workingHourStart: new Date("1970-01-01T09:00:00.000Z"),
-          workingHourEnd: new Date("1970-01-01T18:00:00.000Z"),
-          workDays: "mon,tue,wed,thu,fri",
+          workingHourStart: new Date('1970-01-01T09:00:00.000Z'),
+          workingHourEnd: new Date('1970-01-01T18:00:00.000Z'),
+          workDays: 'mon,tue,wed,thu,fri',
           allowRemote: true,
           allowMusic: true,
-          language: "id",
-          timezone: "Asia/Jakarta",
+          language: 'id',
+          timezone: 'Asia/Jakarta',
         },
       });
 
@@ -106,18 +103,18 @@ class CompanyService {
       await tx.department.create({
         data: {
           companyId: company.id,
-          name: "General",
-          description: "Default department",
+          name: 'General',
+          description: 'Default department',
         },
       });
 
       const plan = await ensurePlan(tier, tx);
-      const periodEnd = getPeriodEnd("monthly", now);
+      const periodEnd = getPeriodEnd('monthly', now);
       const subscription = await tx.subscription.create({
         data: {
           companyId: company.id,
           planId: plan.id,
-          status: "active",
+          status: 'active',
           currentPeriodStart: now,
           currentPeriodEnd: periodEnd,
         },
@@ -133,7 +130,7 @@ class CompanyService {
 
     const leader = await resolveAuthUser(result.leader.id, result.company.id);
     if (!leader) {
-      throw new Error("Leader tidak ditemukan");
+      throw new Error('Leader tidak ditemukan');
     }
 
     return {
@@ -141,9 +138,9 @@ class CompanyService {
         id: result.company.id,
         name: result.company.name,
         tier,
-        billingCycle: "monthly" as const,
+        billingCycle: 'monthly' as const,
         subscriptionStartsAt: now,
-        subscriptionEndsAt: getPeriodEnd("monthly", now),
+        subscriptionEndsAt: getPeriodEnd('monthly', now),
         leaderId: result.company.ownerId,
         stripeCustomerId: null,
         xenditCustomerId: null,
@@ -161,7 +158,7 @@ class CompanyService {
     });
 
     if (existing) {
-      throw new Error("Email sudah terdaftar");
+      throw new Error('Email sudah terdaftar');
     }
 
     const company = await prisma.company.findUnique({
@@ -169,12 +166,12 @@ class CompanyService {
     });
 
     if (!company) {
-      throw new Error("Company tidak ditemukan");
+      throw new Error('Company tidak ditemukan');
     }
 
     const hashedPassword = await bcryptjs.hash(input.password, 10);
     const adminRole = await prisma.role.findFirst({
-      where: { companyId, name: { equals: "Admin", mode: "insensitive" } },
+      where: { companyId, name: { equals: 'Admin', mode: 'insensitive' } },
     });
 
     const result = await prisma.$transaction(async (tx) => {
@@ -183,7 +180,7 @@ class CompanyService {
           email: input.email,
           fullName: input.fullName,
           passwordHash: hashedPassword,
-          status: "active",
+          status: 'active',
         },
       });
 
@@ -191,7 +188,7 @@ class CompanyService {
         data: {
           companyId,
           userId: user.id,
-          status: "active",
+          status: 'active',
           joinedAt: new Date(),
         },
       });
@@ -224,7 +221,7 @@ class CompanyService {
     });
 
     if (!company) {
-      throw new Error("Company tidak ditemukan");
+      throw new Error('Company tidak ditemukan');
     }
 
     const targetMember = await prisma.companyMember.findUnique({
@@ -237,13 +234,11 @@ class CompanyService {
     });
 
     if (!targetMember) {
-      throw new Error(
-        "User tidak ditemukan atau bukan member dari company ini",
-      );
+      throw new Error('User tidak ditemukan atau bukan member dari company ini');
     }
 
     if (targetMember.userId === company.ownerId) {
-      throw new Error("Owner tidak dapat dihapus");
+      throw new Error('Owner tidak dapat dihapus');
     }
 
     const query = await prisma.$transaction(async (tx) => {
@@ -272,11 +267,11 @@ class CompanyService {
     companyId: string,
     query: {
       search?: string;
-      status?: "active" | "inactive";
+      status?: 'active' | 'inactive';
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -287,7 +282,7 @@ class CompanyService {
       companyId,
       roles: {
         some: {
-          role: { name: { equals: "Admin", mode: "insensitive" } },
+          role: { name: { equals: 'Admin', mode: 'insensitive' } },
         },
       },
     };
@@ -295,8 +290,8 @@ class CompanyService {
     if (query.search) {
       where.user = {
         OR: [
-          { fullName: { contains: query.search, mode: "insensitive" } },
-          { email: { contains: query.search, mode: "insensitive" } },
+          { fullName: { contains: query.search, mode: 'insensitive' } },
+          { email: { contains: query.search, mode: 'insensitive' } },
         ],
       };
     }
@@ -307,9 +302,9 @@ class CompanyService {
 
     const orderBy: Record<string, unknown> = {};
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "desc";
+      orderBy[query.sortBy] = query.sortOrder ?? 'desc';
     } else {
-      orderBy.createdAt = "desc";
+      orderBy.createdAt = 'desc';
     }
 
     const [totalData, members] = await prisma.$transaction([
@@ -353,10 +348,8 @@ class CompanyService {
         fullName: authUser.fullName,
         companyRole: authUser.companyRole,
         companyId: authUser.companyId,
-        createdAt:
-          authUser.createdAt?.toISOString() ?? new Date().toISOString(),
-        updatedAt:
-          authUser.updatedAt?.toISOString() ?? new Date().toISOString(),
+        createdAt: authUser.createdAt?.toISOString() ?? new Date().toISOString(),
+        updatedAt: authUser.updatedAt?.toISOString() ?? new Date().toISOString(),
       };
     });
 
@@ -401,15 +394,14 @@ class CompanyService {
       name: company.name,
       tier,
       billingCycle,
-      subscriptionStartsAt:
-        company.currentSubscription?.currentPeriodStart ?? company.createdAt,
+      subscriptionStartsAt: company.currentSubscription?.currentPeriodStart ?? company.createdAt,
       subscriptionEndsAt: company.currentSubscription?.currentPeriodEnd ?? null,
       leaderId: company.ownerId,
       leader: {
         id: company.owner.id,
         email: company.owner.email,
         fullName: company.owner.fullName,
-        companyRole: "leader" as const,
+        companyRole: 'leader' as const,
       },
       stripeCustomerId: null,
       xenditCustomerId: null,
@@ -423,10 +415,7 @@ class CompanyService {
     };
   }
 
-  public async updateSubscription(
-    companyId: string,
-    input: PickUpdateCompanySubscription,
-  ) {
+  public async updateSubscription(companyId: string, input: PickUpdateCompanySubscription) {
     const company = await prisma.company.findUnique({
       where: { id: companyId },
       include: { currentSubscription: true },
@@ -435,7 +424,7 @@ class CompanyService {
     if (!company) return null;
 
     const now = new Date();
-    const billingCycle = input.billingCycle ?? "monthly";
+    const billingCycle = input.billingCycle ?? 'monthly';
     const plan = await ensurePlan(input.tier);
     const periodEnd = getPeriodEnd(billingCycle, now);
 
@@ -445,7 +434,7 @@ class CompanyService {
             where: { id: company.currentSubscription.id },
             data: {
               planId: plan.id,
-              status: "active",
+              status: 'active',
               currentPeriodStart: now,
               currentPeriodEnd: periodEnd,
             },
@@ -454,7 +443,7 @@ class CompanyService {
             data: {
               companyId,
               planId: plan.id,
-              status: "active",
+              status: 'active',
               currentPeriodStart: now,
               currentPeriodEnd: periodEnd,
             },
@@ -466,17 +455,13 @@ class CompanyService {
       });
     });
   }
-
-  public async updateProfile(
-    companyId: string,
-    input: PickUpdateCompanyProfile,
-  ) {
+  public async updateProfile(companyId: string, input: PickUpdateCompanyProfile) {
     const data: Record<string, string> = {};
     if (input.logo !== undefined) data.logo = input.logo;
     if (input.country !== undefined) data.country = input.country;
 
     if (Object.keys(data).length === 0) {
-      throw new Error("Tidak ada data yang diperbarui");
+      throw new Error('Tidak ada data yang diperbarui');
     }
 
     const company = await prisma.company.update({
@@ -486,6 +471,72 @@ class CompanyService {
 
     if (!company) return null;
     return company;
+  }
+
+  // v0.0.1 Working Hours — baca: semua member. Tulis: Owner only (guard di route).
+  public async getSettings(companyId: string) {
+    const [setting, policy] = await prisma.$transaction([
+      prisma.companySetting.findUnique({ where: { companyId } }),
+      prisma.companyPolicy.findUnique({ where: { companyId } }),
+    ]);
+
+    if (!setting) return null;
+
+    const fmt = (d: Date) => d.toISOString().slice(11, 16);
+    return {
+      workingHourStart: fmt(setting.workingHourStart),
+      workingHourEnd: fmt(setting.workingHourEnd),
+      workDays: setting.workDays,
+      respectWorkingHours: policy?.respectWorkingHours ?? true,
+      queueNotification: policy?.queueNotification ?? true,
+      queueEmail: policy?.queueEmail ?? true,
+    };
+  }
+
+  public async updateSettings(companyId: string, input: PickUpdateCompanySettings) {
+    const toTime = (v: string) => {
+      if (!/^\d{2}:\d{2}$/.test(v)) throw new Error('Format jam harus HH:mm');
+      return new Date(`1970-01-01T${v}:00.000Z`);
+    };
+
+    const settingData: Record<string, unknown> = {};
+    if (input.workingHourStart !== undefined)
+      settingData.workingHourStart = toTime(input.workingHourStart);
+    if (input.workingHourEnd !== undefined)
+      settingData.workingHourEnd = toTime(input.workingHourEnd);
+    if (input.workDays !== undefined) settingData.workDays = input.workDays;
+
+    const policyData: Record<string, unknown> = {};
+    if (input.respectWorkingHours !== undefined)
+      policyData.respectWorkingHours = input.respectWorkingHours;
+    if (input.queueNotification !== undefined)
+      policyData.queueNotification = input.queueNotification;
+
+    await prisma.$transaction(async (tx) => {
+      if (Object.keys(settingData).length > 0) {
+        await tx.companySetting.upsert({
+          where: { companyId },
+          create: {
+            companyId,
+            workingHourStart:
+              (settingData.workingHourStart as Date) ?? new Date('1970-01-01T09:00:00.000Z'),
+            workingHourEnd:
+              (settingData.workingHourEnd as Date) ?? new Date('1970-01-01T18:00:00.000Z'),
+            workDays: (settingData.workDays as string) ?? 'mon,tue,wed,thu,fri',
+          },
+          update: settingData as any,
+        });
+      }
+      if (Object.keys(policyData).length > 0) {
+        await tx.companyPolicy.upsert({
+          where: { companyId },
+          create: { companyId, ...(policyData as any) },
+          update: policyData as any,
+        });
+      }
+    });
+
+    return this.getSettings(companyId);
   }
 }
 
