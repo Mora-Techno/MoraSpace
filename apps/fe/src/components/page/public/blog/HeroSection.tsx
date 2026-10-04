@@ -66,7 +66,7 @@ const BlogSection: React.FC<BlogSectionProps> = () => {
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
              {['Semua', 'Produktivitas', 'AI Assistant', 'Product Update', 'Manajemen'].map((tag, i) => (
-                <button key={tag} className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${i === 0 ? 'bg-foreground text-background' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>
+                 <button key={tag} type="button" className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 ${i === 0 ? 'bg-foreground text-background' : 'bg-secondary/50 text-muted-foreground hover:bg-secondary'}`}>
                   {tag}
                 </button>
              ))}

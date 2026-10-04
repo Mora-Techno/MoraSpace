@@ -3,7 +3,12 @@ import Constants from 'expo-constants';
 
 import { store } from '@/stores/store';
 
+// @deprecated dead code — gunakan @repo/services via props.service. Jangan hapus file (histori).
 const BASE_URL = Constants.expoConfig?.extra?.BACKEND_URL;
+
+if (!BASE_URL && __DEV__) {
+  console.warn('AxiosClient: BACKEND_URL belum dikonfigurasi.');
+}
 
 const AxiosClient = axios.create({
   baseURL: BASE_URL,

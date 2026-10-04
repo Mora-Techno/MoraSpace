@@ -1,17 +1,17 @@
-"use client";
-import { View } from "react-native";
+'use client';
+import { View } from 'react-native';
 
-import LoginSection from "@/components/section/auth/login/page-section";
-import { useApi } from "@/hooks/service/useApi";
-import { useState } from "react";
-import { PickLogin } from "@repo/types";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import LoginSection from '@/components/section/auth/login/page-section';
+import { useApi } from '@/hooks/service/useApi';
+import { useState } from 'react';
+import { PickLogin } from '@repo/types';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
 const LoginContainer = () => {
   const api = useApi();
   const ns = useAppNameSpace();
   const [formLogin, setFormLogin] = useState<PickLogin>({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -20,7 +20,12 @@ const LoginContainer = () => {
 
   const handleLogin = () => {
     if (!formLogin.email || !formLogin.password) {
-      return null;
+      ns.alert.toast({
+        title: 'Validasi',
+        message: 'Email dan password wajib diisi',
+        icon: 'warning',
+      });
+      return;
     }
     const payload = formLogin;
     useLogin.mutate(payload);

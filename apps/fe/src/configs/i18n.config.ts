@@ -1,4 +1,4 @@
-import { InitOptions } from '../../node_modules/i18next';
+import type { InitOptions } from 'i18next';
 
 export const defaultNS = 'common';
 export const fallbackLng = 'en';

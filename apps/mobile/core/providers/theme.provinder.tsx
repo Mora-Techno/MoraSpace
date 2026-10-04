@@ -92,7 +92,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           setTheme(systemColorScheme === 'dark' ? 'dark' : 'light');
         }
       } catch (error) {
-        console.error('Error loading theme:', error);
+        if (__DEV__) console.error('Error loading theme:', error);
         setTheme(systemColorScheme === 'dark' ? 'dark' : 'light');
       } finally {
         setMounted(true);
@@ -112,7 +112,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       await AsyncStorage.setItem('theme', newTheme);
     } catch (error) {
-      console.error('Error saving theme:', error);
+      if (__DEV__) console.error('Error saving theme:', error);
     }
   };
 

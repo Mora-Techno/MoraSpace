@@ -45,7 +45,6 @@ class SettingsRouter {
       (c: AppContext) => SettingsController.TestingEmail(c),
       {
         body: TestEmailDto,
-        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Testing Send mail",
           description: "Mengirim Email Testing Ke User",

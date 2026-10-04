@@ -21,7 +21,7 @@ const Providers = composeProviders([
 export function AppProviders({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     Api.System.Ping().catch((err) => {
-      console.warn('Smart warming ping failed:', err);
+      if (__DEV__) console.warn('Smart warming ping failed:', err);
     });
   }, []);
 

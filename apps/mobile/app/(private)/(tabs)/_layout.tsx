@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { Home, Settings, User, CheckSquare, Calendar, FileText, Music } from 'lucide-react-native';
+import { CheckSquare, Calendar, FileText, Home, Music } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { useTheme } from '@/core/providers/theme.provinder';
@@ -92,32 +92,7 @@ export default function TabsLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: 'Profile',
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
-            >
-              <User size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
-            >
-              <Settings size={size} color={color} />
-            </View>
-          ),
-        }}
-      />
+      {/* Tabs.Screen profile/settings dihapus: tidak ada route-nya */}
     </Tabs>
   );
 }

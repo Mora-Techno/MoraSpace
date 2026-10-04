@@ -7,9 +7,14 @@ export function SimpleReactQueryDevtools() {
 
   return (
     <ScrollView style={{ padding: 10 }}>
-      <Button title="Log React Query Cache" onPress={() => console.log('Cache:', queries)} />
-      {queries.map((q, i) => (
-        <View key={i}>
+      <Button
+        title="Log React Query Cache"
+        onPress={() => {
+          if (__DEV__) console.log('Cache:', queries);
+        }}
+      />
+      {queries.map((q) => (
+        <View key={q.queryHash}>
           <Text>{q.queryHash}</Text>
         </View>
       ))}
