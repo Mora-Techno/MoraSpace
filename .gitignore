@@ -6,4 +6,5 @@ scripts
 /apps/fe/.env
 /apps/mobile/expo-env.d.ts
 /apps/mobile/.expo
-/graphify-out
+/graphify-out/cache
+/graphify-out/*.tmp
