@@ -6,6 +6,7 @@ import calendarRoutes from "./calendarRoutes";
 import musicRoutes from "./musicRoutes";
 import notificationRoutes from "./notificationRoutes";
 import companyRoutes from "./companyRoutes";
+import adminRoutes from "./adminRoutes";
 import subscriptionRoutes from "./subscriptionRoutes";
 import sessionRoutes from "./sessionRoutes";
 import departmentRoutes from "./departmentRoutes";
@@ -46,6 +47,7 @@ class ApiRouter {
       .use(metricsPlugin)
       .use(authRoutes)
       .use(companyRoutes)
+      .use(adminRoutes)
       .use(subscriptionRoutes)
       .use(todoRoutes)
       .use(noteRoutes)

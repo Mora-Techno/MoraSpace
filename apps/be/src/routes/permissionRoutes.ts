@@ -2,7 +2,9 @@ import Elysia from 'elysia';
 import RoleController from '@/controllers/RoleController';
 import { RoleParamsDto, UpdateRolePermissionsDto } from '@/dto/role.dto';
 import type { AppContext } from '@/contex';
-import { verifyToken } from '@/middlewares/auth';
+import { requireRole, verifyToken } from '@/middlewares/auth';
+
+// v0.0.1: permission granular frozen — seluruh domain hanya Owner (UI disembunyikan total).
 
 class PermissionRouter {
   public permissionRouter;
@@ -17,7 +19,7 @@ class PermissionRouter {
 
   private routes() {
     this.permissionRouter.get('/', (c: AppContext) => RoleController.listMasterPermissions(c), {
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Master Permission',
         description: 'Mengambil daftar seluruh hak akses sistem yang tersedia.',
@@ -29,7 +31,7 @@ class PermissionRouter {
       (c: AppContext) => RoleController.getRolePermissions(c),
       {
         params: RoleParamsDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
         detail: {
           summary: 'Daftar permission role via /permissions',
           description:
@@ -44,7 +46,7 @@ class PermissionRouter {
       {
         params: RoleParamsDto,
         body: UpdateRolePermissionsDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
         detail: {
           summary: 'Perbarui pemetaan permission via /permissions',
           description: 'Mengganti seluruh pemetaan hak akses pada peran (role ID) ini.',

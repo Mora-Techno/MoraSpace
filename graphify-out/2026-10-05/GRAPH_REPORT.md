@@ -1,16 +1,16 @@
-# Graph Report - Space  (2026-10-05)
+# Graph Report - Space  (2026-10-04)
 
 ## Corpus Check
-- 798 files · ~141,714 words
+- 792 files · ~138,956 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 3813 nodes · 10435 edges · 303 communities (164 shown, 139 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 345 edges (avg confidence: 0.79)
+- 3762 nodes · 10227 edges · 317 communities (175 shown, 142 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 331 edges (avg confidence: 0.79)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `e3c38aa2`
+- Built from commit: `b67aede9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -162,16 +162,21 @@
 - Nodemailer
 - Prisma
 - Repo Package
+- Sharp
 - Swagger
 - Types JWT
 - Types Nodemailer
+- Types Web Push
 - UUID
 - Prisma Client
 - Next Config
 - OpenTelemetry
 - Classnames
 - Clsx
+- CMDK
 - Cookies Next
+- Date Fns
+- Embla Carousel
 - Import Sort Plugin
 - Goey Toast
 - GSAP
@@ -193,6 +198,7 @@
 - Radix Select
 - Radix Separator
 - Radix Slot
+- React
 - React DOM
 - React Hook Form
 - React Hot Toast
@@ -201,10 +207,13 @@
 - Repo Package
 - Sonner
 - T3 Env
+- TanStack Query
 - Query Devtools
 - Tailwind Animate
 - PostCSS Config
+- Toast Notifications
 - Environment Types
+- Burnt Toast Library
 - Class Variance Authority
 - Class Name Utility
 - Expo Constants
@@ -221,6 +230,7 @@
 - Expo Vector Icons
 - Expo Web Browser
 - Lottie Animations
+- Lucide Icons
 - NativeWind Styling
 - React Core
 - React Native
@@ -255,6 +265,7 @@
 - Tempo Volume
 - Delete Response Type
 - burnt
+- SessionService
 - Notification/state/mutate.ts
 - @aejkatappaja/phantom-ui
 - plan2.md
@@ -289,37 +300,39 @@
 - @react-navigation/routers
 - sonner-native
 - @tanstack/react-query
+- .deleteSessionById
 - uuid
 - expo-image
 - shared/utils/log.ts
 - cmdk
 - SessionService
+- burnt
 - pre-commit
 - class-variance-authority
 
 ## God Nodes (most connected - your core abstractions)
-1. `AppContext` - 192 edges
+1. `AppContext` - 183 edges
 2. `cn()` - 182 edges
-3. `HttpResponse()` - 178 edges
-4. `TResponse` - 157 edges
-5. `toServiceResponse()` - 153 edges
-6. `error()` - 131 edges
-7. `getUser()` - 131 edges
-8. `useAppMutation` - 99 edges
+3. `HttpResponse()` - 170 edges
+4. `TResponse` - 150 edges
+5. `toServiceResponse()` - 146 edges
+6. `getUser()` - 129 edges
+7. `error()` - 124 edges
+8. `useAppMutation` - 94 edges
 9. `useAppMutation` - 79 edges
-10. `useApi()` - 76 edges
+10. `useApi()` - 74 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `createAppMutationHook()` --indirect_call--> `error()`  [INFERRED]
   packages/shared/react-query/useAppMutation.ts → apps/be/src/contracts/api-regression.test.ts
-- `roleType` --references--> `CompanyRole`  [EXTRACTED]
-  apps/be/src/utils/roleHelper.ts → packages/shared/types/company.types.ts
 - `SubscriptionPlan` --references--> `SubscriptionTier`  [EXTRACTED]
   apps/be/src/config/subscriptionPlans.ts → packages/shared/types/company.types.ts
 - `AppContext` --references--> `JwtPayload`  [EXTRACTED]
   apps/be/src/contex/index.ts → packages/shared/types/auth.types.ts
 - `registerForPushNotificationsAsync()` --indirect_call--> `error()`  [INFERRED]
   apps/mobile/service/notification.service.ts → apps/be/src/contracts/api-regression.test.ts
+- `roleType` --references--> `CompanyRole`  [EXTRACTED]
+  apps/be/src/utils/roleHelper.ts → packages/shared/types/company.types.ts
 
 ## Import Cycles
 - None detected.
@@ -328,31 +341,35 @@
 - **Observability Stack** — docker_compose_alloy, docker_compose_tempo, docker_compose_loki, docker_compose_grafana [EXTRACTED 1.00]
 - **Application Stack** — apps_be, apps_fe, apps_mobile [INFERRED 0.80]
 
-## Communities (303 total, 139 thin omitted)
+## Communities (317 total, 142 thin omitted)
 
 ### Community 0 - "Calendar and Notes"
-Cohesion: 0.20
+Cohesion: 0.21
 Nodes (16): TasksContainer(), TaskSection(), useAddTaskAttachment(), useAddTaskComment(), useAssignTask(), useCreateTask(), useCreateTaskChecklist(), useDeleteTask() (+8 more)
 
 ### Community 1 - "Auth and Endpoints"
 Cohesion: 0.06
-Nodes (29): TaskSectionProps, ADMIN_COMPANY_ENDPOINTS, MUSIC_ENDPOINTS, NOTE_ENDPOINTS, TASK_ENDPOINTS, AppMutationConfig, BaseAppNameSpace, createAppMutationHook() (+21 more)
+Nodes (34): TaskSectionProps, CatalogReviewSectionProps, DEPARTMENT_ENDPOINTS, TASK_ENDPOINTS, AppMutationConfig, BaseAppNameSpace, createAppMutationHook(), AuthService (+26 more)
 
 ### Community 2 - "App and Auth DTOs"
-Cohesion: 0.09
-Nodes (24): app, connectWithRetry(), disconnectDatabase(), _env, envSchema, shutdown(), processNotificationQueue(), startNotificationQueueRunner() (+16 more)
+Cohesion: 0.13
+Nodes (17): _env, envSchema, mapTrack(), TrackCatalogService, createMailTransport(), formatMailError(), getMailFromAddress(), getTransport() (+9 more)
 
 ### Community 3 - "Department and Member"
-Cohesion: 0.07
-Nodes (24): AppContext, error(), AuthController, CalendarController, DepartmentController, MemberController, MusicController, NoteController (+16 more)
+Cohesion: 0.12
+Nodes (11): DepartmentController, MemberController, TaskController, TeamController, DepartmentRouter, MemberRouter, TaskRouter, TeamRouter (+3 more)
 
 ### Community 4 - "UI Components"
-Cohesion: 0.06
-Nodes (62): AccordionContent(), AccordionItem(), AccordionTrigger(), AvatarImage(), CardFooter(), DialogOverlay(), NavigationMenu(), NavigationMenuContent() (+54 more)
+Cohesion: 0.03
+Nodes (105): AccordionContent(), AccordionItem(), AccordionTrigger(), ButtonProps, buttonVariants, Calendar(), CardFooter(), Command() (+97 more)
 
 ### Community 5 - "Config and Calendar DTOs"
-Cohesion: 0.11
-Nodes (11): MagicLinkContainer(), CompanyAdminContainer(), OwnerCompanyMemberContainer(), CompanyTeamContainer(), CompanyPermissionContainer(), CompanyPositionContainer(), MagicLinkSectionProps, useAlert() (+3 more)
+Cohesion: 0.36
+Nodes (5): NoteListSectionProps, NOTE_ENDPOINTS, NoteService, Note, NoteQuery
+
+### Community 6 - "Controllers Mix"
+Cohesion: 0.13
+Nodes (7): NoteController, PomodoroController, TrackCatalogController, NoteRouter, PomodoroRouter, TrackCatalogRouter, personalContextValidate()
 
 ### Community 7 - "Auth Pages and Dashboard"
 Cohesion: 0.27
@@ -363,52 +380,48 @@ Cohesion: 0.04
 Nodes (48): devDependencies, autoprefixer, babel-plugin-module-resolver, @babel/plugin-transform-react-jsx, babel-preset-expo, eslint, eslint-config-expo, eslint-plugin-simple-import-sort (+40 more)
 
 ### Community 9 - "API Endpoints Config"
-Cohesion: 0.08
-Nodes (34): buildEndpoint(), listEndpoints(), AUTH_ENDPOINTS, listAuthEndpoints(), listCalendarEndpoints(), COMPANY_ENDPOINTS, listCompanyEndpoints(), listDepartmentEndpoints() (+26 more)
+Cohesion: 0.09
+Nodes (33): buildEndpoint(), listEndpoints(), AUTH_ENDPOINTS, listAuthEndpoints(), listCalendarEndpoints(), COMPANY_ENDPOINTS, listCompanyEndpoints(), listDepartmentEndpoints() (+25 more)
 
 ### Community 10 - "Frontend Dev Dependencies"
 Cohesion: 0.06
 Nodes (35): devDependencies, bun-types, eslint, eslint-config-next, eslint-config-prettier, @eslint/eslintrc, eslint-import-resolver-typescript, eslint-plugin-import (+27 more)
 
 ### Community 11 - "Role and Company State"
-Cohesion: 0.48
-Nodes (3): SESSION_ENDPOINT, SessionService, Session
+Cohesion: 0.35
+Nodes (5): SESSION_ENDPOINT, SessionService, ISession, Session, SessionQuery
 
 ### Community 12 - "Biome Config"
 Cohesion: 0.04
 Nodes (46): source, assist, actions, noUnusedVariables, files, includes, formatter, enabled (+38 more)
 
 ### Community 13 - "Settings and Dropdown UI"
-Cohesion: 0.08
-Nodes (28): SettingsContainer(), DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator() (+20 more)
+Cohesion: 0.16
+Nodes (13): DropdownMenu(), DropdownMenuCheckboxItem(), DropdownMenuContent(), DropdownMenuItem(), DropdownMenuLabel(), DropdownMenuRadioItem(), DropdownMenuSeparator(), DropdownMenuShortcut() (+5 more)
 
 ### Community 14 - "API Response Types"
 Cohesion: 0.20
-Nodes (17): DelResponse, GetResponse, PatchResponse, PostResponse, PublicGetResponse, PublicPostResponse, PutResponse, useMutationWrapper() (+9 more)
+Nodes (18): DelResponse, GetResponse, PatchResponse, PostResponse, PublicGetResponse, PublicPostResponse, PutResponse, QueryValue (+10 more)
 
 ### Community 15 - "Notes UI"
-Cohesion: 0.05
-Nodes (45): Avatar(), AvatarFallback(), Badge(), badgeVariants, CardContent(), CardDescription(), CardHeader(), CardTitle() (+37 more)
+Cohesion: 0.06
+Nodes (39): SessionWithProfile, FocusToggle(), FocusToggleProps, Skeleton(), TimerDisplay(), TimerDisplayProps, WidgetHeader(), WidgetHeaderProps (+31 more)
 
 ### Community 16 - "Alert and Button UI"
 Cohesion: 0.09
 Nodes (34): AlertDialogAction(), AlertDialogCancel(), AlertDialogContent(), AlertDialogDescription(), AlertDialogFooter(), AlertDialogHeader(), AlertDialogOverlay(), AlertDialogTitle() (+26 more)
 
 ### Community 17 - "Subscription and Stripe"
-Cohesion: 0.11
-Nodes (19): getPeriodEnd(), getPlan(), getPlanPrice(), PaymentProvider, PlanPrice, SUBSCRIPTION_PLANS, SubscriptionPlan, StripeService (+11 more)
+Cohesion: 0.23
+Nodes (14): getPeriodEnd(), getPlan(), getPlanPrice(), PaymentProvider, PlanPrice, SUBSCRIPTION_PLANS, SubscriptionPlan, XenditInvoiceResponse (+6 more)
 
 ### Community 18 - "Calendar UI"
-Cohesion: 0.04
-Nodes (49): DashboardContainer(), SessionWithProfile, MusicContainer(), FocusToggle(), FocusToggleProps, TimerDisplay(), TimerDisplayProps, WidgetHeader() (+41 more)
-
-### Community 19 - "Company and Team Services"
-Cohesion: 0.16
-Nodes (7): TeamService, WORKSTATION_USER_LIMITS, PickAddTeamMember, PickCreateTeam, PickUpdateTeam, TeamQuery, PickInviteMember
+Cohesion: 0.13
+Nodes (16): MusicContainer(), FloatingMusicPlayer(), QueuePanel(), sendPlayerCommand(), toEmbedUrl(), useYouTubeOnEnded(), buildShuffledQueue(), fisherYatesShuffle() (+8 more)
 
 ### Community 20 - "Command and Dialog UI"
 Cohesion: 0.07
-Nodes (20): CalendarContainer(), TodosContainer(), Sheet(), SheetContent(), SheetDescription(), SheetFooter(), SheetHeader(), SheetOverlay() (+12 more)
+Nodes (30): AdminRow(), AdminRowProps, getInitials(), GhibliTab, GhibliTabs(), GhibliTabsProps, getInitials(), MemberRow() (+22 more)
 
 ### Community 21 - "Frontend TypeScript Config"
 Cohesion: 0.06
@@ -419,20 +432,20 @@ Cohesion: 0.06
 Nodes (34): @biomejs/biome, dependencies, axios, @sinclair/typebox, @tanstack/react-query, @tanstack/react-query-devtools, devDependencies, @biomejs/biome (+26 more)
 
 ### Community 23 - "Auth Service"
-Cohesion: 0.44
-Nodes (10): useForgotPassword(), useLogin(), useLogout(), useRegister(), useResetPassword(), useSendMagicLink(), useVerifyMagicLink(), AuthCacheContext (+2 more)
+Cohesion: 0.10
+Nodes (30): AuthService, AUTH_EXPIRY, generateOtp(), generateSecureToken(), getMagicLinkExpiry(), getOtpExpiry(), sanitizeUser(), resolveAuthUser() (+22 more)
 
 ### Community 24 - "Todo State Management"
 Cohesion: 0.19
 Nodes (14): TListResponse, TPagedList, TPagedListResponse, apiDelete(), apiGet(), apiPatch(), apiPost(), apiPut() (+6 more)
 
 ### Community 25 - "Server Fetch and Auth"
-Cohesion: 0.29
+Cohesion: 0.28
 Nodes (9): CatalogReviewContainer(), CatalogReviewSection(), useApproveTrack(), useDeleteTrack(), useRejectTrack(), useSubmitTrack(), usePendingTracks(), useTrackCatalogList() (+1 more)
 
 ### Community 26 - "Music and Home"
-Cohesion: 0.08
-Nodes (10): BlogsContainer(), PricingContainer(), ResourceContainer(), ARTICLES, BlogSectionProps, PLANS, PricingSectionSection, CATEGORIES (+2 more)
+Cohesion: 0.07
+Nodes (20): NotesContainer(), BlogsContainer(), ContainerHome(), PricingContainer(), ResourceContainer(), ARTICLES, BlogSectionProps, CtaSection() (+12 more)
 
 ### Community 27 - "Expo App Config"
 Cohesion: 0.07
@@ -440,11 +453,11 @@ Nodes (28): backgroundColor, backgroundImage, foregroundImage, monochromeImage, 
 
 ### Community 28 - "App Layout and Theme"
 Cohesion: 0.09
-Nodes (19): PrivateLayout(), MobileCalendarContainer(), TabsLayout(), MobileNotesContainer(), LoginPage(), ThemeToggle(), ColorConfig, ThemeConfig (+11 more)
+Nodes (17): MobileCalendarContainer(), HomePageContainer(), TabsLayout(), MobileNotesContainer(), MobileTodoContainer(), LoginPage(), HomePageSection(), ThemeToggle() (+9 more)
 
 ### Community 29 - "Auth Forms"
-Cohesion: 0.10
-Nodes (15): NoteDetailContainer(), NoteModal(), NoteModalProps, QuickNoteModalProps, QuickAddFabProps, QuickNotesSection(), QuickNotesSectionProps, NoteEditorSection() (+7 more)
+Cohesion: 0.05
+Nodes (27): CalendarContainer(), NotificationsContainer(), SheetTrigger(), NoteModal(), TodoCheckbox(), TodoCheckboxProps, TodoListItem(), TodoListItemProps (+19 more)
 
 ### Community 30 - "Backend TypeScript Config"
 Cohesion: 0.07
@@ -459,48 +472,48 @@ Cohesion: 0.07
 Nodes (27): devDependencies, bun-types, eslint, eslint-config-prettier, eslint-plugin-prettier, prettier, ts-node, @types/bcryptjs (+19 more)
 
 ### Community 33 - "Session Management"
-Cohesion: 0.17
-Nodes (12): NotesContainer(), ContainerHome(), CtaSection(), FEATURES, FeaturesSection(), HeroSection(), TAGS, ShowcaseSection() (+4 more)
+Cohesion: 0.33
+Nodes (3): EventDetailContainer(), toLocalInput(), EventDetailSection()
 
 ### Community 34 - "Auth Containers"
-Cohesion: 0.24
-Nodes (18): useAdminActivateCompany(), useAdminCreateCompany(), useAdminSetCompanyPlan(), useAdminSuspendCompany(), useCreateAdmin(), useDeleteAdmin(), useRegisterCompany(), useUpdateCompanyProfile() (+10 more)
+Cohesion: 0.33
+Nodes (11): useCreateAdmin(), useDeleteAdmin(), useRegisterCompany(), useUpdateCompanyProfile(), useUpdateCompanySubscription(), useGetMyCompany(), useListAdmins(), CompanyCacheContext (+3 more)
 
 ### Community 35 - "Auth Token and Session"
 Cohesion: 0.14
 Nodes (34): buildBaseHeaders(), clearTokens(), COOKIE_KEYS, coreFetch(), coreFetchResponse(), Del(), DelResponse(), _doRefreshOnce() (+26 more)
 
 ### Community 36 - "Calendar, Note, Todo Controllers"
-Cohesion: 0.14
-Nodes (17): COMPANY_ROLE_REGISTRY, CompanyRoleOption, getCompanyRoleBySlug(), MANAGED_COMPANY_ROLES, IAuth, CompanyParams, CompanyRespone, CompanyRole (+9 more)
+Cohesion: 0.12
+Nodes (19): roleType, IAuth, CompanyParams, CompanyRespone, CompanyRole, ICompany, SafeUser, PaymentInfo (+11 more)
 
 ### Community 37 - "Query Keys and Configs"
-Cohesion: 0.40
-Nodes (9): useCreateNote(), useDeleteNote(), useUpdateNote(), useNote(), useNotes(), NoteCacheContext, readNoteDetailSnapshot(), readNoteListSnapshot() (+1 more)
+Cohesion: 0.18
+Nodes (12): NoteService, EditNoteDialogProps, useCreateNote(), useDeleteNote(), useUpdateNote(), useNote(), useNotes(), NoteCacheContext (+4 more)
 
 ### Community 38 - "App Layout and Providers"
-Cohesion: 0.25
-Nodes (6): CatalogReviewSectionProps, TrackCatalogService, PickReviewTrack, PickSubmitTrack, TrackCatalog, TrackCatalogQuery
+Cohesion: 0.15
+Nodes (7): AppContext, AuthController, InvitationController, PlatformRole, requirePlatformRole(), AuthRouter, InvitationRouter
 
 ### Community 39 - "Alert and Notification State"
 Cohesion: 0.25
 Nodes (17): NotificationListSectionProps, useMarkAllRead(), useMarkRead(), useSendNotification(), useNotification(), useNotificationLogs(), useNotifications(), NotificationCacheContext (+9 more)
 
 ### Community 40 - "Mobile Pages"
-Cohesion: 0.17
-Nodes (14): HomeContainer(), SectionHomePage(), Card(), CardContent(), CardDescription(), CardFooter(), CardHeader(), CardTitle() (+6 more)
+Cohesion: 0.14
+Nodes (15): HomeContainer(), SectionHomePage(), Card(), CardContent(), CardDescription(), CardFooter(), CardHeader(), CardTitle() (+7 more)
 
 ### Community 41 - "API Client Setup"
 Cohesion: 0.12
 Nodes (23): BASE_URL, AuthErrorHandler, BaseURLProvider, buildApiUrl(), buildBaseHeaders(), clientCoreFetch(), clientCoreFetchResponse(), ClientDel() (+15 more)
 
 ### Community 42 - "Role Service"
-Cohesion: 0.13
-Nodes (9): RoleService, RoleService, IPermission, IRole, PermissionQuery, PickCreateRole, PickUpdateRole, PickUpdateRolePermissions (+1 more)
+Cohesion: 0.25
+Nodes (9): ROLE_ENDPOINTS, RoleService, IPermission, IRole, PermissionQuery, PickCreateRole, PickUpdateRole, PickUpdateRolePermissions (+1 more)
 
 ### Community 43 - "Sitemap and App Config"
 Cohesion: 0.13
-Nodes (15): generateSitemap(), GET(), AppConfig, AUTH_ROUTES, NavigationMenuConfig, PropsParams, PUBLIC_ROUTES, RegisterConfigRoutes (+7 more)
+Nodes (15): DashboardContainer(), generateSitemap(), GET(), AppConfig, AUTH_ROUTES, PropsParams, PUBLIC_ROUTES, RegisterConfigRoutes (+7 more)
 
 ### Community 44 - "Alert Dialog Atoms"
 Cohesion: 0.16
@@ -511,40 +524,40 @@ Cohesion: 0.08
 Nodes (23): compilerOptions, esModuleInterop, isolatedModules, jsx, lib, module, moduleResolution, noEmit (+15 more)
 
 ### Community 46 - "Music Controller"
-Cohesion: 0.35
+Cohesion: 0.33
 Nodes (9): useCreateNote(), useDeleteNote(), useUpdateNote(), useNote(), useNotes(), useNotess(), NoteCacheContext, readNoteDetailSnapshot() (+1 more)
 
 ### Community 47 - "Invitation Service"
-Cohesion: 0.19
-Nodes (7): InvitationService, InvitationService, IInvitation, InvitationQuery, PickAcceptInvitation, PickCreateInvitation, PickRejectInvitation
+Cohesion: 0.27
+Nodes (6): InvitationService, IInvitation, InvitationQuery, PickAcceptInvitation, PickCreateInvitation, PickRejectInvitation
 
 ### Community 48 - "UI Input and Navigation"
-Cohesion: 0.22
-Nodes (20): useCreateAdmin(), useDeleteAdmin(), useRegisterCompany(), useUpdateCompanyProfile(), useUpdateCompanySubscription(), useAddTaskAttachment(), useAddTaskComment(), useAssignTask() (+12 more)
+Cohesion: 0.31
+Nodes (14): useAddTaskAttachment(), useAddTaskComment(), useAssignTask(), useCreateTask(), useCreateTaskChecklist(), useDeleteTask(), useUpdateTask(), useUpdateTaskStatus() (+6 more)
 
 ### Community 49 - "Subscription State"
-Cohesion: 0.12
-Nodes (15): BillingContainer(), BillingSection(), BillingSectionProps, BillingCycle, CheckoutData, CreateCheckoutInput, PaymentInfo, PaymentProvider (+7 more)
+Cohesion: 0.11
+Nodes (20): BillingContainer(), BillingSection(), BillingSectionProps, useCancelSubscription(), useCreateCheckout(), useSubscription(), useSubscriptionPlans(), useSubscription() (+12 more)
 
 ### Community 50 - "Music and Settings State"
-Cohesion: 0.27
-Nodes (5): PomodoroService, IPomodoroSession, PickStartPomodoro, PickStopPomodoro, PomodoroQuery
+Cohesion: 0.35
+Nodes (6): CreateRoleDto, PermissionQueryDto, RoleParamsDto, RoleQueryDto, UpdateRoleDto, UpdateRolePermissionsDto
 
 ### Community 51 - "Turbo Tasks"
 Cohesion: 0.10
 Nodes (19): ^lint, !.next/cache/**, dependsOn, outputs, cache, persistent, cache, ^build (+11 more)
 
 ### Community 52 - "UI Toast and Alert"
-Cohesion: 0.08
-Nodes (44): Button(), Card(), CardAction(), Dialog(), DialogContent(), DialogDescription(), DialogFooter(), DialogHeader() (+36 more)
+Cohesion: 0.07
+Nodes (42): NoteDetailContainer(), CompanyContainer(), formatDate(), TIER_STYLES, Button(), Card(), CardAction(), CardContent() (+34 more)
 
 ### Community 53 - "Mobile UI Components"
-Cohesion: 0.13
-Nodes (17): LoginPageProps, AlertModal(), AlertModalInternalProps, iconMap, styles, { width }, iconMap, styles (+9 more)
+Cohesion: 0.10
+Nodes (21): LoginPageProps, AlertModal(), AlertModalInternalProps, iconMap, styles, { width }, PopUp(), styles (+13 more)
 
 ### Community 54 - "Redux Auth Store"
-Cohesion: 0.27
-Nodes (4): TEAM_ENDPOINTS, TeamService, ITeam, PickInviteTeamMember
+Cohesion: 0.20
+Nodes (9): CompanyTeamSectionProps, TEAM_ENDPOINTS, TeamService, ITeam, PickAddTeamMember, PickCreateTeam, PickInviteTeamMember, PickUpdateTeam (+1 more)
 
 ### Community 55 - "Frontend Components Config"
 Cohesion: 0.11
@@ -555,12 +568,12 @@ Cohesion: 0.21
 Nodes (14): ALL_NAV_ITEMS, getMobileNavGroups(), getMobileNavItems(), getNavItems(), isMobileNavItem(), MEMBER_WORKSPACE_ITEMS, MOBILE_NAV_ITEMS, MobileNavItem (+6 more)
 
 ### Community 58 - "Task State Management"
-Cohesion: 0.25
-Nodes (11): ForgotPasswordDto, LoginDto, RefreshTokenDto, RegisterDto, ResetPasswordDto, SendMagicLinkDto, SendOtpDto, UserQueryDto (+3 more)
+Cohesion: 0.32
+Nodes (10): ForgotPasswordDto, LoginDto, RefreshTokenDto, RegisterDto, ResetPasswordDto, SendMagicLinkDto, SendOtpDto, UserQueryDto (+2 more)
 
 ### Community 59 - "Member Service"
-Cohesion: 0.13
-Nodes (9): MemberService, MEMBER_ENDPOINTS, MemberService, EmploymentTypeOption, ICompanyMember, MemberQuery, PickUpdateCompanyMember, PickUpdateMemberContacts (+1 more)
+Cohesion: 0.11
+Nodes (11): MemberService, MEMBER_ENDPOINTS, MemberService, CompanyMemberStatus, EmploymentTypeOption, ICompanyMember, MemberContactItem, MemberQuery (+3 more)
 
 ### Community 60 - "Position Service"
 Cohesion: 0.20
@@ -575,20 +588,20 @@ Cohesion: 0.12
 Nodes (15): aliases, components, hooks, lib, ui, utils, rsc, $schema (+7 more)
 
 ### Community 63 - "Pomodoro Controller"
-Cohesion: 0.11
-Nodes (17): DEFAULT_EMPLOYMENT_TYPES, DEFAULT_TASK_PRIORITIES, DEFAULT_TASK_STATUSES, AuthService, CompanyService, sanitizeUser(), resolveAuthUser(), resolveCompanyRole() (+9 more)
+Cohesion: 0.17
+Nodes (11): DEFAULT_EMPLOYMENT_TYPES, DEFAULT_TASK_PRIORITIES, DEFAULT_TASK_STATUSES, CompanyService, resolveCompanyRole(), slugify(), toSafeAuthUser(), uniqueCompanySlug() (+3 more)
 
 ### Community 64 - "Role State"
 Cohesion: 0.33
 Nodes (11): useCreateRole(), useDeleteRole(), useUpdateRole(), useUpdateRolePermissions(), useGetRolePermissions(), useListMasterPermissions(), useListRoles(), readRoleSnapshot() (+3 more)
 
 ### Community 65 - "Member State"
-Cohesion: 0.36
-Nodes (10): useDeleteMember(), useUpdateContacts(), useUpdateMember(), useUpdateProfile(), useGetContacts(), useGetMember(), useGetProfile(), useListMembers() (+2 more)
+Cohesion: 0.29
+Nodes (12): useDeleteMember(), useUpdateContacts(), useUpdateMember(), useUpdateProfile(), useGetContacts(), useGetMember(), useGetProfile(), useListMembers() (+4 more)
 
 ### Community 66 - "Team State"
-Cohesion: 0.33
-Nodes (11): useAddTeamMember(), useCreateTeam(), useDeleteTeam(), useRemoveTeamMember(), useUpdateTeam(), useListTeamMembers(), useListTeams(), useTeam() (+3 more)
+Cohesion: 0.40
+Nodes (9): useAddTeamMember(), useCreateTeam(), useDeleteTeam(), useRemoveTeamMember(), useUpdateTeam(), useListTeamMembers(), useListTeams(), useTeam() (+1 more)
 
 ### Community 67 - "Mobile TypeScript Config"
 Cohesion: 0.13
@@ -603,68 +616,64 @@ Cohesion: 0.13
 Nodes (14): name, scripts, build, dev, format, format:check, lint, lint:fix (+6 more)
 
 ### Community 70 - "Auth Controller Routes"
-Cohesion: 0.30
-Nodes (11): TaskViewer, PickAddTaskAttachment, PickAddTaskComment, PickAssignTask, PickCreateTask, PickCreateTaskChecklist, PickUpdateTask, PickUpdateTaskStatus (+3 more)
+Cohesion: 0.38
+Nodes (10): PickAddTaskAttachment, PickAddTaskComment, PickAssignTask, PickCreateTask, PickCreateTaskChecklist, PickUpdateTask, PickUpdateTaskStatus, TaskPriorityOption (+2 more)
 
 ### Community 71 - "Invitation Controller"
-Cohesion: 0.42
-Nodes (8): useAddPlaylistItem(), useCreatePlaylist(), useDeletePlaylist(), useDeletePlaylistItem(), usePlaylists(), MusicCacheContext, readPlaylistSnapshot(), useMusic()
+Cohesion: 0.52
+Nodes (5): AcceptInvitationDto, CreateInvitationDto, InvitationParamsDto, InvitationQueryDto, RejectInvitationDto
 
 ### Community 72 - "Position Controller"
-Cohesion: 0.43
-Nodes (3): TestEmailDto, UpdateSettingsDto, SettingsRouter
-
-### Community 73 - "Subscription Controller"
-Cohesion: 0.15
-Nodes (8): MobileMusicContainer(), useCreatePlaylist(), useDeletePlaylist(), usePlaylists(), useMusic(), NativeAudioService, MusicCacheContext, readPlaylistSnapshot()
+Cohesion: 0.26
+Nodes (5): SettingsController, TestEmailDto, UpdateSettingsDto, verifyToken(), SettingsRouter
 
 ### Community 74 - "Carousel UI"
-Cohesion: 0.13
-Nodes (17): ButtonProps, buttonVariants, Calendar(), Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps (+9 more)
+Cohesion: 0.20
+Nodes (13): Carousel(), CarouselApi, CarouselContent(), CarouselContext, CarouselContextProps, CarouselItem(), CarouselNext(), CarouselOptions (+5 more)
 
 ### Community 75 - "Role State"
-Cohesion: 0.38
-Nodes (9): useCreateRole(), useDeleteRole(), useUpdateRole(), useUpdateRolePermissions(), useGetRolePermissions(), useListMasterPermissions(), useListRoles(), useRole() (+1 more)
+Cohesion: 0.30
+Nodes (11): useCreateRole(), useDeleteRole(), useUpdateRole(), useUpdateRolePermissions(), useGetRolePermissions(), useListMasterPermissions(), useListRoles(), useRole() (+3 more)
 
 ### Community 76 - "Mobile Dependencies"
 Cohesion: 0.12
-Nodes (17): dependencies, burnt, expo-font, expo-system-ui, @expo/vector-icons, react-native-keyboard-aware-scroll-view, react-native-reanimated, react-native-worklets (+9 more)
+Nodes (17): dependencies, @babel/runtime, expo-font, expo-system-ui, @expo/vector-icons, react-native-keyboard-aware-scroll-view, react-native-reanimated, react-native-worklets (+9 more)
 
 ### Community 77 - "Shared React Query"
-Cohesion: 0.28
-Nodes (4): CompanyRegisterFormSectionProps, RegisterFormSectionProps, PickRegister, PickRegisterCompany
+Cohesion: 0.16
+Nodes (3): StripeService, SubscriptionService, XenditService
 
 ### Community 78 - "UI Dependencies"
 Cohesion: 0.06
 Nodes (33): @aejkatappaja/phantom-ui, dependencies, @aejkatappaja/phantom-ui, classnames, date-fns, embla-carousel-react, lenis, next-themes (+25 more)
 
 ### Community 79 - "Private Layout and Auth"
-Cohesion: 0.16
-Nodes (15): useDeleteSessionAll(), useDeleteSessionById(), useGetSession(), useListSessions(), useSession(), useCancelSubscription(), useCreateCheckout(), useSubscription() (+7 more)
+Cohesion: 0.13
+Nodes (21): useCreatePlaylist(), useDeletePlaylist(), usePlaylists(), useMusic(), useDeleteSessionAll(), useDeleteSessionById(), useGetSession(), useListSessions() (+13 more)
 
 ### Community 80 - "Member State"
 Cohesion: 0.30
 Nodes (12): useDeleteMember(), useUpdateContacts(), useUpdateMember(), useUpdateProfile(), useGetContacts(), useGetMember(), useGetProfile(), useListMembers() (+4 more)
 
 ### Community 81 - "Pomodoro State"
-Cohesion: 0.21
+Cohesion: 0.20
 Nodes (12): PomodoroContainer(), PomodoroSection(), usePausePomodoroSession(), useResumePomodoroSession(), useStartPomodoroSession(), useStopPomodoroSession(), useGetPomodoroStatistics(), useGetTodayFocus() (+4 more)
 
 ### Community 82 - "Note State"
-Cohesion: 0.39
-Nodes (4): DEPARTMENT_ENDPOINTS, DepartmentService, DepartmentQuery, IDepartment
+Cohesion: 0.26
+Nodes (13): TODO: petakan SafeAuthUser -> userSchema saat kontrak backend stabil., useLogin(), useLogout(), useRegister(), useAuth(), useCreateAdmin(), useDeleteAdmin(), useRegisterCompany() (+5 more)
 
 ### Community 83 - "Pomodoro State"
-Cohesion: 0.33
+Cohesion: 0.32
 Nodes (10): usePausePomodoroSession(), useResumePomodoroSession(), useStartPomodoroSession(), useStopPomodoroSession(), useGetPomodoroStatistics(), useGetTodayFocus(), usePomodoro(), podomoroRoot (+2 more)
 
 ### Community 84 - "Task Service"
-Cohesion: 0.12
-Nodes (14): NoteService, EditNoteDialogProps, EventParams, ICalendarEvent, IMusicPlaylist, PickAddMusicItem, PlaylistParams, INote (+6 more)
+Cohesion: 0.07
+Nodes (42): CalendarService, mapEvent(), mapTodo(), TodoService, PlayListModalProps, TodoCreateModalProps, TodoDetailSectionProps, TODO_ENDPOINTS (+34 more)
 
 ### Community 85 - "Auth State"
 Cohesion: 0.04
-Nodes (40): ForgotPasswordContainer(), LoginContainer(), RegisterCompanyContainer(), RegisterEmployContainer(), ResetPasswordContainer(), AddDocContainer(), AdminCompaniesContainer(), EventDetailContainer() (+32 more)
+Nodes (32): ForgotPasswordContainer(), LoginContainer(), MagicLinkContainer(), RegisterCompanyContainer(), RegisterEmployContainer(), ResetPasswordContainer(), AddDocContainer(), NotificationDetailContainer() (+24 more)
 
 ### Community 86 - "Calendar State"
 Cohesion: 0.36
@@ -675,19 +684,19 @@ Cohesion: 0.17
 Nodes (13): DepartmentService, useCreateDepartment(), useDeleteDepartment(), useUpdateDepartment(), useGetDepartment(), useListDepartments(), DepartmentCacheContext, departmentRootKey (+5 more)
 
 ### Community 88 - "Invitation State"
-Cohesion: 0.41
+Cohesion: 0.37
 Nodes (9): useAcceptInvitation(), useCreateInvitation(), useDeleteInvitation(), useRejectInvitation(), useListInvitations(), InvitationCacheContext, invitationsRootKey, readInvitationSnapshot() (+1 more)
 
 ### Community 90 - "Team State"
-Cohesion: 0.35
-Nodes (12): useAddTeamMember(), useCreateTeam(), useDeleteTeam(), useInviteTeamMember(), useRemoveTeamMember(), useUpdateTeam(), useListTeamMembers(), useListTeams() (+4 more)
+Cohesion: 0.21
+Nodes (21): useForgotPassword(), useLogin(), useLogout(), useRegister(), useResetPassword(), useSendMagicLink(), useVerifyMagicLink(), useAuth() (+13 more)
 
 ### Community 91 - "Department State"
-Cohesion: 0.33
+Cohesion: 0.32
 Nodes (9): useCreateDepartment(), useDeleteDepartment(), useUpdateDepartment(), useGetDepartment(), useListDepartments(), useDepartment(), DepartmentCacheContext, departmentRootKey (+1 more)
 
 ### Community 92 - "Invitation State"
-Cohesion: 0.36
+Cohesion: 0.33
 Nodes (9): useAcceptInvitation(), useCreateInvitation(), useDeleteInvitation(), useRejectInvitation(), useListInvitations(), useInvitation(), InvitationCacheContext, invitationsRootKey (+1 more)
 
 ### Community 93 - "Task Controller and Types"
@@ -703,20 +712,20 @@ Cohesion: 0.25
 Nodes (4): NotFound(), BlankLayout(), Props, blankLayoutClasses
 
 ### Community 96 - "Position State"
-Cohesion: 0.42
+Cohesion: 0.38
 Nodes (8): useCreatePosition(), useDeletePosition(), useUpdatePosition(), useListPositions(), PositionCacheContext, positionsRoot, readPositionSnapshot(), usePosition()
 
 ### Community 97 - "Notification State"
-Cohesion: 0.10
-Nodes (18): composeProviders(), ProviderComponent, ProviderProps, nunito, playfair, metadata, siteConfig, AppProviders() (+10 more)
+Cohesion: 0.13
+Nodes (12): composeProviders(), ProviderComponent, ProviderProps, nunito, playfair, metadata, siteConfig, AppProviders() (+4 more)
 
 ### Community 98 - "Position State"
-Cohesion: 0.10
-Nodes (28): useCreatePosition(), useDeletePosition(), useUpdatePosition(), useListPositions(), usePosition(), AppNameSpaceLike, extractQueryClient(), QueryClientLike (+20 more)
+Cohesion: 0.11
+Nodes (25): useCreatePosition(), useDeletePosition(), useUpdatePosition(), useListPositions(), usePosition(), AppNameSpaceLike, extractQueryClient(), QueryClientLike (+17 more)
 
 ### Community 99 - "Session Management"
-Cohesion: 0.35
-Nodes (6): useTestingEmail(), useUpdateSettings(), useGetSettings(), SettingsCacheContext, SettingsRoot, useSettings()
+Cohesion: 0.36
+Nodes (6): useTestingEmail(), useUpdateSettings(), useGetSettings(), SettingsRoot, useSettings(), Api
 
 ### Community 100 - "Subscription Flow"
 Cohesion: 0.31
@@ -727,16 +736,20 @@ Cohesion: 0.27
 Nodes (10): buildCss(), fs, GLOBAL_CSS_PATH, main(), parseHexToRgb(), parseRgbToRgb(), parseThemeConfig(), path (+2 more)
 
 ### Community 102 - "Package Config"
-Cohesion: 0.33
-Nodes (5): main, name, private, types, version
+Cohesion: 0.18
+Nodes (10): main, name, optional, peerDependenciesMeta, next, server-only, private, optional (+2 more)
 
 ### Community 103 - "Dev Dependencies"
 Cohesion: 0.25
 Nodes (8): devDependencies, @tanstack/react-query, @types/node, @types/react, @tanstack/react-query, @types/node, @types/react, @tanstack/react-query
 
+### Community 104 - "Pomodoro Service"
+Cohesion: 0.23
+Nodes (9): app, connectWithRetry(), disconnectDatabase(), shutdown(), processNotificationQueue(), startNotificationQueueRunner(), stopNotificationQueueRunner(), swaggerPlugin (+1 more)
+
 ### Community 105 - "Session State"
-Cohesion: 0.46
-Nodes (3): TODO_ENDPOINTS, TodoService, Todo
+Cohesion: 0.25
+Nodes (3): RoleController, PermissionRouter, RoleRouter
 
 ### Community 106 - "Peer Dependencies"
 Cohesion: 0.20
@@ -755,40 +768,52 @@ Cohesion: 0.29
 Nodes (5): pageFilterTypeSchema, QueryParams, queryParamsSchema, requiredString, rowsFilterTypeSchema
 
 ### Community 112 - "Calendar Events"
-Cohesion: 0.19
-Nodes (8): AdminCompanyService, CreateCompanyAdminInput, getCompanyTier(), inferBillingCycle(), mapPlanNameToTier(), PrismaClientLike, getWorkstationUserLimit(), PickUpdateCompanySubscription
+Cohesion: 0.31
+Nodes (6): getCompanyTier(), inferBillingCycle(), mapPlanNameToTier(), PrismaClientLike, getWorkstationUserLimit(), WORKSTATION_USER_LIMITS
 
 ### Community 113 - "Department Management"
-Cohesion: 0.29
-Nodes (6): transformParams(), pageFilterTypeSchema, QueryParams, queryParamsSchema, requiredString, rowsFilterTypeSchema
+Cohesion: 0.07
+Nodes (22): Avatar(), AvatarFallback(), AvatarImage(), Badge(), badgeVariants, PendingApproval, pendingApprovals, PendingApprovalsWidget() (+14 more)
 
 ### Community 114 - "Note Management"
-Cohesion: 0.10
-Nodes (19): CustomDrawerContent(), PrivateProviders(), useAppDispatch(), useAppSelector, clearAuthTokens(), authSlice, AuthState, initialState (+11 more)
+Cohesion: 0.11
+Nodes (19): CustomDrawerContent(), PrivateLayout(), PrivateProviders(), useAppDispatch(), useAppSelector, clearAuthTokens(), authSlice, AuthState (+11 more)
 
 ### Community 115 - "Todo DTOs Routes"
-Cohesion: 0.15
-Nodes (16): CompanyParamsDto, CompanyQueryDto, CreateAdminDto, CreateCompanyAdminDto, RegisterCompanyDto, UpdateCompanyProfileDto, UpdateCompanySettingsDto, UpdateSubscriptionDto (+8 more)
+Cohesion: 0.46
+Nodes (6): CompanyParamsDto, CompanyQueryDto, CreateAdminDto, RegisterCompanyDto, UpdateCompanyProfileDto, UpdateSubscriptionDto
 
 ### Community 116 - "Company Queries"
-Cohesion: 0.12
-Nodes (20): LoginContainer(), TODO: petakan SafeAuthUser -> userSchema saat kontrak backend stabil., useLogin(), useLogout(), useRegister(), useAuth(), useGetMyCompany(), useListAdmins() (+12 more)
+Cohesion: 0.14
+Nodes (14): LoginContainer(), useGetMyCompany(), useListAdmins(), useCompany(), useUpdateSettings(), useGetSettings(), useSettings(), useApi() (+6 more)
 
 ### Community 117 - "Mutation Wrapper"
 Cohesion: 0.33
 Nodes (4): TListResponse, TPagedList, TPagedListResponse, TResponse
 
 ### Community 118 - "Session Endpoints"
-Cohesion: 0.38
-Nodes (4): errorPlugin, metricsPlugin, loggerPlugin, logger
+Cohesion: 0.21
+Nodes (7): InternalApiKey(), errorPlugin, metricsPlugin, loggerPlugin, ApiRouter, systemRoutes, logger
+
+### Community 120 - "Badge Component"
+Cohesion: 0.48
+Nodes (5): CreateTodoDto, TodoParamsDto, TodoQueryDto, TodoStatusEnum, UpdateTodoDto
 
 ### Community 121 - "Auth Hooks"
-Cohesion: 0.14
-Nodes (20): mapTodo(), TodoService, useCreateTodo(), useDeleteTodo(), useUpdateTodo(), useTodo(), useTodos(), useTodo() (+12 more)
+Cohesion: 0.25
+Nodes (15): useCreateTodo(), useDeleteTodo(), useUpdateTodo(), useTodo(), useTodos(), useTodo(), useCreateTodo(), useDeleteTodo() (+7 more)
 
 ### Community 122 - "Metro Config"
 Cohesion: 0.33
 Nodes (5): config, { getDefaultConfig }, monorepoRoot, path, { withNativeWind }
+
+### Community 123 - "Music Playlist Service"
+Cohesion: 0.50
+Nodes (4): COMPANY_ROLE_REGISTRY, CompanyRoleOption, getCompanyRoleBySlug(), MANAGED_COMPANY_ROLES
+
+### Community 124 - "API Error Classes"
+Cohesion: 0.36
+Nodes (6): GooeyToaster(), AlertModal(), showAlertToast(), AlertContex, AlertProvinder(), ToastProps
 
 ### Community 126 - "ESLint Config"
 Cohesion: 0.40
@@ -807,8 +832,8 @@ Cohesion: 0.50
 Nodes (4): Frontend (Next.js), Geist Font, Next.js, Vercel
 
 ### Community 130 - "Login UI"
-Cohesion: 0.40
-Nodes (5): optional, peerDependenciesMeta, next, server-only, optional
+Cohesion: 0.60
+Nodes (4): CreateDepartmentDto, DepartmentParamsDto, DepartmentQueryDto, UpdateDepartmentDto
 
 ### Community 131 - "ESLint Expo"
 Cohesion: 0.50
@@ -819,36 +844,48 @@ Cohesion: 0.67
 Nodes (3): Mobile (Expo), expo, expo
 
 ### Community 138 - "Axios"
-Cohesion: 0.29
-Nodes (6): mapSettings(), SettingsService, ISettings, PickUpdateSettings, TestEmail, ThemePreference
+Cohesion: 0.39
+Nodes (4): mapSettings(), SettingsService, PickUpdateSettings, TestEmail
 
 ### Community 139 - "Settings and Select UI"
-Cohesion: 0.07
-Nodes (31): CompanyContainer(), formatDate(), TIER_STYLES, Command(), CommandEmpty(), CommandGroup(), CommandInput(), CommandItem() (+23 more)
+Cohesion: 0.14
+Nodes (16): SettingsContainer(), SettingsSection(), SettingsSectionProps, TIMEZONE_OPTIONS, getLanguageName(), i18nConfig, Language, languages (+8 more)
 
 ### Community 141 - "Elysia Helmet"
-Cohesion: 0.13
-Nodes (16): ColorConfig, ThemeConfig, useDeleteSessionAll(), useDeleteSessionById(), useGetSession(), useListSessions(), readSessionSnapshot(), SessionCacheContext (+8 more)
+Cohesion: 0.12
+Nodes (20): ColorConfig, ThemeConfig, useAddPlaylistItem(), useCreatePlaylist(), useDeletePlaylist(), useDeletePlaylistItem(), usePlaylists(), MusicCacheContext (+12 more)
 
 ### Community 143 - "Google Auth"
-Cohesion: 0.03
-Nodes (84): CreateEventDto, EventParamsDto, EventQueryDto, UpdateEventDto, CreateDepartmentDto, DepartmentParamsDto, DepartmentQueryDto, UpdateDepartmentDto (+76 more)
+Cohesion: 0.19
+Nodes (12): DateRangeDto, FilterQueryDto, PaginationDto, SearchDto, CreatePositionDto, PositionParamsDto, PositionQueryDto, UpdatePositionDto (+4 more)
 
 ### Community 146 - "Prisma"
 Cohesion: 0.20
 Nodes (9): FE — hide > build, Kontrak BE (baru), Kontrak BE (guard + 1 endpoint baru), Layer 1: Platform Role — Super Admin only, Layer 2: Company Role — Owner & Member only, Prinsip Dasar, Spaces v0.0.1 — Role & Scope Lock, Verifikasi (+1 more)
 
-### Community 151 - "Types Nodemailer"
-Cohesion: 0.17
-Nodes (6): NotificationService, INotification, INotificationLog, NotificationLogQuery, NotificationStatus, PickSendNotification
+### Community 147 - "Repo Package"
+Cohesion: 0.60
+Nodes (4): AddItemToPlaylistDto, CreatePlaylistDto, MusicQueryDto, PlaylistParamsDto
+
+### Community 148 - "Sharp"
+Cohesion: 0.60
+Nodes (4): CreateNoteDto, NoteParamsDto, NoteQueryDto, UpdateNoteDto
 
 ### Community 153 - "UUID"
-Cohesion: 0.22
-Nodes (6): NotificationDetailSectionProps, NOTIFICATION_ENDPOINTS, NotificationService, NotificationInApp, NotificationLog, NotificationQueueQuery
+Cohesion: 0.36
+Nodes (4): NotificationDetailSectionProps, NOTIFICATION_ENDPOINTS, NotificationService, NotificationInApp
 
 ### Community 157 - "Classnames"
-Cohesion: 0.18
-Nodes (16): AppShell(), checkRoleAccess(), PrivateProviders(), restoreAuthSession(), AuthTokens, clearTokens(), COOKIE_KEYS, getCookieStore() (+8 more)
+Cohesion: 0.22
+Nodes (15): checkRoleAccess(), PrivateProviders(), restoreAuthSession(), AuthTokens, clearTokens(), COOKIE_KEYS, getCookieStore(), getRoleFromCookie() (+7 more)
+
+### Community 161 - "Date Fns"
+Cohesion: 0.22
+Nodes (7): CatalogModalProps, PlaylistItemCard(), PlaylistItemCardProps, MusicSectionProps, MUSIC_ENDPOINTS, MusicService, MusicPlaylist
+
+### Community 162 - "Embla Carousel"
+Cohesion: 0.60
+Nodes (4): ReviewTrackDto, SubmitTrackDto, TrackCatalogParamsDto, TrackCatalogQueryDto
 
 ### Community 165 - "GSAP"
 Cohesion: 0.20
@@ -859,32 +896,48 @@ Cohesion: 0.17
 Nodes (11): name, private, scripts, build, dev, format, format:check, lint (+3 more)
 
 ### Community 179 - "Radix Dropdown"
-Cohesion: 0.19
-Nodes (5): CompanyController, InvitationController, CompanyRouter, InvitationRouter, unauthorizedValidate()
+Cohesion: 0.13
+Nodes (8): error(), CompanyController, NotificationController, SubscriptionController, CompanyRouter, NotificationRouter, SubscriptionRouter, unauthorizedValidate()
 
 ### Community 180 - "Radix Popover"
 Cohesion: 0.50
 Nodes (3): IntrinsicElements, JSX, react/jsx-runtime
 
+### Community 184 - "React"
+Cohesion: 0.35
+Nodes (9): AddTaskAttachmentDto, AddTaskCommentDto, AssignTaskDto, CreateTaskChecklistDto, CreateTaskDto, TaskParamsDto, TaskQueryDto, UpdateTaskDto (+1 more)
+
 ### Community 185 - "React DOM"
 Cohesion: 0.29
 Nodes (3): db, sessions, user
+
+### Community 193 - "TanStack Query"
+Cohesion: 0.70
+Nodes (3): PomodoroQueryDto, StartPomodoroDto, StopPomodoroDto
+
+### Community 200 - "Toast Notifications"
+Cohesion: 0.36
+Nodes (7): CompanyMemberStatusEnum, MemberContactItemDto, MemberParamsDto, MemberQueryDto, UpdateMemberContactsDto, UpdateMemberDto, UpdateMemberProfileDto
+
+### Community 205 - "Burnt Toast Library"
+Cohesion: 0.42
+Nodes (7): AddTeamMemberDto, CreateTeamDto, InviteMemberDto, TeamMemberParamsDto, TeamParamsDto, TeamQueryDto, UpdateTeamDto
 
 ### Community 212 - "authSlice.ts"
 Cohesion: 0.50
 Nodes (3): Rules (ringkas — detail di `agent/CLAUDE.MD`), SPACES — Agent Entry Point (OpenCode auto-loads this file), Stack
 
+### Community 222 - "Lucide Icons"
+Cohesion: 0.48
+Nodes (5): CreateEventDto, EventParamsDto, EventQueryDto, UpdateEventDto, SortDto
+
 ### Community 237 - "Bottom Tab Navigation"
-Cohesion: 0.36
-Nodes (6): NotificationInAppQueryDto, NotificationLogQueryDto, NotificationParamsDto, NotificationQueueQueryDto, SendNotificationDto, NotificationRouter
+Cohesion: 0.52
+Nodes (5): NotificationInAppQueryDto, NotificationLogQueryDto, NotificationParamsDto, NotificationQueueQueryDto, SendNotificationDto
 
 ### Community 250 - "InvitationService"
-Cohesion: 0.15
-Nodes (12): CalendarService, mapEvent(), AgendaTimelineItemProps, EventDetailSectionProps, EventListSectionProps, CALENDAR_ENDPOINTS, CalendarService, PickApiID (+4 more)
-
-### Community 269 - "burnt"
-Cohesion: 0.09
-Nodes (22): ResetPasswordSectionProps, ApiError, HttpStatusCode, IApi, TPagedList, TPagedListResponse, AccessTokenPayload, PickResetPassword (+14 more)
+Cohesion: 0.29
+Nodes (7): AgendaTimelineItemProps, EventDetailSectionProps, EventListSectionProps, CALENDAR_ENDPOINTS, CalendarService, PickApiID, CalendarEvent
 
 ### Community 271 - "Notification/state/mutate.ts"
 Cohesion: 0.50
@@ -895,28 +948,28 @@ Cohesion: 0.67
 Nodes (3): zod, zod, zod
 
 ### Community 313 - "SessionService"
-Cohesion: 0.06
-Nodes (38): ElysiaHandler, ElysiaMiddleware, AddItemBody, ReviewBody, buildGetResponseMeta(), formatProcessTime(), isGetRequest(), SessionService (+30 more)
+Cohesion: 0.10
+Nodes (26): ElysiaHandler, ElysiaMiddleware, AddItemBody, SystemController, ReviewBody, buildGetResponseMeta(), formatProcessTime(), HttpResponse() (+18 more)
 
 ## Knowledge Gaps
-- **736 isolated node(s):** `name`, `version`, `type`, `prisma:generate`, `dev` (+731 more)
+- **733 isolated node(s):** `name`, `version`, `type`, `prisma:generate`, `dev` (+728 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **139 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **142 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `UI Components` to `Carousel UI`, `Settings and Select UI`, `Alert Dialog Atoms`, `Settings and Dropdown UI`, `Notes UI`, `Calendar UI`, `UI Toast and Alert`, `Command and Dialog UI`, `Auth State`, `Public Pages`, `Auth Forms`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
-- **Why does `AppContext` connect `Department and Member` to `Pomodoro Service`, `Position Controller`, `Cloudinary`, `Bottom Tab Navigation`, `Google Auth`, `Calendar Events`, `Radix Dropdown`, `Todo DTOs Routes`, `Badge Component`, `SessionService`, `Task State Management`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `TResponse` connect `Auth and Endpoints` to `Auth Controller Routes`, `App Layout and Providers`, `Session State`, `Role Service`, `Role and Company State`, `burnt`, `API Response Types`, `Invitation Service`, `Note State`, `Music and Settings State`, `Redux Auth Store`, `Auth Service`, `UUID`, `InvitationService`, `Member Service`, `Position Service`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
+- **Why does `AppContext` connect `App Layout and Providers` to `Login UI`, `Department and Member`, `Controllers Mix`, `Cloudinary`, `Google Auth`, `Repo Package`, `Sharp`, `Types JWT`, `Auth Service`, `Embla Carousel`, `Music and Settings State`, `Radix Dropdown`, `.deleteSessionById`, `React`, `SessionService`, `Task State Management`, `TanStack Query`, `Auth Controller Routes`, `Invitation Controller`, `Position Controller`, `Toast Notifications`, `Burnt Toast Library`, `Note State`, `Lucide Icons`, `Session State`, `Bottom Tab Navigation`, `Todo DTOs Routes`, `Home Page UI`, `Badge Component`?**
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
+- **Why does `cn()` connect `UI Components` to `Date Fns`, `Carousel UI`, `Alert Dialog Atoms`, `Settings and Dropdown UI`, `Notes UI`, `Department Management`, `Calendar UI`, `UI Toast and Alert`, `Auth State`, `Command and Dialog UI`, `Public Pages`, `Auth Forms`?**
+  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+- **Why does `JwtPayload` connect `SessionService` to `App Layout and Providers`, `SessionService`, `Music and Settings State`, `Task Service`, `Auth Service`?**
+  _High betweenness centrality (0.023) - this node is a cross-community bridge._
 - **What connects `name`, `version`, `type` to the rest of the system?**
-  _736 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _733 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Auth and Endpoints` be split into smaller, more focused modules?**
-  _Cohesion score 0.05880780539962577 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.05509518477043673 - nodes in this community are weakly interconnected._
 - **Should `App and Auth DTOs` be split into smaller, more focused modules?**
-  _Cohesion score 0.08902439024390243 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1349206349206349 - nodes in this community are weakly interconnected._
 - **Should `Department and Member` be split into smaller, more focused modules?**
-  _Cohesion score 0.07072966172770478 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.12089447938504543 - nodes in this community are weakly interconnected._

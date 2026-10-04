@@ -29,6 +29,19 @@ export const verifyToken = () => ({
       if (!session) {
         return c.json({ status: 401, message: 'Sesi telah berakhir. Silakan login kembali.' }, 401);
       }
+      // v0.0.1 kill switch: member company yang di-suspend ditolak (SUPER_ADMIN bypass).
+      if (decoded.companyId && decoded.platformRole !== 'SUPER_ADMIN') {
+        const company = await prisma.company.findUnique({
+          where: { id: decoded.companyId },
+          select: { status: true },
+        });
+        if (company?.status === 'suspended') {
+          return c.json(
+            { status: 403, message: 'Company dinonaktifkan. Hubungi administrator.' },
+            403,
+          );
+        }
+      }
       c.user = decoded;
     } catch (error: any) {
       if (error.name === 'TokenExpiredError') {
