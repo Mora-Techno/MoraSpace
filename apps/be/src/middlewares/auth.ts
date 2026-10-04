@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { JwtPayload } from '@repo/types/auth.types';
 import { env } from '@/config/env.config';
+import prisma from 'prisma/client';
 
 export const verifyToken = () => ({
   beforeHandle: async (c: any) => {
@@ -21,6 +22,13 @@ export const verifyToken = () => ({
       if (decoded.tokenType && decoded.tokenType !== 'access') {
         return c.json({ status: 403, message: 'Tipe token tidak valid.' }, 403);
       }
+      const session = await prisma.userSession.findFirst({
+        where: { userId: decoded.id, accessToken: token, expiredAt: { gt: new Date() } },
+        select: { id: true },
+      });
+      if (!session) {
+        return c.json({ status: 401, message: 'Sesi telah berakhir. Silakan login kembali.' }, 401);
+      }
       c.user = decoded;
     } catch (error: any) {
       if (error.name === 'TokenExpiredError') {
@@ -37,7 +45,7 @@ export const verifyToken = () => ({
 
 export const requireRole = (roles: string[]) => ({
   beforeHandle: (c: any) => {
-    if (!c.user || !roles.includes(c.user.role)) {
+    if (!c.user || !roles.includes(c.user.companyRole)) {
       return c.json({ status: 403, message: 'Akses ditolak. Role tidak sesuai.' }, 403);
     }
   },

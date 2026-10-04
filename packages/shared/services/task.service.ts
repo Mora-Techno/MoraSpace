@@ -1,3 +1,4 @@
+import type { TaskStatusOption, TaskPriorityOption } from "../types/task.types";
 import { TASK_ENDPOINTS } from "../endpoints/task.endpoints";
 import type { TResponse } from "../types/response.types";
 import type {
@@ -21,6 +22,15 @@ import {
 import { toServiceResponse } from "./service-response";
 
 class TaskService {
+  public async ListStatuses(): Promise<TResponse<TaskStatusOption[]>> {
+    return toServiceResponse(await GetResponse<TaskStatusOption[]>(TASK_ENDPOINTS.STATUSES));
+  }
+
+  public async ListPriorities(): Promise<TResponse<TaskPriorityOption[]>> {
+    return toServiceResponse(await GetResponse<TaskPriorityOption[]>(TASK_ENDPOINTS.PRIORITIES));
+  }
+
+
   public async ListTasks(query?: TaskQuery): Promise<TResponse<ITask[]>> {
     const res = await GetResponse<ITask[]>(
       withQuery(TASK_ENDPOINTS.LIST, query),

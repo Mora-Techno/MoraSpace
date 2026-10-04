@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 import { AlertModal } from '@/core/components/alert-modal';
 import { ToastContainer } from '@/core/components/toast';
@@ -16,11 +16,13 @@ export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
   const [modal, setModal] = useState<ModalProps | null>(null);
   const [resolver, setResolver] = useState<(res: boolean) => void>();
   const [toastData, setToastData] = useState<ToastProps | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const toastAlert = ({ message, title, icon, onVoid }: ToastProps) => {
     setToastData({ message, title, icon, onVoid });
 
-    setTimeout(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
       setToastData(null);
       onVoid?.();
     }, 3000);
@@ -41,11 +43,13 @@ export const AlertProvinder = ({ children }: { children: React.ReactNode }) => {
     modal?.onConfirm?.();
     setModal(null);
     resolver?.(true);
+    setResolver(undefined);
   };
   const handleCancel = () => {
     modal?.onClose?.();
     setModal(null);
-    resolver?.(true);
+    resolver?.(false);
+    setResolver(undefined);
   };
 
   return (

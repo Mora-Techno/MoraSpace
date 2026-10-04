@@ -17,6 +17,20 @@ import type {
 } from "@repo/types/task.types";
 
 class TaskController {
+  public async listStatuses(c: AppContext) {
+    const user = getUser(c);
+    const invalid = await memberContextValidate(user, c);
+    if (invalid) return invalid;
+    return HttpResponse(c).ok(await TaskService.listStatuses(user.companyId!), undefined, 'Daftar status tugas');
+  }
+
+  public async listPriorities(c: AppContext) {
+    const user = getUser(c);
+    const invalid = await memberContextValidate(user, c);
+    if (invalid) return invalid;
+    return HttpResponse(c).ok(await TaskService.listPriorities(user.companyId!), undefined, 'Daftar prioritas tugas');
+  }
+
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
@@ -95,7 +109,7 @@ class TaskController {
       );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Tugas berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Tugas berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -114,7 +128,7 @@ class TaskController {
       const data = await TaskService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Tugas berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Tugas berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -139,7 +153,7 @@ class TaskController {
       );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Penugasan berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Penugasan berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -164,7 +178,7 @@ class TaskController {
       );
       if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Status tugas berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Status tugas berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

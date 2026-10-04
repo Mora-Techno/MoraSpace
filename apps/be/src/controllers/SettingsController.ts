@@ -37,14 +37,7 @@ class SettingsController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const companyMemberId = user.companyMemberId;
-      if (!companyMemberId) {
-        return HttpResponse(c).badRequest(
-          "Konteks anggota company tidak ditemukan",
-        );
-      }
-
-      const settings = await SettingsService.update(companyMemberId, input);
+      const settings = await SettingsService.update(user.companyMemberId ?? null, user.id, input);
       if (!settings) {
         return HttpResponse(c).badRequest();
       }
@@ -77,7 +70,7 @@ class SettingsController {
       }
       return HttpResponse(c).ok(
         queryService,
-        "Testing Email Berhasil Dilakukan",
+        undefined, "Testing Email Berhasil Dilakukan",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

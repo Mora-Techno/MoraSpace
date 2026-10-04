@@ -11,6 +11,9 @@ export const SubscriptionQueryDto = t.Object({
         t.Literal("inactive"),
         t.Literal("expired"),
         t.Literal("cancelled"),
+        t.Literal("canceled"),
+        t.Literal("incomplete"),
+        t.Literal("past_due"),
       ],
       {
         description: "Filter berdasarkan status langganan",

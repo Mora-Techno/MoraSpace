@@ -23,7 +23,8 @@ const AddDocContainer = () => {
     const payload = {} as PickUpdateCompanyProfile;
     if (form.logo) payload.logo = form.logo;
     if (form.country) payload.country = form.country;
-    updateProfile.mutateAsync(payload);
+    if (!payload.logo && !payload.country) return;
+    updateProfile.mutateAsync(payload).catch(() => {});
   };
 
   return (

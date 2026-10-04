@@ -4,7 +4,7 @@ export type SubscriptionQuery = {
   search?: string;
   page?: number;
   limit?: number;
-  status?: string;
+  status?: SubscriptionStatus | 'inactive' | 'expired' | 'cancelled';
   planId?: string;
   startDate?: string;
   endDate?: string;

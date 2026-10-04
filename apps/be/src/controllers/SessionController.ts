@@ -42,6 +42,7 @@ class SessionController {
 
       const queryService = await SessionService.getSessionByIdService(
         params.id,
+        user.id,
       );
 
       if (!queryService) {
@@ -50,7 +51,7 @@ class SessionController {
 
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil mengambil session berdasarkan id",
+        undefined, "Berhasil mengambil session berdasarkan id",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -68,14 +69,14 @@ class SessionController {
 
       if (paramsValidation) return paramsValidation;
 
-      const queryService = await SessionService.deleteSessionById(params.id);
+      const queryService = await SessionService.deleteSessionById(params.id, user.id);
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil Delete History Session",
+        undefined, "Berhasil Delete History Session",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -98,7 +99,7 @@ class SessionController {
 
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil Menghapus Seluruh Session",
+        undefined, "Berhasil Menghapus Seluruh Session",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

@@ -10,6 +10,7 @@
     "lint": "biome lint src",
     "lint:fix": "biome lint --write --unsafe src",
     "test": "bun test",
+    "test:contracts": "bun run scripts/check-bruno-contracts.ts",
     "format": "biome format --write src",
     "format:check": "biome format src"
   },

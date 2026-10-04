@@ -1,3 +1,4 @@
+import type { EmploymentTypeOption } from "../types/member.types";
 import { MEMBER_ENDPOINTS } from "../endpoints/member.endpoints";
 import type {
   ICompanyMember,
@@ -11,6 +12,11 @@ import { DeleteResponse, GetResponse, PatchResponse, withQuery } from "./http";
 import { toServiceResponse } from "./service-response";
 
 class MemberService {
+  public async ListEmploymentTypes(): Promise<TResponse<EmploymentTypeOption[]>> {
+    return toServiceResponse(await GetResponse<EmploymentTypeOption[]>(MEMBER_ENDPOINTS.EMPLOYMENT_TYPES));
+  }
+
+
   public async ListMembers(
     query?: MemberQuery,
   ): Promise<TResponse<ICompanyMember[]>> {

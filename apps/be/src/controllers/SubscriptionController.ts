@@ -106,7 +106,7 @@ class SubscriptionController {
 
   public async stripeWebhook(c: AppContext) {
     try {
-      const payload = await c.request.text();
+      const payload = c.body as string;
       const signature = c.request.headers.get("stripe-signature");
       const queryService = await SubscriptionService.handleStripeWebhook(
         payload,

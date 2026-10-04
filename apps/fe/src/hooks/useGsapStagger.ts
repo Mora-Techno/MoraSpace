@@ -27,7 +27,7 @@ export function useGsapStagger<T extends HTMLElement>(
         ease: 'power2.out',
       },
     );
-  }, deps);
+  }, [...deps, selector]);
 
   return containerRef;
 }

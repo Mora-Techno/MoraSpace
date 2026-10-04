@@ -30,7 +30,7 @@ export function BottomNav() {
   const mobileNavItems = useMemo(() => {
     const role = loadAuthSession()?.role;
     return getMobileNavGroups(role?.toLocaleLowerCase());
-  }, []);
+  }, [pathname]);
 
   const openItem = mobileNavItems.find((item) => item.title === openTitle);
   const subItems = openItem?.children?.filter((child): child is MobileLeaf =>

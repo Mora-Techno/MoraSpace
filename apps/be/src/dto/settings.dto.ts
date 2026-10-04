@@ -14,5 +14,5 @@ export const UpdateSettingsDto = t.Object({
 });
 
 export const TestEmailDto = t.Object({
-  email: t.String({ description: "Email Wajib Diisi" }),
+  email: t.String({ format: "email", description: "Email Wajib Diisi" }),
 });

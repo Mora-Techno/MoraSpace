@@ -5,6 +5,8 @@ import type { RequestStore } from '@/types/request.types';
 
 export interface AppContext extends Omit<Context, 'body' | 'query' | 'params'> {
   user?: JwtPayload;
+  startedAt?: number;
+  requestId?: string;
   json?: (data: unknown, status?: number) => Response;
   files?: Record<string, AppFile[]>;
   body: unknown;

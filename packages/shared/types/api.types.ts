@@ -21,6 +21,14 @@ export interface ApiSuccessResponse<T = unknown> {
   errors?: Record<string, string[]>;
   status?: number;
   statusCode?: number;
+  meta?: {
+    process_time?: string;
+    currentPage?: number;
+    limit?: number;
+    totalData?: number;
+    totalPage?: number;
+    [key: string]: unknown;
+  };
 }
 
 export class ApiError extends Error {

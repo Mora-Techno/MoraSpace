@@ -11,7 +11,7 @@ import type {
   PickUpdateTeam,
   PickAddTeamMember,
 } from "@repo/types/team.types";
-import type { PickInviteMember } from "@repo/types/workstation.types";
+import type { PickInviteTeamMember } from "@repo/types/team.types";
 
 class TeamController {
   public async list(c: AppContext) {
@@ -61,7 +61,7 @@ class TeamController {
       const data = await TeamService.update(params.id, user.companyId!, body);
       if (!data) return HttpResponse(c).notFound("Tim tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Tim berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Tim berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -80,7 +80,7 @@ class TeamController {
       const data = await TeamService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Tim tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Tim berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Tim berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -162,7 +162,7 @@ class TeamController {
       );
       if (!data) return HttpResponse(c).notFound("Anggota tim tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Anggota berhasil dihapus dari tim");
+      return HttpResponse(c).ok(data, undefined, "Anggota berhasil dihapus dari tim");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -170,12 +170,11 @@ class TeamController {
   public async inviteMember(c: AppContext) {
     try {
       const user = getUser(c);
-      const params = c.params as { id: string };
-      const body = c.body as PickInviteMember;
+      const body = c.body as PickInviteTeamMember;
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
-      const validateParams = await paramsValidate(params.id, c);
+      const validateParams = await paramsValidate(body.teamId, c);
 
       if (validateParams) return validateParams;
 
@@ -184,7 +183,7 @@ class TeamController {
       }
 
       const queryService = await TeamService.inviteMember(
-        params.id,
+        body.teamId,
         user.companyId,
         body,
       );
@@ -195,10 +194,10 @@ class TeamController {
 
       return HttpResponse(c).ok(
         queryService,
-        "Karyawan berhasil diinvite ke workstation",
+        undefined, "Karyawan berhasil diinvite ke workstation",
       );
     } catch (error) {
-      return HttpResponse(c).internalError(error);
+      return HttpResponse(c).badRequest(error instanceof Error ? error.message : "Gagal mengundang anggota tim");
     }
   }
 }

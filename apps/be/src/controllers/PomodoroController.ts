@@ -39,7 +39,7 @@ class PomodoroController {
       );
       return HttpResponse(c).ok(
         data,
-        "Sesi pomodoro diubah menjadi jeda (pause)",
+        undefined, "Sesi pomodoro diubah menjadi jeda (pause)",
       );
     } catch (error) {
       const msg = error instanceof Error ? error.message : "Gagal menjeda sesi";
@@ -57,7 +57,7 @@ class PomodoroController {
         user.companyMemberId ?? null,
         user.id,
       );
-      return HttpResponse(c).ok(data, "Sesi pomodoro dilanjutkan (resume)");
+      return HttpResponse(c).ok(data, undefined, "Sesi pomodoro dilanjutkan (resume)");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -76,7 +76,7 @@ class PomodoroController {
         body.sessionId,
         body.duration,
       );
-      return HttpResponse(c).ok(data, "Sesi pomodoro dihentikan (stop)");
+      return HttpResponse(c).ok(data, undefined, "Sesi pomodoro dihentikan (stop)");
     } catch (error) {
       const msg =
         error instanceof Error ? error.message : "Gagal menghentikan sesi";

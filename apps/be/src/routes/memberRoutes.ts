@@ -22,6 +22,10 @@ class MemberRouter {
   }
 
   private routes() {
+    this.memberRouter.get('/employment-types', (c: AppContext) => MemberController.listEmploymentTypes(c), {
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: { summary: 'Daftar referensi tipe kepegawaian', tags: ['Company Members'] },
+    });
     this.memberRouter.get("/", (c: AppContext) => MemberController.list(c), {
       query: MemberQueryDto,
       beforeHandle: [verifyToken().beforeHandle],

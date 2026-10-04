@@ -22,7 +22,12 @@ import { MemberDashboardTemplate } from "@/components/templates/MemberDashboardT
 import { useMusicPlayer } from "@/context/MusicPlayerContext";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { loadAuthSession } from "@/utils/storage";
+import { loadAuthSession, type AuthSession } from "@/utils/storage";
+
+type SessionWithProfile = AuthSession & {
+  fullName?: string;
+  user?: { name?: string };
+};
 
 export default function DashboardContainer() {
   const api = useApi();
@@ -46,7 +51,7 @@ export default function DashboardContainer() {
   };
 
   useEffect(() => {
-    const session = loadAuthSession() as any;
+    const session = loadAuthSession() as SessionWithProfile | null;
     if (session?.fullName) {
       setName(session.fullName);
     } else if (session?.user?.name) {
@@ -126,7 +131,7 @@ export default function DashboardContainer() {
   };
 
   const useCalenderEntry = api.calender;
-  const now = new Date();
+  const now = useMemo(() => new Date(), []);
 
   const useCalender = useCalenderEntry.query.getCalender({
     month: String(now.getMonth() + 1).padStart(2, "0"),
@@ -143,15 +148,16 @@ export default function DashboardContainer() {
     )
     .slice(0, 4);
 
+  const today = now.getDate();
   const stats = useMemo(
     () => ({
       completedTodos: uncompletedTodosCount,
       pomodoroMinutes: 0,
       totalMeetings: events.filter(
-        (e) => new Date(e.startDate).getDate() === now.getDate(),
+        (e) => new Date(e.startDate).getDate() === today,
       ).length,
     }),
-    [uncompletedTodosCount, events, now.getDate()],
+    [uncompletedTodosCount, events, today],
   );
 
   const usePodomoroEntry = api.pomodoro;
@@ -341,8 +347,6 @@ export default function DashboardContainer() {
       onSuccess: () => setSelectedNote(null),
     });
   };
-
-  console.log("Datas", trackCatalogTracks);
 
   return (
     <div

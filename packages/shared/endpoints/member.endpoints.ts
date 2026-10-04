@@ -3,6 +3,7 @@ import { buildEndpoint } from "../config/api.config";
 const mount = "/members";
 
 export const MEMBER_ENDPOINTS = {
+  EMPLOYMENT_TYPES: buildEndpoint(mount, '/employment-types'),
   LIST: buildEndpoint(mount),
   BYID: (id: string) => buildEndpoint(mount, `/${id}`),
   UPDATE: (id: string) => buildEndpoint(mount, `/${id}`),

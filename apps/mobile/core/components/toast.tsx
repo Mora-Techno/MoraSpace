@@ -16,7 +16,7 @@ const iconMap: Record<
     textColor: '#14532d',
   },
   error: {
-    emoji: '�突出',
+    emoji: '❌',
     bgColor: '#fee2e2',
     borderColor: '#ef4444',
     textColor: '#7f1d1d',

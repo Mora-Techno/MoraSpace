@@ -1,4 +1,4 @@
-import { Audio } from "expo-av";
+import { Audio } from 'expo-av';
 
 class NativeAudioService {
   private sound: Audio.Sound | null = null;
@@ -12,35 +12,40 @@ class NativeAudioService {
         shouldDuckAndroid: true,
       });
     } catch (e) {
-      console.warn("Gagal konfigurasi audio mode", e);
+      if (__DEV__) console.warn('Gagal konfigurasi audio mode', e);
     }
   }
 
   public async playTrack(url: string) {
     try {
       await this.stopTrack();
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: url },
-        { shouldPlay: true },
-      );
+      const { sound } = await Audio.Sound.createAsync({ uri: url }, { shouldPlay: true });
       this.sound = sound;
       this.isPlaying = true;
     } catch (error) {
-      console.error("Gagal memutar audio track", error);
+      if (__DEV__) console.error('Gagal memutar audio track', error);
     }
   }
 
   public async pauseTrack() {
-    if (this.sound && this.isPlaying) {
-      await this.sound.pauseAsync();
-      this.isPlaying = false;
+    try {
+      if (this.sound && this.isPlaying) {
+        await this.sound.pauseAsync();
+        this.isPlaying = false;
+      }
+    } catch (e) {
+      if (__DEV__) console.warn('Gagal pause audio track', e);
     }
   }
 
   public async resumeTrack() {
-    if (this.sound && !this.isPlaying) {
-      await this.sound.playAsync();
-      this.isPlaying = true;
+    try {
+      if (this.sound && !this.isPlaying) {
+        await this.sound.playAsync();
+        this.isPlaying = true;
+      }
+    } catch (e) {
+      if (__DEV__) console.warn('Gagal resume audio track', e);
     }
   }
 
@@ -49,7 +54,9 @@ class NativeAudioService {
       try {
         await this.sound.stopAsync();
         await this.sound.unloadAsync();
-      } catch {}
+      } catch (e) {
+        if (__DEV__) console.warn('Gagal stop audio track', e);
+      }
       this.sound = null;
       this.isPlaying = false;
     }

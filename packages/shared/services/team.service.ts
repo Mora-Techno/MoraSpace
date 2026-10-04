@@ -7,6 +7,7 @@ import type {
   PickCreateTeam,
   PickUpdateTeam,
   TeamQuery,
+  PickInviteTeamMember,
 } from "../types/team.types";
 import {
   DeleteResponse,
@@ -81,7 +82,7 @@ class TeamService {
     return toServiceResponse(res, { message: "Anggota tim berhasil dihapus" });
   }
 
-  public async InviteMember(payload: unknown): Promise<TResponse<unknown>> {
+  public async InviteMember(payload: PickInviteTeamMember): Promise<TResponse<unknown>> {
     const res = await PostResponse<unknown>(
       TEAM_ENDPOINTS.INVITE_MEMBER,
       payload,

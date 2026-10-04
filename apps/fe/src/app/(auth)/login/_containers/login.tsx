@@ -25,7 +25,7 @@ export default function LoginContainer() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = formLogin;
-    login.mutateAsync(payload);
+    login.mutateAsync(payload).catch(() => {});
   };
 
   const googleLogin = useGoogleLogin({
@@ -73,10 +73,10 @@ export default function LoginContainer() {
 
           <GoogleSignInButton onSuccess={googleLogin} disabled />
         </div>
-        {RegisterConfigRoutes.map((items, key) => {
+        {RegisterConfigRoutes.map((items) => {
           const Icon = items.icon;
           return (
-            <div key={key} className="w-full flex gap-1">
+            <div key={items.href} className="w-full flex gap-1">
               <RegisterCard href={items.href} title={items.title} icon={Icon} />
             </div>
           );

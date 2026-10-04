@@ -221,7 +221,8 @@ export function FloatingMusicPlayer() {
   }, [isPlaying, currentTrack?.id]);
 
   const handleEnded = React.useCallback(() => {
-    setTimeout(() => nextTrack(), 500);
+    const t = setTimeout(() => nextTrack(), 500);
+    return () => clearTimeout(t);
   }, [nextTrack]);
 
   useYouTubeOnEnded(iframeRef, handleEnded);

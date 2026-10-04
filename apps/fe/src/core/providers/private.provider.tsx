@@ -146,7 +146,7 @@ export default function PrivateProviders({
         normalizedRole === "owner" ? "/owner/dashboard" : "/member/dashboard";
       router.replace(redirectTo);
     }
-  }, [isReady, isAuthenticated]);
+  }, [isReady, isAuthenticated, pathname, role, router]);
 
   return <>{isReady && isAuthenticated ? children : null}</>;
 }

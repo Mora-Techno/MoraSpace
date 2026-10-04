@@ -51,7 +51,12 @@ function buildQuery(params?: QueryParams): string {
 }
 
 async function parseResponse<T>(res: Response): Promise<TResponse<T>> {
-  const json = (await res.json()) as TResponse<T> | TErrorResponse;
+  let json: TResponse<T> | TErrorResponse;
+  try {
+    json = (await res.json()) as TResponse<T> | TErrorResponse;
+  } catch {
+    throw new Error("Request gagal");
+  }
 
   if (!res.ok) {
     throw new Error(json.message ?? "Request gagal");

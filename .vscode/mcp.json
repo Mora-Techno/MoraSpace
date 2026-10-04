@@ -2,7 +2,7 @@
   "servers": {
     "graphify": {
       "command": "graphify-mcp",
-      "args": ["/Space/graphify-out/graph.json"]
+      "args": ["/home/muliaandiki/Mora/Space/graphify-out/graph.json"]
     }
   }
 }

@@ -9,7 +9,7 @@ export const loggerPlugin = new Elysia()
     startedAt: performance.now(),
   }))
 
-  .onRequest(({ request, requestId }: any) => {
+  .onBeforeHandle(({ request, requestId }) => {
     logger.debug(
       {
         requestId,
@@ -20,7 +20,7 @@ export const loggerPlugin = new Elysia()
     );
   })
 
-  .onAfterHandle(({ request, requestId, startedAt, set }) => {
+  .onAfterHandle(({ request, requestId, startedAt, set, response }) => {
     const duration = Math.round(performance.now() - startedAt);
 
     logger.info(
@@ -28,9 +28,10 @@ export const loggerPlugin = new Elysia()
         requestId,
         method: request.method,
         path: new URL(request.url).pathname,
-        status: set.status,
+        status: response instanceof Response ? response.status : set.status,
         duration,
       },
       'Request Completed',
     );
-  });
+  })
+  .as('global');

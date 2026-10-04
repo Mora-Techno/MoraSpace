@@ -73,27 +73,29 @@ class SessionService {
       },
     };
   }
-  public async getSessionByIdService(id: string) {
+  public async getSessionByIdService(id: string, userId: string) {
     if (!id) {
       throw new Error("id session tidak temukan");
     }
-    const sessionQuery = await prisma.userSession.findUnique({
+    const sessionQuery = await prisma.userSession.findFirst({
       where: {
         id: id,
+        userId,
       },
     });
-    return { sessionQuery };
+    return sessionQuery ? { sessionQuery } : null;
   }
-  public async deleteSessionById(id: string) {
+  public async deleteSessionById(id: string, userId: string) {
     if (!id) {
       throw new Error("id session tidak temukan");
     }
-    const query = await prisma.userSession.delete({
+    const query = await prisma.userSession.deleteMany({
       where: {
         id: id,
+        userId,
       },
     });
-    return { query };
+    return query.count ? { query } : null;
   }
   public async deleteAllSessionService(id: string) {
     const sessionQuery = await prisma.userSession.deleteMany({

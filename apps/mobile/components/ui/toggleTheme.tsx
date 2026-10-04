@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useTheme } from '@/core/providers/theme.provinder';
 
 export default function ThemeToggle() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, colors } = useTheme();
 
   return (
     <Button
@@ -17,9 +17,9 @@ export default function ThemeToggle() {
     >
       <View>
         {theme === 'dark' ? (
-          <Feather name="moon" size={20} color="#911DEC" />
+          <Feather name="moon" size={20} color={colors.primary} />
         ) : (
-          <Feather name="sun" size={20} color="#911DEC" />
+          <Feather name="sun" size={20} color={colors.primary} />
         )}
       </View>
     </Button>

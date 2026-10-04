@@ -66,10 +66,11 @@ const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
             <Search className="ml-4 size-5 text-muted-foreground shrink-0" />
             <input
               type="text"
+              aria-label="Cari dokumentasi"
               placeholder="Cari dokumentasi atau panduan..."
               className="flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
             />
-            <button className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-sm font-semibold transition-all duration-300">
+            <button type="button" className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-sm font-semibold transition-all duration-300">
               Cari
             </button>
           </div>

@@ -44,7 +44,8 @@ function extractRefreshPayload(payload?: RefreshPayload | null): AuthTokens | nu
 }
 
 export async function refreshAuthSession(refreshToken: string): Promise<RefreshAuthSessionResult> {
-  const baseUrl = env.NEXT_PUBLIC_BACKEND_URL ?? 'http://localhost:5000';
+  const baseUrl = env.NEXT_PUBLIC_BACKEND_URL;
+  if (!baseUrl) throw new Error('NEXT_PUBLIC_BACKEND_URL is not defined');
   const internalApiKey =
     env.NEXT_INTERNAL_API_SECRET ||
     process.env.INTERNAL_API_SECRET ||

@@ -23,6 +23,14 @@ class TaskRouter {
   }
 
   private routes() {
+    this.taskRouter.get('/statuses', (c: AppContext) => TaskController.listStatuses(c), {
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: { summary: 'Daftar referensi status tugas', tags: ['Tasks'] },
+    });
+    this.taskRouter.get('/priorities', (c: AppContext) => TaskController.listPriorities(c), {
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: { summary: 'Daftar referensi prioritas tugas', tags: ['Tasks'] },
+    });
     this.taskRouter.get("/", (c: AppContext) => TaskController.list(c), {
       query: TaskQueryDto,
       beforeHandle: [verifyToken().beforeHandle],

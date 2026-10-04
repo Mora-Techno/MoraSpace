@@ -673,6 +673,7 @@ model PomodoroSession {
   startedAt       DateTime       @map("started_at")
   endedAt         DateTime?      @map("ended_at")
   duration        Int?
+  metadata        Json?
   userId          String?        @map("user_id")
   companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
   user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)

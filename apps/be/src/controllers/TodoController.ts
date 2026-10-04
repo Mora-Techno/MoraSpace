@@ -59,7 +59,7 @@ class TodoController {
 
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil mengambil detail tugas",
+        undefined, "Berhasil mengambil detail tugas",
       );
     } catch (error) {
       console.error(error);
@@ -116,7 +116,7 @@ class TodoController {
       if (!queryService)
         return HttpResponse(c).notFound("Tugas tidak ditemukan");
 
-      return HttpResponse(c).ok(queryService, "Tugas berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, undefined, "Tugas berhasil diperbarui");
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -141,7 +141,7 @@ class TodoController {
       );
       if (!queryService)
         return HttpResponse(c).notFound("Tugas tidak ditemukan");
-      return HttpResponse(c).ok(queryService, "Tugas berhasil dihapus");
+      return HttpResponse(c).ok(queryService, undefined, "Tugas berhasil dihapus");
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
