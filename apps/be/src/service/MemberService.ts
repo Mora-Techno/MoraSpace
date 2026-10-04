@@ -6,6 +6,10 @@ import type {
 } from "@repo/types/member.types";
 
 class MemberService {
+  public listEmploymentTypes(companyId: string) {
+    return prisma.employmentType.findMany({ where: { companyId }, orderBy: { name: 'asc' } });
+  }
+
   public async list(
     companyId: string,
     query: {

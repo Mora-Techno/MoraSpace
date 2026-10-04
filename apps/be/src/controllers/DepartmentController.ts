@@ -88,7 +88,7 @@ class DepartmentController {
       );
       if (!data) return HttpResponse(c).notFound("Departemen tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Departemen berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Departemen berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -107,7 +107,7 @@ class DepartmentController {
       const data = await DepartmentService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Departemen tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Departemen berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Departemen berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

@@ -55,3 +55,8 @@ export type MemberQuery = {
 export type PickUpdateMemberContacts = {
   contacts: MemberContactItem[];
 };
+export interface EmploymentTypeOption {
+  id: string;
+  companyId: string;
+  name: string;
+}

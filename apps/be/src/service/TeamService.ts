@@ -366,6 +366,8 @@ class TeamService {
         user: toSafeAuthUser(member.companyMember.user, member.companyMember),
       };
     }
+
+    throw new Error("Pengguna belum terdaftar. Buat akun terlebih dahulu atau gunakan undangan perusahaan.");
   }
 }
 

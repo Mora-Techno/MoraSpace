@@ -2,8 +2,15 @@ import crypto from "node:crypto";
 
 export const InternalApiKey = (app: any) => {
   app.onBeforeHandle(
-    ({ headers, set }: { headers: Record<string, any>; set: any }) => {
+    ({ headers, set, request }: { headers: Record<string, any>; set: any; request: Request }) => {
       try {
+        const path = new URL(request.url).pathname.replace(/\/$/, "");
+        // These handlers authenticate the provider signature/callback token themselves.
+        if (request.method === "POST" && (
+          path === "/api/v1/subscriptions/webhooks/stripe" ||
+          path === "/api/v1/subscriptions/webhooks/xendit"
+        )) return;
+
         const rawKey = headers["."] ?? headers["x-internal-api-key"];
         const clientKey = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 

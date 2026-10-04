@@ -68,6 +68,7 @@ export const TeamQueryDto = t.Object({
 });
 
 export const InviteMemberDto = t.Object({
+  teamId: t.String({ format: "uuid", description: "ID tim tujuan" }),
   email: t.String({ format: "email", description: "Email karyawan" }),
   fullName: t.String({ minLength: 1, description: "Nama lengkap karyawan" }),
   role: t.Optional(

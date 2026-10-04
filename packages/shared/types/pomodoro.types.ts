@@ -1,6 +1,8 @@
 export interface IPomodoroSession {
   id: string;
-  companyMemberId: string;
+  companyMemberId: string | null;
+  userId?: string | null;
+  metadata?: Record<string, unknown> | null;
   startedAt: string;
   endedAt: string | null;
   duration: number | null;
@@ -10,7 +12,7 @@ export type PomodoroQuery = {
   search?: string;
   page?: number;
   limit?: number;
-  status?: string;
+  status?: 'active' | 'completed';
   startDate?: string;
   endDate?: string;
 };

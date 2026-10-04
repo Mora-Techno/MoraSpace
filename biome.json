@@ -1,25 +1,26 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
   "files": {
-    "ignore": [
-      "**/node_modules",
-      "**/.next",
-      "**/dist",
-      "**/build",
-      "**/.expo",
-      "**/bun.lock",
-      "**/package-lock.json",
-      "**/pnpm-lock.yaml",
-      "apps/mobile/android",
-      "apps/mobile/ios",
-      "apps/mobile/script",
-      "apps/mobile/.vscode",
-      "apps/be/prisma/migrations"
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/.next",
+      "!**/dist",
+      "!**/build",
+      "!**/.expo",
+      "!**/bun.lock",
+      "!**/package-lock.json",
+      "!**/pnpm-lock.yaml",
+      "!**/apps/mobile/android",
+      "!**/apps/mobile/ios",
+      "!**/apps/mobile/script",
+      "!**/apps/mobile/.vscode",
+      "!**/apps/be/prisma/migrations"
     ]
   },
   "formatter": {
@@ -28,13 +29,11 @@
     "indentWidth": 2,
     "lineWidth": 100
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUnusedVariables": "warn"
       },

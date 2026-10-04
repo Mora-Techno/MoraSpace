@@ -72,7 +72,7 @@ class StripeService {
     };
   }
 
-  public constructWebhookEvent(payload: string, signature: string | null) {
+  public async constructWebhookEvent(payload: string, signature: string | null) {
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (!webhookSecret) {
       throw new Error('STRIPE_WEBHOOK_SECRET belum dikonfigurasi');
@@ -83,7 +83,7 @@ class StripeService {
     }
 
     const stripe = this.getClient();
-    return stripe.webhooks.constructEvent(payload, signature, webhookSecret);
+    return stripe.webhooks.constructEventAsync(payload, signature, webhookSecret);
   }
 }
 

@@ -63,3 +63,18 @@ export type PickAddTaskAttachment = {
   fileUrl: string;
   fileSize: number;
 };
+export interface TaskStatusOption {
+  id: string;
+  companyId: string;
+  name: string;
+  color: string;
+  sortOrder: number;
+}
+
+export interface TaskPriorityOption {
+  id: string;
+  companyId: string;
+  name: string;
+  color: string;
+  level: number;
+}

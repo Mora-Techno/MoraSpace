@@ -59,7 +59,7 @@ class NoteController {
 
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil mengambil detail catatan",
+        undefined, "Berhasil mengambil detail catatan",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -113,7 +113,7 @@ class NoteController {
       if (!queryService)
         return HttpResponse(c).notFound("Catatan tidak ditemukan");
 
-      return HttpResponse(c).ok(queryService, "Catatan berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, undefined, "Catatan berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -138,7 +138,7 @@ class NoteController {
 
       if (!queryService)
         return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      return HttpResponse(c).ok(queryService, "Catatan berhasil dihapus");
+      return HttpResponse(c).ok(queryService, undefined, "Catatan berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

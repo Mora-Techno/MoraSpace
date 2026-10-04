@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 import type { CompanyRole } from "@repo/types/company.types";
 import type {
   AuthTokensResponse,
@@ -85,8 +85,9 @@ export function buildPayload(user: SafeAuthUser): JwtPayload {
 }
 
 export function signAccessToken(payload: JwtPayload): string {
-  return jwt.sign(payload, getJwtSecret(), {
+  return jwt.sign({ ...payload, tokenType: 'access' }, getJwtSecret(), {
     expiresIn: AUTH_EXPIRY.accessToken,
+    jwtid: randomUUID(),
   });
 }
 

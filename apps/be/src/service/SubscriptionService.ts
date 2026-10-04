@@ -373,7 +373,7 @@ class SubscriptionService {
   }
 
   public async handleStripeWebhook(payload: string, signature: string | null) {
-    const event = StripeService.constructWebhookEvent(payload, signature);
+    const event = await StripeService.constructWebhookEvent(payload, signature);
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as {
@@ -462,7 +462,7 @@ class SubscriptionService {
     companyId: string,
     query: {
       search?: string;
-      status?: "active" | "inactive" | "expired" | "cancelled";
+      status?: "active" | "inactive" | "expired" | "cancelled" | "canceled" | "incomplete" | "past_due";
       planId?: string;
       startDate?: string;
       endDate?: string;
@@ -482,7 +482,7 @@ class SubscriptionService {
     }
 
     if (query.status) {
-      where.status = query.status;
+      where.status = query.status === "cancelled" ? "canceled" : query.status;
     }
 
     if (query.planId) {

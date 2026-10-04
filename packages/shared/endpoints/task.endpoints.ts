@@ -3,6 +3,8 @@ import { buildEndpoint } from '../config/api.config';
 const mount = '/tasks';
 
 export const TASK_ENDPOINTS = {
+  STATUSES: buildEndpoint(mount, '/statuses'),
+  PRIORITIES: buildEndpoint(mount, '/priorities'),
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),
   BYID: (id: string) => buildEndpoint(mount, `/${id}`),

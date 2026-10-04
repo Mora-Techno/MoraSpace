@@ -87,7 +87,7 @@ class CompanyController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(queryService, "Admin Berhasil dihapus");
+      return HttpResponse(c).ok(queryService, undefined, "Admin Berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -160,7 +160,7 @@ class CompanyController {
 
       if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Profil company berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Profil company berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -186,7 +186,7 @@ class CompanyController {
 
       if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Langganan berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Langganan berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
