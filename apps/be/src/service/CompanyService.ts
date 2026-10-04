@@ -1,4 +1,5 @@
 import bcryptjs from "bcryptjs";
+import { DEFAULT_TASK_STATUSES, DEFAULT_TASK_PRIORITIES, DEFAULT_EMPLOYMENT_TYPES } from '@/config/companyDefaults';
 import prisma from "prisma/client";
 import { getWorkstationUserLimit } from "@/utils/tierLimits";
 import { getPeriodEnd } from "@/config/subscriptionPlans";
@@ -56,6 +57,15 @@ class CompanyService {
       });
 
       const roles = await ensureDefaultRoles(company.id, tx);
+      await tx.taskStatus.createMany({
+        data: DEFAULT_TASK_STATUSES.map((status) => ({ ...status, companyId: company.id })),
+      });
+      await tx.taskPriority.createMany({
+        data: DEFAULT_TASK_PRIORITIES.map((priority) => ({ ...priority, companyId: company.id })),
+      });
+      await tx.employmentType.createMany({
+        data: DEFAULT_EMPLOYMENT_TYPES.map((name) => ({ name, companyId: company.id })),
+      });
       const ownerRole = roles.find((role) => role.name === "Owner");
 
       const member = await tx.companyMember.create({

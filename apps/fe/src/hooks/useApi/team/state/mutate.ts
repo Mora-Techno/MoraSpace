@@ -1,3 +1,4 @@
+import type { PickInviteTeamMember } from "@repo/types/team.types";
 import type {
   ITeam,
   PickAddTeamMember,
@@ -68,7 +69,7 @@ export function useRemoveTeamMember() {
 }
 
 export function useInviteTeamMember() {
-  return useAppMutation<unknown, unknown, TeamCacheContext>({
+  return useAppMutation<unknown, PickInviteTeamMember, TeamCacheContext>({
     mutationFn: (payload) => Api.Team.InviteMember(payload),
     invalidateKeys: [teamsRoot],
     optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),

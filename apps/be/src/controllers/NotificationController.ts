@@ -30,7 +30,7 @@ class NotificationController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(data, "Email berhasil dikirim");
+      return HttpResponse(c).ok(data, undefined, "Email berhasil dikirim");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -93,7 +93,7 @@ class NotificationController {
       );
       if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Notifikasi ditandai sudah dibaca");
+      return HttpResponse(c).ok(data, undefined, "Notifikasi ditandai sudah dibaca");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -109,7 +109,7 @@ class NotificationController {
         user.companyMemberId ?? null,
         user.id,
       );
-      return HttpResponse(c).ok(data, "Semua notifikasi ditandai sudah dibaca");
+      return HttpResponse(c).ok(data, undefined, "Semua notifikasi ditandai sudah dibaca");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -151,7 +151,7 @@ class NotificationController {
       );
       if (!data) return HttpResponse(c).notFound("Notifikasi tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Berhasil mengambil detail notifikasi");
+      return HttpResponse(c).ok(data, undefined, "Berhasil mengambil detail notifikasi");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

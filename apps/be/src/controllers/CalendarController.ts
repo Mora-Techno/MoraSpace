@@ -59,7 +59,7 @@ class CalendarController {
       }
       return HttpResponse(c).ok(
         queryService,
-        "Berhasil mengambil detail jadwal",
+        undefined, "Berhasil mengambil detail jadwal",
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -117,7 +117,7 @@ class CalendarController {
       if (!queryService) {
         return HttpResponse(c).notFound("Jadwal tidak ditemukan");
       }
-      return HttpResponse(c).ok(queryService, "Jadwal berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, undefined, "Jadwal berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -142,7 +142,7 @@ class CalendarController {
 
       if (!queryService)
         return HttpResponse(c).notFound("Jadwal tidak ditemukan");
-      return HttpResponse(c).ok(queryService, "Jadwal berhasil dihapus");
+      return HttpResponse(c).ok(queryService, undefined, "Jadwal berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

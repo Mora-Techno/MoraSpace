@@ -13,6 +13,13 @@ import type {
 } from "@repo/types/member.types";
 
 class MemberController {
+  public async listEmploymentTypes(c: AppContext) {
+    const user = getUser(c);
+    const invalid = await memberContextValidate(user, c);
+    if (invalid) return invalid;
+    return HttpResponse(c).ok(await MemberService.listEmploymentTypes(user.companyId!), undefined, 'Daftar tipe kepegawaian');
+  }
+
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
@@ -68,7 +75,7 @@ class MemberController {
       const data = await MemberService.update(params.id, user.companyId!, body);
       if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Anggota berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -87,7 +94,7 @@ class MemberController {
       const data = await MemberService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Anggota berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Anggota berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -134,7 +141,7 @@ class MemberController {
       );
       if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Profil anggota berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Profil anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -181,7 +188,7 @@ class MemberController {
       );
       if (!data) return HttpResponse(c).notFound("Anggota tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Kontak anggota berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Kontak anggota berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

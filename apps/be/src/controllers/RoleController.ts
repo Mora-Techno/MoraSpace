@@ -66,7 +66,7 @@ class RoleController {
       );
       if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Role berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Role berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -85,7 +85,7 @@ class RoleController {
       const data = await RoleService.removeRole(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Role berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Role berhasil dihapus");
     } catch (error) {
       const msg =
         error instanceof Error ? error.message : "Gagal menghapus role";
@@ -137,7 +137,7 @@ class RoleController {
       );
       if (!data) return HttpResponse(c).notFound("Role tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Permission role berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Permission role berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

@@ -5,6 +5,7 @@ import {
   SubscriptionQueryDto,
 } from "@/dto/subscription.dto";
 import type { AppContext } from "@/contex";
+import { verifyToken } from "@/middlewares/auth";
 
 class SubscriptionRouter {
   public subscriptionRouter;
@@ -23,6 +24,7 @@ class SubscriptionRouter {
       (c: AppContext) => SubscriptionController.list(c),
       {
         query: SubscriptionQueryDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Daftar langganan",
           description:
@@ -47,6 +49,7 @@ class SubscriptionRouter {
       "/webhooks/stripe",
       (c: AppContext) => SubscriptionController.stripeWebhook(c),
       {
+        parse: "text",
         detail: {
           summary: "Webhook Stripe",
           tags: ["Subscriptions"],
@@ -68,6 +71,7 @@ class SubscriptionRouter {
       "/me",
       (c: AppContext) => SubscriptionController.getMine(c),
       {
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Langganan company saat ini",
           tags: ["Subscriptions"],
@@ -79,6 +83,7 @@ class SubscriptionRouter {
       (c: AppContext) => SubscriptionController.checkout(c),
       {
         body: CreateCheckoutDto,
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Buat checkout langganan",
           description:
@@ -91,6 +96,7 @@ class SubscriptionRouter {
       "/cancel",
       (c: AppContext) => SubscriptionController.cancel(c),
       {
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Batalkan langganan",
           description: "Leader membatalkan langganan dan downgrade ke free.",

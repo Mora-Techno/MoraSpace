@@ -1,20 +1,16 @@
 import type { AppContext } from '@/contex';
 
-type RequestTimingStore = {
-  startedAt?: number;
-};
-
 function isGetRequest(c: AppContext) {
   return c.request.method.toUpperCase() === 'GET';
 }
 
 function formatProcessTime(c: AppContext) {
-  const store = c.store as RequestTimingStore | undefined;
-  if (!store?.startedAt) {
+  const startedAt = c.startedAt;
+  if (typeof startedAt !== 'number') {
     return '0ms';
   }
 
-  const durationMs = Math.max(0, Math.round(performance.now() - store.startedAt));
+  const durationMs = Math.max(0, Math.round(performance.now() - startedAt));
 
   return `${durationMs}ms`;
 }
@@ -34,7 +30,7 @@ function buildGetResponseMeta(c: AppContext, meta?: unknown) {
 
 export function HttpResponse(c: AppContext) {
   return {
-    ok: (data?: any, meta?: any, message = 'Berhasil') => {
+    ok: (data?: unknown, meta?: Record<string, unknown>, message = 'Berhasil') => {
       const responseMeta = isGetRequest(c) ? buildGetResponseMeta(c, meta) : meta;
 
       return c.json?.({ status: 200, message, data, meta: responseMeta }, 200);

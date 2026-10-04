@@ -31,3 +31,10 @@ export type PickAddTeamMember = {
   companyMemberId: string;
   isLeader?: boolean;
 };
+
+export type PickInviteTeamMember = {
+  teamId: string;
+  email: string;
+  fullName: string;
+  role?: 'Admin' | 'Member';
+};

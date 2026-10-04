@@ -11,10 +11,11 @@ class PomodoroService {
   public async start(
     companyMemberId: string | null,
     userId: string,
-    _metadata?: Record<string, unknown>,
+    metadata?: Record<string, unknown>,
   ) {
     const data: Record<string, unknown> = {
       startedAt: new Date(),
+      ...(metadata ? { metadata } : {}),
     };
     if (companyMemberId) {
       data.companyMemberId = companyMemberId;
@@ -63,7 +64,7 @@ class PomodoroService {
   ) {
     const where = this.buildWhere(companyMemberId, userId);
     const active = sessionId
-      ? await prisma.pomodoroSession.findUnique({ where: { id: sessionId } })
+      ? await prisma.pomodoroSession.findFirst({ where: { id: sessionId, ...where, endedAt: null } })
       : await prisma.pomodoroSession.findFirst({
           where: { ...where, endedAt: null } as any,
           orderBy: { startedAt: "desc" },
@@ -136,7 +137,7 @@ class PomodoroService {
     userId: string,
     query: {
       search?: string;
-      status?: "active" | "completed" | "cancelled";
+      status?: "active" | "completed";
       startDate?: string;
       endDate?: string;
       page?: number;

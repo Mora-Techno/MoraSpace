@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Auto-update graphify knowledge graph on commit if code changed.
+# Install (sekali per clone): cp .github/hooks/pre-commit .git/hooks/pre-commit
+
+if command -v graphify >/dev/null 2>&1; then
+  # Check if non-graphify files changed
+  CHANGED=$(git diff --cached --name-only | grep -v '^graphify-out/')
+  if [ -n "$CHANGED" ]; then
+    echo "⚡ Code changes detected. Auto-updating Graphify knowledge graph..."
+    graphify update . || true
+    git add graphify-out/ || true
+  fi
+fi

@@ -7,6 +7,14 @@ import type {
 } from "@repo/types/task.types";
 
 class TaskService {
+  public listStatuses(companyId: string) {
+    return prisma.taskStatus.findMany({ where: { companyId }, orderBy: { sortOrder: 'asc' } });
+  }
+
+  public listPriorities(companyId: string) {
+    return prisma.taskPriority.findMany({ where: { companyId }, orderBy: { level: 'asc' } });
+  }
+
   public async list(
     companyId: string,
     query: {

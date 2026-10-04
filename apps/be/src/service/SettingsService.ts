@@ -30,7 +30,7 @@ class SettingsService {
       ? { companyMemberId }
       : { userId };
 
-    let settings = await prisma.userSetting.findFirst({
+    const settings = await prisma.userSetting.findFirst({
       where: where as any,
     });
 
@@ -41,48 +41,34 @@ class SettingsService {
     return mapSettings(settings);
   }
 
-  public async update(companyMemberId: string, payload: PickUpdateSettings) {
-    const existing = await prisma.userSetting.findUnique({
-      where: { companyMemberId },
-    });
-
-    if (!existing) {
-      const settings = await prisma.userSetting.create({
-        data: {
-          companyMemberId,
-          theme: payload.theme ?? null,
-          language: payload.language ?? null,
-          timezone: payload.timezone ?? null,
-          enableMusic: payload.enableMusic ?? false,
-          focusMode: payload.focusMode ?? false,
-          notificationEnabled: payload.notificationEnabled ?? true,
-        },
-      });
-      return mapSettings(settings);
-    }
-
-    const settings = await prisma.userSetting.update({
-      where: { companyMemberId },
-      data: {
+  public async update(
+    companyMemberId: string | null,
+    userId: string,
+    payload: PickUpdateSettings,
+  ) {
+    const where = companyMemberId ? { companyMemberId } : { userId };
+    const settings = await prisma.userSetting.upsert({
+      where,
+      create: {
+        ...where,
+        theme: payload.theme ?? null,
+        language: payload.language ?? null,
+        timezone: payload.timezone ?? null,
+        enableMusic: payload.enableMusic ?? false,
+        focusMode: payload.focusMode ?? false,
+        notificationEnabled: payload.notificationEnabled ?? true,
+      },
+      update: {
         ...(payload.theme !== undefined ? { theme: payload.theme } : {}),
-        ...(payload.language !== undefined
-          ? { language: payload.language }
-          : {}),
-        ...(payload.timezone !== undefined
-          ? { timezone: payload.timezone }
-          : {}),
-        ...(payload.enableMusic !== undefined
-          ? { enableMusic: payload.enableMusic }
-          : {}),
-        ...(payload.focusMode !== undefined
-          ? { focusMode: payload.focusMode }
-          : {}),
+        ...(payload.language !== undefined ? { language: payload.language } : {}),
+        ...(payload.timezone !== undefined ? { timezone: payload.timezone } : {}),
+        ...(payload.enableMusic !== undefined ? { enableMusic: payload.enableMusic } : {}),
+        ...(payload.focusMode !== undefined ? { focusMode: payload.focusMode } : {}),
         ...(payload.notificationEnabled !== undefined
           ? { notificationEnabled: payload.notificationEnabled }
           : {}),
       },
     });
-
     return mapSettings(settings);
   }
   public async TestEmail(payload: TestEmail) {

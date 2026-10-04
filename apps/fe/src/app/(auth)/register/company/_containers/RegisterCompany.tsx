@@ -28,7 +28,7 @@ export default function RegisterCompanyContainer() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = formRegister;
-    registerCompany.mutateAsync(payload);
+    registerCompany.mutateAsync(payload).catch(() => {});
   };
 
   const googleLogin = useGoogleLogin({

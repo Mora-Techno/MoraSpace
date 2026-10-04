@@ -10,7 +10,8 @@ export function toServiceResponse<T>(
   override?: ServiceResponseOverride,
 ): ApiSuccessResponse<T> {
   return {
-    data: res.data,
+    ...res,
     message: override?.message ?? res.message,
+    statusCode: res.statusCode ?? res.status ?? override?.statusCode,
   };
 }

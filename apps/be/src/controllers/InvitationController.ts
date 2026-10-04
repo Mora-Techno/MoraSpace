@@ -63,7 +63,7 @@ class InvitationController {
       const data = await InvitationService.accept(body.token, user.id);
       return HttpResponse(c).ok(
         data,
-        "Undangan berhasil diterima, selamat bergabung!",
+        undefined, "Undangan berhasil diterima, selamat bergabung!",
       );
     } catch (error) {
       const msg =
@@ -81,7 +81,7 @@ class InvitationController {
           "Undangan tidak ditemukan atau sudah diproses",
         );
 
-      return HttpResponse(c).ok(data, "Undangan berhasil ditolak");
+      return HttpResponse(c).ok(data, undefined, "Undangan berhasil ditolak");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -100,7 +100,7 @@ class InvitationController {
       const data = await InvitationService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Undangan tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Undangan berhasil dibatalkan/dihapus");
+      return HttpResponse(c).ok(data, undefined, "Undangan berhasil dibatalkan/dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

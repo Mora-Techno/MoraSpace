@@ -54,17 +54,18 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({
           type={showPassword ? "text" : "password"}
           value={formLogin.password}
           iconRight={
-            showPassword ? (
-              <EyeClosed
-                onClick={() => setShowPassword(false)}
-                className="text-foreground  cursor-pointer relative"
-              />
-            ) : (
-              <Eye
-                onClick={() => setShowPassword(true)}
-                className="text-foreground cursor-pointer relative"
-              />
-            )
+            <button
+              type="button"
+              aria-label="Tampilkan password"
+              onClick={() => setShowPassword(!showPassword)}
+              className="cursor-pointer"
+            >
+              {showPassword ? (
+                <EyeClosed className="text-foreground relative" />
+              ) : (
+                <Eye className="text-foreground relative" />
+              )}
+            </button>
           }
           onChange={(e) =>
             setFormLogin((prev) => ({

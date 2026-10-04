@@ -26,14 +26,14 @@ const MagicLinkContainer = () => {
       {
         onSuccess: () => {
           if (link === "forgot") {
-            ns.router.push("");
+            ns.router.push("/forgot-password");
           } else {
             ns.router.push("/login");
           }
         },
       },
-    );
-  }, [token, link, ns.router]);
+    ).catch(() => {});
+  }, [token, link, ns.router, useMagicLink]);
 
   return (
     <main className="w-full min-h-screen">

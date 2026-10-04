@@ -65,7 +65,7 @@ class PositionController {
       );
       if (!data) return HttpResponse(c).notFound("Jabatan tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Jabatan berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, "Jabatan berhasil diperbarui");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -84,7 +84,7 @@ class PositionController {
       const data = await PositionService.remove(params.id, user.companyId!);
       if (!data) return HttpResponse(c).notFound("Jabatan tidak ditemukan");
 
-      return HttpResponse(c).ok(data, "Jabatan berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, "Jabatan berhasil dihapus");
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

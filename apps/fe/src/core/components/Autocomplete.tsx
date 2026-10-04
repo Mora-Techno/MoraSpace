@@ -120,8 +120,8 @@ export default function Autocomplete({
               )}
             </SelectTrigger>
             <SelectContent className="w-full">
-              {options?.map((option, index) => (
-                <SelectItem key={index} value={option.value}>
+              {options?.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
                   {selectedValueRender ? selectedValueRender(option) : option.label}
                 </SelectItem>
               ))}

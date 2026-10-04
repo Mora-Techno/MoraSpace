@@ -7,9 +7,23 @@ import { Text, View } from 'react-native';
 import ThemeToggle from '@/components/ui/toggleTheme';
 import PrivateProviders from '@/core/providers/private.provinder';
 import { useTheme } from '@/core/providers/theme.provinder';
+import { useAppDispatch, useAppSelector } from '@/hooks/toolkit/redux';
+import { clearAuthTokens } from '@/service/auth-storage';
+import { logout } from '@/stores/authSlice/authSlice';
 
 function CustomDrawerContent(props: any) {
   const { theme, colors, isDark } = useTheme();
+  const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state) => state.auth.currentUser);
+  const displayName =
+    (currentUser as any)?.user?.fullName ?? (currentUser as any)?.fullName ?? 'User';
+  const displayEmail = (currentUser as any)?.user?.email ?? (currentUser as any)?.email ?? '';
+
+  const handleLogout = async () => {
+    dispatch(logout());
+    await clearAuthTokens();
+    router.replace('/(auth)/login/page');
+  };
 
   return (
     <DrawerContentScrollView
@@ -26,8 +40,8 @@ function CustomDrawerContent(props: any) {
             <User size={24} color={colors.primary} />
           </View>
           <View className="ml-3 flex-1">
-            <Text className="text-lg font-bold">John Doe</Text>
-            <Text className="text-sm text-gray-500">john@example.com</Text>
+            <Text className="text-lg font-bold">{displayName}</Text>
+            {displayEmail ? <Text className="text-sm text-gray-500">{displayEmail}</Text> : null}
           </View>
         </View>
       </View>
@@ -41,7 +55,7 @@ function CustomDrawerContent(props: any) {
           label="Logout"
           icon={({ size }) => <LogOut size={size} color={colors.destructive} />}
           labelStyle={{ color: colors.destructive }}
-          onPress={() => router.replace('/(auth)/login/page')}
+          onPress={handleLogout}
         />
       </View>
     </DrawerContentScrollView>

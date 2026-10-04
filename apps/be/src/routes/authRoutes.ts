@@ -86,6 +86,7 @@ class AuthRouter {
       "/logout",
       (c: AppContext) => AuthController.logout(c),
       {
+        beforeHandle: [verifyToken().beforeHandle],
         detail: {
           summary: "Logout pengguna",
           description:

@@ -11,12 +11,12 @@ export default function PrivateProviders({
   const currentUser = useAppSelector((state) => state.auth.currentUser?.user.token);
   const isAuth = currentUser;
 
-  // useEffect(() => {
-  //   if (!isAuth) {
-  //     // Redirect to login if not authenticated
-  //     router.replace("/(auth)/login" as any);
-  //   }
-  // }, [isAuth]);
+  useEffect(() => {
+    if (!isAuth) {
+      // Redirect to login if not authenticated
+      router.replace('/(auth)/login/page' as any);
+    }
+  }, [isAuth]);
 
   return <>{children}</>;
 }

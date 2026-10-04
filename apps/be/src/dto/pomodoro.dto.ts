@@ -12,7 +12,7 @@ export const StopPomodoroDto = t.Object({
     t.String({ format: "uuid", description: "ID sesi pomodoro" }),
   ),
   duration: t.Optional(
-    t.Numeric({ description: "Durasi fokus dalam detik/menit" }),
+    t.Integer({ minimum: 0, description: "Durasi fokus dalam detik" }),
   ),
 });
 
@@ -21,7 +21,7 @@ export const PomodoroQueryDto = t.Object({
   ...PaginationDto.properties,
   status: t.Optional(
     t.Union(
-      [t.Literal("active"), t.Literal("completed"), t.Literal("cancelled")],
+      [t.Literal("active"), t.Literal("completed")],
       {
         description: "Filter berdasarkan status sesi",
       },
