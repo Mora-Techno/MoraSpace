@@ -49,7 +49,7 @@ export type TaskQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   statusId?: string;
   priorityId?: string;
   assigneeId?: string;
@@ -70,6 +70,18 @@ export interface TaskStatusOption {
   color: string;
   sortOrder: number;
 }
+
+export type PickCreateTaskStatus = {
+  name: string;
+  color?: string;
+  sortOrder?: number;
+};
+
+export type PickUpdateTaskStatusItem = {
+  name?: string;
+  color?: string;
+  sortOrder?: number;
+};
 
 export interface TaskPriorityOption {
   id: string;

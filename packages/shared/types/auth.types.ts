@@ -36,7 +36,31 @@ export type SafeAuthUser = Pick<
 > & {
   companyMemberId?: string | null;
   platformRole: PlatformRole;
+  workspaceType?: "personal" | "company";
 };
+
+export type WorkspaceType = "personal" | "company";
+
+export interface WorkspaceItem {
+  id: string;
+  name: string;
+  type: WorkspaceType;
+  role?: string;
+  slug?: string;
+  logo?: string | null;
+  companyMemberId?: string | null;
+}
+
+export interface UserWorkspacesResponse {
+  personal: WorkspaceItem;
+  companies: WorkspaceItem[];
+  activeWorkspaceId: string;
+  activeType: WorkspaceType;
+}
+
+export interface SwitchWorkspaceInput {
+  workspaceId: string;
+}
 
 export interface AuthTokensResponse {
   accessToken: string;
@@ -51,6 +75,7 @@ export type AccessTokenPayload = Pick<
   tokenType?: "access";
   companyMemberId?: string | null;
   platformRole: PlatformRole;
+  workspaceType?: "personal" | "company";
 };
 
 export interface AuthSessionResponse extends AuthTokensResponse {

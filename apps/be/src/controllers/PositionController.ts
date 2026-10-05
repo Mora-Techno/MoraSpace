@@ -15,12 +15,26 @@ class PositionController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
+      if (!user) return HttpResponse(c).unauthorized();
+
+      if (!user.companyId) {
+        return HttpResponse(c).ok(
+          [],
+          {
+            currentPage: 1,
+            limit: 10,
+            totalData: 0,
+            totalPage: 0,
+          },
+          "Daftar jabatan",
+        );
+      }
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
       const result = await PositionService.list(
-        user.companyId!,
+        user.companyId,
         c.query as any,
       );
       return HttpResponse(c).ok(

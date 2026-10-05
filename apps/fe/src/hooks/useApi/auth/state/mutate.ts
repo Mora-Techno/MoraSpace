@@ -125,3 +125,40 @@ export function useResetPassword() {
     mutationFn: (payload) => Api.Auth.ResetPassword(payload),
   });
 }
+
+export function useSwitchWorkspace() {
+  return useAppMutation<
+    AuthSessionResponse,
+    { workspaceId: string },
+    AuthCacheContext
+  >({
+    mutationFn: (payload) => Api.Auth.SwitchWorkspace(payload),
+    onSuccess: async (res, _vars, _ctx, ns) => {
+      const data = res.data;
+      const accessToken = res?.data.accessToken;
+      const refreshToken = res?.data.refreshToken;
+      const role = res?.data.user?.companyRole ?? "";
+
+      if (accessToken && refreshToken) {
+        persistAuthSessionFromResponse(data);
+        try {
+          await saveTokens({
+            role: role || undefined,
+            accessToken,
+            refreshToken,
+          });
+        } catch {}
+      }
+
+      await ns.queryClient.resetQueries();
+
+      const normalizedRole = role?.toLowerCase();
+      if (normalizedRole === "owner") {
+        ns.router.replace("/owner/dashboard");
+      } else {
+        ns.router.replace("/member/dashboard");
+      }
+    },
+  });
+}
+

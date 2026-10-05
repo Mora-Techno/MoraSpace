@@ -6,6 +6,7 @@ export const queryKey = {
   authRoot: () => ['auth'] as const,
   auth: {
     me: () => ['auth', 'me'] as const,
+    workspaces: () => ['auth', 'workspaces'] as const,
   },
 
   todosRoot: () => ['todos'] as const,
@@ -107,6 +108,8 @@ export const queryKey = {
   tasksRoot: () => ['tasks'] as const,
   tasks: {
     list: () => ['tasks', 'list'] as const,
+    statuses: () => ['tasks', 'statuses'] as const,
+    priorities: () => ['tasks', 'priorities'] as const,
     detail: (id: string) => ['tasks', 'detail', id] as const,
     activities: (id: string) => ['tasks', 'activities', id] as const,
   },

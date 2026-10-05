@@ -14,6 +14,8 @@ export const AUTH_ENDPOINTS = {
   RESET_PASSWORD: buildEndpoint(mount, "/reset-password"),
   VERIFY_OTP: buildEndpoint(mount, "/otp/verify"),
   USERS: buildEndpoint(mount, "/users"),
+  WORKSPACES: buildEndpoint(mount, "/workspaces"),
+  SWITCH_WORKSPACE: buildEndpoint(mount, "/switch-workspace"),
 } as const;
 
 export function listAuthEndpoints() {

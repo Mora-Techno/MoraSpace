@@ -15,19 +15,37 @@ import type {
 class MemberController {
   public async listEmploymentTypes(c: AppContext) {
     const user = getUser(c);
+    if (!user) return HttpResponse(c).unauthorized();
+    if (!user.companyId) {
+      return HttpResponse(c).ok([], undefined, 'Daftar tipe kepegawaian');
+    }
     const invalid = await memberContextValidate(user, c);
     if (invalid) return invalid;
-    return HttpResponse(c).ok(await MemberService.listEmploymentTypes(user.companyId!), undefined, 'Daftar tipe kepegawaian');
+    return HttpResponse(c).ok(await MemberService.listEmploymentTypes(user.companyId), undefined, 'Daftar tipe kepegawaian');
   }
 
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
+      if (!user) return HttpResponse(c).unauthorized();
+
+      if (!user.companyId) {
+        return HttpResponse(c).ok(
+          [],
+          {
+            currentPage: 1,
+            limit: 10,
+            totalData: 0,
+            totalPage: 0,
+          },
+          "Daftar anggota",
+        );
+      }
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await MemberService.list(user.companyId!, c.query as any);
+      const result = await MemberService.list(user.companyId, c.query as any);
       return HttpResponse(c).ok(
         result.data,
         result.meta,

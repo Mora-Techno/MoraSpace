@@ -94,3 +94,7 @@ export const UserQueryDto = t.Object({
     }),
   ),
 });
+
+export const SwitchWorkspaceDto = t.Object({
+  workspaceId: t.String({ minLength: 1, description: "ID workspace ('personal' atau ID company)" }),
+});

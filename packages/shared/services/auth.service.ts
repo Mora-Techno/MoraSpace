@@ -11,7 +11,9 @@ import type {
   PickVerifyMagicLink,
   PickVerifyOtp,
   SafeAuthUser,
+  SwitchWorkspaceInput,
   UserQuery,
+  UserWorkspacesResponse,
 } from "../types/auth.types";
 import type { TResponse } from "../types/response.types";
 import {
@@ -146,6 +148,28 @@ class AuthService {
     );
     return toServiceResponse(res, {
       message: "Daftar pengguna berhasil diambil",
+    });
+  }
+
+  public async ListWorkspaces(): Promise<TResponse<UserWorkspacesResponse>> {
+    const res = await GetResponse<UserWorkspacesResponse>(
+      AUTH_ENDPOINTS.WORKSPACES,
+    );
+    return toServiceResponse(res, {
+      message: "Daftar workspace berhasil diambil",
+    });
+  }
+
+  public async SwitchWorkspace(
+    payload: SwitchWorkspaceInput,
+  ): Promise<TResponse<AuthSessionResponse>> {
+    const res = await PostResponse<AuthSessionResponse>(
+      AUTH_ENDPOINTS.SWITCH_WORKSPACE,
+      payload,
+    );
+    return toServiceResponse(res, {
+      message: "Berhasil berpindah workspace",
+      statusCode: 200,
     });
   }
 }

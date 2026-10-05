@@ -1,27 +1,167 @@
-import prisma from 'prisma/client';
 import type {
-  PickCreateTask,
-  PickUpdateTask,
-  PickCreateTaskChecklist,
   PickAddTaskAttachment,
+  PickCreateTask,
+  PickCreateTaskChecklist,
+  PickUpdateTask,
 } from '@repo/types/task.types';
+import prisma from 'prisma/client';
+import { DEFAULT_TASK_STATUSES } from '@/config/companyDefaults';
 
 export interface TaskViewer {
   companyRole?: string;
   companyMemberId?: string | null;
+  userId?: string;
 }
 
+const DEFAULT_PRIORITIES = [
+  { id: 'low', name: 'Rendah', color: '#10b981', level: 1 },
+  { id: 'medium', name: 'Sedang', color: '#f59e0b', level: 2 },
+  { id: 'high', name: 'Tinggi', color: '#ef4444', level: 3 },
+  { id: 'urgent', name: 'Mendesak', color: '#dc2626', level: 4 },
+];
+
 class TaskService {
-  public listStatuses(companyId: string) {
-    return prisma.taskStatus.findMany({ where: { companyId }, orderBy: { sortOrder: 'asc' } });
+  public async listStatuses(companyId?: string | null, userId?: string) {
+    const whereClause: Record<string, unknown> = companyId
+      ? { companyId }
+      : { userId, companyId: null };
+
+    let statuses = await prisma.taskStatus.findMany({
+      where: whereClause as any,
+      orderBy: { sortOrder: 'asc' },
+    });
+
+    if (statuses.length === 0 && typeof prisma.taskStatus?.createMany === 'function') {
+      await prisma.taskStatus.createMany({
+        data: DEFAULT_TASK_STATUSES.map((status) => ({
+          name: status.name,
+          color: status.color,
+          sortOrder: status.sortOrder,
+          companyId: companyId ?? null,
+          userId: companyId ? null : (userId ?? null),
+        })),
+      });
+      statuses = await prisma.taskStatus.findMany({
+        where: whereClause as any,
+        orderBy: { sortOrder: 'asc' },
+      });
+    }
+
+    return statuses;
   }
 
-  public listPriorities(companyId: string) {
-    return prisma.taskPriority.findMany({ where: { companyId }, orderBy: { level: 'asc' } });
+  public async createStatus(
+    companyId: string | null,
+    userId: string,
+    input: { name: string; color?: string; sortOrder?: number },
+  ) {
+    const whereClause: Record<string, unknown> = companyId
+      ? { companyId }
+      : { userId, companyId: null };
+
+    let sortOrder = input.sortOrder;
+    if (typeof sortOrder !== 'number') {
+      const highest = await prisma.taskStatus.findFirst({
+        where: whereClause as any,
+        orderBy: { sortOrder: 'desc' },
+        select: { sortOrder: true },
+      });
+      sortOrder = (highest?.sortOrder ?? -1) + 1;
+    }
+
+    return prisma.taskStatus.create({
+      data: {
+        companyId: companyId ?? null,
+        userId: companyId ? null : userId,
+        name: input.name.trim(),
+        color: input.color?.trim() || '#3b82f6',
+        sortOrder,
+      },
+    });
+  }
+
+  public async updateStatusItem(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    input: { name?: string; color?: string; sortOrder?: number },
+  ) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.taskStatus.findFirst({
+      where: whereClause as any,
+    });
+    if (!existing) {
+      throw new Error('Status tugas tidak ditemukan');
+    }
+
+    return prisma.taskStatus.update({
+      where: { id },
+      data: {
+        ...(input.name !== undefined ? { name: input.name.trim() } : {}),
+        ...(input.color !== undefined ? { color: input.color.trim() } : {}),
+        ...(typeof input.sortOrder === 'number' ? { sortOrder: input.sortOrder } : {}),
+      },
+    });
+  }
+
+  public async deleteStatusItem(id: string, companyId: string | null, userId: string) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.taskStatus.findFirst({
+      where: whereClause as any,
+    });
+    if (!existing) {
+      throw new Error('Status tugas tidak ditemukan');
+    }
+
+    const scopeWhere: Record<string, unknown> = companyId
+      ? { companyId }
+      : { userId, companyId: null };
+
+    const totalStatuses = await prisma.taskStatus.count({
+      where: scopeWhere as any,
+    });
+    if (totalStatuses <= 1) {
+      throw new Error(
+        'Tidak dapat menghapus status terakhir. Workspace minimal harus memiliki 1 status.',
+      );
+    }
+
+    const inUseWhere: Record<string, unknown> = companyId
+      ? { companyId, statusId: id }
+      : { userId, statusId: id };
+
+    const inUseCount = await prisma.task.count({
+      where: inUseWhere as any,
+    });
+    if (inUseCount > 0) {
+      throw new Error(
+        `Status masih digunakan oleh ${inUseCount} tugas. Pindahkan tugas ke status lain terlebih dahulu.`,
+      );
+    }
+
+    await prisma.taskStatus.delete({
+      where: { id },
+    });
+
+    return { id };
+  }
+
+  public async listPriorities(companyId?: string | null, _userId?: string) {
+    if (companyId) {
+      const dbPriorities = await prisma.taskPriority.findMany({
+        where: { companyId },
+        orderBy: { level: 'asc' },
+      });
+      if (dbPriorities.length > 0) return dbPriorities;
+    }
+    return DEFAULT_PRIORITIES;
   }
 
   public async list(
-    companyId: string,
+    companyId: string | null,
+    userId: string,
     query: {
       search?: string;
       statusId?: string;
@@ -41,7 +181,28 @@ class TaskService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = { companyId };
+    const where: Record<string, unknown> = {};
+
+    if (companyId) {
+      where.companyId = companyId;
+      if (query.assigneeId) {
+        where.assignees = {
+          some: { companyMemberId: query.assigneeId },
+        };
+      }
+      if (query.reporterMemberId) {
+        where.reporterMemberId = query.reporterMemberId;
+      }
+      // v0.0.1: Member hanya lihat task sendiri (reporter/assignee). Owner lihat semua.
+      if (viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+        where.OR = [
+          { reporterMemberId: viewer.companyMemberId },
+          { assignees: { some: { companyMemberId: viewer.companyMemberId } } },
+        ];
+      }
+    } else {
+      where.userId = userId;
+    }
 
     if (query.search) {
       where.title = { contains: query.search, mode: 'insensitive' };
@@ -55,29 +216,11 @@ class TaskService {
       where.priorityId = query.priorityId;
     }
 
-    if (query.assigneeId) {
-      where.assignees = {
-        some: { companyMemberId: query.assigneeId },
-      };
-    }
-
-    if (query.reporterMemberId) {
-      where.reporterMemberId = query.reporterMemberId;
-    }
-
     if (query.startDate || query.endDate) {
       where.dueDate = {};
       if (query.startDate)
         (where.dueDate as Record<string, unknown>).gte = new Date(query.startDate);
       if (query.endDate) (where.dueDate as Record<string, unknown>).lte = new Date(query.endDate);
-    }
-
-    // v0.0.1: Member hanya lihat task sendiri (reporter/assignee). Owner lihat semua.
-    if (viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
-      where.OR = [
-        { reporterMemberId: viewer.companyMemberId },
-        { assignees: { some: { companyMemberId: viewer.companyMemberId } } },
-      ];
     }
 
     const orderBy: Record<string, unknown> = {};
@@ -104,6 +247,14 @@ class TaskService {
                   avatarUrl: true,
                 },
               },
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
             },
           },
           assignees: {
@@ -145,9 +296,16 @@ class TaskService {
     };
   }
 
-  public async getById(id: string, companyId: string, viewer?: TaskViewer) {
+  public async getById(id: string, companyId: string | null, userId?: string, viewer?: TaskViewer) {
+    const where: Record<string, unknown> = { id };
+    if (companyId) {
+      where.companyId = companyId;
+    } else if (userId) {
+      where.userId = userId;
+    }
+
     const task = await prisma.task.findFirst({
-      where: { id, companyId },
+      where: where as any,
       include: {
         status: true,
         priority: true,
@@ -161,6 +319,14 @@ class TaskService {
                 avatarUrl: true,
               },
             },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            email: true,
+            avatarUrl: true,
           },
         },
         assignees: {
@@ -193,6 +359,14 @@ class TaskService {
                 },
               },
             },
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                email: true,
+                avatarUrl: true,
+              },
+            },
           },
           orderBy: { createdAt: 'desc' },
         },
@@ -203,6 +377,7 @@ class TaskService {
                 user: { select: { id: true, fullName: true } },
               },
             },
+            user: { select: { id: true, fullName: true } },
           },
         },
         checklists: {
@@ -215,14 +390,14 @@ class TaskService {
                 user: { select: { id: true, fullName: true } },
               },
             },
+            user: { select: { id: true, fullName: true } },
           },
           orderBy: { createdAt: 'desc' },
         },
       },
     });
 
-    // v0.0.1: samakan dengan list — Member di luar reporter/assignee = tidak terlihat.
-    if (task && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+    if (task && companyId && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
       const mine =
         task.reporterMemberId === viewer.companyMemberId ||
         task.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
@@ -231,12 +406,18 @@ class TaskService {
     return task;
   }
 
-  public async create(companyId: string, reporterMemberId: string, input: PickCreateTask) {
+  public async create(
+    companyId: string | null,
+    reporterMemberId: string | null,
+    userId: string,
+    input: PickCreateTask,
+  ) {
     const task = await prisma.$transaction(async (tx) => {
       const newTask = await tx.task.create({
         data: {
-          companyId,
-          reporterMemberId,
+          companyId: companyId ?? null,
+          reporterMemberId: companyId ? (reporterMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           title: input.title,
           description: input.description ?? null,
           statusId: input.statusId,
@@ -247,7 +428,7 @@ class TaskService {
         },
       });
 
-      if (input.assigneeIds && input.assigneeIds.length > 0) {
+      if (companyId && input.assigneeIds && input.assigneeIds.length > 0) {
         await tx.taskAssignee.createMany({
           data: input.assigneeIds.map((memberId) => ({
             taskId: newTask.id,
@@ -259,7 +440,8 @@ class TaskService {
       await tx.taskActivity.create({
         data: {
           taskId: newTask.id,
-          companyMemberId: reporterMemberId,
+          companyMemberId: companyId ? (reporterMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: 'Membuat tugas',
         },
       });
@@ -267,11 +449,19 @@ class TaskService {
       return newTask;
     });
 
-    return this.getById(task.id, companyId);
+    return this.getById(task.id, companyId, userId);
   }
 
-  public async update(id: string, companyId: string, actorMemberId: string, input: PickUpdateTask) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+  public async update(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
+    input: PickUpdateTask,
+  ) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     await prisma.$transaction(async (tx) => {
@@ -298,7 +488,7 @@ class TaskService {
         },
       });
 
-      if (input.assigneeIds !== undefined) {
+      if (companyId && input.assigneeIds !== undefined) {
         await tx.taskAssignee.deleteMany({ where: { taskId: id } });
         if (input.assigneeIds.length > 0) {
           await tx.taskAssignee.createMany({
@@ -313,26 +503,41 @@ class TaskService {
       await tx.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: 'Memperbarui tugas',
         },
       });
     });
 
-    return this.getById(id, companyId);
+    return this.getById(id, companyId, userId);
   }
 
-  public async remove(id: string, companyId: string) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+  public async remove(id: string, companyId: string | null, userId: string) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     await prisma.task.delete({ where: { id } });
     return existing;
   }
 
-  public async assign(id: string, companyId: string, actorMemberId: string, assigneeIds: string[]) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+  public async assign(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
+    assigneeIds: string[],
+  ) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
+
+    if (!companyId) {
+      return this.getById(id, companyId, userId);
+    }
 
     await prisma.$transaction([
       prisma.taskAssignee.deleteMany({ where: { taskId: id } }),
@@ -346,22 +551,25 @@ class TaskService {
       prisma.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: actorMemberId ?? null,
           action: `Mengatur penugasan kepada ${assigneeIds.length} anggota`,
         },
       }),
     ]);
 
-    return this.getById(id, companyId);
+    return this.getById(id, companyId, userId);
   }
 
   public async updateStatus(
     id: string,
-    companyId: string,
-    actorMemberId: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
     statusId: string,
   ) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     const statusObj = await prisma.taskStatus.findUnique({
@@ -379,24 +587,34 @@ class TaskService {
       prisma.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: `Mengubah status menjadi ${statusObj?.name ?? statusId}`,
         },
       }),
     ]);
 
-    return this.getById(id, companyId);
+    return this.getById(id, companyId, userId);
   }
 
-  public async addComment(id: string, companyId: string, actorMemberId: string, content: string) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+  public async addComment(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
+    content: string,
+  ) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     const comment = await prisma.$transaction(async (tx) => {
       const newComment = await tx.taskComment.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           content,
         },
         include: {
@@ -412,13 +630,22 @@ class TaskService {
               },
             },
           },
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              email: true,
+              avatarUrl: true,
+            },
+          },
         },
       });
 
       await tx.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: 'Menambahkan komentar',
         },
       });
@@ -431,11 +658,14 @@ class TaskService {
 
   public async createChecklist(
     id: string,
-    companyId: string,
-    actorMemberId: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
     input: PickCreateTaskChecklist,
   ) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     const checklist = await prisma.$transaction(async (tx) => {
@@ -458,7 +688,8 @@ class TaskService {
       await tx.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: `Membuat checklist: ${input.title}`,
         },
       });
@@ -474,18 +705,22 @@ class TaskService {
 
   public async addAttachment(
     id: string,
-    companyId: string,
-    actorMemberId: string,
+    companyId: string | null,
+    userId: string,
+    actorMemberId: string | null,
     input: PickAddTaskAttachment,
   ) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     const attachment = await prisma.$transaction(async (tx) => {
       const newAttachment = await tx.taskAttachment.create({
         data: {
           taskId: id,
-          uploadedBy: actorMemberId,
+          uploadedBy: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           fileName: input.fileName,
           fileUrl: input.fileUrl,
           fileSize: BigInt(input.fileSize),
@@ -496,13 +731,15 @@ class TaskService {
               user: { select: { id: true, fullName: true } },
             },
           },
+          user: { select: { id: true, fullName: true } },
         },
       });
 
       await tx.taskActivity.create({
         data: {
           taskId: id,
-          companyMemberId: actorMemberId,
+          companyMemberId: companyId ? (actorMemberId ?? null) : null,
+          userId: companyId ? null : userId,
           action: `Mengunggah lampiran: ${input.fileName}`,
         },
       });
@@ -516,8 +753,16 @@ class TaskService {
     return attachment;
   }
 
-  public async listActivities(id: string, companyId: string, page = 1, limit = 10) {
-    const existing = await prisma.task.findFirst({ where: { id, companyId } });
+  public async listActivities(
+    id: string,
+    companyId: string | null,
+    userId: string,
+    page = 1,
+    limit = 10,
+  ) {
+    const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
+
+    const existing = await prisma.task.findFirst({ where: whereClause as any });
     if (!existing) return null;
 
     const skip = (page - 1) * limit;
@@ -533,6 +778,7 @@ class TaskService {
               user: { select: { id: true, fullName: true, avatarUrl: true } },
             },
           },
+          user: { select: { id: true, fullName: true, avatarUrl: true } },
         },
         orderBy: { createdAt: 'desc' },
         take: limit,
