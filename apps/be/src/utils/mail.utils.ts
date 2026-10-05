@@ -1,5 +1,6 @@
-import nodemailer, { type Transporter } from 'nodemailer';
+import { Resend } from 'resend';
 import { env } from '@/config/env.config';
+import { logger } from '@/utils/logger.utils';
 
 type SendMailInput = {
   to: string;
@@ -8,112 +9,45 @@ type SendMailInput = {
   text?: string;
 };
 
-let cachedTransport: Transporter | null = null;
+const resendApiKey = env.RESEND_API_KEY ?? '';
+const isConfigured = resendApiKey !== '' && !resendApiKey.startsWith('xxxx');
 
-function normalizeSmtpPassword(password: string) {
-  return password
-    .trim()
-    .replace(/^["']|["']$/g, '')
-    .replace(/\s/g, '');
+const resend = isConfigured ? new Resend(resendApiKey) : null;
+const FROM_EMAIL = env.RESEND_FROM_EMAIL || 'onboarding@resend.dev';
+
+export function getMailFromAddress(label = 'Mora') {
+  return `"${label}" <${FROM_EMAIL}>`;
 }
 
-function isGmailHost(host: string) {
-  return host.toLowerCase().includes('gmail.com');
-}
-
-export function createMailTransport() {
-  const user = env.SMTP_USER.trim();
-  const pass = normalizeSmtpPassword(env.SMTP_PASS);
-
-  if (isGmailHost(env.SMTP_HOST)) {
-    if (env.SMTP_PORT === 465) {
-      return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: { user, pass },
-        tls: {
-          minVersion: 'TLSv1.2',
-          rejectUnauthorized: true,
-        },
-      });
-    }
-
-    return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 587,
-      secure: false,
-      requireTLS: true,
-      auth: { user, pass },
-      tls: {
-        minVersion: 'TLSv1.2',
-        rejectUnauthorized: true,
-      },
-    });
-  }
-
-  return nodemailer.createTransport({
-    host: env.SMTP_HOST,
-    port: env.SMTP_PORT,
-    secure: env.SMTP_SECURE,
-    auth: { user, pass },
-  });
-}
-
-function getTransport() {
-  if (!cachedTransport) {
-    cachedTransport = createMailTransport();
-  }
-
-  return cachedTransport;
-}
-
-export function resetMailTransport() {
-  cachedTransport = null;
-}
-
-export function getMailFromAddress(label = 'Etno Learning') {
-  return `"${label}" <${env.SMTP_USER.trim()}>`;
-}
-
+// Resend tak punya verify koneksi ala SMTP — cukup pastikan key ada.
+// serve.ts sudah menangkap throw ini sebagai warning.
 export async function verifyMailTransport() {
-  const transporter = getTransport();
-  await transporter.verify();
-}
-
-function formatMailError(error: unknown) {
-  if (!(error instanceof Error)) {
-    return 'Gagal mengirim email';
+  if (!isConfigured || !resend) {
+    throw new Error('RESEND_API_KEY belum dikonfigurasi');
   }
-
-  const smtpError = error as Error & { code?: string; responseCode?: number };
-
-  if (smtpError.code === 'EAUTH' || smtpError.responseCode === 535) {
-    return 'Autentikasi SMTP gagal. Pastikan SMTP_USER dan App Password Gmail benar.';
-  }
-
-  if (smtpError.code === 'ESOCKET' || smtpError.code === 'ECONNECTION') {
-    return 'Koneksi SMTP gagal. Periksa SMTP_HOST, SMTP_PORT, dan SMTP_SECURE.';
-  }
-
-  return smtpError.message || 'Gagal mengirim email';
 }
 
 export async function sendMailMessage(input: SendMailInput) {
-  const transporter = getTransport();
-
-  try {
-    const info = await transporter.sendMail({
-      from: getMailFromAddress(),
-      to: input.to,
-      subject: input.subject,
-      html: input.html,
-      text: input.text,
-    });
-
-    return info;
-  } catch (error) {
-    resetMailTransport();
-    throw new Error(formatMailError(error));
+  if (!isConfigured || !resend) {
+    logger.info(
+      { to: input.to, subject: input.subject },
+      '[EMAIL][DEV MODE - RESEND NOT CONFIGURED]',
+    );
+    return { id: 'dev-mode' };
   }
+
+  const { data, error } = await resend.emails.send({
+    from: getMailFromAddress(),
+    to: input.to,
+    subject: input.subject,
+    text: input.text,
+    html: input.html || input.text || '<p></p>',
+  });
+
+  if (error) {
+    throw new Error(`[EMAIL][RESEND] Gagal mengirim email: ${error.message}`);
+  }
+
+  logger.info({ id: data?.id, to: input.to }, '[EMAIL][RESEND] Email sent successfully');
+  return data;
 }

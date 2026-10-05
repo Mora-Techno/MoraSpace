@@ -8,3 +8,5 @@ scripts
 /apps/mobile/.expo
 /graphify-out/cache
 /graphify-out/*.tmp
+/apps/be/src/generated
+graphify-out

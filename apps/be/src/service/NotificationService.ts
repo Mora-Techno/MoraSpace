@@ -1,49 +1,24 @@
-import { randomUUID } from "node:crypto";
-import nodemailer from "nodemailer";
-import prisma from "prisma/client";
-import type { NotificationStatus } from "@repo/types/notification.types";
-import type {
-  NotificationLogQuery,
-  PickSendNotification,
-} from "@repo/types/notification.types";
+import { randomUUID } from 'node:crypto';
+import prisma from 'prisma/client';
+import { sendMailMessage } from '@/utils/mail.utils';
+import type { NotificationStatus } from '@repo/types/notification.types';
+import type { NotificationLogQuery, PickSendNotification } from '@repo/types/notification.types';
 
 class NotificationService {
-  private createTransporter() {
-    const host = process.env.SMTP_HOST;
-    const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 587;
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    const secure = process.env.SMTP_SECURE === "true";
-
-    if (!host || !user || !pass) {
-      throw new Error("Konfigurasi SMTP belum lengkap");
-    }
-
-    return nodemailer.createTransport({
-      host,
-      port,
-      secure,
-      auth: { user, pass },
-    });
-  }
-
   public async send(input: PickSendNotification) {
-    let status: NotificationStatus = "success";
+    let status: NotificationStatus = 'success';
     let errorMessage: string | null = null;
 
     try {
-      const transporter = this.createTransporter();
-      await transporter.sendMail({
-        from: process.env.SMTP_USER,
+      await sendMailMessage({
         to: input.recipient,
         subject: input.subject,
         text: input.body,
-        html: `<p>${input.body.replace(/\n/g, "<br>")}</p>`,
+        html: `<p>${input.body.replace(/\n/g, '<br>')}</p>`,
       });
     } catch (error) {
-      status = "failed";
-      errorMessage =
-        error instanceof Error ? error.message : "Gagal mengirim email";
+      status = 'failed';
+      errorMessage = error instanceof Error ? error.message : 'Gagal mengirim email';
     }
 
     const log = {
@@ -56,8 +31,8 @@ class NotificationService {
       createdAt: new Date(),
     };
 
-    if (status === "failed") {
-      throw new Error(errorMessage ?? "Gagal mengirim email");
+    if (status === 'failed') {
+      throw new Error(errorMessage ?? 'Gagal mengirim email');
     }
 
     return log;
@@ -81,8 +56,8 @@ class NotificationService {
 
     if (query.search) {
       where.OR = [
-        { recipient: { contains: query.search, mode: "insensitive" } },
-        { subject: { contains: query.search, mode: "insensitive" } },
+        { recipient: { contains: query.search, mode: 'insensitive' } },
+        { subject: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
@@ -97,20 +72,15 @@ class NotificationService {
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate)
-        (where.createdAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.createdAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.createdAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.createdAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const [totalData, data] = await prisma.$transaction([
       prisma.notificationLog.count({ where: where as any }),
       prisma.notificationLog.findMany({
         where: where as any,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: limit,
         skip: skip,
       }),
@@ -134,7 +104,7 @@ class NotificationService {
     userId: string,
     query: {
       search?: string;
-      read?: "true" | "false";
+      read?: 'true' | 'false';
       type?: string;
       startDate?: string;
       endDate?: string;
@@ -146,17 +116,15 @@ class NotificationService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = companyMemberId
-      ? { companyMemberId }
-      : { userId };
+    const where: Record<string, unknown> = companyMemberId ? { companyMemberId } : { userId };
 
     if (query.search) {
-      where.message = { contains: query.search, mode: "insensitive" };
+      where.message = { contains: query.search, mode: 'insensitive' };
     }
 
-    if (query.read === "true") {
+    if (query.read === 'true') {
       where.readAt = { not: null };
-    } else if (query.read === "false") {
+    } else if (query.read === 'false') {
       where.readAt = null;
     }
 
@@ -167,20 +135,15 @@ class NotificationService {
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate)
-        (where.createdAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.createdAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.createdAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.createdAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const [totalData, data] = await prisma.$transaction([
       prisma.notification.count({ where: where as any }),
       prisma.notification.findMany({
         where: where as any,
-        orderBy: [{ createdAt: "desc" }],
+        orderBy: [{ createdAt: 'desc' }],
         take: limit,
         skip: skip,
       }),
@@ -200,11 +163,7 @@ class NotificationService {
   }
 
   public async listQueue(
-    query: {
-      status?: "pending" | "processing" | "failed";
-      page?: number;
-      limit?: number;
-    } = {},
+    query: { status?: 'pending' | 'processing' | 'failed'; page?: number; limit?: number } = {},
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
@@ -221,7 +180,7 @@ class NotificationService {
       prisma.notificationQueue.findMany({
         where: where as any,
         include: { notification: true },
-        orderBy: [{ scheduledAt: "asc" }],
+        orderBy: [{ scheduledAt: 'asc' }],
         take: limit,
         skip: skip,
       }),
@@ -240,11 +199,7 @@ class NotificationService {
     };
   }
 
-  public async markRead(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async markRead(id: string, companyMemberId: string | null, userId: string) {
     const where: Record<string, unknown> = companyMemberId
       ? { id, companyMemberId }
       : { id, userId };
@@ -273,11 +228,7 @@ class NotificationService {
     return { success: true };
   }
 
-  public async getById(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async getById(id: string, companyMemberId: string | null, userId: string) {
     const where: Record<string, unknown> = companyMemberId
       ? { id, companyMemberId }
       : { id, userId };

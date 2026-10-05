@@ -1,8 +1,9 @@
-import { GhibliCard } from "@/components/molecules";
-import { ActionButton, DecoratedInput } from "@/components/wrapper";
-import { PickResetPassword } from "@repo/types";
-import Link from "next/link";
-import Image from "next/image";
+import { GhibliCard } from '@/components/molecules';
+import { ActionButton, DecoratedInput } from '@/components/wrapper';
+import { PickResetPassword } from '@repo/types';
+import { Eye, EyeClosed } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 interface ResetPasswordSectionProps {
   service: {
@@ -15,26 +16,34 @@ interface ResetPasswordSectionProps {
     confirmPassword: string;
     setConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
     passwordStrength: { score: number; label: string; color: string };
+    showPassword: boolean;
+    setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+    showConfirmPassword: boolean;
+    setShowConfirmPassword: React.Dispatch<React.SetStateAction<boolean>>;
   };
 }
 
-const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({
-  service,
-  state,
-}) => {
-  const { formResetPassword, setFormResetPassword, confirmPassword, setConfirmPassword, passwordStrength } = state;
+const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({ service, state }) => {
+  const {
+    formResetPassword,
+    setFormResetPassword,
+    confirmPassword,
+    setConfirmPassword,
+    passwordStrength,
+    showPassword,
+    setShowPassword,
+    showConfirmPassword,
+    setShowConfirmPassword,
+  } = state;
   const { onResetPassword, isPending } = service;
 
   return (
     <section className="w-full min-h-screen flex justify-center items-center">
-      <form
-        onSubmit={onResetPassword}
-        className="w-full flex justify-center items-center"
-      >
+      <form onSubmit={onResetPassword} className="w-full flex justify-center items-center">
         <GhibliCard hover={false} className="w-full max-w-md">
           <div className="w-full flex justify-center items-center">
             <Image
-              src={"/images/logo.png"}
+              src={'/images/logo.png'}
               alt="logo"
               width={64}
               height={64}
@@ -51,8 +60,21 @@ const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({
               </label>
               <DecoratedInput
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={formResetPassword.password}
+                iconRight={
+                  showPassword ? (
+                    <EyeClosed
+                      onClick={() => setShowPassword(false)}
+                      className="text-foreground cursor-pointer relative"
+                    />
+                  ) : (
+                    <Eye
+                      onClick={() => setShowPassword(true)}
+                      className="text-foreground cursor-pointer relative"
+                    />
+                  )
+                }
                 onChange={(e) =>
                   setFormResetPassword((prev) => ({
                     ...prev,
@@ -62,16 +84,26 @@ const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({
                 required
                 placeholder="Masukkan kata sandi baru"
               />
-              
+
               {formResetPassword.password.length > 0 && (
                 <div className="flex flex-col space-y-1 mt-1">
                   <div className="flex space-x-1 h-1.5 w-full">
-                    <div className={`h-full flex-1 rounded-l-full transition-colors ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`} />
-                    <div className={`h-full flex-1 transition-colors ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`} />
-                    <div className={`h-full flex-1 transition-colors ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`} />
-                    <div className={`h-full flex-1 rounded-r-full transition-colors ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`} />
+                    <div
+                      className={`h-full flex-1 rounded-l-full transition-colors ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`}
+                    />
+                    <div
+                      className={`h-full flex-1 transition-colors ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`}
+                    />
+                    <div
+                      className={`h-full flex-1 transition-colors ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`}
+                    />
+                    <div
+                      className={`h-full flex-1 rounded-r-full transition-colors ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-200 dark:bg-gray-700'}`}
+                    />
                   </div>
-                  <span className={`text-xs font-medium ${passwordStrength.score < 2 ? 'text-red-500' : 'text-green-600 dark:text-green-400'}`}>
+                  <span
+                    className={`text-xs font-medium ${passwordStrength.score < 2 ? 'text-red-500' : 'text-green-600 dark:text-green-400'}`}
+                  >
                     {passwordStrength.label}
                   </span>
                 </div>
@@ -84,8 +116,21 @@ const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({
               </label>
               <DecoratedInput
                 id="confirmPassword"
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
+                iconRight={
+                  showConfirmPassword ? (
+                    <EyeClosed
+                      onClick={() => setShowConfirmPassword(false)}
+                      className="text-foreground cursor-pointer relative"
+                    />
+                  ) : (
+                    <Eye
+                      onClick={() => setShowConfirmPassword(true)}
+                      className="text-foreground cursor-pointer relative"
+                    />
+                  )
+                }
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="Ketik ulang kata sandi baru"
@@ -93,11 +138,11 @@ const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({
             </div>
           </div>
           <ActionButton type="submit" className="w-full mt-4" disabled={isPending}>
-            {isPending ? "Memproses..." : "Simpan Kata Sandi"}
+            {isPending ? 'Memproses...' : 'Simpan Kata Sandi'}
           </ActionButton>
           <div className="w-full flex justify-center mt-2">
             <Link
-              href={"/login"}
+              href={'/login'}
               className="font-medium text-sm text-muted-foreground hover:text-foreground"
             >
               Kembali
