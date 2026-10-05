@@ -1,10 +1,15 @@
-import prisma from "prisma/client";
+import prisma from 'prisma/client';
 import type {
   PickCreateTask,
   PickUpdateTask,
   PickCreateTaskChecklist,
   PickAddTaskAttachment,
-} from "@repo/types/task.types";
+} from '@repo/types/task.types';
+
+export interface TaskViewer {
+  companyRole?: string;
+  companyMemberId?: string | null;
+}
 
 class TaskService {
   public listStatuses(companyId: string) {
@@ -28,8 +33,9 @@ class TaskService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
+    viewer?: TaskViewer,
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
@@ -38,7 +44,7 @@ class TaskService {
     const where: Record<string, unknown> = { companyId };
 
     if (query.search) {
-      where.title = { contains: query.search, mode: "insensitive" };
+      where.title = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.statusId) {
@@ -62,20 +68,23 @@ class TaskService {
     if (query.startDate || query.endDate) {
       where.dueDate = {};
       if (query.startDate)
-        (where.dueDate as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.dueDate as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.dueDate as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.dueDate as Record<string, unknown>).lte = new Date(query.endDate);
+    }
+
+    // v0.0.1: Member hanya lihat task sendiri (reporter/assignee). Owner lihat semua.
+    if (viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      where.OR = [
+        { reporterMemberId: viewer.companyMemberId },
+        { assignees: { some: { companyMemberId: viewer.companyMemberId } } },
+      ];
     }
 
     const orderBy: Record<string, unknown> = {};
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "desc";
+      orderBy[query.sortBy] = query.sortOrder ?? 'desc';
     } else {
-      orderBy.createdAt = "desc";
+      orderBy.createdAt = 'desc';
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -136,7 +145,7 @@ class TaskService {
     };
   }
 
-  public async getById(id: string, companyId: string) {
+  public async getById(id: string, companyId: string, viewer?: TaskViewer) {
     const task = await prisma.task.findFirst({
       where: { id, companyId },
       include: {
@@ -185,7 +194,7 @@ class TaskService {
               },
             },
           },
-          orderBy: { createdAt: "desc" },
+          orderBy: { createdAt: 'desc' },
         },
         attachments: {
           include: {
@@ -207,18 +216,22 @@ class TaskService {
               },
             },
           },
-          orderBy: { createdAt: "desc" },
+          orderBy: { createdAt: 'desc' },
         },
       },
     });
+
+    // v0.0.1: samakan dengan list — Member di luar reporter/assignee = tidak terlihat.
+    if (task && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      const mine =
+        task.reporterMemberId === viewer.companyMemberId ||
+        task.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
+      if (!mine) return null;
+    }
     return task;
   }
 
-  public async create(
-    companyId: string,
-    reporterMemberId: string,
-    input: PickCreateTask,
-  ) {
+  public async create(companyId: string, reporterMemberId: string, input: PickCreateTask) {
     const task = await prisma.$transaction(async (tx) => {
       const newTask = await tx.task.create({
         data: {
@@ -247,7 +260,7 @@ class TaskService {
         data: {
           taskId: newTask.id,
           companyMemberId: reporterMemberId,
-          action: "Membuat tugas",
+          action: 'Membuat tugas',
         },
       });
 
@@ -257,12 +270,7 @@ class TaskService {
     return this.getById(task.id, companyId);
   }
 
-  public async update(
-    id: string,
-    companyId: string,
-    actorMemberId: string,
-    input: PickUpdateTask,
-  ) {
+  public async update(id: string, companyId: string, actorMemberId: string, input: PickUpdateTask) {
     const existing = await prisma.task.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 
@@ -306,7 +314,7 @@ class TaskService {
         data: {
           taskId: id,
           companyMemberId: actorMemberId,
-          action: "Memperbarui tugas",
+          action: 'Memperbarui tugas',
         },
       });
     });
@@ -322,12 +330,7 @@ class TaskService {
     return existing;
   }
 
-  public async assign(
-    id: string,
-    companyId: string,
-    actorMemberId: string,
-    assigneeIds: string[],
-  ) {
+  public async assign(id: string, companyId: string, actorMemberId: string, assigneeIds: string[]) {
     const existing = await prisma.task.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 
@@ -370,9 +373,7 @@ class TaskService {
         where: { id },
         data: {
           statusId,
-          completedAt: statusObj?.name.toLowerCase().includes("complete")
-            ? new Date()
-            : null,
+          completedAt: statusObj?.name.toLowerCase().includes('complete') ? new Date() : null,
         },
       }),
       prisma.taskActivity.create({
@@ -387,12 +388,7 @@ class TaskService {
     return this.getById(id, companyId);
   }
 
-  public async addComment(
-    id: string,
-    companyId: string,
-    actorMemberId: string,
-    content: string,
-  ) {
+  public async addComment(id: string, companyId: string, actorMemberId: string, content: string) {
     const existing = await prisma.task.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 
@@ -423,7 +419,7 @@ class TaskService {
         data: {
           taskId: id,
           companyMemberId: actorMemberId,
-          action: "Menambahkan komentar",
+          action: 'Menambahkan komentar',
         },
       });
 
@@ -520,12 +516,7 @@ class TaskService {
     return attachment;
   }
 
-  public async listActivities(
-    id: string,
-    companyId: string,
-    page = 1,
-    limit = 10,
-  ) {
+  public async listActivities(id: string, companyId: string, page = 1, limit = 10) {
     const existing = await prisma.task.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 
@@ -543,7 +534,7 @@ class TaskService {
             },
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: limit,
         skip: skip,
       }),

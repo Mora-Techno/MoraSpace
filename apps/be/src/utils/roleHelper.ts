@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@/generated/client';
 import type { CompanyRole } from '@repo/types/company.types';
 export interface roleType {
   name: CompanyRole;
@@ -7,9 +7,9 @@ export interface roleType {
 }
 
 export async function ensureDefaultRoles(companyId: string, client: Prisma.TransactionClient) {
+  // v0.0.1: Owner & Member only — Admin/Chief frozen, jangan seed lagi.
   const roleNames: roleType[] = [
     { name: 'Owner', description: 'Pemilik perusahaan', isSystem: true },
-    { name: 'Admin', description: 'Administrator perusahaan', isSystem: true },
     { name: 'Member', description: 'Anggota perusahaan', isSystem: true },
   ];
 

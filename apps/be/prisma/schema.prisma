@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
+  output   = "../src/generated"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -103,6 +103,8 @@ model Company {
   subscriptionId      String?          @unique @map("subscription_id")
   timezone            String?
   updatedAt           DateTime         @updatedAt @map("updated_at")
+  status              CompanyStatus    @default(active)
+  suspendedAt         DateTime?        @map("suspended_at")
   activityLogs        ActivityLog[]
   aiConversations     AiConversation[]
   apiKeys             ApiKey[]
@@ -979,6 +981,11 @@ enum PlatformRole {
 enum UserStatus {
   active
   pending
+  suspended
+}
+
+enum CompanyStatus {
+  active
   suspended
 }
 

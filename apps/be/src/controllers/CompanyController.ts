@@ -1,19 +1,17 @@
-import CompanyService from "@/service/CompanyService";
-import AuthService from "@/service/AuthService";
-import { HttpResponse } from "@/http";
+import CompanyService from '@/service/CompanyService';
+import AuthService from '@/service/AuthService';
+import { HttpResponse } from '@/http';
 import type {
   PickCreateAdmin,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
+  PickUpdateCompanySettings,
   PickUpdateCompanySubscription,
-} from "@repo/types/company.types";
-import type { AppContext } from "@/contex";
-import {
-  paramsValidate,
-  unauthorizedValidate,
-} from "@/validation/auth.validate";
-import { CreateAdminValidate } from "@/validation/company.validate";
-import { getUser } from "@/utils/authTokens";
+} from '@repo/types/company.types';
+import type { AppContext } from '@/contex';
+import { paramsValidate, unauthorizedValidate } from '@/validation/auth.validate';
+import { CreateAdminValidate } from '@/validation/company.validate';
+import { getUser } from '@/utils/authTokens';
 
 class CompanyController {
   public async register(c: AppContext) {
@@ -24,7 +22,7 @@ class CompanyController {
 
       return HttpResponse(c).created(
         { company: data.company, leader: data.leader, ...queryService },
-        "Company dan akun leader berhasil dibuat",
+        'Company dan akun leader berhasil dibuat',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -44,19 +42,16 @@ class CompanyController {
       if (validateRespone) return validateRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const queryService = await CompanyService.createAdmin(
-        user.companyId,
-        input,
-      );
+      const queryService = await CompanyService.createAdmin(user.companyId, input);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).created(queryService, "Admin berhasil dibuat");
+      return HttpResponse(c).created(queryService, 'Admin berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -75,19 +70,16 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const queryService = await CompanyService.deleteAdmin(
-        user.companyId,
-        params.id,
-      );
+      const queryService = await CompanyService.deleteAdmin(user.companyId, params.id);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(queryService, undefined, "Admin Berhasil dihapus");
+      return HttpResponse(c).ok(queryService, undefined, 'Admin Berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -102,19 +94,12 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const result = await CompanyService.listAdmins(
-        user.companyId,
-        c.query as any,
-      );
+      const result = await CompanyService.listAdmins(user.companyId, c.query as any);
 
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar admin",
-      );
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar admin');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -128,17 +113,13 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
       const data = await CompanyService.getById(user.companyId);
-      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Company tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil profil company",
-      );
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil profil company');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -153,14 +134,14 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
       const data = await CompanyService.updateProfile(user.companyId, body);
 
-      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Company tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Profil company berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Profil company berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -176,17 +157,57 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const data = await CompanyService.updateSubscription(
-        user.companyId,
-        body,
-      );
+      const data = await CompanyService.updateSubscription(user.companyId, body);
 
-      if (!data) return HttpResponse(c).notFound("Company tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Company tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Langganan berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Langganan berhasil diperbarui');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  // v0.0.1 Working Hours — baca: semua member.
+  public async getSettings(c: AppContext) {
+    try {
+      const user = getUser(c);
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound('Company tidak ditemukan');
+      }
+
+      const data = await CompanyService.getSettings(user.companyId);
+      if (!data) return HttpResponse(c).notFound('Pengaturan company tidak ditemukan');
+
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil pengaturan company');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  // v0.0.1 Working Hours — tulis: Owner only (guard di route).
+  public async updateSettings(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const body = c.body as PickUpdateCompanySettings;
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).notFound('Company tidak ditemukan');
+      }
+
+      const data = await CompanyService.updateSettings(user.companyId, body);
+      if (!data) return HttpResponse(c).notFound('Pengaturan company tidak ditemukan');
+
+      return HttpResponse(c).ok(data, undefined, 'Pengaturan company berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

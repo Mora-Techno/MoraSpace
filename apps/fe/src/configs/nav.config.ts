@@ -9,13 +9,11 @@ import {
   Music2,
   Settings,
   Users,
-  KeyRound,
-  Group,
   Kanban,
   Timer,
   CreditCard,
   Radio,
-} from "lucide-react";
+} from 'lucide-react';
 
 export type NavItem = {
   title: string;
@@ -25,7 +23,7 @@ export type NavItem = {
   children?: NavItem[];
 };
 
-type Role = "member" | "owner";
+type Role = 'member' | 'owner';
 
 /**
  * Fitur khas "member" yang dijadikan sub-laman di dalam area Owner.
@@ -35,44 +33,44 @@ type Role = "member" | "owner";
  */
 const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
   {
-    title: "Tasks",
-    url: "/owner/member/tasks",
+    title: 'Tasks',
+    url: '/owner/member/tasks',
     icon: Kanban,
     mobile: true,
   },
   {
-    title: "Pomodoro",
-    url: "/owner/member/pomodoro",
+    title: 'Pomodoro',
+    url: '/owner/member/pomodoro',
     icon: Timer,
     mobile: true,
   },
   {
-    title: "Todos",
-    url: "/owner/member/todos",
+    title: 'Todos',
+    url: '/owner/member/todos',
     icon: CheckSquare,
     mobile: true,
   },
   {
-    title: "Notes",
-    url: "/owner/member/notes",
+    title: 'Notes',
+    url: '/owner/member/notes',
     icon: FileText,
     mobile: true,
   },
   {
-    title: "Calendar",
-    url: "/owner/member/calendar",
+    title: 'Calendar',
+    url: '/owner/member/calendar',
     icon: Calendar,
     mobile: true,
   },
   {
-    title: "Music",
-    url: "/owner/member/music",
+    title: 'Music',
+    url: '/owner/member/music',
     icon: Music2,
     mobile: true,
   },
   {
-    title: "Notifications",
-    url: "/owner/member/notifications",
+    title: 'Notifications',
+    url: '/owner/member/notifications',
     icon: Bell,
     mobile: true,
   },
@@ -80,70 +78,59 @@ const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
 
 const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
   member: [
-    { title: "Dashboard", url: "/member/dashboard", icon: Home, mobile: true },
-    { title: "Tasks", url: "/member/tasks", icon: Kanban, mobile: true },
-    { title: "Pomodoro", url: "/member/pomodoro", icon: Timer, mobile: true },
-    { title: "Todos", url: "/member/todos", icon: CheckSquare, mobile: true },
-    { title: "Notes", url: "/member/notes", icon: FileText, mobile: true },
+    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
+    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
+    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
+    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
     {
-      title: "Calendar",
-      url: "/member/calendar",
+      title: 'Calendar',
+      url: '/member/calendar',
       icon: Calendar,
       mobile: true,
     },
-    { title: "Music", url: "/member/music", icon: Music2, mobile: false },
+    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
     {
-      title: "Settings",
-      url: "/member/settings",
+      title: 'Settings',
+      url: '/member/settings',
       icon: Settings,
       mobile: true,
     },
   ],
   owner: [
-    { title: "Dashboard", url: "/owner/dashboard", icon: Home, mobile: true },
+    { title: 'Dashboard', url: '/owner/dashboard', icon: Home, mobile: true },
 
     {
-      title: "Billing & Plans",
-      url: "/owner/billing",
+      title: 'Billing & Plans',
+      url: '/owner/billing',
       icon: CreditCard,
       mobile: true,
     },
     {
-      title: "Review Tracks",
-      url: "/owner/catalog",
+      title: 'Review Tracks',
+      url: '/owner/catalog',
       icon: Radio,
       mobile: false,
     },
     {
-      title: "Company",
-      url: "/owner/company",
+      title: 'Company',
+      url: '/owner/company',
       icon: Building2,
       mobile: true,
     },
+    // v0.0.1: Kelola Permission/Team/Position disembunyikan total (file rute tetap ada, tak di-link).
     {
-      title: "Kelola Permission",
-      url: "/owner/permission",
-      icon: KeyRound,
-      mobile: true,
-    },
-    {
-      title: "Kelola Team",
-      url: "/owner/team",
-      icon: Group,
-      mobile: true,
-    },
-    {
-      title: "Workspace Member",
+      title: 'Workspace Member',
       icon: Users,
       mobile: true,
       children: MEMBER_WORKSPACE_ITEMS,
     },
-    { title: "Settings", url: "/owner/settings", icon: Settings, mobile: true },
+    { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
 };
 
 export function getNavItems(role?: Role | string | null): NavItem[] {
-  if (role === "owner") return ALL_NAV_ITEMS.owner;
+  if (role === 'owner') return ALL_NAV_ITEMS.owner;
   return ALL_NAV_ITEMS.member;
 }
 
@@ -153,9 +140,7 @@ function isMobileNavItem(item: NavItem): item is MobileNavItem {
   return Boolean(item.mobile && item.url && item.icon);
 }
 
-export function getMobileNavItems(
-  role?: Role | string | null,
-): MobileNavItem[] {
+export function getMobileNavItems(role?: Role | string | null): MobileNavItem[] {
   return getNavItems(role).flatMap((item) => {
     if (item.children?.length) {
       return item.children.filter(isMobileNavItem);

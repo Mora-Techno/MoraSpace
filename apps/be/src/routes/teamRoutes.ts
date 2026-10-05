@@ -10,7 +10,9 @@ import {
   UpdateTeamDto,
 } from '@/dto/team.dto';
 import type { AppContext } from '@/contex';
-import { verifyToken } from '@/middlewares/auth';
+import { requireRole, verifyToken } from '@/middlewares/auth';
+
+// v0.0.1: hirarki frozen — seluruh domain Team hanya Owner (UI disembunyikan total).
 
 class TeamRouter {
   public teamRouter;
@@ -26,7 +28,7 @@ class TeamRouter {
   private routes() {
     this.teamRouter.get('/', (c: AppContext) => TeamController.list(c), {
       query: TeamQueryDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Daftar tim',
         description: 'Menampilkan semua tim di perusahaan atau filter berdasarkan departemen.',
@@ -35,7 +37,7 @@ class TeamRouter {
     });
     this.teamRouter.post('/', (c: AppContext) => TeamController.create(c), {
       body: CreateTeamDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Buat tim baru',
         description: 'Membuat tim baru di dalam suatu departemen.',
@@ -45,7 +47,7 @@ class TeamRouter {
     this.teamRouter.patch('/:id', (c: AppContext) => TeamController.update(c), {
       params: TeamParamsDto,
       body: UpdateTeamDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Perbarui tim',
         description: 'Mengubah nama, deskripsi, atau leader tim.',
@@ -54,7 +56,7 @@ class TeamRouter {
     });
     this.teamRouter.delete('/:id', (c: AppContext) => TeamController.remove(c), {
       params: TeamParamsDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Hapus tim',
         description: 'Menghapus tim dari departemen.',
@@ -63,7 +65,7 @@ class TeamRouter {
     });
     this.teamRouter.get('/:id/members', (c: AppContext) => TeamController.listMembers(c), {
       params: TeamParamsDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Daftar anggota tim',
         description: 'Menampilkan semua anggota yang terdaftar dalam tim.',
@@ -73,7 +75,7 @@ class TeamRouter {
     this.teamRouter.post('/:id/members', (c: AppContext) => TeamController.addMember(c), {
       params: TeamParamsDto,
       body: AddTeamMemberDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Tambah anggota tim',
         description: 'Menambahkan anggota ke dalam tim atau mengatur status leader.',
@@ -85,7 +87,7 @@ class TeamRouter {
       (c: AppContext) => TeamController.removeMember(c),
       {
         params: TeamMemberParamsDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
         detail: {
           summary: 'Hapus anggota tim',
           description: 'Menghapus anggota dari tim.',
@@ -94,7 +96,7 @@ class TeamRouter {
       },
     );
     this.teamRouter.post('/inviteMember', (c: AppContext) => TeamController.inviteMember(c), {
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       body: InviteMemberDto,
       detail: {
         summary: 'Inveting Member Ke Tim',

@@ -1,11 +1,8 @@
-import TaskService from "@/service/TaskService";
-import { HttpResponse } from "@/http";
-import { getUser } from "@/utils/authTokens";
-import {
-  memberContextValidate,
-  paramsValidate,
-} from "@/validation/auth.validate";
-import type { AppContext } from "@/contex";
+import TaskService from '@/service/TaskService';
+import { HttpResponse } from '@/http';
+import { getUser } from '@/utils/authTokens';
+import { memberContextValidate, paramsValidate } from '@/validation/auth.validate';
+import type { AppContext } from '@/contex';
 import type {
   PickCreateTask,
   PickUpdateTask,
@@ -14,21 +11,29 @@ import type {
   PickAddTaskComment,
   PickCreateTaskChecklist,
   PickAddTaskAttachment,
-} from "@repo/types/task.types";
+} from '@repo/types/task.types';
 
 class TaskController {
   public async listStatuses(c: AppContext) {
     const user = getUser(c);
     const invalid = await memberContextValidate(user, c);
     if (invalid) return invalid;
-    return HttpResponse(c).ok(await TaskService.listStatuses(user.companyId!), undefined, 'Daftar status tugas');
+    return HttpResponse(c).ok(
+      await TaskService.listStatuses(user.companyId!),
+      undefined,
+      'Daftar status tugas',
+    );
   }
 
   public async listPriorities(c: AppContext) {
     const user = getUser(c);
     const invalid = await memberContextValidate(user, c);
     if (invalid) return invalid;
-    return HttpResponse(c).ok(await TaskService.listPriorities(user.companyId!), undefined, 'Daftar prioritas tugas');
+    return HttpResponse(c).ok(
+      await TaskService.listPriorities(user.companyId!),
+      undefined,
+      'Daftar prioritas tugas',
+    );
   }
 
   public async list(c: AppContext) {
@@ -38,12 +43,11 @@ class TaskController {
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await TaskService.list(user.companyId!, c.query as any);
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar tugas",
-      );
+      const result = await TaskService.list(user.companyId!, c.query as any, {
+        companyRole: user.companyRole,
+        companyMemberId: user.companyMemberId,
+      });
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar tugas');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -59,14 +63,13 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.getById(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      const data = await TaskService.getById(params.id, user.companyId!, {
+        companyRole: user.companyRole,
+        companyMemberId: user.companyMemberId,
+      });
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil detail tugas",
-      );
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil detail tugas');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -79,12 +82,8 @@ class TaskController {
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await TaskService.create(
-        user.companyId!,
-        user.companyMemberId!,
-        body,
-      );
-      return HttpResponse(c).created(data, "Tugas berhasil dibuat");
+      const data = await TaskService.create(user.companyId!, user.companyMemberId!, body);
+      return HttpResponse(c).created(data, 'Tugas berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -107,9 +106,9 @@ class TaskController {
         user.companyMemberId!,
         body,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Tugas berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Tugas berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -126,9 +125,9 @@ class TaskController {
       if (validateParams) return validateParams;
 
       const data = await TaskService.remove(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Tugas berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, 'Tugas berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -151,9 +150,9 @@ class TaskController {
         user.companyMemberId!,
         body.assigneeIds,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Penugasan berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Penugasan berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -176,9 +175,9 @@ class TaskController {
         user.companyMemberId!,
         body.statusId,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Status tugas berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Status tugas berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -201,9 +200,9 @@ class TaskController {
         user.companyMemberId!,
         body.content,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).created(data, "Komentar berhasil ditambahkan");
+      return HttpResponse(c).created(data, 'Komentar berhasil ditambahkan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -226,9 +225,9 @@ class TaskController {
         user.companyMemberId!,
         body,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).created(data, "Checklist berhasil dibuat");
+      return HttpResponse(c).created(data, 'Checklist berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -251,9 +250,9 @@ class TaskController {
         user.companyMemberId!,
         body,
       );
-      if (!data) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).created(data, "Lampiran berhasil ditambahkan");
+      return HttpResponse(c).created(data, 'Lampiran berhasil ditambahkan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -263,8 +262,7 @@ class TaskController {
     try {
       const user = getUser(c);
       const params = c.params as { id: string };
-      const page =
-        Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
+      const page = Number((c.query as any)?.page) || Number((c.params as any)?.page) || 1;
       const limit = Number(c.query.limit) || 10;
 
       const authResponse = await memberContextValidate(user, c);
@@ -273,18 +271,13 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const result = await TaskService.listActivities(
-        params.id,
-        user.companyId!,
-        page,
-        limit,
-      );
-      if (!result) return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      const result = await TaskService.listActivities(params.id, user.companyId!, page, limit);
+      if (!result) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
       return HttpResponse(c).ok(
         result.data,
         result.meta,
-        "Berhasil mengambil riwayat aktivitas tugas",
+        'Berhasil mengambil riwayat aktivitas tugas',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

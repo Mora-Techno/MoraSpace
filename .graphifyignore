@@ -1,4 +1,5 @@
 /apps/be/node_modules
+/apps/be/src/generated
 /apps/fe/node_modules
 /apps/mobile/node_modules
 /apps/fe/.next
