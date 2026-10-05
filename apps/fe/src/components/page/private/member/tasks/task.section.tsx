@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Plus, AlertCircle, Clock, CheckCircle2, Trash2, Layers } from "lucide-react";
-import { PageHeader } from "@/components/molecules/PageHeader";
+import React, { useState } from 'react';
+import { Plus, AlertCircle, Clock, CheckCircle2, Trash2, Layers } from 'lucide-react';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { RichTextEditor } from '@/components/molecules/editor/RichTextEditor';
 import {
   Button,
   Card,
@@ -13,10 +14,10 @@ import {
   DialogTitle,
   Input,
   Label,
-  Textarea,
-  Select,
-} from "@/components/atoms";
-import type { ITask } from "@repo/types";
+} from '@/components/atoms';
+import { deleteObject, uploadAvatar } from '@/utils/r2-utils';
+import { stripHtml } from '@/utils/html';
+import type { ITask } from '@repo/types';
 
 export interface TaskSectionProps {
   service: {
@@ -30,30 +31,32 @@ export interface TaskSectionProps {
 }
 
 const STATUS_COLUMNS = [
-  { id: "todo", title: "To Do", icon: AlertCircle, color: "text-amber-500" },
-  { id: "in_progress", title: "In Progress", icon: Clock, color: "text-blue-500" },
-  { id: "done", title: "Done", icon: CheckCircle2, color: "text-emerald-500" },
+  { id: 'todo', title: 'To Do', icon: AlertCircle, color: 'text-amber-500' },
+  { id: 'in_progress', title: 'In Progress', icon: Clock, color: 'text-blue-500' },
+  { id: 'done', title: 'Done', icon: CheckCircle2, color: 'text-emerald-500' },
 ];
 
 export const TaskSection: React.FC<TaskSectionProps> = ({
   service: { tasks, isLoading, handleCreate, handleStatusChange, handleDelete, isPending },
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [statusId, setStatusId] = useState("todo");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [statusId, setStatusId] = useState('todo');
+  const [detailTask, setDetailTask] = useState<ITask | null>(null);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
+    const plain = stripHtml(description);
     handleCreate({
       title: title.trim(),
-      description: description.trim() || undefined,
+      description: plain ? description : undefined,
       statusId,
     });
-    setTitle("");
-    setDescription("");
-    setStatusId("todo");
+    setTitle('');
+    setDescription('');
+    setStatusId('todo');
     setOpenModal(false);
   };
 
@@ -72,7 +75,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {STATUS_COLUMNS.map((col) => {
-          const colTasks = tasks.filter((t) => (t.statusId || "todo") === col.id);
+          const colTasks = tasks.filter((t) => (t.statusId || 'todo') === col.id);
           const ColIcon = col.icon;
 
           return (
@@ -99,9 +102,15 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 ) : (
                   <div className="space-y-3 overflow-y-auto">
                     {colTasks.map((task) => (
-                      <Card key={task.id} className="p-3 shadow-none border-neutral-200 dark:border-neutral-800">
+                      <Card
+                        key={task.id}
+                        className="p-3 shadow-none border-neutral-200 dark:border-neutral-800"
+                      >
                         <div className="flex items-start justify-between gap-2">
-                          <h4 className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                          <h4
+                            className="text-sm font-medium text-neutral-900 dark:text-neutral-100 cursor-pointer hover:text-blue-600"
+                            onClick={() => setDetailTask(task)}
+                          >
                             {task.title}
                           </h4>
                           <button
@@ -113,12 +122,12 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                         </div>
                         {task.description && (
                           <p className="text-xs text-neutral-500 mt-1 line-clamp-2">
-                            {task.description}
+                            {stripHtml(task.description)}
                           </p>
                         )}
                         <div className="mt-3 pt-2 border-t border-neutral-100 dark:border-neutral-800 flex items-center justify-between text-xs">
                           <select
-                            value={task.statusId || "todo"}
+                            value={task.statusId || 'todo'}
                             onChange={(e) => handleStatusChange(task.id, e.target.value)}
                             className="bg-transparent text-neutral-600 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-0.5 text-xs outline-none"
                           >
@@ -138,7 +147,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
       </div>
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Tambah Task Baru</DialogTitle>
           </DialogHeader>
@@ -154,13 +163,15 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Deskripsi</Label>
-              <Textarea
-                id="description"
+              <Label>Deskripsi</Label>
+              <RichTextEditor
+                variant="compact"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Rincian task..."
-                rows={3}
+                onChange={setDescription}
+                onUploadImage={(file) => uploadAvatar(file, 'task-images')}
+                onDeleteImage={deleteObject}
+                placeholder="Rincian task... (bisa gambar & tabel)"
+                minHeight="min-h-[160px]"
               />
             </div>
             <div className="space-y-2">
@@ -181,10 +192,28 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 Batal
               </Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Menyimpan..." : "Simpan Task"}
+                {isPending ? 'Menyimpan...' : 'Simpan Task'}
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!detailTask} onOpenChange={(open) => !open && setDetailTask(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{detailTask?.title}</DialogTitle>
+          </DialogHeader>
+          {detailTask?.description ? (
+            <RichTextEditor
+              variant="compact"
+              value={detailTask.description}
+              readOnly
+              minHeight="min-h-[120px]"
+            />
+          ) : (
+            <p className="text-sm text-neutral-400">Tidak ada deskripsi.</p>
+          )}
         </DialogContent>
       </Dialog>
     </div>

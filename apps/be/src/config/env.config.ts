@@ -7,16 +7,8 @@ const envSchema = z.object({
   JWT_SECRET: z.string(),
   FRONTEND_URL: z.string().url(),
   INTERNAL_API_SECRET: z.string(),
-  SMTP_HOST: z.string(),
-  SMTP_PORT: z.string().transform((val) => Number(val)),
-  SMTP_USER: z.string().trim(),
-  SMTP_PASS: z.string().transform((value) =>
-    value
-      .trim()
-      .replace(/^["']|["']$/g, '')
-      .replace(/\s/g, ''),
-  ),
-  SMTP_SECURE: z.preprocess((val) => val === 'true', z.boolean()),
+  RESEND_API_KEY: z.string(),
+  RESEND_FROM_EMAIL: z.string(),
   STRIPE_SECRET_KEY: z.string().optional().default(''),
   STRIPE_WEBHOOK_SECRET: z.string().optional().default(''),
   XENDIT_SECRET_KEY: z.string().optional().default(''),

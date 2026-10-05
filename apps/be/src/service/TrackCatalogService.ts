@@ -1,11 +1,8 @@
-import prisma from "prisma/client";
-import { extractYouTubeVideoId } from "@/utils/youtube.utils";
-import NotificationService from "./NotificationService";
-import { sendMailMessage, getMailFromAddress } from "@/utils/mail.utils";
-import type {
-  PickSubmitTrack,
-  PickReviewTrack,
-} from "@repo/types/trackCatalog.types";
+import prisma from 'prisma/client';
+import { extractYouTubeVideoId } from '@/utils/youtube.utils';
+import NotificationService from './NotificationService';
+import { sendMailMessage } from '@/utils/mail.utils';
+import type { PickSubmitTrack, PickReviewTrack } from '@repo/types/trackCatalog.types';
 
 function mapTrack(track: {
   id: string;
@@ -30,8 +27,7 @@ function mapTrack(track: {
     reviewedAt: track.reviewedAt?.toISOString() ?? null,
     createdAt: track.createdAt.toISOString(),
     updatedAt: track.updatedAt.toISOString(),
-    submittedBy:
-      track.companyMember?.user?.fullName ?? track.user?.fullName ?? "Unknown",
+    submittedBy: track.companyMember?.user?.fullName ?? track.user?.fullName ?? 'Unknown',
   };
 }
 
@@ -46,7 +42,7 @@ class TrackCatalogService {
   ) {
     const videoId = extractYouTubeVideoId(input.youtubeUrl);
     if (!videoId) {
-      throw new Error("URL YouTube tidak valid");
+      throw new Error('URL YouTube tidak valid');
     }
 
     // Check duplicity (scoped to company)
@@ -60,11 +56,11 @@ class TrackCatalogService {
 
     if (existing) {
       const statusMsg =
-        existing.status === "APPROVED"
-          ? "sudah disetujui"
-          : existing.status === "REJECTED"
-            ? "sudah ditolak"
-            : "sedang dalam proses review";
+        existing.status === 'APPROVED'
+          ? 'sudah disetujui'
+          : existing.status === 'REJECTED'
+            ? 'sudah ditolak'
+            : 'sedang dalam proses review';
       throw new Error(`Lagu ini ${statusMsg} (duplicate)`);
     }
 
@@ -72,7 +68,7 @@ class TrackCatalogService {
       title: input.title,
       youtubeUrl: input.youtubeUrl,
       youtubeVideoId: videoId,
-      status: "PENDING",
+      status: 'PENDING',
     };
     if (companyId) data.companyId = companyId;
     if (companyMemberId) data.companyMemberId = companyMemberId;
@@ -87,8 +83,7 @@ class TrackCatalogService {
     });
 
     // ── notification + email ──────────────────────────────────────────
-    const submitterName =
-      track.companyMember?.user?.fullName ?? track.user?.fullName ?? "Unknown";
+    const submitterName = track.companyMember?.user?.fullName ?? track.user?.fullName ?? 'Unknown';
 
     // In-app notification to submitter
     try {
@@ -98,9 +93,9 @@ class TrackCatalogService {
             companyId: companyId ?? undefined,
             companyMemberId,
             userId,
-            title: "Track Submitted",
+            title: 'Track Submitted',
             body: `Lagu "${input.title}" berhasil dikirim untuk review.`,
-            type: "track_catalog",
+            type: 'track_catalog',
           },
         });
       }
@@ -141,7 +136,7 @@ class TrackCatalogService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -156,21 +151,21 @@ class TrackCatalogService {
     if (query.status) {
       where.status = query.status;
     } else {
-      where.status = "APPROVED";
+      where.status = 'APPROVED';
     }
 
     if (query.search) {
       where.OR = [
-        { title: { contains: query.search, mode: "insensitive" } },
-        { youtubeVideoId: { contains: query.search, mode: "insensitive" } },
+        { title: { contains: query.search, mode: 'insensitive' } },
+        { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ createdAt: "desc" });
+      orderBy.push({ createdAt: 'desc' });
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -206,7 +201,7 @@ class TrackCatalogService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -220,21 +215,21 @@ class TrackCatalogService {
     if (query.status) {
       where.status = query.status;
     } else {
-      where.status = "PENDING";
+      where.status = 'PENDING';
     }
 
     if (query.search) {
       where.OR = [
-        { title: { contains: query.search, mode: "insensitive" } },
-        { youtubeVideoId: { contains: query.search, mode: "insensitive" } },
+        { title: { contains: query.search, mode: 'insensitive' } },
+        { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ createdAt: "desc" });
+      orderBy.push({ createdAt: 'desc' });
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -295,14 +290,14 @@ class TrackCatalogService {
     });
     if (!track) return null;
 
-    if (track.status !== "PENDING") {
+    if (track.status !== 'PENDING') {
       throw new Error(`Track sudah berstatus "${track.status}"`);
     }
 
     const updated = await prisma.trackCatalog.update({
       where: { id },
       data: {
-        status: "APPROVED",
+        status: 'APPROVED',
         reviewedAt: new Date(),
       },
       include: {
@@ -323,9 +318,9 @@ class TrackCatalogService {
             companyId: adminCompanyId,
             companyMemberId: submitterMemberId,
             userId: submitterUserId ?? undefined,
-            title: "Track Approved",
+            title: 'Track Approved',
             body: `Lagu "${trackTitle}" telah disetujui dan sekarang tersedia di katalog.`,
-            type: "track_catalog",
+            type: 'track_catalog',
           },
         });
       }
@@ -374,14 +369,14 @@ class TrackCatalogService {
     });
     if (!track) return null;
 
-    if (track.status !== "PENDING") {
+    if (track.status !== 'PENDING') {
       throw new Error(`Track sudah berstatus "${track.status}"`);
     }
 
     const updated = await prisma.trackCatalog.update({
       where: { id },
       data: {
-        status: "REJECTED",
+        status: 'REJECTED',
         rejectionReason: input.rejectionReason ?? null,
         reviewedAt: new Date(),
       },
@@ -395,9 +390,7 @@ class TrackCatalogService {
     const submitterUserId = updated.userId;
     const submitterMemberId = updated.companyMemberId;
     const trackTitle = updated.title;
-    const reason = input.rejectionReason
-      ? `\nAlasan: ${input.rejectionReason}`
-      : "";
+    const reason = input.rejectionReason ? `\nAlasan: ${input.rejectionReason}` : '';
 
     // In-app notification (company-scoped only)
     try {
@@ -407,9 +400,9 @@ class TrackCatalogService {
             companyId: adminCompanyId,
             companyMemberId: submitterMemberId,
             userId: submitterUserId ?? undefined,
-            title: "Track Rejected",
+            title: 'Track Rejected',
             body: `Lagu "${trackTitle}" ditolak.${reason}`,
-            type: "track_catalog",
+            type: 'track_catalog',
           },
         });
       }
@@ -431,7 +424,7 @@ class TrackCatalogService {
             subject: `[Mora] Track "${trackTitle}" Rejected`,
             html: `<p>Halo ${user.fullName},</p>
 <p>Lagu <strong>"${trackTitle}"</strong> telah ditolak.</p>
-${reason ? `<p>Alasan: <em>${input.rejectionReason}</em></p>` : ""}
+${reason ? `<p>Alasan: <em>${input.rejectionReason}</em></p>` : ''}
 <p>Anda dapat mengirim ulang track lainnya kapan saja.</p>`,
           });
         }

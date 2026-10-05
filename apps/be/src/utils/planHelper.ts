@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@/generated/client';
 import type { BillingCycle, SubscriptionTier } from '@repo/types/company.types';
 import { getPlan } from '@/config/subscriptionPlans';
 import prisma from 'prisma/client';

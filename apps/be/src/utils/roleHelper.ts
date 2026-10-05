@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { Prisma } from '@/generated/client';
 import type { CompanyRole } from '@repo/types/company.types';
 export interface roleType {
   name: CompanyRole;
