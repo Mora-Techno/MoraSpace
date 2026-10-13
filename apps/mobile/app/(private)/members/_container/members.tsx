@@ -116,8 +116,8 @@ export function MobileMembersContainer() {
             className="flex-row items-center px-3.5 py-2 rounded-xl"
             style={{ backgroundColor: colors.primary }}
           >
-            <Plus size={16} color="#fff" />
-            <Text className="text-white text-xs font-semibold ml-1.5">Undang</Text>
+            <Plus size={16} color={colors.primaryForeground} />
+            <Text className="text-primary-foreground text-xs font-semibold ml-1.5">Undang</Text>
           </TouchableOpacity>
         </View>
 
@@ -136,7 +136,7 @@ export function MobileMembersContainer() {
               className="px-4 py-2 rounded-lg"
               style={{ backgroundColor: colors.primary }}
             >
-              <Text className="text-white text-xs font-semibold">Coba lagi</Text>
+              <Text className="text-primary-foreground text-xs font-semibold">Coba lagi</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -268,7 +268,7 @@ export function MobileMembersContainer() {
                   className="px-4 py-2 rounded-lg"
                   style={{ backgroundColor: colors.primary }}
                 >
-                  <Text className="text-white font-semibold text-xs">
+                  <Text className="text-primary-foreground font-semibold text-xs">
                     {createInvite.isPending ? 'Mengirim...' : 'Kirim Undangan'}
                   </Text>
                 </TouchableOpacity>

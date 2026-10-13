@@ -182,8 +182,8 @@ export function MobileSettingsContainer() {
               </Text>
             </View>
             {isOwner ? (
-              <View className="px-2 py-0.5 rounded-md bg-amber-500/20">
-                <Text className="text-[10px] font-semibold text-amber-500">Edit Akses: Owner</Text>
+              <View className="px-2 py-0.5 rounded-md bg-warning/20">
+                <Text className="text-[10px] font-semibold text-foreground">Edit Akses: Owner</Text>
               </View>
             ) : (
               <View className="px-2 py-0.5 rounded-md bg-gray-500/20">
@@ -263,7 +263,7 @@ export function MobileSettingsContainer() {
                 className="mt-2 py-3 rounded-xl items-center"
                 style={{ backgroundColor: colors.primary }}
               >
-                <Text className="text-white text-xs font-bold">
+                <Text className="text-primary-foreground text-xs font-bold">
                   {updateCompanySettings.isPending ? 'Menyimpan...' : 'Simpan Pengaturan Jam Kerja'}
                 </Text>
               </TouchableOpacity>

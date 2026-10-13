@@ -79,7 +79,7 @@ export function MobileCalendarContainer() {
             className="p-2.5 rounded-full"
             style={{ backgroundColor: colors.primary }}
           >
-            <Plus size={20} color="#fff" />
+            <Plus size={20} color={colors.primaryForeground} />
           </TouchableOpacity>
         </View>
 
@@ -201,7 +201,7 @@ export function MobileCalendarContainer() {
                   className="px-4 py-2 rounded-lg"
                   style={{ backgroundColor: colors.primary }}
                 >
-                  <Text className="text-white font-semibold text-xs">
+                  <Text className="text-primary-foreground font-semibold text-xs">
                     {createEvent.isPending ? 'Menyimpan...' : 'Simpan'}
                   </Text>
                 </TouchableOpacity>

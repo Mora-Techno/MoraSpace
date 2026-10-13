@@ -92,10 +92,14 @@ export function MobileMusicContainer() {
                 className="p-2 rounded-full"
                 style={{ backgroundColor: colors.primary }}
               >
-                {isPlaying ? <Pause size={16} color="#fff" /> : <Play size={16} color="#fff" />}
+                {isPlaying ? (
+                  <Pause size={16} color={colors.primaryForeground} />
+                ) : (
+                  <Play size={16} color={colors.primaryForeground} />
+                )}
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleStop} className="p-2 rounded-full bg-red-500">
-                <Square size={16} color="#fff" />
+              <TouchableOpacity onPress={handleStop} className="p-2 rounded-full bg-destructive">
+                <Square size={16} color={colors.destructiveForeground} />
               </TouchableOpacity>
             </View>
           </View>

@@ -177,17 +177,17 @@ export default function HomePageSection() {
       >
         <View className="flex-row items-center flex-1 mr-3">
           <View className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
-            <Timer size={22} color="#fff" />
+            <Timer size={22} color={colors.primaryForeground} />
           </View>
           <View className="ml-3 flex-1">
-            <Text className="text-sm font-bold text-white">Mulai Sesi Fokus</Text>
-            <Text className="text-[11px] text-white/80 mt-0.5">
+            <Text className="text-sm font-bold text-primary-foreground">Mulai Sesi Fokus</Text>
+            <Text className="text-[11px] text-primary-foreground/80 mt-0.5">
               Timer Pomodoro 25 menit untuk produktivitas maksimal
             </Text>
           </View>
         </View>
         <View className="w-8 h-8 rounded-full bg-white/25 items-center justify-center">
-          <Play size={16} color="#fff" />
+          <Play size={16} color={colors.primaryForeground} />
         </View>
       </TouchableOpacity>
 

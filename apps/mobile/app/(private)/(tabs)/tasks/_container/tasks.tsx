@@ -146,7 +146,7 @@ export function MobileTasksContainer() {
             className="p-2.5 rounded-full"
             style={{ backgroundColor: colors.primary }}
           >
-            <Plus size={20} color="#fff" />
+            <Plus size={20} color={colors.primaryForeground} />
           </TouchableOpacity>
         </View>
 
@@ -163,7 +163,7 @@ export function MobileTasksContainer() {
             >
               <Text
                 className="text-xs font-semibold"
-                style={{ color: activeStatusId === 'all' ? '#fff' : colors.text }}
+                style={{ color: activeStatusId === 'all' ? colors.primaryForeground : colors.text }}
               >
                 Semua ({accessibleTasks.length})
               </Text>
@@ -184,7 +184,7 @@ export function MobileTasksContainer() {
                 >
                   <Text
                     className="text-xs font-semibold"
-                    style={{ color: isActive ? '#fff' : colors.text }}
+                    style={{ color: isActive ? colors.primaryForeground : colors.text }}
                   >
                     {s.name} ({count})
                   </Text>
@@ -209,7 +209,7 @@ export function MobileTasksContainer() {
               className="px-4 py-2 rounded-lg"
               style={{ backgroundColor: colors.primary }}
             >
-              <Text className="text-white text-xs font-semibold">Coba lagi</Text>
+              <Text className="text-primary-foreground text-xs font-semibold">Coba lagi</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -357,7 +357,9 @@ export function MobileTasksContainer() {
                   >
                     <Text
                       className="text-xs"
-                      style={{ color: newStatusId === s.id ? '#fff' : colors.text }}
+                      style={{
+                        color: newStatusId === s.id ? colors.primaryForeground : colors.text,
+                      }}
                     >
                       {s.name}
                     </Text>
@@ -378,7 +380,7 @@ export function MobileTasksContainer() {
                   className="px-4 py-2 rounded-lg"
                   style={{ backgroundColor: colors.primary }}
                 >
-                  <Text className="text-white font-semibold text-xs">
+                  <Text className="text-primary-foreground font-semibold text-xs">
                     {createTask.isPending ? 'Menyimpan...' : 'Simpan Tugas'}
                   </Text>
                 </TouchableOpacity>

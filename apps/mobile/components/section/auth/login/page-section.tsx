@@ -147,7 +147,7 @@ export default function LoginPage({ state, service }: LoginPageProps) {
 
                 <Button className="w-full mt-2" onPress={() => onLogin()} disabled={isPending}>
                   {/* Set Login */}
-                  <Text className="text-white font-semibold text-base">Masuk</Text>
+                  <Text className="text-primary-foreground font-semibold text-base">Masuk</Text>
                 </Button>
 
                 <View className="flex-row items-center my-4">

@@ -151,8 +151,8 @@ export function MobilePomodoroContainer() {
                 className="flex-row items-center px-6 py-3 rounded-2xl"
                 style={{ backgroundColor: colors.primary }}
               >
-                <Play size={18} color="#fff" />
-                <Text className="text-white font-bold ml-2 text-sm">
+                <Play size={18} color={colors.primaryForeground} />
+                <Text className="text-primary-foreground font-bold ml-2 text-sm">
                   {startSession.isPending ? 'Memulai...' : 'Mulai Fokus'}
                 </Text>
               </TouchableOpacity>
@@ -165,24 +165,24 @@ export function MobilePomodoroContainer() {
                     className="p-3.5 rounded-full"
                     style={{ backgroundColor: colors.primary }}
                   >
-                    <Play size={20} color="#fff" />
+                    <Play size={20} color={colors.primaryForeground} />
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
                     onPress={handlePause}
                     disabled={pauseSession.isPending}
-                    className="p-3.5 rounded-full bg-amber-500"
+                    className="p-3.5 rounded-full bg-warning"
                   >
-                    <Pause size={20} color="#fff" />
+                    <Pause size={20} color={colors.warningForeground} />
                   </TouchableOpacity>
                 )}
 
                 <TouchableOpacity
                   onPress={handleStop}
                   disabled={stopSession.isPending}
-                  className="p-3.5 rounded-full bg-red-500"
+                  className="p-3.5 rounded-full bg-destructive"
                 >
-                  <Square size={20} color="#fff" />
+                  <Square size={20} color={colors.destructiveForeground} />
                 </TouchableOpacity>
 
                 <TouchableOpacity

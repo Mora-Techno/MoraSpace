@@ -90,7 +90,7 @@ export function MobileNotificationsContainer() {
           >
             <Text
               className="text-xs font-semibold"
-              style={{ color: filterMode === 'all' ? '#fff' : colors.text }}
+              style={{ color: filterMode === 'all' ? colors.primaryForeground : colors.text }}
             >
               Semua ({Array.isArray(rawNotifications) ? rawNotifications.length : 0})
             </Text>
@@ -106,7 +106,7 @@ export function MobileNotificationsContainer() {
           >
             <Text
               className="text-xs font-semibold"
-              style={{ color: filterMode === 'unread' ? '#fff' : colors.text }}
+              style={{ color: filterMode === 'unread' ? colors.primaryForeground : colors.text }}
             >
               Belum Dibaca ({unreadCount})
             </Text>
@@ -128,7 +128,7 @@ export function MobileNotificationsContainer() {
               className="px-4 py-2 rounded-lg"
               style={{ backgroundColor: colors.primary }}
             >
-              <Text className="text-white text-xs font-semibold">Coba lagi</Text>
+              <Text className="text-primary-foreground text-xs font-semibold">Coba lagi</Text>
             </TouchableOpacity>
           </View>
         ) : (
