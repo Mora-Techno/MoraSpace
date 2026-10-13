@@ -3,14 +3,12 @@ import type {
   PickUpdateCompanyMember,
   PickUpdateMemberContacts,
   PickUpdateMemberProfile,
-} from "@repo/types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  type MemberCacheContext,
-  membersRoot,
-  readMemberSnapshot,
-} from "./utils";
+} from '@repo/types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { type MemberCacheContext, membersRoot, readMemberSnapshot } from './utils';
 
 export function useUpdateMember() {
   return useAppMutation<

@@ -5,21 +5,15 @@ import type {
   PickRegisterCompany,
   PickUpdateCompanyProfile,
   PickUpdateCompanySubscription,
-} from "@repo/types/company.types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  type CompanyCacheContext,
-  companyRootKey,
-  readCompanySnapshot,
-} from "./utils";
+} from '@repo/types/company.types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { type CompanyCacheContext, companyRootKey, readCompanySnapshot } from './utils';
 
 export function useRegisterCompany() {
-  return useAppMutation<
-    CompanyProfile,
-    PickRegisterCompany,
-    CompanyCacheContext
-  >({
+  return useAppMutation<CompanyProfile, PickRegisterCompany, CompanyCacheContext>({
     mutationFn: (payload) => Api.Company.RegisterCompany(payload),
     invalidateKeys: [companyRootKey],
     optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
@@ -43,11 +37,7 @@ export function useDeleteAdmin() {
 }
 
 export function useUpdateCompanySubscription() {
-  return useAppMutation<
-    CompanyProfile,
-    PickUpdateCompanySubscription,
-    CompanyCacheContext
-  >({
+  return useAppMutation<CompanyProfile, PickUpdateCompanySubscription, CompanyCacheContext>({
     mutationFn: (payload) => Api.Company.UpdateCompanySubscription(payload),
     invalidateKeys: [companyRootKey],
     optimistic: (ns) => ({ previousData: readCompanySnapshot(ns) }),
@@ -55,11 +45,14 @@ export function useUpdateCompanySubscription() {
 }
 
 export function useUpdateCompanyProfile() {
-  return useAppMutation<
-    CompanyProfile,
-    PickUpdateCompanyProfile,
-    CompanyCacheContext
-  >({
+  return useAppMutation<CompanyProfile, PickUpdateCompanyProfile, CompanyCacheContext>({
     mutationFn: (payload) => Api.Company.UpdateCompanyProfile(payload),
+  });
+}
+
+export function useUpdateCompanySettings() {
+  return useAppMutation<unknown, any>({
+    mutationFn: (payload) => Api.Company.UpdateCompanySettings(payload),
+    invalidateKeys: [companyRootKey, ['companies', 'settings']],
   });
 }

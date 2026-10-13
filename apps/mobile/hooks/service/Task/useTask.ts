@@ -8,7 +8,13 @@ import {
   useUpdateTask,
   useUpdateTaskStatus,
 } from './state/mutate';
-import { useGetTask, useListTaskActivities, useListTasks } from './state/query';
+import {
+  useGetTask,
+  useListTaskActivities,
+  useListTaskPriorities,
+  useListTasks,
+  useListTaskStatuses,
+} from './state/query';
 
 export const useTask = () => {
   return {
@@ -26,6 +32,8 @@ export const useTask = () => {
       list: useListTasks,
       detail: useGetTask,
       activities: useListTaskActivities,
+      statuses: useListTaskStatuses,
+      priorities: useListTaskPriorities,
     },
   };
 };

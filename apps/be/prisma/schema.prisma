@@ -38,6 +38,14 @@ model User {
   managerReportingLines  ReportingLine[]     @relation("ReportingManager")
   ledTeams               Team[]              @relation("TeamLeader")
   todos                  Todo[]
+  tasks                  Task[]
+  taskActivities         TaskActivity[]
+  taskAttachments        TaskAttachment[]
+  taskChecklistItems     TaskChecklistItem[]
+  taskComments           TaskComment[]
+  taskLabels             TaskLabel[]
+  taskPriorities         TaskPriority[]
+  taskStatuses           TaskStatus[]
   trackCatalogs          TrackCatalog[]
   sessions               UserSession[]
   setting                UserSetting?
@@ -95,6 +103,7 @@ model Company {
   id                  String           @id @default(uuid())
   name                String
   country             String?
+  counrys             String?          @map("counrys")
   createdAt           DateTime         @default(now()) @map("created_at")
   currency            String?
   logo                String?
@@ -399,12 +408,13 @@ model Invitation {
 
 model Task {
   id               String                @id @default(uuid())
-  companyId        String                @map("company_id")
+  companyId        String?               @map("company_id")
+  userId           String?               @map("user_id")
   title            String
   description      String?
   statusId         String                @map("status_id")
   priorityId       String?               @map("priority_id")
-  reporterMemberId String                @map("reporter_member_id")
+  reporterMemberId String?               @map("reporter_member_id")
   startDate        DateTime?             @map("start_date")
   dueDate          DateTime?             @map("due_date")
   completedAt      DateTime?             @map("completed_at")
@@ -417,10 +427,11 @@ model Task {
   checklists       TaskChecklist[]
   comments         TaskComment[]
   labels           TaskLabelAssignment[]
-  company          Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company          Company?              @relation(fields: [companyId], references: [id], onDelete: Cascade)
   priority         TaskPriority?         @relation(fields: [priorityId], references: [id])
-  reporter         CompanyMember         @relation("TaskReporter", fields: [reporterMemberId], references: [id])
+  reporter         CompanyMember?        @relation("TaskReporter", fields: [reporterMemberId], references: [id])
   status           TaskStatus            @relation(fields: [statusId], references: [id])
+  user             User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("tasks")
 }
@@ -437,24 +448,28 @@ model TaskAssignee {
 }
 
 model TaskStatus {
-  id        String  @id @default(uuid())
-  companyId String  @map("company_id")
+  id        String   @id @default(uuid())
+  companyId String?  @map("company_id")
+  userId    String?  @map("user_id")
   name      String
   color     String
-  sortOrder Int     @default(0) @map("order")
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  sortOrder Int      @default(0) @map("order")
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks     Task[]
 
   @@map("task_statuses")
 }
 
 model TaskPriority {
-  id        String  @id @default(uuid())
-  companyId String  @map("company_id")
+  id        String   @id @default(uuid())
+  companyId String?  @map("company_id")
+  userId    String?  @map("user_id")
   name      String
   color     String
-  level     Int     @default(0)
-  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  level     Int      @default(0)
+  company   Company? @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   tasks     Task[]
 
   @@map("task_priorities")
@@ -462,11 +477,13 @@ model TaskPriority {
 
 model TaskLabel {
   id        String                @id @default(uuid())
-  companyId String                @map("company_id")
+  companyId String?               @map("company_id")
+  userId    String?               @map("user_id")
   name      String
   color     String
   tasks     TaskLabelAssignment[]
-  company   Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  company   Company?              @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user      User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_labels")
 }
@@ -482,26 +499,30 @@ model TaskLabelAssignment {
 }
 
 model TaskComment {
-  id              String        @id @default(uuid())
-  taskId          String        @map("task_id")
-  companyMemberId String        @map("company_member_id")
+  id              String         @id @default(uuid())
+  taskId          String         @map("task_id")
+  companyMemberId String?        @map("company_member_id")
+  userId          String?        @map("user_id")
   content         String
-  createdAt       DateTime      @default(now()) @map("created_at")
-  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
-  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  task            Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_comments")
 }
 
 model TaskAttachment {
-  id         String        @id @default(uuid())
-  taskId     String        @map("task_id")
-  uploadedBy String        @map("uploaded_by")
-  fileName   String        @map("file_name")
-  fileUrl    String        @map("file_url")
-  fileSize   BigInt        @map("file_size")
-  task       Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  uploader   CompanyMember @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  id         String         @id @default(uuid())
+  taskId     String         @map("task_id")
+  uploadedBy String?        @map("uploaded_by")
+  userId     String?        @map("user_id")
+  fileName   String         @map("file_name")
+  fileUrl    String         @map("file_url")
+  fileSize   BigInt         @map("file_size")
+  task       Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  uploader   CompanyMember? @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+  user       User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_attachments")
 }
@@ -522,21 +543,25 @@ model TaskChecklistItem {
   content     String
   completed   Boolean        @default(false)
   completedBy String?        @map("completed_by")
+  userId      String?        @map("user_id")
   checklist   TaskChecklist  @relation(fields: [checklistId], references: [id], onDelete: Cascade)
   completer   CompanyMember? @relation(fields: [completedBy], references: [id])
+  user        User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_checklist_items")
 }
 
 model TaskActivity {
-  id              String        @id @default(uuid())
-  taskId          String        @map("task_id")
-  companyMemberId String        @map("company_member_id")
+  id              String         @id @default(uuid())
+  taskId          String         @map("task_id")
+  companyMemberId String?        @map("company_member_id")
+  userId          String?        @map("user_id")
   action          String
   metadata        Json?
-  createdAt       DateTime      @default(now()) @map("created_at")
-  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
-  task            Task          @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now()) @map("created_at")
+  companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  task            Task           @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("task_activities")
 }
@@ -999,4 +1024,12 @@ enum TrackStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model countries {
+  id         String   @id
+  code       String   @unique
+  name       String
+  updated_at DateTime
+  createdAt  DateTime @default(now())
 }

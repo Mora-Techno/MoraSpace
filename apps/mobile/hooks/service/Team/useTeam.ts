@@ -4,8 +4,8 @@ import {
   useDeleteTeam,
   useRemoveTeamMember,
   useUpdateTeam,
-} from "./state/mutate";
-import { useListTeamMembers, useListTeams } from "./state/query";
+} from './state/mutate';
+import { useListTeamMembers, useListTeams } from './state/query';
 
 export const useTeam = () => {
   return {

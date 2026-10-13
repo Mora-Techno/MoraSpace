@@ -1,3 +1,4 @@
+import { PickLogin } from '@repo/types';
 import { Link } from 'expo-router';
 import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react-native';
 import React, { useState } from 'react';
@@ -7,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Text } from '@/components/ui/text';
 import { useTheme } from '@/core/providers/theme.provinder';
-import { PickLogin } from '@repo/types';
 import { AlertContexType } from '@/types/ui';
 
 interface LoginPageProps {
@@ -147,7 +147,7 @@ export default function LoginPage({ state, service }: LoginPageProps) {
 
                 <Button className="w-full mt-2" onPress={() => onLogin()} disabled={isPending}>
                   {/* Set Login */}
-                  <Text className="text-white font-semibold text-base">Masuk</Text>
+                  <Text className="text-primary-foreground font-semibold text-base">Masuk</Text>
                 </Button>
 
                 <View className="flex-row items-center my-4">

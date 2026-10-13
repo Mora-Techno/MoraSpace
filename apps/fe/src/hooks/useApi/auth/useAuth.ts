@@ -6,7 +6,9 @@ import {
   useVerifyMagicLink,
   useForgotPassword,
   useResetPassword,
+  useSwitchWorkspace,
 } from "./state/mutate";
+import { useWorkspaces } from "./state/query";
 
 export const useAuth = () => {
   return {
@@ -18,9 +20,10 @@ export const useAuth = () => {
       sendMagicLink: useSendMagicLink,
       forgotPassword: useForgotPassword,
       resetPassword: useResetPassword,
+      switchWorkspace: useSwitchWorkspace,
     },
     query: {
-      //
+      workspaces: useWorkspaces,
     },
   };
 };

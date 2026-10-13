@@ -1,6 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
 import { setAuthErrorHandler, setTokenProvider } from '@repo/services';
 import { router } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
 
 const ACCESS_TOKEN_KEY = 'spaces_mobile_access_token';
 const REFRESH_TOKEN_KEY = 'spaces_mobile_refresh_token';

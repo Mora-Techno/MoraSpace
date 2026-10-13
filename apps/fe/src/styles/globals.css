@@ -1,13 +1,15 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./theme.generated.css";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-body);
-  --font-serif: var(--font-heading);
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-serif: var(--font-fraunces), ui-serif, Georgia, serif;
   --font-mono: ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
@@ -38,101 +40,15 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
 }
 
 :root {
   --radius: 1rem;
-  --font-heading: var(--font-playfair);
-  --font-body: var(--font-nunito);
-
-  --background: #fdfbf7;
-  --foreground: #4a4238;
-  --card: rgba(255, 255, 255, 0.72);
-  --card-foreground: #4a4238;
-  --popover: #ffffff;
-  --popover-foreground: #4a4238;
-  --primary: #7daf74;
-  --primary-foreground: #fdfbf7;
-  --secondary: #aec6cf;
-  --secondary-foreground: #4a4238;
-  --muted: #f3efe8;
-  --muted-foreground: rgba(74, 66, 56, 0.65);
-  --accent: #e8f4e6;
-  --accent-foreground: #5e8b56;
-  --destructive: #d97757;
-  --destructive-foreground: #ffffff;
-  --border: rgba(94, 139, 86, 0.2);
-  --input: rgba(94, 139, 86, 0.15);
-  --ring: rgba(125, 175, 116, 0.4);
-  --warning: #f2c94c;
-  --warning-foreground: #4a4238;
-  --success: #7daf74;
-  --success-foreground: #fdfbf7;
-  --info: #aec6cf;
-  --info-foreground: #4a4238;
-  --chart-1: #7daf74;
-  --chart-2: #aec6cf;
-  --chart-3: #f2c94c;
-  --chart-4: #5e8b56;
-  --chart-5: #d97757;
-  --sidebar: rgba(255, 255, 255, 0.82);
-  --sidebar-foreground: #4a4238;
-  --sidebar-primary: #7daf74;
-  --sidebar-primary-foreground: #fdfbf7;
-  --sidebar-accent: #e8f4e6;
-  --sidebar-accent-foreground: #5e8b56;
-  --sidebar-border: rgba(94, 139, 86, 0.18);
-  --sidebar-ring: rgba(125, 175, 116, 0.35);
-}
-
-.dark {
-  --background: #1a2530;
-  --foreground: #e8e6e1;
-  --card: rgba(0, 0, 0, 0.42);
-  --card-foreground: #e8e6e1;
-  --popover: #243040;
-  --popover-foreground: #e8e6e1;
-  --primary: #f2c94c;
-  --primary-foreground: #1a2530;
-  --secondary: #4a4e69;
-  --secondary-foreground: #e8e6e1;
-  --muted: #243040;
-  --muted-foreground: rgba(232, 230, 225, 0.6);
-  --accent: #2d3a4a;
-  --accent-foreground: #f2c94c;
-  --destructive: #d97757;
-  --destructive-foreground: #e8e6e1;
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.12);
-  --ring: rgba(242, 201, 76, 0.35);
-  --warning: #e5a93d;
-  --warning-foreground: #1a2530;
-  --success: #7daf74;
-  --success-foreground: #1a2530;
-  --info: #4a4e69;
-  --info-foreground: #e8e6e1;
-  --chart-1: #f2c94c;
-  --chart-2: #7daf74;
-  --chart-3: #4a4e69;
-  --chart-4: #e5a93d;
-  --chart-5: #d97757;
-  --sidebar: rgba(26, 37, 48, 0.92);
-  --sidebar-foreground: #e8e6e1;
-  --sidebar-primary: #f2c94c;
-  --sidebar-primary-foreground: #1a2530;
-  --sidebar-accent: #2d3a4a;
-  --sidebar-accent-foreground: #f2c94c;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: rgba(242, 201, 76, 0.3);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -141,7 +57,7 @@
   h2,
   h3,
   h4 {
-    font-family: var(--font-heading), serif;
+    font-family: var(--font-sans);
   }
   *::-webkit-scrollbar {
     display: none;
@@ -151,19 +67,19 @@
 }
 
 .ghibli-bg {
-  background: radial-gradient(ellipse at 20% 0%, rgba(174, 198, 207, 0.45) 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 10%, rgba(125, 175, 116, 0.25) 0%, transparent 50%),
-    linear-gradient(180deg, #aec6cf33 0%, var(--background) 35%, #7daf7418 100%);
+  background: radial-gradient(ellipse at 20% 0%, color-mix(in srgb, var(--secondary) 45%, transparent) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 10%, color-mix(in srgb, var(--primary) 25%, transparent) 0%, transparent 50%),
+    linear-gradient(180deg, color-mix(in srgb, var(--secondary) 20%, transparent) 0%, var(--background) 35%, color-mix(in srgb, var(--primary) 9%, transparent) 100%);
 }
 
 .dark .ghibli-bg {
-  background: radial-gradient(ellipse at 15% 0%, rgba(242, 201, 76, 0.12) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 20%, rgba(74, 78, 105, 0.35) 0%, transparent 50%),
-    linear-gradient(180deg, #243040 0%, var(--background) 40%, #1a2530 100%);
+  background: radial-gradient(ellipse at 15% 0%, color-mix(in srgb, var(--primary) 12%, transparent) 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 20%, color-mix(in srgb, var(--secondary) 35%, transparent) 0%, transparent 50%),
+    linear-gradient(180deg, var(--muted) 0%, var(--background) 40%, var(--background) 100%);
 }
 
 .ghibli-glass {
-  @apply rounded-2xl border border-white/40 bg-white/70 shadow-lg shadow-green-900/5 backdrop-blur-md dark:border-white/10 dark:bg-black/40 dark:shadow-black/20;
+  @apply rounded-2xl border border-border bg-card shadow-lg backdrop-blur-md;
 }
 
 .ghibli-btn {
@@ -226,10 +142,10 @@ input[type="number"] {
 
 @keyframes glow {
   from {
-    box-shadow: 0 0 20px rgba(69, 59, 207, 0.4);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--primary) 40%, transparent);
   }
   to {
-    box-shadow: 0 0 30px rgba(69, 59, 207, 0.8);
+    box-shadow: 0 0 30px color-mix(in srgb, var(--primary) 80%, transparent);
   }
 }
 
@@ -246,7 +162,7 @@ input[type="number"] {
 
 /* Custom gradient utilities */
 .gradient-primary {
-  background: linear-gradient(135deg, #453bcf 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, color-mix(in srgb, var(--primary) 65%, var(--secondary)) 100%);
 }
 
 .gradient-secondary {
@@ -268,7 +184,7 @@ input[type="number"] {
 
 /* Custom text gradient utilities */
 .text-gradient-primary {
-  background: linear-gradient(135deg, #453bcf, #6366f1);
+  background: linear-gradient(135deg, var(--primary), color-mix(in srgb, var(--primary) 65%, var(--secondary)));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -289,14 +205,14 @@ input[type="number"] {
 }
 
 .card-glass {
-  background: rgba(255, 255, 255, 0.72);
+  background: var(--card);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(125, 175, 116, 0.15);
+  border: 1px solid var(--border);
 }
 
 .dark .card-glass {
-  background: rgba(0, 0, 0, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--card);
+  border: 1px solid var(--border);
 }
 
 /* Enhanced hover effects */

@@ -1,7 +1,9 @@
-import type { PickUpdateSettings, Settings } from "@repo/types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import { readSettingsSnapshot, type SettingsCacheContext, SettingsRoot } from "./utils";
+import type { PickUpdateSettings, Settings } from '@repo/types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readSettingsSnapshot, type SettingsCacheContext, SettingsRoot } from './utils';
 
 export function useUpdateSettings() {
   return useAppMutation<Settings, PickUpdateSettings, SettingsCacheContext>({

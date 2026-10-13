@@ -4,6 +4,7 @@ const mount = '/tasks';
 
 export const TASK_ENDPOINTS = {
   STATUSES: buildEndpoint(mount, '/statuses'),
+  STATUS_BY_ID: (id: string) => buildEndpoint(mount, `/statuses/${id}`),
   PRIORITIES: buildEndpoint(mount, '/priorities'),
   LIST: buildEndpoint(mount),
   CREATE: buildEndpoint(mount),

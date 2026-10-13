@@ -1,20 +1,20 @@
 import "@/styles/globals.css";
 import "@aejkatappaja/phantom-ui/ssr.css";
 
-import { Nunito, Playfair_Display } from "next/font/google";
+import { DM_Sans, Fraunces } from "next/font/google";
 
 import { metadata, siteConfig } from "./metadata";
 import { AppProviders } from "./providers";
 export { metadata };
-const playfair = Playfair_Display({
+const dmSans = DM_Sans({
   subsets: ["latin"],
-  variable: "--font-playfair",
+  variable: "--font-dm-sans",
   display: "swap",
 });
 
-const nunito = Nunito({
+const fraunces = Fraunces({
   subsets: ["latin"],
-  variable: "--font-nunito",
+  variable: "--font-fraunces",
   display: "swap",
 });
 
@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang={siteConfig.locale} suppressHydrationWarning>
       <body
-        className={`${playfair.variable} ${nunito.variable} ghibli-bg min-h-screen`}
+        className={`${dmSans.variable} ${fraunces.variable} ghibli-bg min-h-screen`}
       >
         <AppProviders>{children}</AppProviders>
       </body>

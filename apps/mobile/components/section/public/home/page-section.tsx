@@ -31,9 +31,9 @@ export default function SectionHomePage() {
 
           <Button className="w-full max-w-sm">
             <Link href={'/(auth)/login/page'}>
-              <Text className="text-white font-semibold text-base">Get Started</Text>
+              <Text className="text-primary-foreground font-semibold text-base">Get Started</Text>
             </Link>
-            <ArrowRight size={20} color="white" className="ml-2" />
+            <ArrowRight size={20} color={colors.primaryForeground} className="ml-2" />
           </Button>
         </View>
 

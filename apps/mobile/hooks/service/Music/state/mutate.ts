@@ -1,32 +1,24 @@
-import type { MusicPlaylist, PickCreatePlaylist } from "@repo/types";
-import { queryKey } from "@/config/query-key";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  type MusicCacheContext,
-  readPlaylistSnapshot,
-} from "./utils";
+import type { MusicPlaylist, PickCreatePlaylist } from '@repo/types';
+
+import { queryKey } from '@/config/query-key';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { type MusicCacheContext, readPlaylistSnapshot } from './utils';
 
 export function useCreatePlaylist() {
-  return useAppMutation<
-    MusicPlaylist,
-    PickCreatePlaylist,
-    MusicCacheContext
-  >({
+  return useAppMutation<MusicPlaylist, PickCreatePlaylist, MusicCacheContext>({
     mutationFn: (payload) => Api.Music.CreatePlaylist(payload),
     invalidateKeys: [queryKey.musicRoot()],
     optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
     onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.music.list(),
-          context.previousData,
-        );
+        ns.queryClient.setQueryData(queryKey.music.list(), context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -39,15 +31,12 @@ export function useDeletePlaylist() {
     optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
     onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.music.list(),
-          context.previousData,
-        );
+        ns.queryClient.setQueryData(queryKey.music.list(), context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

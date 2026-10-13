@@ -15,6 +15,28 @@ export function useListTasks() {
   });
 }
 
+export function useListTaskStatuses() {
+  return useQuery({
+    queryKey: queryKey.tasks.statuses(),
+    queryFn: async () => {
+      const res = await Api.Task.ListStatuses();
+      return res.data;
+    },
+    staleTime: MODULE_QUERY,
+  });
+}
+
+export function useListTaskPriorities() {
+  return useQuery({
+    queryKey: queryKey.tasks.priorities(),
+    queryFn: async () => {
+      const res = await Api.Task.ListPriorities();
+      return res.data;
+    },
+    staleTime: MODULE_QUERY,
+  });
+}
+
 export function useGetTask(id: string) {
   return useQuery({
     queryKey: queryKey.tasks.detail(id),

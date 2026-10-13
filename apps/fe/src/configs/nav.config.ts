@@ -3,16 +3,16 @@ import {
   Building2,
   Calendar,
   CheckSquare,
+  CreditCard,
   FileText,
   Home,
+  Kanban,
   type LucideIcon,
   Music2,
-  Settings,
-  Users,
-  Kanban,
-  Timer,
-  CreditCard,
   Radio,
+  Settings,
+  Timer,
+  Users,
 } from 'lucide-react';
 
 export type NavItem = {
@@ -23,7 +23,7 @@ export type NavItem = {
   children?: NavItem[];
 };
 
-type Role = 'member' | 'owner';
+type Role = 'member' | 'owner' | 'individual' | 'personal';
 
 /**
  * Fitur khas "member" yang dijadikan sub-laman di dalam area Owner.
@@ -127,10 +127,52 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
     },
     { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
+  personal: [
+    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
+    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
+    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
+    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
+    {
+      title: 'Calendar',
+      url: '/member/calendar',
+      icon: Calendar,
+      mobile: true,
+    },
+    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
+    {
+      title: 'Settings',
+      url: '/member/settings',
+      icon: Settings,
+      mobile: true,
+    },
+  ],
+  individual: [
+    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
+    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
+    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
+    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
+    {
+      title: 'Calendar',
+      url: '/member/calendar',
+      icon: Calendar,
+      mobile: true,
+    },
+    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
+    {
+      title: 'Settings',
+      url: '/member/settings',
+      icon: Settings,
+      mobile: true,
+    },
+  ],
 };
 
 export function getNavItems(role?: Role | string | null): NavItem[] {
-  if (role === 'owner') return ALL_NAV_ITEMS.owner;
+  const normalized = role?.toLowerCase();
+  if (normalized === 'owner') return ALL_NAV_ITEMS.owner;
+  if (normalized === 'individual' || normalized === 'personal') return ALL_NAV_ITEMS.personal;
   return ALL_NAV_ITEMS.member;
 }
 

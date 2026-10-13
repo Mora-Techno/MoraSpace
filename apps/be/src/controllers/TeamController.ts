@@ -17,11 +17,25 @@ class TeamController {
   public async list(c: AppContext) {
     try {
       const user = getUser(c);
+      if (!user) return HttpResponse(c).unauthorized();
+
+      if (!user.companyId) {
+        return HttpResponse(c).ok(
+          [],
+          {
+            currentPage: 1,
+            limit: 10,
+            totalData: 0,
+            totalPage: 0,
+          },
+          "Daftar tim",
+        );
+      }
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await TeamService.list(user.companyId!, c.query as any);
+      const result = await TeamService.list(user.companyId, c.query as any);
       return HttpResponse(c).ok(
         result.data,
         result.meta,
