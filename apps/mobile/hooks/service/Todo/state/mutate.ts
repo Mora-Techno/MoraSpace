@@ -1,17 +1,9 @@
-import type {
-  PickCreateTodo,
-  PickUpdateTodo,
-  Todo,
-  TodoQuery,
-} from "@repo/types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  readTodoSnapshot,
-  type TodoCacheContext,
-  todoRootKey,
-  todosListKey,
-} from "./utils";
+import type { PickCreateTodo, PickUpdateTodo, Todo, TodoQuery } from '@repo/types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readTodoSnapshot, type TodoCacheContext, todoRootKey, todosListKey } from './utils';
 
 export function useCreateTodo(filters?: TodoQuery) {
   return useAppMutation<Todo, PickCreateTodo, TodoCacheContext>({
@@ -23,9 +15,9 @@ export function useCreateTodo(filters?: TodoQuery) {
         ns.queryClient.setQueryData(todosListKey(filters), context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -41,9 +33,9 @@ export function useDeleteTodo() {
         ns.queryClient.setQueryData(todoRootKey, context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -57,7 +49,7 @@ export function useUpdateTodo(filters?: TodoQuery) {
   >({
     mutationFn: (variables) => {
       const id = variables.id;
-      const payload = "payload" in variables ? variables.payload : variables;
+      const payload = 'payload' in variables ? variables.payload : variables;
       return Api.Todo.UpdateTodo(id, payload);
     },
     invalidateKeys: [todoRootKey],
@@ -67,9 +59,9 @@ export function useUpdateTodo(filters?: TodoQuery) {
         ns.queryClient.setQueryData(todosListKey(filters), context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

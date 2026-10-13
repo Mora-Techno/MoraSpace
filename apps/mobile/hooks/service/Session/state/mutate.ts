@@ -1,8 +1,10 @@
-import type { Session } from "@repo/types";
-import { queryKey } from "@/config/query-key";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import { readSessionSnapshot, type SessionCacheContext } from "./utils";
+import type { Session } from '@repo/types';
+
+import { queryKey } from '@/config/query-key';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readSessionSnapshot, type SessionCacheContext } from './utils';
 
 export function useDeleteSessionById() {
   return useAppMutation<Session, string, SessionCacheContext>({

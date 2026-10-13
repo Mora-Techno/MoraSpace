@@ -1,20 +1,21 @@
+import type { MusicPlaylist } from '@repo/types';
+import { StatusBar } from 'expo-status-bar';
+import { Disc, Music as MusicIcon, Pause, Play, Square } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
   ActivityIndicator,
   Button,
+  FlatList,
   RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Play, Pause, Square, Music as MusicIcon, Disc } from 'lucide-react-native';
-import { useMusic } from '@/hooks/service/Music/useMusic';
+
 import { useTheme } from '@/core/providers/theme.provinder';
+import { useMusic } from '@/hooks/service/Music/useMusic';
 import { nativeAudioService } from '@/service/audio.service';
-import type { MusicPlaylist } from '@repo/types';
 
 const FALLBACK_AUDIO_URL = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
 

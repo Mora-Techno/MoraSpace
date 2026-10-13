@@ -1,24 +1,25 @@
+import type { Todo } from '@repo/types';
+import { StatusBar } from 'expo-status-bar';
+import { CheckCircle2, Circle, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  Modal,
   ActivityIndicator,
   Alert,
   Button,
+  FlatList,
   KeyboardAvoidingView,
+  Modal,
   Platform,
   RefreshControl,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Plus, Trash2, CheckCircle2, Circle } from 'lucide-react-native';
-import { useTodo } from '@/hooks/service/Todo/useTodo';
+
 import { useTheme } from '@/core/providers/theme.provinder';
-import type { Todo } from '@repo/types';
+import { useTodo } from '@/hooks/service/Todo/useTodo';
 
 export function MobileTodoContainer() {
   const { colors, isDark } = useTheme();

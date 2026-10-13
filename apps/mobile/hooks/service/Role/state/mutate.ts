@@ -1,16 +1,9 @@
-import type {
-  IRole,
-  PickCreateRole,
-  PickUpdateRole,
-  PickUpdateRolePermissions,
-} from "@repo/types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  readRoleSnapshot,
-  type RoleCacheContext,
-  rolesRoot,
-} from "./utils";
+import type { IRole, PickCreateRole, PickUpdateRole, PickUpdateRolePermissions } from '@repo/types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readRoleSnapshot, type RoleCacheContext, rolesRoot } from './utils';
 
 export function useCreateRole() {
   return useAppMutation<IRole, PickCreateRole, RoleCacheContext>({
@@ -21,11 +14,7 @@ export function useCreateRole() {
 }
 
 export function useUpdateRole() {
-  return useAppMutation<
-    IRole,
-    { id: string; payload: PickUpdateRole },
-    RoleCacheContext
-  >({
+  return useAppMutation<IRole, { id: string; payload: PickUpdateRole }, RoleCacheContext>({
     mutationFn: ({ id, payload }) => Api.Role.UpdateRole(id, payload),
     invalidateKeys: [rolesRoot],
     optimistic: (ns) => ({ previousData: readRoleSnapshot(ns) }),

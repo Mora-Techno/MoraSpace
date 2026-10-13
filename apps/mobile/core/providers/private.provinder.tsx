@@ -3,11 +3,7 @@ import { useEffect } from 'react';
 
 import { useAppSelector } from '@/hooks/toolkit/redux';
 
-export default function PrivateProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivateProviders({ children }: { children: React.ReactNode }) {
   const currentUser = useAppSelector((state) => state.auth.currentUser?.user.token);
   const isAuth = currentUser;
 

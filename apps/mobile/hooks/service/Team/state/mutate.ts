@@ -1,16 +1,9 @@
-import type {
-  ITeam,
-  PickAddTeamMember,
-  PickCreateTeam,
-  PickUpdateTeam,
-} from "@repo/types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  readTeamSnapshot,
-  type TeamCacheContext,
-  teamsRoot,
-} from "./utils";
+import type { ITeam, PickAddTeamMember, PickCreateTeam, PickUpdateTeam } from '@repo/types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readTeamSnapshot, type TeamCacheContext, teamsRoot } from './utils';
 
 export function useCreateTeam() {
   return useAppMutation<ITeam, PickCreateTeam, TeamCacheContext>({
@@ -21,11 +14,7 @@ export function useCreateTeam() {
 }
 
 export function useUpdateTeam() {
-  return useAppMutation<
-    ITeam,
-    { id: string; payload: PickUpdateTeam },
-    TeamCacheContext
-  >({
+  return useAppMutation<ITeam, { id: string; payload: PickUpdateTeam }, TeamCacheContext>({
     mutationFn: ({ id, payload }) => Api.Team.UpdateTeam(id, payload),
     invalidateKeys: [teamsRoot],
     optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
@@ -41,11 +30,7 @@ export function useDeleteTeam() {
 }
 
 export function useAddTeamMember() {
-  return useAppMutation<
-    unknown,
-    { teamId: string; payload: PickAddTeamMember },
-    TeamCacheContext
-  >({
+  return useAppMutation<unknown, { teamId: string; payload: PickAddTeamMember }, TeamCacheContext>({
     mutationFn: ({ teamId, payload }) => Api.Team.AddMember(teamId, payload),
     invalidateKeys: [teamsRoot],
     optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
@@ -53,13 +38,8 @@ export function useAddTeamMember() {
 }
 
 export function useRemoveTeamMember() {
-  return useAppMutation<
-    unknown,
-    { teamId: string; memberId: string },
-    TeamCacheContext
-  >({
-    mutationFn: ({ teamId, memberId }) =>
-      Api.Team.RemoveMember(teamId, memberId),
+  return useAppMutation<unknown, { teamId: string; memberId: string }, TeamCacheContext>({
+    mutationFn: ({ teamId, memberId }) => Api.Team.RemoveMember(teamId, memberId),
     invalidateKeys: [teamsRoot],
     optimistic: (ns) => ({ previousData: readTeamSnapshot(ns) }),
   });

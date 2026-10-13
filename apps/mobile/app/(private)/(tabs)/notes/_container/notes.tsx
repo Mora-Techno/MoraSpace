@@ -1,21 +1,22 @@
+import { StatusBar } from 'expo-status-bar';
+import { FileText, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  Modal,
   ActivityIndicator,
   Alert,
   Button,
+  FlatList,
+  Modal,
   RefreshControl,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Plus, Trash2, FileText } from 'lucide-react-native';
-import { useNotess } from '@/hooks/service/Note/useNotes';
+
 import { useTheme } from '@/core/providers/theme.provinder';
+import { useNotess } from '@/hooks/service/Note/useNotes';
 
 export function MobileNotesContainer() {
   const { colors, isDark } = useTheme();

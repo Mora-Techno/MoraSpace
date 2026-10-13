@@ -1,12 +1,10 @@
-import type { Note, PickCreateNote, PickUpdateNote } from "@repo/types";
-import { queryKey } from "@/config/query-key";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  type NoteCacheContext,
-  readNoteDetailSnapshot,
-  readNoteListSnapshot,
-} from "./utils";
+import type { Note, PickCreateNote, PickUpdateNote } from '@repo/types';
+
+import { queryKey } from '@/config/query-key';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { type NoteCacheContext, readNoteDetailSnapshot, readNoteListSnapshot } from './utils';
 
 export function useCreateNote() {
   return useAppMutation<Note, PickCreateNote, NoteCacheContext>({
@@ -18,9 +16,9 @@ export function useCreateNote() {
         ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -36,20 +34,16 @@ export function useDeleteNote() {
         ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
 }
 
 export function useUpdateNote() {
-  return useAppMutation<
-    Note,
-    { id: string; payload: PickUpdateNote },
-    NoteCacheContext
-  >({
+  return useAppMutation<Note, { id: string; payload: PickUpdateNote }, NoteCacheContext>({
     mutationFn: ({ id, payload }) => Api.Note.UpdateNote(id, payload),
     invalidateKeys: [queryKey.notesRoot()],
     optimistic: (ns, { id }) => ({
@@ -61,15 +55,12 @@ export function useUpdateNote() {
         ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       if (context?.previousDetail !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.detail(id),
-          context.previousDetail,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.detail(id), context.previousDetail);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

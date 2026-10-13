@@ -34,3 +34,23 @@ export function useListTaskActivities(id: string) {
     enabled: !!id,
   });
 }
+
+export function useListTaskStatuses() {
+  return useQuery({
+    queryKey: queryKey.tasks.statuses(),
+    queryFn: async () => {
+      const res = await Api.Task.ListStatuses();
+      return res.data;
+    },
+  });
+}
+
+export function useListTaskPriorities() {
+  return useQuery({
+    queryKey: queryKey.tasks.priorities(),
+    queryFn: async () => {
+      const res = await Api.Task.ListPriorities();
+      return res.data;
+    },
+  });
+}
