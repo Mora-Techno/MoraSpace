@@ -1,12 +1,12 @@
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { ThemeProvider } from '@/core/providers/theme.provinder';
 import { AlertProvinder } from '@/hooks/useAlert/costum-alert';
 import { ReactQueryClientProvider } from '@/pkg/react-query/query-client.pkg';
-import { persistor, store } from '@/stores/store';
-import React, { useEffect } from 'react';
 import Api from '@/service/props.service';
+import { persistor, store } from '@/stores/store';
 
 import { composeProviders } from './composeProvinder';
 

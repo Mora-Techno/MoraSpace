@@ -1,5 +1,5 @@
 import { Tabs } from 'expo-router';
-import { CheckSquare, Calendar, FileText, Home, Music } from 'lucide-react-native';
+import { Calendar, CheckSquare, FileText, Home, Kanban, Music } from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { useTheme } from '@/core/providers/theme.provinder';
@@ -41,14 +41,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="todos"
+        name="tasks"
         options={{
-          title: 'Todos',
+          title: 'Tasks',
           tabBarIcon: ({ color, size, focused }) => (
             <View
               className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
             >
-              <CheckSquare size={size} color={color} />
+              <Kanban size={size} color={color} />
             </View>
           ),
         }}
@@ -67,6 +67,19 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="todos"
+        options={{
+          title: 'Todos',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <CheckSquare size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="notes"
         options={{
           title: 'Notes',
@@ -79,20 +92,13 @@ export default function TabsLayout() {
           ),
         }}
       />
+      {/* Route music tetap dapat dinavigasikan namun disembunyikan dari bottom bar */}
       <Tabs.Screen
         name="music"
         options={{
-          title: 'Music',
-          tabBarIcon: ({ color, size, focused }) => (
-            <View
-              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
-            >
-              <Music size={size} color={color} />
-            </View>
-          ),
+          href: null,
         }}
       />
-      {/* Tabs.Screen profile/settings dihapus: tidak ada route-nya */}
     </Tabs>
   );
 }

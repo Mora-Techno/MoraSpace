@@ -53,14 +53,17 @@ export function toSafeAuthUser(
     roles?: { role: { name: string } }[];
     company: { ownerId: string };
   } | null,
+  workspaceType?: 'personal' | 'company',
 ): SafeAuthUser {
-  const companyRole = member
-    ? resolveCompanyRole(
-        user.id,
-        member.company.ownerId,
-        member.roles!.map((item) => item.role.name),
-      )
-    : 'Member';
+  const resolvedType = workspaceType ?? (member ? 'company' : 'personal');
+  const companyRole =
+    member && resolvedType === 'company'
+      ? resolveCompanyRole(
+          user.id,
+          member.company.ownerId,
+          member.roles!.map((item) => item.role.name),
+        )
+      : 'Individual';
 
   return {
     id: user.id,
@@ -69,8 +72,9 @@ export function toSafeAuthUser(
     fullName: user.fullName,
     platformRole: user.platformRole as SafeAuthUser['platformRole'],
     companyRole,
-    companyId: member?.companyId ?? null,
-    companyMemberId: member?.id ?? null,
+    companyId: resolvedType === 'company' ? (member?.companyId ?? null) : null,
+    companyMemberId: resolvedType === 'company' ? (member?.id ?? null) : null,
+    workspaceType: resolvedType,
     isVerify: Boolean(user.emailVerifiedAt),
     createdAt: user.createdAt ?? new Date(),
     updatedAt: user.updatedAt ?? new Date(),
@@ -80,9 +84,14 @@ export function toSafeAuthUser(
 export async function resolveAuthUser(
   userId: string,
   companyId?: string | null,
+  forcePersonal = false,
 ): Promise<SafeAuthUser | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
+
+  if (forcePersonal || companyId === 'personal') {
+    return toSafeAuthUser(user, null, 'personal');
+  }
 
   const member = companyId
     ? await prisma.companyMember.findUnique({
@@ -101,7 +110,57 @@ export async function resolveAuthUser(
         orderBy: { joinedAt: 'asc' },
       });
 
-  return toSafeAuthUser(user, member);
+  return toSafeAuthUser(user, member, member ? 'company' : 'personal');
+}
+
+export async function listUserWorkspaces(userId: string) {
+  const members = await prisma.companyMember.findMany({
+    where: { userId, status: 'active' },
+    include: {
+      company: {
+        select: {
+          id: true,
+          name: true,
+          logo: true,
+          slug: true,
+          ownerId: true,
+        },
+      },
+      roles: {
+        include: {
+          role: { select: { name: true } },
+        },
+      },
+    },
+    orderBy: { joinedAt: 'asc' },
+  });
+
+  const companies = members.map((m) => ({
+    id: m.company.id,
+    name: m.company.name,
+    type: 'company' as const,
+    role: resolveCompanyRole(
+      userId,
+      m.company.ownerId,
+      m.roles.map((r) => r.role.name),
+    ),
+    slug: m.company.slug,
+    logo: m.company.logo,
+    companyMemberId: m.id,
+  }));
+
+  const personal = {
+    id: 'personal',
+    name: 'Personal Workspace',
+    type: 'personal' as const,
+    role: 'Individual',
+    companyMemberId: null,
+  };
+
+  return {
+    personal,
+    companies,
+  };
 }
 
 export async function requireCompanyMember(

@@ -3,14 +3,15 @@
 import { Leaf } from 'lucide-react';
 
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/atoms';
+import { FloatingMusicPlayer } from '@/components/organisms/FloatingMusicPlayer';
+import { useMusicPlayer } from '@/context/MusicPlayerContext';
 import { AppSidebar } from '@/core/components/app-sidebar';
 import { BottomNav } from '@/core/components/bottom-nav';
 import LanguageDropdown from '@/core/components/language.dropdown';
 import NotificationDropdown from '@/core/components/notification.dropdown';
 import ProfileDropdown from '@/core/components/profile.dropdown';
 import ThemeToggle from '@/core/components/theme-toggle';
-import { FloatingMusicPlayer } from '@/components/organisms/FloatingMusicPlayer';
-import { useMusicPlayer } from '@/context/MusicPlayerContext';
+import { WorkspaceSwitcher } from '@/core/components/workspace-switcher';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -33,7 +34,13 @@ export function AppShell({ children }: AppShellProps) {
                 <Leaf className="size-5 text-primary" />
                 <span className="font-serif text-lg font-semibold">MoraSpace</span>
               </div>
+              <div className="hidden sm:block">
+                <WorkspaceSwitcher />
+              </div>
               <div className="ml-auto flex items-center gap-2">
+                <div className="sm:hidden">
+                  <WorkspaceSwitcher collapsed />
+                </div>
                 <ThemeToggle />
                 <LanguageDropdown />
                 <NotificationDropdown />

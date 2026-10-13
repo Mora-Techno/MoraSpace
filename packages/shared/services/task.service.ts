@@ -1,6 +1,11 @@
-import type { TaskStatusOption, TaskPriorityOption } from "../types/task.types";
-import { TASK_ENDPOINTS } from "../endpoints/task.endpoints";
-import type { TResponse } from "../types/response.types";
+import type {
+  TaskStatusOption,
+  TaskPriorityOption,
+  PickCreateTaskStatus,
+  PickUpdateTaskStatusItem,
+} from '../types/task.types';
+import { TASK_ENDPOINTS } from '../endpoints/task.endpoints';
+import type { TResponse } from '../types/response.types';
 import type {
   ITask,
   PickAddTaskAttachment,
@@ -11,87 +16,88 @@ import type {
   PickUpdateTask,
   PickUpdateTaskStatus,
   TaskQuery,
-} from "../types/task.types";
-import {
-  DeleteResponse,
-  GetResponse,
-  PatchResponse,
-  PostResponse,
-  withQuery,
-} from "./http";
-import { toServiceResponse } from "./service-response";
+} from '../types/task.types';
+import { DeleteResponse, GetResponse, PatchResponse, PostResponse, withQuery } from './http';
+import { toServiceResponse } from './service-response';
 
 class TaskService {
   public async ListStatuses(): Promise<TResponse<TaskStatusOption[]>> {
     return toServiceResponse(await GetResponse<TaskStatusOption[]>(TASK_ENDPOINTS.STATUSES));
   }
 
+  public async CreateStatus(payload: PickCreateTaskStatus): Promise<TResponse<TaskStatusOption>> {
+    const res = await PostResponse<TaskStatusOption>(TASK_ENDPOINTS.STATUSES, payload);
+    return toServiceResponse(res, {
+      message: 'Status tugas berhasil dibuat',
+      statusCode: 201,
+    });
+  }
+
+  public async UpdateStatusItem(
+    id: string,
+    payload: PickUpdateTaskStatusItem,
+  ): Promise<TResponse<TaskStatusOption>> {
+    const res = await PatchResponse<TaskStatusOption>(TASK_ENDPOINTS.STATUS_BY_ID(id), payload);
+    return toServiceResponse(res, {
+      message: 'Status tugas berhasil diperbarui',
+    });
+  }
+
+  public async DeleteStatusItem(id: string): Promise<TResponse<{ id: string }>> {
+    const res = await DeleteResponse<{ id: string }>(TASK_ENDPOINTS.STATUS_BY_ID(id));
+    return toServiceResponse(res, {
+      message: 'Status tugas berhasil dihapus',
+    });
+  }
+
   public async ListPriorities(): Promise<TResponse<TaskPriorityOption[]>> {
     return toServiceResponse(await GetResponse<TaskPriorityOption[]>(TASK_ENDPOINTS.PRIORITIES));
   }
 
-
   public async ListTasks(query?: TaskQuery): Promise<TResponse<ITask[]>> {
-    const res = await GetResponse<ITask[]>(
-      withQuery(TASK_ENDPOINTS.LIST, query),
-    );
-    return toServiceResponse(res, { message: "Daftar tugas berhasil diambil" });
+    const res = await GetResponse<ITask[]>(withQuery(TASK_ENDPOINTS.LIST, query));
+    return toServiceResponse(res, { message: 'Daftar tugas berhasil diambil' });
   }
 
   public async CreateTask(payload: PickCreateTask): Promise<TResponse<ITask>> {
     const res = await PostResponse<ITask>(TASK_ENDPOINTS.CREATE, payload);
     return toServiceResponse(res, {
-      message: "Tugas berhasil dibuat",
+      message: 'Tugas berhasil dibuat',
       statusCode: 201,
     });
   }
 
   public async GetTask(id: string): Promise<TResponse<ITask>> {
     const res = await GetResponse<ITask>(TASK_ENDPOINTS.BYID(id));
-    return toServiceResponse(res, { message: "Detail tugas berhasil diambil" });
+    return toServiceResponse(res, { message: 'Detail tugas berhasil diambil' });
   }
 
-  public async UpdateTask(
-    id: string,
-    payload: PickUpdateTask,
-  ): Promise<TResponse<ITask>> {
+  public async UpdateTask(id: string, payload: PickUpdateTask): Promise<TResponse<ITask>> {
     const res = await PatchResponse<ITask>(TASK_ENDPOINTS.UPDATE(id), payload);
-    return toServiceResponse(res, { message: "Tugas berhasil diperbarui" });
+    return toServiceResponse(res, { message: 'Tugas berhasil diperbarui' });
   }
 
   public async DeleteTask(id: string): Promise<TResponse<ITask>> {
     const res = await DeleteResponse<ITask>(TASK_ENDPOINTS.DELETE(id));
-    return toServiceResponse(res, { message: "Tugas berhasil dihapus" });
+    return toServiceResponse(res, { message: 'Tugas berhasil dihapus' });
   }
 
-  public async AssignTask(
-    id: string,
-    payload: PickAssignTask,
-  ): Promise<TResponse<ITask>> {
+  public async AssignTask(id: string, payload: PickAssignTask): Promise<TResponse<ITask>> {
     const res = await PostResponse<ITask>(TASK_ENDPOINTS.ASSIGN(id), payload);
-    return toServiceResponse(res, { message: "Penugasan berhasil diperbarui" });
+    return toServiceResponse(res, { message: 'Penugasan berhasil diperbarui' });
   }
 
-  public async UpdateStatus(
-    id: string,
-    payload: PickUpdateTaskStatus,
-  ): Promise<TResponse<ITask>> {
+  public async UpdateStatus(id: string, payload: PickUpdateTaskStatus): Promise<TResponse<ITask>> {
     const res = await PostResponse<ITask>(TASK_ENDPOINTS.STATUS(id), payload);
     return toServiceResponse(res, {
-      message: "Status tugas berhasil diperbarui",
+      message: 'Status tugas berhasil diperbarui',
     });
   }
 
-  public async AddComment(
-    id: string,
-    payload: PickAddTaskComment,
-  ): Promise<TResponse<unknown>> {
-    const res = await PostResponse<unknown>(
-      TASK_ENDPOINTS.COMMENT(id),
-      payload,
-    );
+  public async AddComment(id: string, payload: PickAddTaskComment): Promise<TResponse<unknown>> {
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.COMMENT(id), payload);
     return toServiceResponse(res, {
-      message: "Komentar berhasil ditambahkan",
+      message: 'Komentar berhasil ditambahkan',
       statusCode: 201,
     });
   }
@@ -100,12 +106,9 @@ class TaskService {
     id: string,
     payload: PickCreateTaskChecklist,
   ): Promise<TResponse<unknown>> {
-    const res = await PostResponse<unknown>(
-      TASK_ENDPOINTS.CHECKLIST(id),
-      payload,
-    );
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.CHECKLIST(id), payload);
     return toServiceResponse(res, {
-      message: "Checklist berhasil dibuat",
+      message: 'Checklist berhasil dibuat',
       statusCode: 201,
     });
   }
@@ -114,12 +117,9 @@ class TaskService {
     id: string,
     payload: PickAddTaskAttachment,
   ): Promise<TResponse<unknown>> {
-    const res = await PostResponse<unknown>(
-      TASK_ENDPOINTS.ATTACHMENT(id),
-      payload,
-    );
+    const res = await PostResponse<unknown>(TASK_ENDPOINTS.ATTACHMENT(id), payload);
     return toServiceResponse(res, {
-      message: "Lampiran berhasil ditambahkan",
+      message: 'Lampiran berhasil ditambahkan',
       statusCode: 201,
     });
   }
@@ -127,7 +127,7 @@ class TaskService {
   public async ListActivities(id: string): Promise<TResponse<unknown[]>> {
     const res = await GetResponse<unknown[]>(TASK_ENDPOINTS.ACTIVITY(id));
     return toServiceResponse(res, {
-      message: "Riwayat aktivitas berhasil diambil",
+      message: 'Riwayat aktivitas berhasil diambil',
     });
   }
 }

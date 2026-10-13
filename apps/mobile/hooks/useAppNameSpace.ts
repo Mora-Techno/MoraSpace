@@ -1,7 +1,7 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 
-import { useAlert } from "@/hooks/useAlert/costum-alert";
+import { useAlert } from '@/hooks/useAlert/costum-alert';
 
 export type AppNameSpace = {
   queryClient: ReturnType<typeof useQueryClient>;

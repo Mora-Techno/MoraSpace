@@ -94,7 +94,16 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).ok(
+          [],
+          {
+            currentPage: 1,
+            limit: 10,
+            totalData: 0,
+            totalPage: 0,
+          },
+          'Tidak terhubung dengan company',
+        );
       }
 
       const result = await CompanyService.listAdmins(user.companyId, c.query as any);
@@ -113,11 +122,11 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).ok(null, undefined, 'Tidak terhubung dengan company');
       }
 
       const data = await CompanyService.getById(user.companyId);
-      if (!data) return HttpResponse(c).notFound('Company tidak ditemukan');
+      if (!data) return HttpResponse(c).ok(null, undefined, 'Company tidak ditemukan');
 
       return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil profil company');
     } catch (error) {
@@ -134,7 +143,7 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).badRequest('Tidak dapat memperbarui profil company pada mode individual');
       }
 
       const data = await CompanyService.updateProfile(user.companyId, body);
@@ -157,7 +166,7 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).badRequest('Tidak terhubung dengan company');
       }
 
       const data = await CompanyService.updateSubscription(user.companyId, body);
@@ -179,11 +188,11 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound('Company tidak ditemukan');
+        return HttpResponse(c).ok(null, undefined, 'Tidak terhubung dengan company');
       }
 
       const data = await CompanyService.getSettings(user.companyId);
-      if (!data) return HttpResponse(c).notFound('Pengaturan company tidak ditemukan');
+      if (!data) return HttpResponse(c).ok(null, undefined, 'Pengaturan company tidak ditemukan');
 
       return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil pengaturan company');
     } catch (error) {

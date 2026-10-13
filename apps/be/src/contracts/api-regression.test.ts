@@ -11,6 +11,12 @@ process.env.XENDIT_WEBHOOK_TOKEN = 'xendit-contract-only';
 
 const sessions = new Map<string, string>();
 const db = {
+  company: {
+    findUnique: mock(async () => ({ id: '11111111-1111-4111-8111-111111111111', status: 'active' })),
+  },
+  user: {
+    findUnique: mock(async () => ({ id: '00000000-0000-4000-8000-000000000000' })),
+  },
   userSession: {
     findFirst: mock(async ({ where }: any) => sessions.get(where.accessToken) === where.userId ? { id: 'session' } : null),
     deleteMany: mock(async ({ where }: any) => {
@@ -246,3 +252,52 @@ describe('Response and ownership regressions', () => {
     expect(db.userSession.deleteMany.mock.calls[0][0].where).toEqual({ id: teamId, userId: user.id });
   });
 });
+
+describe('Individual workspace and empty return policy contracts', () => {
+  let personalToken: string;
+  const personalUser = {
+    id: 'personal-user',
+    email: 'personal@example.com',
+    fullName: 'Personal User',
+    companyId: null,
+    companyMemberId: null,
+    companyRole: 'Individual',
+    platformRole: 'USER',
+    workspaceType: 'personal',
+  };
+
+  beforeEach(() => {
+    personalToken = jwt.sign(personalUser, secret, { expiresIn: '15m' });
+    sessions.set(personalToken, personalUser.id);
+  });
+
+  it('returns 200 OK with free plan for individual subscription without 404', async () => {
+    const res = await request('/subscriptions/me', 'GET', undefined, { token: personalToken });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as any;
+    expect(body.data.tier).toBe('free');
+    expect(body.data.isIndividual).toBe(true);
+  });
+
+  it('returns 200 OK with null for individual company profile without 404', async () => {
+    const res = await request('/companies/me', 'GET', undefined, { token: personalToken });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as any;
+    expect(body.data).toBeNull();
+  });
+
+  it('returns 200 OK with empty array for individual member employment types without 400', async () => {
+    const res = await request('/members/employment-types', 'GET', undefined, { token: personalToken });
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as any;
+    expect(body.data).toEqual([]);
+  });
+
+  it('scopes task statuses to userId when in personal workspace', async () => {
+    (db.taskStatus.findMany as any).mockResolvedValueOnce([{ id: 'status-1', name: 'To Do', color: '#fff', sortOrder: 0 }]);
+    const res = await request('/tasks/statuses', 'GET', undefined, { token: personalToken });
+    expect(res.status).toBe(200);
+    expect(db.taskStatus.findMany.mock.calls[0][0].where).toEqual({ userId: personalUser.id, companyId: null });
+  });
+});
+

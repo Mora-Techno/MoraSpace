@@ -7,11 +7,13 @@ import type {
   PickCreateTaskChecklist,
   PickUpdateTask,
   PickUpdateTaskStatus,
-} from "@repo/types";
-import { queryKey } from "@/config/query-key";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import { readTaskSnapshot, type TaskCacheContext } from "./utils";
+} from '@repo/types';
+
+import { queryKey } from '@/config/query-key';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { readTaskSnapshot, type TaskCacheContext } from './utils';
 
 export function useCreateTask() {
   return useAppMutation<ITask, PickCreateTask, TaskCacheContext>({
@@ -22,11 +24,7 @@ export function useCreateTask() {
 }
 
 export function useUpdateTask() {
-  return useAppMutation<
-    ITask,
-    { id: string; payload: PickUpdateTask },
-    TaskCacheContext
-  >({
+  return useAppMutation<ITask, { id: string; payload: PickUpdateTask }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.UpdateTask(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),
@@ -42,11 +40,7 @@ export function useDeleteTask() {
 }
 
 export function useAssignTask() {
-  return useAppMutation<
-    ITask,
-    { id: string; payload: PickAssignTask },
-    TaskCacheContext
-  >({
+  return useAppMutation<ITask, { id: string; payload: PickAssignTask }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.AssignTask(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),
@@ -54,11 +48,7 @@ export function useAssignTask() {
 }
 
 export function useUpdateTaskStatus() {
-  return useAppMutation<
-    ITask,
-    { id: string; payload: PickUpdateTaskStatus },
-    TaskCacheContext
-  >({
+  return useAppMutation<ITask, { id: string; payload: PickUpdateTaskStatus }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.UpdateStatus(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),
@@ -66,11 +56,7 @@ export function useUpdateTaskStatus() {
 }
 
 export function useAddTaskComment() {
-  return useAppMutation<
-    any,
-    { id: string; payload: PickAddTaskComment },
-    TaskCacheContext
-  >({
+  return useAppMutation<any, { id: string; payload: PickAddTaskComment }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.AddComment(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),
@@ -78,11 +64,7 @@ export function useAddTaskComment() {
 }
 
 export function useCreateTaskChecklist() {
-  return useAppMutation<
-    any,
-    { id: string; payload: PickCreateTaskChecklist },
-    TaskCacheContext
-  >({
+  return useAppMutation<any, { id: string; payload: PickCreateTaskChecklist }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.CreateChecklist(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),
@@ -90,11 +72,7 @@ export function useCreateTaskChecklist() {
 }
 
 export function useAddTaskAttachment() {
-  return useAppMutation<
-    any,
-    { id: string; payload: PickAddTaskAttachment },
-    TaskCacheContext
-  >({
+  return useAppMutation<any, { id: string; payload: PickAddTaskAttachment }, TaskCacheContext>({
     mutationFn: ({ id, payload }) => Api.Task.AddAttachment(id, payload),
     invalidateKeys: [queryKey.tasksRoot()],
     optimistic: (ns) => ({ previousData: readTaskSnapshot(ns) }),

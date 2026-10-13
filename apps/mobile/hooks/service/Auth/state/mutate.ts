@@ -1,4 +1,5 @@
 import type { AuthSessionResponse, PickLogin, PickRegister } from '@repo/types/auth.types';
+
 import { useAppMutation } from '@/hooks/useAppMutation';
 import { saveAuthTokens } from '@/service/auth-storage';
 import Api from '@/service/props.service';
@@ -19,10 +20,15 @@ export function useLogin() {
             setCurrentUser({
               user: {
                 token: data.accessToken,
+                id: data.user?.id,
                 email: data.user?.email ?? '',
                 fullName: data.user?.fullName ?? 'User',
+                companyRole: data.user?.companyRole,
+                companyId: data.user?.companyId,
+                companyMemberId: data.user?.companyMemberId,
+                platformRole: data.user?.platformRole,
               },
-            } as never),
+            }),
           );
         } catch {}
       }

@@ -1,4 +1,4 @@
-import { MobileMusicContainer } from "./_container/music";
+import { MobileMusicContainer } from './_container/music';
 
 export default function MobileMusicPage() {
   return <MobileMusicContainer />;

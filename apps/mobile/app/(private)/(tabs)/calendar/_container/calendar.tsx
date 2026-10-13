@@ -1,22 +1,23 @@
+import type { CalendarEvent } from '@repo/types';
+import { StatusBar } from 'expo-status-bar';
+import { Calendar as CalendarIcon, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  Modal,
   ActivityIndicator,
   Alert,
   Button,
+  FlatList,
+  Modal,
   RefreshControl,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { Plus, Trash2, Calendar as CalendarIcon } from 'lucide-react-native';
-import { useCalender } from '@/hooks/service/Calendar/useCalender';
+
 import { useTheme } from '@/core/providers/theme.provinder';
-import type { CalendarEvent } from '@repo/types';
+import { useCalender } from '@/hooks/service/Calendar/useCalender';
 
 export function MobileCalendarContainer() {
   const { colors, isDark } = useTheme();
@@ -78,7 +79,7 @@ export function MobileCalendarContainer() {
             className="p-2.5 rounded-full"
             style={{ backgroundColor: colors.primary }}
           >
-            <Plus size={20} color="#fff" />
+            <Plus size={20} color={colors.primaryForeground} />
           </TouchableOpacity>
         </View>
 
@@ -200,7 +201,7 @@ export function MobileCalendarContainer() {
                   className="px-4 py-2 rounded-lg"
                   style={{ backgroundColor: colors.primary }}
                 >
-                  <Text className="text-white font-semibold text-xs">
+                  <Text className="text-primary-foreground font-semibold text-xs">
                     {createEvent.isPending ? 'Menyimpan...' : 'Simpan'}
                   </Text>
                 </TouchableOpacity>

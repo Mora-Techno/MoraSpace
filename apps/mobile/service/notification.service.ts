@@ -1,6 +1,7 @@
-import { Alert, Platform } from 'react-native';
-import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { Alert, Platform } from 'react-native';
+
 import Api from '@/service/props.service';
 
 // Konfigurasi bagaimana notifikasi ditampilkan saat aplikasi foreground
@@ -11,6 +12,7 @@ Notifications.setNotificationHandler({
     shouldSetBadge: false,
     shouldShowBanner: true,
     shouldPresentAlert: true,
+    shouldShowList: true,
   }),
 });
 

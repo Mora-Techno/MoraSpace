@@ -8,6 +8,7 @@ import {
   ResetPasswordDto,
   SendMagicLinkDto,
   SendOtpDto,
+  SwitchWorkspaceDto,
   UserQueryDto,
   VerifyMagicLinkDto,
   VerifyOtpDto,
@@ -154,6 +155,31 @@ class AuthRouter {
         tags: ["Auth"],
       },
     });
+    this.authRouter.get(
+      "/workspaces",
+      (c: AppContext) => AuthController.listWorkspaces(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Daftar workspace",
+          description: "Melihat daftar workspace personal dan company yang dimiliki user.",
+          tags: ["Auth"],
+        },
+      },
+    );
+    this.authRouter.post(
+      "/switch-workspace",
+      (c: AppContext) => AuthController.switchWorkspace(c),
+      {
+        body: SwitchWorkspaceDto,
+        beforeHandle: [verifyToken().beforeHandle],
+        detail: {
+          summary: "Pindah workspace",
+          description: "Berpindah ke workspace personal atau company lain.",
+          tags: ["Auth"],
+        },
+      },
+    );
   }
 }
 export default new AuthRouter().authRouter;

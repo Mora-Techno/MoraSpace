@@ -19,7 +19,7 @@ import type {
   PickResetPassword,
 } from "@repo/types/auth.types";
 import { createTokenPair, sanitizeUser } from "@/utils/authTokens";
-import { resolveAuthUser } from "@/utils/memberContext";
+import { listUserWorkspaces, resolveAuthUser } from "@/utils/memberContext";
 
 class AuthService {
   public async createSession(
@@ -417,6 +417,29 @@ class AuthService {
         totalPage,
       },
     };
+  }
+
+  public async listWorkspaces(userId: string) {
+    return listUserWorkspaces(userId);
+  }
+
+  public async switchWorkspace(userId: string, workspaceId: string) {
+    const isPersonal = workspaceId === 'personal';
+    if (!isPersonal) {
+      const member = await prisma.companyMember.findUnique({
+        where: { companyId_userId: { companyId: workspaceId, userId } },
+      });
+      if (!member || member.status !== 'active') {
+        throw new Error('Anda bukan anggota aktif dari company ini');
+      }
+    }
+
+    const safeUser = await resolveAuthUser(userId, isPersonal ? null : workspaceId, isPersonal);
+    if (!safeUser) {
+      throw new Error('User tidak ditemukan');
+    }
+
+    return this.createSession(safeUser);
   }
 }
 

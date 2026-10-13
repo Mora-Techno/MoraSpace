@@ -1,16 +1,10 @@
-import type { PickApiID } from "@repo/types/api.types";
-import type {
-  CalendarEvent,
-  PickCreateEvent,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/service/props.service";
-import {
-  type CalendarCacheContext,
-  calenderRootKey,
-  readEventSnapshot,
-} from "./utils";
+import type { PickApiID } from '@repo/types/api.types';
+import type { CalendarEvent, PickCreateEvent, PickUpdateEvent } from '@repo/types/calendar.types';
+
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/service/props.service';
+
+import { type CalendarCacheContext, calenderRootKey, readEventSnapshot } from './utils';
 
 export function useCreateEvent() {
   return useAppMutation<CalendarEvent, PickCreateEvent, CalendarCacheContext>({
@@ -22,9 +16,9 @@ export function useCreateEvent() {
         ns.queryClient.setQueryData(calenderRootKey, context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -40,9 +34,9 @@ export function useDeleteEvent() {
         ns.queryClient.setQueryData(calenderRootKey, context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -62,9 +56,9 @@ export function useUpdateEvent() {
         ns.queryClient.setQueryData(calenderRootKey, context.previousData);
       }
       ns.alert.toast({
-        title: "Error",
+        title: 'Error',
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

@@ -305,7 +305,16 @@ class AuthController {
       const user = getUser(c);
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).ok(
+          [],
+          {
+            currentPage: 1,
+            limit: 10,
+            totalData: 0,
+            totalPage: 0,
+          },
+          "Tidak terhubung dengan company",
+        );
       }
 
       const result = await AuthService.list(user.companyId, c.query as any);
@@ -316,6 +325,44 @@ class AuthController {
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async listWorkspaces(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const workspaces = await AuthService.listWorkspaces(user.id);
+      return HttpResponse(c).ok(
+        {
+          ...workspaces,
+          activeWorkspaceId: user.companyId ?? "personal",
+          activeType: user.companyId ? "company" : "personal",
+        },
+        undefined,
+        "Daftar workspace",
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async switchWorkspace(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const body = c.body as { workspaceId: string };
+      const session = await AuthService.switchWorkspace(
+        user.id,
+        body.workspaceId,
+      );
+      return HttpResponse(c).ok(
+        session,
+        undefined,
+        "Berhasil berpindah workspace",
+      );
+    } catch (error) {
+      const msg =
+        error instanceof Error ? error.message : "Gagal berpindah workspace";
+      return HttpResponse(c).badRequest(msg);
     }
   }
 }

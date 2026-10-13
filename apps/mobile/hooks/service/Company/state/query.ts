@@ -22,3 +22,13 @@ export function useListAdmins() {
     },
   });
 }
+
+export function useGetCompanySettings() {
+  return useQuery({
+    queryKey: queryKey.companies.settings(),
+    queryFn: async () => {
+      const res = await Api.Company.GetCompanySettings();
+      return res.data;
+    },
+  });
+}

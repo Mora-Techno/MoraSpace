@@ -81,6 +81,7 @@ export function buildPayload(user: SafeAuthUser): JwtPayload {
     companyRole: user.companyRole,
     companyId: user.companyId,
     companyMemberId: user.companyMemberId ?? null,
+    workspaceType: user.workspaceType,
   };
 }
 

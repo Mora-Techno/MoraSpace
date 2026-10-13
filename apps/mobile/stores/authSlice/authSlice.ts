@@ -1,9 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { SafeAuthUser } from '@repo/types/auth.types';
 
-import { userSchema } from '@/types/api';
+export type AuthUserState = Partial<SafeAuthUser> & {
+  token: string;
+  id?: string;
+  email: string;
+  fullName: string;
+  companyRole?: string;
+  companyId?: string | null;
+  companyMemberId?: string | null;
+  platformRole?: string;
+};
+
+export interface CurrentUserContainer {
+  user: AuthUserState;
+}
 
 interface AuthState {
-  currentUser: userSchema | null;
+  currentUser: CurrentUserContainer | null;
 }
 
 const initialState: AuthState = {
@@ -14,7 +28,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setCurrentUser(state, action: PayloadAction<userSchema | null>) {
+    setCurrentUser(state, action: PayloadAction<CurrentUserContainer | null>) {
       state.currentUser = action.payload;
     },
     logout(state) {

@@ -21,6 +21,8 @@
     "turbo": "^2.11.4"
   },
   "scripts": {
+    "theme:generate": "bun packages/shared/scripts/generate-theme-css.mjs",
+    "theme:check": "bun packages/shared/scripts/check-contrast.mjs && bun packages/shared/scripts/generate-theme-css.mjs --check",
     "dev": "turbo run dev --parallel --filter=!mobile",
     "mobile": "cd apps/mobile && bun run dev",
     "mobile:clear": "cd apps/mobile && bun x expo start -c",

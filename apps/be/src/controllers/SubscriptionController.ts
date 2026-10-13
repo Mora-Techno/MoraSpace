@@ -24,12 +24,53 @@ class SubscriptionController {
       const user = getUser(c);
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).ok(
+          {
+            plan: "Free",
+            tier: "free",
+            status: "active",
+            billingCycle: "monthly",
+            maxMembers: 1,
+            features: [
+              "personal_workspace",
+              "tasks",
+              "todos",
+              "notes",
+              "pomodoro",
+              "music",
+              "calendar",
+            ],
+            currentPeriodEnd: null,
+            isIndividual: true,
+          },
+          undefined,
+          "Berhasil mengambil langganan individual",
+        );
       }
 
       const queryService = await SubscriptionService.getDetail(user.companyId);
       if (!queryService) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).ok(
+          {
+            plan: "Free",
+            tier: "free",
+            status: "active",
+            billingCycle: "monthly",
+            maxMembers: 5,
+            features: [
+              "company_workspace",
+              "tasks",
+              "todos",
+              "notes",
+              "pomodoro",
+              "music",
+              "calendar",
+            ],
+            currentPeriodEnd: null,
+          },
+          undefined,
+          "Berhasil mengambil langganan default",
+        );
       }
 
       return HttpResponse(c).ok(
