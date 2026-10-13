@@ -1,5 +1,6 @@
 "use client";
 
+import type { EventQuery } from "@repo/types";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,7 +17,6 @@ import { PageHeader } from "@/components/molecules/PageHeader";
 import { EventFormSection } from "@/components/page/private/member/calendar/event-form.section";
 import { EventListSection } from "@/components/page/private/member/calendar/event-list.section";
 import { useApi } from "@/hooks/useApi/useApi";
-import type { EventQuery } from "@repo/types";
 
 export default function CalendarContainer() {
   const [open, setOpen] = useState(false);

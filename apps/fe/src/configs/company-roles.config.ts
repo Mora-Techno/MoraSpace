@@ -1,12 +1,11 @@
+import type { CompanyRole } from "@repo/types/company.types";
 import {
   Crown,
+  type LucideIcon,
   ShieldCheck,
   User,
   Wrench,
-  type LucideIcon,
 } from "lucide-react";
-
-import type { CompanyRole } from "@repo/types/company.types";
 
 export type CompanyRoleOption = {
   /** Nilai asli dari shared types (CompanyRole). */

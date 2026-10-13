@@ -1,28 +1,30 @@
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import {
-  Music,
-  Plus,
-  Pause,
-  Play,
-  Trash2,
-  ChevronDown,
-  ChevronRight,
-  Shuffle,
-  ListPlus,
-  Disc3,
-} from "lucide-react";
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { Button, Input } from "@/components/atoms";
 import type {
-  PickCreatePlaylist,
-  MusicPlaylist,
   IMusicPlayListItem,
+  MusicPlaylist,
+  PickCreatePlaylist,
   TrackCatalog,
 } from "@repo/types";
+import {
+  ChevronDown,
+  ChevronRight,
+  Disc3,
+  ListPlus,
+  Music,
+  Pause,
+  Play,
+  Plus,
+  Shuffle,
+  Trash2,
+} from "lucide-react";
+
+import { Button, Input } from "@/components/atoms";
+import { Skeleton } from "@/components/atoms/Skeleton";
+import { WidgetHeader } from "@/components/atoms/WidgetHeader";
+import { GlassCard } from "@/components/molecules/GlassCard";
 import { cn } from "@/utils/classname";
-import PlaylistModal from "../molecules/modal/PlayListModal";
+
 import CatalogModal from "../molecules/modal/CatalogModal";
+import PlaylistModal from "../molecules/modal/PlayListModal";
 
 interface MusicSectionProps {
   service: {

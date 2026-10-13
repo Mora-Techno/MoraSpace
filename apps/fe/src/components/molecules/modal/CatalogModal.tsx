@@ -1,3 +1,6 @@
+import { MusicPlaylist, TrackCatalog } from "@repo";
+import { Disc3, Pause, Play, Plus } from "lucide-react";
+
 import { Skeleton } from "@/components/atoms";
 import {
   Dialog,
@@ -6,8 +9,6 @@ import {
   DialogTitle,
 } from "@/components/atoms/Dialog";
 import { cn } from "@/utils/classname";
-import { MusicPlaylist, TrackCatalog } from "@repo";
-import { Disc3, Pause, Play, Plus } from "lucide-react";
 
 interface CatalogModalProps {
   open: boolean;

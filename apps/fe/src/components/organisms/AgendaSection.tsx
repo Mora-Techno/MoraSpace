@@ -1,10 +1,11 @@
-import * as React from "react";
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { Calendar as CalendarIcon, ArrowRight } from "lucide-react";
-import { AgendaTimelineItem } from "@/components/molecules/AgendaTimelineItem";
-import { Skeleton } from "@/components/atoms/Skeleton";
+import { ArrowRight,Calendar as CalendarIcon } from "lucide-react";
 import Link from "next/link";
+import * as React from "react";
+
+import { Skeleton } from "@/components/atoms/Skeleton";
+import { WidgetHeader } from "@/components/atoms/WidgetHeader";
+import { AgendaTimelineItem } from "@/components/molecules/AgendaTimelineItem";
+import { GlassCard } from "@/components/molecules/GlassCard";
 
 interface AgendaSectionProps {
   state: {

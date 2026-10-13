@@ -1,24 +1,23 @@
-"use client";
+'use client';
 
-import { useGoogleLogin } from "@react-oauth/google";
-import { PickRegister } from "@repo/types";
-import Image from "next/image";
-import Link from "next/link";
-import { useState } from "react";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { RegisterFormSection } from "@/components/page/auth";
-import { useApi } from "@/hooks/useApi/useApi";
-import GoogleSignInButton from "@/components/molecules/GoogleSignButton";
+import { useGoogleLogin } from '@react-oauth/google';
+import type { PickRegister } from '@repo/types';
+import Link from 'next/link';
+import { useState } from 'react';
+
+import GoogleSignInButton from '@/components/molecules/GoogleSignButton';
+import { RegisterFormSection } from '@/components/page/auth';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function RegisterEmployContainer() {
   const api = useApi();
 
   const [formRegister, setFormRegister] = useState<PickRegister>({
-    email: "",
-    fullName: "",
-    password: "",
-    phone: "",
-    companyRole: "Member",
+    email: '',
+    fullName: '',
+    password: '',
+    phone: '',
+    companyRole: 'Member',
   });
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -32,71 +31,73 @@ export default function RegisterEmployContainer() {
   };
 
   const googleLogin = useGoogleLogin({
-    flow: "auth-code",
-    onSuccess: async (codeRespone) => {
-      console.log("login google");
+    flow: 'auth-code',
+    onSuccess: async (_codeResponse) => {
+      console.log('login google');
     },
     onError: (err) => {
-      console.log("Google Login Failed", err);
+      console.log('Google Login Failed', err);
     },
   });
-  return (
-    <main className="flex min-h-screen items-center justify-center p-4">
-      <GhibliCard className="w-full max-w-md" hover={false}>
-        <div className="mb-6 flex flex-col items-center gap-2 text-center">
-          <Image
-            alt="icon"
-            src={"/images/logo.png"}
-            width={46}
-            height={46}
-            className="rounded-full"
-          />
-          <span className="text-lg font-semibold">Mora</span>
-          <h1 className="font-serif text-2xl font-semibold">
-            Buat Akun Karyawan mu
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Mulai perjalanan produktivitasmu
-          </p>
-        </div>
 
-        <RegisterFormSection
-          service={{
-            isPending: register.isPending,
-            onSubmit: handleSubmit,
-          }}
-          state={{
-            formRegister: formRegister,
-            setFormRegister: setFormRegister,
-            showPassword: showPassword,
-            setShowPassword: setShowPassword,
-          }}
+  return (
+    <div className="w-full space-y-6">
+      {/* Form Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Bergabung ke ruang kerja tim
+        </h1>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Buat akun karyawan dan mulai berkolaborasi di Spaces.
+        </p>
+      </div>
+
+      {/* Main Registration Form */}
+      <RegisterFormSection
+        service={{
+          isPending: register.isPending,
+          onSubmit: handleSubmit,
+        }}
+        state={{
+          formRegister: formRegister,
+          setFormRegister: setFormRegister,
+          showPassword: showPassword,
+          setShowPassword: setShowPassword,
+        }}
+      />
+
+      {/* Divider */}
+      <div className="relative flex items-center justify-center my-4">
+        <div className="w-full border-t border-border/60" />
+        <span className="absolute bg-background px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+          atau
+        </span>
+      </div>
+
+      {/* Social Registration */}
+      <div className="w-full">
+        <GoogleSignInButton
+          onSuccess={googleLogin}
+          disabled={false}
+          className="rounded-xl border-border/70 bg-card/60 hover:bg-muted font-medium text-sm py-2.5"
         />
-        <div className="w-full flex justify-center items-center flex-col space-y-3">
-          <h1 className="text-sm font-semibold text-muted-foreground">
-            Atau Daftar Menggunakan
-          </h1>
-          {/* Nanti Dipakein Service yang Benar */}
-          <GoogleSignInButton onSuccess={googleLogin} disabled />
-        </div>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
-          Daftar Sebagai Perusahaan ? {""}
-          <Link
-            href="/register/company"
-            className="font-medium text-primary hover:underline"
-          >
-            Klick Disini
+      </div>
+
+      {/* Account Switching Links */}
+      <div className="space-y-2 pt-2 text-center text-sm">
+        <p className="text-muted-foreground">
+          Sudah punya akun?{' '}
+          <Link href="/login" className="font-semibold text-primary hover:underline">
+            Masuk
           </Link>
         </p>
-        <p className="mt-2 text-center text-sm">
-          <Link
-            href="/login"
-            className="text-muted-foreground hover:text-primary"
-          >
-            ← Kembali ke masuk
+        <p className="text-xs text-muted-foreground">
+          Ingin mendaftarkan perusahaan baru?{' '}
+          <Link href="/register/company" className="font-medium text-foreground hover:underline">
+            Daftar sebagai perusahaan
           </Link>
         </p>
-      </GhibliCard>
-    </main>
+      </div>
+    </div>
   );
 }

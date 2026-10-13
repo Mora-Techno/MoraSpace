@@ -6,8 +6,8 @@ import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { getMobileNavGroups, type NavItem } from "@/configs/nav.config";
-import { loadAuthSession } from "@/utils/storage";
 import { cn } from "@/utils/classname";
+import { loadAuthSession } from "@/utils/storage";
 
 type MobileLeaf = NavItem & { url: string; icon: LucideIcon };
 

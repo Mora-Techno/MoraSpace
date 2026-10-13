@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+
 import CompanyPositionSection from "@/components/page/private/owner/dashboard/company/position/CompanyPositionSection";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function CompanyPositionContainer() {
   const api = useApi();

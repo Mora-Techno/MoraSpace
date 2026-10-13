@@ -1,5 +1,6 @@
 import { setAuthErrorHandler, setTokenProvider } from "@repo/services";
 import ApiServicePackage from "@repo/services";
+
 import { clearAuthSession, loadAuthSession } from "@/utils/storage";
 
 if (typeof window !== "undefined") {

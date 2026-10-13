@@ -1,10 +1,10 @@
+import { formatDateTime } from "@repo";
+import type { CalendarEvent, PickUpdateEvent } from "@repo/types";
 import { CalendarClock, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import type { CalendarEvent, PickUpdateEvent } from "@repo/types";
-import { formatDateTime } from "@repo";
 
 interface EventDetailSectionProps {
   service: {

@@ -1,14 +1,14 @@
+import { formatDateOnly } from "@repo";
+import type { Note, NoteQuery, PickCreateNote } from "@repo/types";
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import { NoteModal } from "@/components/molecules/modal/NoteModal";
+import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
 import { cn } from "@/utils/classname";
-import type { Note, NoteQuery, PickCreateNote } from "@repo/types";
-import { formatDateOnly } from "@repo";
 
 interface NoteListSectionProps {
   service: {

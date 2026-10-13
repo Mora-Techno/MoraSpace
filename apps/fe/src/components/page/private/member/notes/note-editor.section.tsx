@@ -1,8 +1,9 @@
+import type { Note, PickCreateNote } from "@repo/types";
+
 import { Button, Textarea } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { DecoratedInput } from "@/components/wrapper";
-import type { Note, PickCreateNote } from "@repo/types";
 
 interface NoteEditorSectionProps {
   service: {

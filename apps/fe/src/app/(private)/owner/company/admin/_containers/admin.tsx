@@ -1,12 +1,14 @@
 "use client";
 
 import "@aejkatappaja/phantom-ui";
-import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
+
 import type { PickCreateAdmin } from "@repo/types/company.types";
+import { useState } from "react";
+
 import CompanyAdminSection from "@/components/page/private/owner/dashboard/company/admin/CompanyAdminSection";
-import { useDebounce } from "@/hooks/useDebounce";
+import { useApi } from "@/hooks/useApi/useApi";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function CompanyAdminContainer() {
   const api = useApi();

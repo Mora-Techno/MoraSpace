@@ -1,12 +1,12 @@
 "use client";
 
+import type { NotificationInAppQuery } from "@repo/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { NotificationListSection } from "@/components/page/private/member/notifications/notification-list.section";
 import { useApi } from "@/hooks/useApi/useApi";
-import type { NotificationInAppQuery } from "@repo/types";
 
 export default function NotificationsContainer() {
   const api = useApi();

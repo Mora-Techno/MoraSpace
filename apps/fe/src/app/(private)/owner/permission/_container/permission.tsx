@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+
 import CompanyPermissionSection from "@/components/page/private/owner/dashboard/company/permission/CompanyPermissionSection";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function CompanyPermissionContainer() {
   const api = useApi();

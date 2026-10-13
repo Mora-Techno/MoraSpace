@@ -1,4 +1,8 @@
+'use client';
+
 import { Loader2, MailCheck } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
 
 interface MagicLinkSectionProps {
   initial: {
@@ -10,37 +14,35 @@ interface MagicLinkSectionProps {
 
 const MagicLinkSection: React.FC<MagicLinkSectionProps> = ({ initial, loading = true }) => {
   return (
-    <main className="ghibli-bg flex min-h-screen items-center justify-center px-6 py-10">
-      <div className="ghibli-glass  w-full max-w-lg overflow-hidden">
-        <div className="flex flex-col items-center gap-5 border-b border-border/60 px-8 py-10">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 text-primary">
-            {loading ? (
-              <Loader2 className="h-10 w-10 animate-spin" />
-            ) : (
-              <MailCheck className="h-10 w-10" />
-            )}
-          </div>
-
-          <div className="space-y-2 text-center">
-            <h1 className="text-3xl font-bold text-foreground">{initial.title}</h1>
-
-            <p className="mx-auto max-w-sm text-sm leading-6 text-muted-foreground">
-              {initial.desc}
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-5 px-8 py-8">
-          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
-            <p className="text-center text-sm leading-6 text-muted-foreground">
-              {loading
-                ? 'Sedang memverifikasi Magic Link Anda. Mohon tunggu beberapa saat dan jangan menutup halaman ini.'
-                : 'Verifikasi selesai. Anda akan segera diarahkan ke dashboard.'}
-            </p>
-          </div>
-        </div>
+    <div className="w-full space-y-6 text-center">
+      <div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-primary/15 text-primary border border-primary/20">
+        {loading ? <Loader2 className="size-8 animate-spin" /> : <MailCheck className="size-8" />}
       </div>
-    </main>
+
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          {initial.title}
+        </h1>
+        <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+          {initial.desc}
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-border/70 bg-card/60 p-4 text-xs text-muted-foreground">
+        {loading
+          ? 'Sedang memverifikasi Magic Link Anda. Mohon tunggu beberapa saat dan jangan menutup halaman ini.'
+          : 'Verifikasi selesai. Anda akan segera diarahkan secara otomatis.'}
+      </div>
+
+      <div className="pt-2">
+        <Link
+          href="/login"
+          className="inline-flex items-center text-sm font-semibold text-primary hover:underline"
+        >
+          ← Kembali ke halaman Masuk
+        </Link>
+      </div>
+    </div>
   );
 };
 

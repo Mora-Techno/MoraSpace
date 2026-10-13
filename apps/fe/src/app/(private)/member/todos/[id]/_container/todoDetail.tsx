@@ -1,5 +1,6 @@
 "use client";
 
+import type { PickUpdateTodo } from "@repo/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -9,7 +10,6 @@ import { Button } from "@/components/atoms";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { TodoDetailSection } from "@/components/page/private/member/todos/todo-detail.section";
 import { useApi } from "@/hooks/useApi/useApi";
-import type { PickUpdateTodo } from "@repo/types";
 
 function toLocalInput(iso: string | null): string {
   if (!iso) return "";

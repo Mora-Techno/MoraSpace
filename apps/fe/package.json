@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@aejkatappaja/phantom-ui": "^1.6.1",
+    "@base-ui/react": "^1.9.0",
     "@gsap/react": "^2.1.2",
     "@hookform/resolvers": "^5.9.1",
     "@radix-ui/react-accordion": "^1.2.12",
@@ -66,6 +67,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@iconify/react": "^5.2.1",
+    "@next/eslint-plugin-next": "15.2.4",
     "@tailwindcss/postcss": "^4.3.0",
     "@types/node": "^20.19.41",
     "@types/react": "^19.2.16",
@@ -78,6 +80,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.5",
     "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.3.0",
     "typescript": "^5.9.3"

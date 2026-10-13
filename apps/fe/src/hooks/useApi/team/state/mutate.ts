@@ -1,10 +1,10 @@
-import type { PickInviteTeamMember } from "@repo/types/team.types";
 import type {
   ITeam,
   PickAddTeamMember,
   PickCreateTeam,
   PickUpdateTeam,
 } from "@repo";
+import type { PickInviteTeamMember } from "@repo/types/team.types";
 
 import { useAppMutation } from "@/hooks/useAppMutation";
 import Api from "@/services/api";

@@ -1,11 +1,11 @@
+import { formatDateTime } from "@repo";
+import type { PickUpdateTodo, Todo } from "@repo/types";
 import { CalendarClock, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { TodoCheckbox } from "@/components/molecules/TodoCheckbox";
-import type { PickUpdateTodo, Todo } from "@repo/types";
-import { formatDateTime } from "@repo";
 
 interface TodoDetailSectionProps {
   service: {

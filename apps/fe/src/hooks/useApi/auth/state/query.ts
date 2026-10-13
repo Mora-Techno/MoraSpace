@@ -1,7 +1,8 @@
+import type { UserWorkspacesResponse } from "@repo/types";
 import { useQuery } from "@tanstack/react-query";
+
 import { queryKey } from "@/configs";
 import Api from "@/services/api";
-import type { UserWorkspacesResponse } from "@repo/types";
 
 export function useWorkspaces() {
   return useQuery<UserWorkspacesResponse>({

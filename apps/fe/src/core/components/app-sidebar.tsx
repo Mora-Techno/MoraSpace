@@ -21,8 +21,8 @@ import {
   useSidebar,
 } from "@/components/atoms";
 import { getNavItems, type NavItem } from "@/configs/nav.config";
-import { loadAuthSession } from "@/utils/storage";
 import { cn } from "@/utils/classname";
+import { loadAuthSession } from "@/utils/storage";
 
 function isItemActive(item: NavItem, pathname: string): boolean {
   if (item.url && (pathname === item.url || pathname.startsWith(item.url))) {

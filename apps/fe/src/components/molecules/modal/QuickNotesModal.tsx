@@ -1,13 +1,14 @@
+import { PickCreateNote } from "@repo";
+import { SendHorizontal } from "lucide-react";
+
 import { Button, Skeleton } from "@/components/atoms";
+import { Input } from "@/components/atoms";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/atoms/Dialog";
-import { Input } from "@/components/atoms";
-import { PickCreateNote } from "@repo";
-import { SendHorizontal } from "lucide-react";
 
 interface QuickNoteModalProps {
   open: boolean;

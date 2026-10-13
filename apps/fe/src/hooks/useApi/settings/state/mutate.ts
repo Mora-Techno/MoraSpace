@@ -6,6 +6,7 @@ import type {
 
 import { useAppMutation } from "@/hooks/useAppMutation";
 import Api from "@/services/api";
+
 import { SettingsRoot } from "./utils";
 
 export function useUpdateSettings() {

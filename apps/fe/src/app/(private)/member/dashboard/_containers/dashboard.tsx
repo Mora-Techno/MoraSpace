@@ -22,7 +22,7 @@ import { MemberDashboardTemplate } from "@/components/templates/MemberDashboardT
 import { useMusicPlayer } from "@/context/MusicPlayerContext";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { loadAuthSession, type AuthSession } from "@/utils/storage";
+import { type AuthSession,loadAuthSession } from "@/utils/storage";
 
 type SessionWithProfile = AuthSession & {
   fullName?: string;

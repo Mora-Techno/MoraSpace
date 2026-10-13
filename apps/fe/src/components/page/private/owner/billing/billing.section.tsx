@@ -1,7 +1,8 @@
-import React from 'react';
 import { Check, CreditCard, Sparkles } from 'lucide-react';
+import React from 'react';
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms';
 import { PageHeader } from '@/components/molecules/PageHeader';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/atoms';
 import type { SubscriptionTier } from '@/types/api/subscription';
 
 export interface BillingSectionProps {
@@ -29,19 +30,19 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
       {/* Status Subscription Saat Ini */}
       <Card className="flex flex-col md:flex-row md:items-center justify-between p-6 gap-6">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-blue-500/10 text-blue-600 rounded-xl">
+          <div className="p-3 bg-primary/10 text-primary rounded-2xl">
             <CreditCard className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-lg font-bold text-neutral-900 dark:text-neutral-100">
+              <h3 className="text-lg font-bold text-foreground">
                 Paket Aktif: {mySub?.tier ? String(mySub.tier).toUpperCase() : 'FREE'}
               </h3>
-              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+              <span className="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-success/15 text-success border border-success/25">
                 {mySub?.status ? String(mySub.status).toUpperCase() : 'ACTIVE'}
               </span>
             </div>
-            <p className="text-xs text-neutral-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               {mySub?.currentPeriodEnd
                 ? `Berlaku hingga ${new Date(mySub.currentPeriodEnd).toLocaleDateString()}`
                 : 'Nikmati fitur dasar produktivitas Spaces.'}
@@ -103,19 +104,19 @@ export const BillingSection: React.FC<BillingSectionProps> = ({
                         ]
                       ).map((feat: string, idx: number) => (
                         <div key={idx} className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                          <Check className="w-3.5 h-3.5 text-primary shrink-0" />
                           <span>{feat}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+                  <div className="mt-8 pt-4 border-t border-border/50">
                     <div
-                      className={`w-full text-center text-xs font-semibold px-4 py-2 rounded-md ${
+                      className={`w-full text-center text-xs font-semibold px-4 py-2 rounded-xl transition-colors ${
                         isCurrent
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800'
+                          ? 'bg-primary text-primary-foreground shadow-xs'
+                          : 'bg-muted text-muted-foreground'
                       }`}
                     >
                       {isCurrent ? 'Paket Saat Ini' : 'Hubungi Super Admin'}

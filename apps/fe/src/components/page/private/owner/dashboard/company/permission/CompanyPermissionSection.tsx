@@ -1,4 +1,8 @@
+// Adjust import as per your backend schema representation of Role structure.
+// Defaulting to any since schema might vary in exact field name for UI usage
+import { type IRole } from "@repo/types";
 import { Plus, Shield, Trash2 } from "lucide-react";
+
 import {
   Button,
   Card,
@@ -20,9 +24,6 @@ import {
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { DecoratedInput } from "@/components/wrapper";
 import { AlertContexType } from "@/types/ui";
-// Adjust import as per your backend schema representation of Role structure.
-// Defaulting to any since schema might vary in exact field name for UI usage
-import { type IRole } from "@repo/types";
 
 interface FormCreate {
   name: string;

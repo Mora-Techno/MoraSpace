@@ -1,46 +1,177 @@
-import { Icon } from '@iconify/react';
-import { Leaf } from 'lucide-react';
+'use client';
+
+import Image from 'next/image';
 import Link from 'next/link';
 
-import { appConfig } from '@/configs/app.config';
+import { useTheme } from '@/core/providers/theme.provider';
 
 export default function AppFooter() {
-  return (
-    <footer className="border-t border-white/10 bg-background/90 px-4 py-12 md:px-6">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
-        <div>
-          <Link href="/home" className="flex items-center gap-2">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-orange-500/20 to-amber-500/10">
-              <Leaf className="size-5 text-orange-400" />
-            </div>
-            <span className="font-serif text-lg font-semibold text-white">
-              {appConfig.name === 'App' ? 'MoraSpace' : appConfig.name}
-            </span>
-          </Link>
-          <p className="mt-4 max-w-xs text-sm text-zinc-500">
-            PWA Produktivitas dengan dark theme modern — kelola tugas, catatan, dan fokus dalam satu
-            tempat.
-          </p>
-        </div>
+  const { theme } = useTheme();
 
-        <div>
-          <h2 className="text-sm font-semibold text-white">Ikuti Kami</h2>
-          <div className="mt-4 flex items-center gap-3">
-            {Object.entries(appConfig.social_media).map(([key, value]) => (
-              <Link
-                href={value.url}
-                key={key}
-                className="flex size-10 items-center justify-center rounded-xl border border-white/10 text-zinc-400 transition-colors hover:border-orange-500/30 hover:text-orange-400"
-              >
-                <Icon icon={value.icon} width={20} height={20} />
-              </Link>
-            ))}
+  return (
+    <footer className="border-t border-border/60 bg-background/80 px-6 py-16 md:px-12 lg:px-16 text-foreground">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-6 mb-16">
+          {/* Brand Info (2 columns) */}
+          <div className="lg:col-span-2 space-y-4">
+            <Link href="/home" className="inline-flex items-center gap-2.5">
+              <div className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-xs">
+                <Image
+                  src="/images/logo.png"
+                  alt="Spaces Logo"
+                  width={20}
+                  height={20}
+                  className="rounded-full aspect-square"
+                />
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-bold text-base tracking-tight text-foreground">Spaces</span>
+                <span className="text-xs font-medium text-muted-foreground">by Mora</span>
+              </div>
+            </Link>
+
+            <h3 className="font-serif text-lg font-semibold text-foreground">
+              One Workspace. Better Work.
+            </h3>
+
+            <p className="text-xs leading-relaxed text-muted-foreground max-w-sm">
+              Ruang kerja digital yang mengutamakan ketenangan mental, fokus literer, dan kolaborasi
+              tanpa distraksi.
+            </p>
+          </div>
+
+          {/* Navigation Links Columns (4 columns) */}
+          <div className="lg:col-span-4 grid grid-cols-2 sm:grid-cols-4 gap-8 text-xs">
+            {/* Produk */}
+            <div className="space-y-3">
+              <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
+                Produk
+              </h4>
+              <ul className="space-y-2.5 text-muted-foreground">
+                <li>
+                  <Link href="#fitur" className="hover:text-foreground transition-colors">
+                    Fitur Unggulan
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#fitur" className="hover:text-foreground transition-colors">
+                    Editor Dokumen
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#fitur" className="hover:text-foreground transition-colors">
+                    Jadwal & Ritme
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#fitur" className="hover:text-foreground transition-colors">
+                    Arsip Pengetahuan
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Solusi */}
+            <div className="space-y-3">
+              <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
+                Solusi
+              </h4>
+              <ul className="space-y-2.5 text-muted-foreground">
+                <li>
+                  <Link href="#untuk-tim" className="hover:text-foreground transition-colors">
+                    Untuk Studio Desain
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#untuk-tim" className="hover:text-foreground transition-colors">
+                    Untuk Penulis & Riset
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#untuk-tim" className="hover:text-foreground transition-colors">
+                    Untuk Tim Produk
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#untuk-tim" className="hover:text-foreground transition-colors">
+                    Untuk Agensi
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Sumber Daya */}
+            <div className="space-y-3">
+              <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
+                Sumber Daya
+              </h4>
+              <ul className="space-y-2.5 text-muted-foreground">
+                <li>
+                  <Link href="#cara-kerja" className="hover:text-foreground transition-colors">
+                    Panduan Memulai
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#faq" className="hover:text-foreground transition-colors">
+                    Pertanyaan Umum
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/blogs" className="hover:text-foreground transition-colors">
+                    Jurnal Mora
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/resource" className="hover:text-foreground transition-colors">
+                    Status Layanan
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Perusahaan */}
+            <div className="space-y-3">
+              <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
+                Perusahaan
+              </h4>
+              <ul className="space-y-2.5 text-muted-foreground">
+                <li>
+                  <Link href="/home" className="hover:text-foreground transition-colors">
+                    Tentang Mora
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pricing" className="hover:text-foreground transition-colors">
+                    Manifesto Desain
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="hover:text-foreground transition-colors">
+                    Kebijakan Privasi
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-foreground transition-colors">
+                    Hubungi Tim
+                  </Link>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="mx-auto mt-10 max-w-5xl border-t border-white/5 pt-6 text-center text-xs text-zinc-600">
-        © {new Date().getFullYear()} MoraSpace. All rights reserved.
+        {/* Bottom Line Bar */}
+        <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
+          <p>© 2025 Spaces by Mora. Hak cipta dilindungi undang-undang.</p>
+          <div className="flex items-center gap-2">
+            <span>Dirancang untuk ketenangan kerja di Asia Tenggara</span>
+            <span>•</span>
+            <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+              <span className="size-1.5 rounded-full bg-primary" />
+              {theme === 'dark' ? 'Midnight Calm' : 'Botanical Light'}
+            </span>
+          </div>
+        </div>
       </div>
     </footer>
   );

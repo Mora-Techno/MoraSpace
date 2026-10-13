@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+
+import CompanySettingsSection from '@/components/page/private/owner/dashboard/company/settings/CompanySettingsSection';
 import { useApi } from '@/hooks/useApi/useApi';
 import { useAppNameSpace } from '@/hooks/useAppNameSpace';
-import CompanySettingsSection from '@/components/page/private/owner/dashboard/company/settings/CompanySettingsSection';
 
 export default function CompanySettingsContainer() {
   const api = useApi();

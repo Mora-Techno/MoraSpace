@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import React from "react";
+
 import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
 import { loadAuthSession } from "@/utils/storage";
 

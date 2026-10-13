@@ -1,16 +1,16 @@
 "use client";
 
+import { TestEmail } from "@repo";
 import { useState } from "react";
 
-import { useTheme } from "@/core/providers/theme.provider";
-import { useSendNotification } from "@/hooks/useApi/notification";
-import { useLanguage } from "@/hooks/useLanguage";
-import { useApi } from "@/hooks/useApi/useApi";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import SettingsSection from "@/components/page/private/member/settings/settingsMemberSection";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
 import type { Language } from "@/configs";
-import { TestEmail } from "@repo";
+import { useTheme } from "@/core/providers/theme.provider";
+import { useSendNotification } from "@/hooks/useApi/notification";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useLanguage } from "@/hooks/useLanguage";
 
 export default function SettingsContainer() {
   const api = useApi();

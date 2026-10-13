@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+import type {
+  ITask,
+  PickCreateTask,
+  PickCreateTaskStatus,
+  PickUpdateTask,
+  PickUpdateTaskStatusItem,
+  TaskStatusOption,
+} from '@repo/types';
 import {
-  Plus,
-  Trash2,
-  Layers,
-  Settings2,
-  Pencil,
-  GripVertical,
+  AlertCircle,
+  Check,
   CheckCircle2,
   Clock,
-  AlertCircle,
-  Sparkles,
-  Palette,
-  Check,
   Eye,
+  GripVertical,
+  Layers,
+  Palette,
+  Pencil,
+  Plus,
+  Settings2,
+  Sparkles,
+  Trash2,
 } from 'lucide-react';
-import { PageHeader } from '@/components/molecules/PageHeader';
-import { RichTextEditor } from '@/components/molecules/editor/RichTextEditor';
+import React, { useState } from 'react';
+
 import {
+  Badge,
   Button,
   Card,
   CardContent,
@@ -28,18 +36,11 @@ import {
   DialogTitle,
   Input,
   Label,
-  Badge,
 } from '@/components/atoms';
-import { deleteObject, uploadAvatar } from '@/utils/r2-utils';
+import { RichTextEditor } from '@/components/molecules/editor/RichTextEditor';
+import { PageHeader } from '@/components/molecules/PageHeader';
 import { stripHtml } from '@/utils/html';
-import type {
-  ITask,
-  TaskStatusOption,
-  PickCreateTask,
-  PickUpdateTask,
-  PickCreateTaskStatus,
-  PickUpdateTaskStatusItem,
-} from '@repo/types';
+import { deleteObject, uploadAvatar } from '@/utils/r2-utils';
 
 export interface TaskSectionProps {
   service: {
@@ -261,7 +262,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
             onClick={() => setOpenCreateStatusModal(true)}
             className="gap-2"
           >
-            <Settings2 className="w-4 h-4 text-neutral-500" />
+            <Settings2 className="w-4 h-4 text-muted-foreground" />
             Tambah Status
           </Button>
           <Button onClick={handleOpenCreateTask} className="gap-2">
@@ -273,17 +274,15 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
 
       {/* Kanban Board */}
       {isLoading ? (
-        <div className="flex items-center justify-center min-h-[400px] border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl text-neutral-400 text-sm">
+        <div className="flex items-center justify-center min-h-[400px] border border-dashed border-border/70 rounded-2xl text-muted-foreground text-sm bg-card/40">
           Memuat data board dan status...
         </div>
       ) : sortedStatuses.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[360px] border border-dashed border-neutral-200 dark:border-neutral-800 rounded-xl p-8 text-center space-y-4">
-          <Layers className="w-12 h-12 text-neutral-400 opacity-60" />
+        <div className="flex flex-col items-center justify-center min-h-[360px] border border-dashed border-border/70 rounded-2xl p-8 text-center space-y-4 bg-card/40">
+          <Layers className="w-12 h-12 text-muted-foreground opacity-60" />
           <div className="space-y-1">
-            <h3 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
-              Belum ada status task
-            </h3>
-            <p className="text-xs text-neutral-500 max-w-sm">
+            <h3 className="text-base font-semibold text-foreground">Belum ada status task</h3>
+            <p className="text-xs text-muted-foreground max-w-sm">
               Buat status pertama (misal: To Do, In Progress, Done) untuk mulai mengorganisir tugas
               tim Anda.
             </p>
@@ -305,23 +304,21 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 onDragOver={(e) => handleDragOver(e, col.id)}
                 onDragLeave={(e) => handleDragLeave(e, col.id)}
                 onDrop={(e) => handleDrop(e, col.id)}
-                className={`w-[320px] shrink-0 min-h-[560px] flex flex-col rounded-xl transition-all duration-150 border ${
+                className={`w-[320px] shrink-0 min-h-[560px] flex flex-col rounded-2xl transition-all duration-150 border backdrop-blur-md ${
                   isDragOver
-                    ? 'border-blue-500 ring-2 ring-blue-500/20 bg-blue-50/20 dark:bg-blue-950/20'
-                    : 'border-neutral-200/80 dark:border-neutral-800 bg-neutral-50/60 dark:bg-neutral-900/40'
+                    ? 'border-primary ring-2 ring-primary/20 bg-primary/5'
+                    : 'border-border/60 bg-card/60'
                 }`}
               >
                 {/* Column Header */}
-                <div className="p-3.5 pb-2.5 flex items-center justify-between border-b border-neutral-200/60 dark:border-neutral-800/60">
+                <div className="p-3.5 pb-2.5 flex items-center justify-between border-b border-border/50">
                   <div className="flex items-center gap-2 min-w-0">
                     <span
                       className="w-3 h-3 rounded-full shrink-0 shadow-xs"
-                      style={{ backgroundColor: col.color || '#3b82f6' }}
+                      style={{ backgroundColor: col.color || 'var(--primary)' }}
                     />
-                    <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 truncate">
-                      {col.name}
-                    </h3>
-                    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-neutral-200/70 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400">
+                    <h3 className="text-sm font-semibold text-foreground truncate">{col.name}</h3>
+                    <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-muted text-muted-foreground">
                       {colTasks.length}
                     </span>
                   </div>
@@ -330,14 +327,14 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                     <button
                       onClick={() => handleOpenEditStatus(col)}
                       title="Edit status"
-                      className="p-1 rounded text-neutral-400 hover:text-neutral-700 dark:hover:text-neutral-200 hover:bg-neutral-200/60 dark:hover:bg-neutral-800 transition"
+                      className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => setDeletingStatus(col)}
                       title="Hapus status"
-                      className="p-1 rounded text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition"
+                      className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -348,10 +345,10 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 <div className="p-3 flex-1 flex flex-col space-y-3 overflow-y-auto max-h-[700px]">
                   {colTasks.length === 0 ? (
                     <div
-                      className={`flex flex-col items-center justify-center flex-1 rounded-lg border-2 border-dashed p-6 text-center transition-all ${
+                      className={`flex flex-col items-center justify-center flex-1 rounded-xl border-2 border-dashed p-6 text-center transition-all ${
                         isDragOver
-                          ? 'border-blue-400 bg-blue-50/30 dark:bg-blue-900/20 text-blue-500'
-                          : 'border-neutral-200 dark:border-neutral-800/80 text-neutral-400'
+                          ? 'border-primary bg-primary/10 text-primary'
+                          : 'border-border/50 text-muted-foreground'
                       }`}
                     >
                       <Layers className="w-7 h-7 mb-2 opacity-40" />
@@ -367,18 +364,19 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                           draggable
                           onDragStart={(e) => handleDragStart(e, task.id)}
                           onDragEnd={handleDragEnd}
-                          className={`p-3.5 cursor-grab active:cursor-grabbing border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-xs hover:shadow-md transition-all group ${
+                          padding="none"
+                          className={`p-3.5 cursor-grab active:cursor-grabbing border rounded-2xl shadow-2xs hover:shadow-xs transition-all group backdrop-blur-md ${
                             isDragging
-                              ? 'opacity-35 scale-95 border-blue-400 dark:border-blue-500'
-                              : 'hover:border-neutral-300 dark:hover:border-neutral-700'
+                              ? 'opacity-40 scale-95 border-primary ring-2 ring-primary/20 shadow-md'
+                              : 'border-border/70 bg-card hover:border-primary/50 hover:-translate-y-0.5'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex items-start gap-1.5 flex-1 min-w-0">
-                              <GripVertical className="w-4 h-4 text-neutral-300 group-hover:text-neutral-500 shrink-0 mt-0.5 transition" />
+                              <GripVertical className="w-4 h-4 text-muted-foreground/60 group-hover:text-muted-foreground shrink-0 mt-0.5 transition" />
                               <h4
                                 onClick={() => setDetailTask(task)}
-                                className="text-sm font-semibold text-neutral-900 dark:text-neutral-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer transition line-clamp-2"
+                                className="text-sm font-semibold text-foreground hover:text-primary cursor-pointer transition line-clamp-2"
                               >
                                 {task.title}
                               </h4>
@@ -388,14 +386,14 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                               <button
                                 onClick={() => handleOpenEditTask(task)}
                                 title="Edit tugas"
-                                className="text-neutral-400 hover:text-blue-600 transition p-1 rounded hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                className="text-muted-foreground hover:text-primary transition p-1 rounded-md hover:bg-muted"
                               >
                                 <Pencil className="w-3.5 h-3.5" />
                               </button>
                               <button
                                 onClick={() => handleDelete(task.id)}
                                 title="Hapus tugas"
-                                className="text-neutral-400 hover:text-red-500 transition p-1 rounded hover:bg-red-50 dark:hover:bg-red-950/20"
+                                className="text-muted-foreground hover:text-destructive transition p-1 rounded-md hover:bg-destructive/10"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
@@ -403,18 +401,20 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                           </div>
 
                           {task.description && (
-                            <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-2 line-clamp-2 pl-5.5">
+                            <p className="text-xs text-muted-foreground mt-2 line-clamp-2 pl-5.5">
                               {stripHtml(task.description)}
                             </p>
                           )}
 
                           {/* Card Footer: Quick Status Switcher */}
-                          <div className="mt-3 pt-2.5 border-t border-neutral-100 dark:border-neutral-800/80 flex items-center justify-between text-xs pl-5.5">
-                            <span className="text-[11px] text-neutral-400">Pindah Status:</span>
+                          <div className="mt-3 pt-2.5 border-t border-border/40 flex items-center justify-between text-xs pl-5.5">
+                            <span className="text-[11px] text-muted-foreground">
+                              Pindah Status:
+                            </span>
                             <select
                               value={task.statusId}
                               onChange={(e) => handleStatusChange(task.id, e.target.value)}
-                              className="bg-neutral-50 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-700 rounded px-2 py-0.5 text-xs outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                              className="bg-card text-foreground border border-input rounded-md px-2 py-0.5 text-xs outline-none focus:ring-1 focus:ring-ring cursor-pointer"
                             >
                               {sortedStatuses.map((s) => (
                                 <option key={s.id} value={s.id}>
@@ -430,13 +430,13 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 </div>
 
                 {/* Column Quick Add Task */}
-                <div className="p-2 border-t border-neutral-200/50 dark:border-neutral-800/50">
+                <div className="p-2 border-t border-border/40">
                   <button
                     onClick={() => {
                       setTaskStatusId(col.id);
                       setOpenCreateTaskModal(true);
                     }}
-                    className="w-full py-1.5 px-3 rounded-lg text-xs font-medium text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 hover:bg-neutral-200/50 dark:hover:bg-neutral-800 transition flex items-center justify-center gap-1.5"
+                    className="w-full py-1.5 px-3 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition flex items-center justify-center gap-1.5"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     Tambah ke {col.name}
@@ -449,7 +449,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
           {/* Add New Status Column Placeholder */}
           <div
             onClick={() => setOpenCreateStatusModal(true)}
-            className="w-[280px] shrink-0 min-h-[160px] rounded-xl border-2 border-dashed border-neutral-200 dark:border-neutral-800 hover:border-blue-400 dark:hover:border-blue-500 p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition bg-white/40 dark:bg-neutral-900/20 text-neutral-400 hover:text-blue-600 dark:hover:text-blue-400 group"
+            className="w-[280px] shrink-0 min-h-[160px] rounded-2xl border-2 border-dashed border-border/60 hover:border-primary/50 p-6 flex flex-col items-center justify-center gap-2 cursor-pointer transition bg-card/40 text-muted-foreground hover:text-primary group"
           >
             <Plus className="w-6 h-6 group-hover:scale-110 transition" />
             <span className="text-sm font-semibold">Tambah Kolom Status</span>
@@ -481,7 +481,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 id="status"
                 value={taskStatusId || sortedStatuses[0]?.id || ''}
                 onChange={(e) => setTaskStatusId(e.target.value)}
-                className="w-full text-sm px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-transparent text-neutral-800 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm px-3 py-2 border border-input rounded-xl bg-muted/40 text-foreground outline-none focus:ring-2 focus:ring-ring"
                 required
               >
                 {sortedStatuses.map((s) => (
@@ -541,7 +541,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 id="edit-status"
                 value={editTaskStatusId}
                 onChange={(e) => setEditTaskStatusId(e.target.value)}
-                className="w-full text-sm px-3 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-transparent text-neutral-800 dark:text-neutral-200 outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-sm px-3 py-2 border border-input rounded-xl bg-muted/40 text-foreground outline-none focus:ring-2 focus:ring-ring"
                 required
               >
                 {sortedStatuses.map((s) => (
@@ -586,8 +586,8 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 <Badge
                   style={{
                     backgroundColor:
-                      statuses.find((s) => s.id === detailTask.statusId)?.color || '#3b82f6',
-                    color: '#ffffff',
+                      statuses.find((s) => s.id === detailTask.statusId)?.color || 'var(--primary)',
+                    color: 'var(--primary-foreground)',
                   }}
                   className="font-medium"
                 >
@@ -600,7 +600,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
 
           <div className="mt-4 space-y-4">
             <div>
-              <Label className="text-xs text-neutral-400">Deskripsi</Label>
+              <Label className="text-xs text-muted-foreground">Deskripsi</Label>
               {detailTask?.description ? (
                 <div className="mt-1">
                   <RichTextEditor
@@ -611,11 +611,11 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                   />
                 </div>
               ) : (
-                <p className="text-sm text-neutral-400 mt-1">Tidak ada rincian deskripsi.</p>
+                <p className="text-sm text-muted-foreground mt-1">Tidak ada rincian deskripsi.</p>
               )}
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-neutral-100 dark:border-neutral-800">
+            <div className="flex justify-end gap-2 pt-3 border-t border-border/50">
               <Button
                 variant="outline"
                 size="sm"
@@ -779,16 +779,16 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
           {deletingStatus && (
             <div className="space-y-4 mt-2">
               {sortedStatuses.length <= 1 ? (
-                <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 text-sm flex items-start gap-2">
-                  <AlertCircle className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
+                <div className="p-3 rounded-xl border border-warning/30 bg-warning/10 text-foreground text-sm flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-warning mt-0.5" />
                   <span>
                     Status ini tidak dapat dihapus karena merupakan status satu-satunya. Perusahaan
                     minimal harus memiliki 1 status tugas.
                   </span>
                 </div>
               ) : tasks.some((t) => t.statusId === deletingStatus.id) ? (
-                <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-200 text-sm flex items-start gap-2">
-                  <AlertCircle className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
+                <div className="p-3 rounded-xl border border-warning/30 bg-warning/10 text-foreground text-sm flex items-start gap-2">
+                  <AlertCircle className="w-5 h-5 shrink-0 text-warning mt-0.5" />
                   <span>
                     Status ini masih digunakan oleh{' '}
                     <strong>
@@ -798,7 +798,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                   </span>
                 </div>
               ) : (
-                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                <p className="text-sm text-muted-foreground">
                   Apakah Anda yakin ingin menghapus kolom status{' '}
                   <strong>{deletingStatus.name}</strong>? Tindakan ini tidak dapat dibatalkan.
                 </p>

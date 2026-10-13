@@ -1,10 +1,11 @@
+import { Clock, Pause, Play, Square } from "lucide-react";
 import * as React from "react";
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { TimerDisplay } from "@/components/atoms/TimerDisplay";
-import { FocusToggle } from "@/components/atoms/FocusToggle";
+
 import { Button } from "@/components/atoms";
-import { Clock, Play, Pause, Square } from "lucide-react";
+import { FocusToggle } from "@/components/atoms/FocusToggle";
+import { TimerDisplay } from "@/components/atoms/TimerDisplay";
+import { WidgetHeader } from "@/components/atoms/WidgetHeader";
+import { GlassCard } from "@/components/molecules/GlassCard";
 
 interface PomodoroSectionProps {
   service: {

@@ -2,6 +2,7 @@
 
 import type { WorkspaceItem } from '@repo/types';
 import { Building2, Check, ChevronsUpDown, Loader2, User } from 'lucide-react';
+
 import {
   Button,
   DropdownMenu,

@@ -1,8 +1,6 @@
 "use client";
 
-import * as React from "react";
-import { useMusicPlayer } from "@/context/MusicPlayerContext";
-import { cn } from "@/utils/classname";
+import type { IMusicPlayListItem } from "@repo/types";
 import {
   ChevronDown,
   ChevronUp,
@@ -16,7 +14,10 @@ import {
   Square,
   X,
 } from "lucide-react";
-import type { IMusicPlayListItem } from "@repo/types";
+import * as React from "react";
+
+import { useMusicPlayer } from "@/context/MusicPlayerContext";
+import { cn } from "@/utils/classname";
 
 // ---------------------------------------------------------------------------
 // Helpers

@@ -1,4 +1,7 @@
-import { Plus, Users, Trash2 } from "lucide-react";
+import { type ITeam } from "@repo/types";
+import { PickCreateTeam } from "@repo/types";
+import { Plus, Trash2,Users } from "lucide-react";
+
 import {
   Button,
   Card,
@@ -20,8 +23,6 @@ import {
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { DecoratedInput } from "@/components/wrapper";
 import { AlertContexType } from "@/types/ui";
-import { type ITeam } from "@repo/types";
-import { PickCreateTeam } from "@repo/types";
 
 interface CompanyTeamSectionProps {
   state: {

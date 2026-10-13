@@ -1,5 +1,6 @@
 "use client";
 
+import { PickCreateNote } from "@repo";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -9,7 +10,6 @@ import { Button } from "@/components/atoms";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { NoteEditorSection } from "@/components/page/private/member/notes/note-editor.section";
 import { useApi } from "@/hooks/useApi/useApi";
-import { PickCreateNote } from "@repo";
 
 export default function NoteDetailContainer({ id }: { id: string }) {
   const api = useApi();

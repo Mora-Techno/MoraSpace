@@ -1,15 +1,20 @@
 "use client";
 
+import type {
+  IMusicPlayListItem,
+  PickCreatePlaylist,
+  TrackCatalog,
+} from "@repo/types";
 import {
+  Disc3,
   ExternalLink,
   Music2,
-  Plus,
-  Shuffle,
-  Trash2,
   Pause,
   Play,
-  Disc3,
+  Plus,
   Search,
+  Shuffle,
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -17,14 +22,9 @@ import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
+import { useMusicPlayer } from "@/context/MusicPlayerContext";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useGsapStagger } from "@/hooks/useGsapStagger";
-import { useMusicPlayer } from "@/context/MusicPlayerContext";
-import type {
-  TrackCatalog,
-  IMusicPlayListItem,
-  PickCreatePlaylist,
-} from "@repo/types";
 import { cn } from "@/utils/classname";
 
 export default function MusicContainer() {

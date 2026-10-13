@@ -1,5 +1,6 @@
 "use client";
 
+import type { SubscriptionTier } from "@repo/types/company.types";
 import { ArrowRight, Building2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -26,7 +27,6 @@ import {
   MANAGED_COMPANY_ROLES,
 } from "@/configs/company-roles.config";
 import { useApi } from "@/hooks/useApi/useApi";
-import type { SubscriptionTier } from "@repo/types/company.types";
 
 const TIER_STYLES: Record<SubscriptionTier, string> = {
   free: "bg-muted text-muted-foreground",

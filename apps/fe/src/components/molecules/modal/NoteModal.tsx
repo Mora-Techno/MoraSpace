@@ -1,13 +1,14 @@
+import { PickCreateNote } from "@repo";
+
+import { Button } from "@/components/atoms/Button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/atoms/Dialog";
-import { Button } from "@/components/atoms/Button";
 import { Input } from "@/components/atoms/Input";
 import { Textarea } from "@/components/atoms/Textarea";
-import { PickCreateNote } from "@repo";
 
 interface NoteModalProps {
   open: boolean;

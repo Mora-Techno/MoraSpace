@@ -1,5 +1,6 @@
-import React from "react";
-import { PageHeader } from "@/components/molecules/PageHeader";
+import { BellRing, Clock, Loader2, ShieldAlert } from 'lucide-react';
+import React from 'react';
+
 import {
   Button,
   Card,
@@ -9,8 +10,8 @@ import {
   CardTitle,
   Input,
   Label,
-} from "@/components/atoms";
-import { Loader2, ShieldAlert, Clock, BellRing } from "lucide-react";
+} from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
 
 interface CompanySettingsSectionProps {
   service: {
@@ -56,9 +57,7 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
         <Card>
           <CardHeader>
             <CardTitle>Organization Profile</CardTitle>
-            <CardDescription>
-              Perbarui logo dan negara operasional perusahaan.
-            </CardDescription>
+            <CardDescription>Perbarui logo dan negara operasional perusahaan.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -99,11 +98,12 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-blue-600" />
+              <Clock className="w-5 h-5 text-primary" />
               <CardTitle>Working Hours & Queue Policy</CardTitle>
             </div>
             <CardDescription>
-              Terapkan aturan Non-Negotiable: antrean pesan dan notifikasi non-kritis di luar jam kerja.
+              Terapkan aturan Non-Negotiable: antrean pesan dan notifikasi non-kritis di luar jam
+              kerja.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
@@ -113,7 +113,7 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                 <Input
                   id="workingHourStart"
                   type="time"
-                  value={formUpdate.workingHourStart || "09:00"}
+                  value={formUpdate.workingHourStart || '09:00'}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFormUpdate((prev) => ({
                       ...prev,
@@ -129,7 +129,7 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                 <Input
                   id="workingHourEnd"
                   type="time"
-                  value={formUpdate.workingHourEnd || "17:00"}
+                  value={formUpdate.workingHourEnd || '17:00'}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     setFormUpdate((prev) => ({
                       ...prev,
@@ -141,7 +141,7 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
               </div>
             </div>
 
-            <div className="pt-2 border-t border-neutral-100 dark:border-neutral-800 space-y-3">
+            <div className="pt-2 border-t border-border/50 space-y-3">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -152,14 +152,15 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                       respectWorkingHours: e.target.checked,
                     }))
                   }
-                  className="mt-0.5 rounded border-neutral-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 rounded border-input text-primary focus:ring-ring"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                  <div className="text-sm font-semibold text-foreground">
                     Respect Working Hours Policy
                   </div>
-                  <div className="text-xs text-neutral-500">
-                    Tunda notifikasi dan email non-darurat saat anggota berada di luar jam operasional.
+                  <div className="text-xs text-muted-foreground">
+                    Tunda notifikasi dan email non-darurat saat anggota berada di luar jam
+                    operasional.
                   </div>
                 </div>
               </label>
@@ -174,13 +175,13 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                       queueNotification: e.target.checked,
                     }))
                   }
-                  className="mt-0.5 rounded border-neutral-300 text-blue-600 focus:ring-blue-500"
+                  className="mt-0.5 rounded border-input text-primary focus:ring-ring"
                 />
                 <div>
-                  <div className="text-sm font-semibold text-neutral-800 dark:text-neutral-200">
+                  <div className="text-sm font-semibold text-foreground">
                     Antrekan Notifikasi Otomatis
                   </div>
-                  <div className="text-xs text-neutral-500">
+                  <div className="text-xs text-muted-foreground">
                     Hanya notifikasi prioritas "Critical" yang langsung diteruskan seketika.
                   </div>
                 </div>
@@ -197,7 +198,7 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                 Menyimpan...
               </>
             ) : (
-              "Simpan Pengaturan"
+              'Simpan Pengaturan'
             )}
           </Button>
         </div>

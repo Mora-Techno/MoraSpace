@@ -1,3 +1,8 @@
+import {
+  PickCreateNote,
+  PickCreateTodo,
+  PickRegisterCompany,
+} from "@repo/types";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/atoms";
@@ -16,12 +21,8 @@ import {
   SheetTrigger,
 } from "@/components/atoms/Sheet";
 import { cn } from "@/utils/classname";
+
 import QuickAddForm from "./form/QuickForm";
-import {
-  PickCreateNote,
-  PickCreateTodo,
-  PickRegisterCompany,
-} from "@repo/types";
 export type modeQuick = "todo" | "note";
 
 interface QuickAddFabProps {

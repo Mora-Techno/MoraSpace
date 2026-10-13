@@ -4,13 +4,13 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { useRef } from "react";
 
+import { AiInsightsBanner } from "@/components/molecules/AiInsightsBanner";
+import { ActivityFeedWidget } from "@/components/organisms/ActivityFeedWidget";
+import { BillingWidget } from "@/components/organisms/BillingWidget";
 import { KpiCards } from "@/components/organisms/KpiCards";
+import { PendingApprovalsWidget } from "@/components/organisms/PendingApprovalsWidget";
 import { ProductivityChart } from "@/components/organisms/ProductivityChart";
 import { TaskDistributionChart } from "@/components/organisms/TaskDistributionChart";
-import { BillingWidget } from "@/components/organisms/BillingWidget";
-import { PendingApprovalsWidget } from "@/components/organisms/PendingApprovalsWidget";
-import { ActivityFeedWidget } from "@/components/organisms/ActivityFeedWidget";
-import { AiInsightsBanner } from "@/components/molecules/AiInsightsBanner";
 import { OwnerDashboardTemplate } from "@/components/templates/OwnerDashboardTemplate";
 
 gsap.registerPlugin(useGSAP);

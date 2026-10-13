@@ -1,6 +1,7 @@
-import { formatDateTime } from "@repo/utils/time-format";
 import type { NotificationInApp } from "@repo/types";
+import { formatDateTime } from "@repo/utils/time-format";
 import { MailOpen } from "lucide-react";
+
 import { Button } from "@/components/atoms";
 import { GhibliCard } from "@/components/molecules";
 

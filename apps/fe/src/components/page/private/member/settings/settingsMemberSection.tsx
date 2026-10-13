@@ -1,3 +1,5 @@
+import { Settings, TestEmail } from "@repo/types";
+
 import { Button } from "@/components/atoms";
 import {
   Select,
@@ -6,14 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/atoms";
-
 import { GhibliCard } from "@/components/molecules/GhibliCard";
 import { GhibliSwitch } from "@/components/molecules/GhibliSwitch";
 import { PageHeader } from "@/components/molecules/PageHeader";
 import { Language } from "@/configs";
 import { Theme } from "@/core/providers/theme.provider";
 import { AlertContexType } from "@/types/ui";
-import { Settings, TestEmail } from "@repo/types";
 
 const TIMEZONE_OPTIONS: { value: string; label: string }[] = [
   { value: "Asia/Jakarta", label: "WIB (Jakarta)" },

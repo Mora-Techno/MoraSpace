@@ -1,8 +1,8 @@
 "use client";
 
+import { BillingSection } from "@/components/page/private/owner/billing/billing.section";
 import { useSubscription } from "@/hooks/useApi/subscription/useSubcription";
 import type { SubscriptionTier } from "@/types/api/subscription";
-import { BillingSection } from "@/components/page/private/owner/billing/billing.section";
 
 export default function BillingContainer() {
   const { query, mutate } = useSubscription();

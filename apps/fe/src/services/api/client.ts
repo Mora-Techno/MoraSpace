@@ -2,8 +2,8 @@ import { getCookie } from "cookies-next";
 
 import { env } from "@/configs";
 import { APP_SESSION_COOKIE_KEY } from "@/configs";
-import { loadAuthSession } from "@/utils/storage";
 import type { TErrorResponse, TResponse } from "@/types/api/response";
+import { loadAuthSession } from "@/utils/storage";
 
 const BASE_URL = env.NEXT_PUBLIC_BACKEND_URL;
 

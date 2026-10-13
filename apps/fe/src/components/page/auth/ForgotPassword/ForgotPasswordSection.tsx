@@ -1,8 +1,9 @@
-import { GhibliCard } from "@/components/molecules";
-import { ActionButton, DecoratedInput } from "@/components/wrapper";
-import { PickSendMagicLink } from "@repo/types";
-import Link from "next/link";
-import Image from "next/image";
+'use client';
+
+import type { PickSendMagicLink } from '@repo/types';
+import { ArrowRight, AtSign, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import type React from 'react';
 
 interface ForgotPasswordSectionProps {
   service: {
@@ -11,41 +12,35 @@ interface ForgotPasswordSectionProps {
   };
   state: {
     formSendMagicLink: PickSendMagicLink;
-    setFormSendMagicLink: React.Dispatch<
-      React.SetStateAction<PickSendMagicLink>
-    >;
+    setFormSendMagicLink: React.Dispatch<React.SetStateAction<PickSendMagicLink>>;
   };
 }
-const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({
-  service,
-  state,
-}) => {
+
+const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, state }) => {
   const { formSendMagicLink, setFormSendMagicLink } = state;
   const { onForgotPassword, isPending } = service;
+
   return (
-    <section className="w-full min-h-screen flex justify-center items-center">
-      <form
-        onSubmit={onForgotPassword}
-        className="w-full flex justify-center items-center"
-      >
-        <GhibliCard hover={false} className="w-full max-w-md">
-          <div className="w-full flex justify-center items-center">
-            <Image
-              src={"/images/logo.png"}
-              alt="logo"
-              width={64}
-              height={64}
-              className="rounded-full"
-            />
-          </div>
-          <div className="w-full flex justify-center items-center">
-            <h1 className="font-2xl font-semibold">Lupa Kata Sandi</h1>
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email:
-            </label>
-            <DecoratedInput
+    <div className="w-full space-y-6">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Lupa kata sandi?
+        </h1>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Masukkan email kerja Anda dan kami akan mengirimkan instruksi untuk mengatur ulang kata
+          sandi.
+        </p>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={onForgotPassword} className="space-y-4.5">
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="text-sm font-medium text-foreground block">
+            Email kerja
+          </label>
+          <div className="relative flex items-center">
+            <input
               id="email"
               type="email"
               value={formSendMagicLink.email}
@@ -56,21 +51,45 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({
                 }))
               }
               required
-              placeholder="nama@email.com"
+              placeholder="nama@perusahaan.com"
+              className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
             />
+            <div className="absolute right-3.5 flex items-center justify-center text-muted-foreground pointer-events-none">
+              <AtSign className="size-4" />
+            </div>
           </div>
-          <ActionButton type="submit" className=" w-full" disabled={isPending}>
-            {isPending ? "Memproses..." : "Kirim"}
-          </ActionButton>
+        </div>
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 px-4 font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:opacity-90 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+        >
+          {isPending ? (
+            <>
+              <Loader2 className="size-4 animate-spin" />
+              <span>Memproses...</span>
+            </>
+          ) : (
+            <>
+              <span>Kirim tautan reset</span>
+              <ArrowRight className="size-4" />
+            </>
+          )}
+        </button>
+
+        {/* Back to Login */}
+        <div className="pt-2 text-center text-sm">
           <Link
-            href={"/login"}
-            className="font-medium text-sm text-muted-foreground hover:text-background"
+            href="/login"
+            className="inline-flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
-            Kembali
+            ← Kembali ke halaman Masuk
           </Link>
-        </GhibliCard>
+        </div>
       </form>
-    </section>
+    </div>
   );
 };
 

@@ -20,7 +20,8 @@ export function CtaSection() {
             Siap Mengubah Cara Tim Anda Bekerja?
           </h2>
           <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-            Bergabung dengan Spaces hari ini dan rasakan pengalaman OS digital yang mengutamakan fokus, kolaborasi, dan keseimbangan hidup.
+            Bergabung dengan Spaces hari ini dan rasakan pengalaman OS digital yang mengutamakan
+            fokus, kolaborasi, dan keseimbangan hidup.
           </p>
 
           <div className="mx-auto mt-12 flex max-w-md flex-col gap-4 sm:flex-row">

@@ -1,7 +1,7 @@
 "use client";
 
-import { useTrackCatalog } from "@/hooks/useApi/trackCatalog/useTrackCatalog";
 import { CatalogReviewSection } from "@/components/page/private/owner/catalog/catalog.section";
+import { useTrackCatalog } from "@/hooks/useApi/trackCatalog/useTrackCatalog";
 
 export default function CatalogReviewContainer() {
   const { query, mutate } = useTrackCatalog();

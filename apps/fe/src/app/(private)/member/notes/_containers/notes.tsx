@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
-import { NoteListSection } from "@/components/page/private/member/notes/note-list.section";
 import type { NoteQuery, PickCreateNote } from "@repo/types";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { PageHeader } from "@/components/molecules/PageHeader";
+import { NoteListSection } from "@/components/page/private/member/notes/note-list.section";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useGsapStagger } from "@/hooks/useGsapStagger";
 
 export default function NotesContainer() {
   const api = useApi();

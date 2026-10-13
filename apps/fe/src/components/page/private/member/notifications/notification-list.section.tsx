@@ -1,6 +1,7 @@
+import type { NotificationInApp,NotificationInAppQuery } from "@repo/types";
 import { formatDateTime } from "@repo/utils/time-format";
-import type { NotificationInAppQuery, NotificationInApp } from "@repo/types";
 import { ChevronLeft, ChevronRight, MailOpen, Search } from "lucide-react";
+
 import { Button } from "@/components/atoms";
 import { Input } from "@/components/atoms/Input";
 import { GhibliCard } from "@/components/molecules";

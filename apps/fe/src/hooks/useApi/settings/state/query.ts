@@ -1,6 +1,6 @@
 import { MODULE_QUERY } from "@repo/config/query-stale";
-import { useQuery } from "@tanstack/react-query";
 import type { Settings } from "@repo/types";
+import { useQuery } from "@tanstack/react-query";
 
 import { queryKey } from "@/configs";
 import Api from "@/services/api";

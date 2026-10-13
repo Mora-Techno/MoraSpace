@@ -1,4 +1,6 @@
+import { AdminUser, PickCreateAdmin } from "@repo";
 import { Plus, Users } from "lucide-react";
+
 import {
   Button,
   Card,
@@ -17,12 +19,11 @@ import {
   Input,
   Label,
 } from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { AdminUser, PickCreateAdmin } from "@repo";
 import { AdminRow } from "@/components/molecules/AdminRow";
+import { MemberRow } from "@/components/molecules/MemberRow";
+import { PageHeader } from "@/components/molecules/PageHeader";
 import { DecoratedInput } from "@/components/wrapper";
 import { AlertContexType } from "@/types/ui";
-import { MemberRow } from "@/components/molecules/MemberRow";
 
 interface OwnerCompanyMemberSectionProps {
   template: {

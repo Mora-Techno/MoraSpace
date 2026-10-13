@@ -1,9 +1,10 @@
 "use client";
 
+import { useState } from "react";
+
 import OwnerCompanyMemberSection from "@/components/page/private/owner/dashboard/company/member/CompanyMemberSection";
 import { useApi } from "@/hooks/useApi/useApi";
 import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const OwnerCompanyMemberContainer = () => {

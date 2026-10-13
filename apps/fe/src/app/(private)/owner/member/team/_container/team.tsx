@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import CompanyTeamSection from "@/components/page/private/owner/dashboard/company/team/CompanyTeamSection";
 import { PickCreateTeam } from "@repo";
+import { useState } from "react";
+
+import CompanyTeamSection from "@/components/page/private/owner/dashboard/company/team/CompanyTeamSection";
+import { useApi } from "@/hooks/useApi/useApi";
+import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function CompanyTeamContainer() {
   const api = useApi();

@@ -1,38 +1,37 @@
-"use client";
+'use client';
 
-import ForgotPasswordSection from "@/components/page/auth/ForgotPassword/ForgotPasswordSection";
-import { useApi } from "@/hooks/useApi/useApi";
-import { PickForgotPassword } from "@repo/types";
-import React, { useState } from "react";
+import type { PickForgotPassword } from '@repo/types';
+import type React from 'react';
+import { useState } from 'react';
+
+import ForgotPasswordSection from '@/components/page/auth/ForgotPassword/ForgotPasswordSection';
+import { useApi } from '@/hooks/useApi/useApi';
 
 const ForgotPasswordContainer = () => {
   const api = useApi();
   const useForgotPassword = api.auth.mutate.forgotPassword();
 
-  const [formSendMagicLink, setFormSendMagicLink] = useState<PickForgotPassword>(
-    {
-      email: "",
-    },
-  );
+  const [formSendMagicLink, setFormSendMagicLink] = useState<PickForgotPassword>({
+    email: '',
+  });
 
   const handleForgotPassword = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = formSendMagicLink;
     useForgotPassword.mutate(payload);
   };
+
   return (
-    <main className="w-full min-h-screen ">
-      <ForgotPasswordSection
-        service={{
-          isPending: useForgotPassword.isPending,
-          onForgotPassword: handleForgotPassword,
-        }}
-        state={{
-          formSendMagicLink: formSendMagicLink,
-          setFormSendMagicLink: setFormSendMagicLink,
-        }}
-      />
-    </main>
+    <ForgotPasswordSection
+      service={{
+        isPending: useForgotPassword.isPending,
+        onForgotPassword: handleForgotPassword,
+      }}
+      state={{
+        formSendMagicLink: formSendMagicLink,
+        setFormSendMagicLink: setFormSendMagicLink,
+      }}
+    />
   );
 };
 

@@ -1,14 +1,16 @@
 import { PickUpdateTodo, Todo } from "@repo/types";
 import { CheckSquare, Plus } from "lucide-react";
 import * as React from "react";
+
 import { Button } from "@/components/atoms";
 import { Skeleton } from "@/components/atoms/Skeleton";
 import { WidgetHeader } from "@/components/atoms/WidgetHeader";
 import { GlassCard } from "@/components/molecules/GlassCard";
-import { TodoListItem } from "../molecules";
 import { useCreateTodo } from "@/hooks/useApi/todo";
-import TodoCreateModal from "../molecules/modal/TodoCreateModal";
 import { AlertContexType } from "@/types/ui";
+
+import { TodoListItem } from "../molecules";
+import TodoCreateModal from "../molecules/modal/TodoCreateModal";
 
 interface TodoListSectionProps {
   service: {

@@ -1,4 +1,8 @@
+import { PickUpdateNote } from "@repo";
+import { FileEdit, Save } from "lucide-react";
 import React from "react";
+
+import { Button } from "@/components/atoms/Button";
 import {
   Dialog,
   DialogContent,
@@ -8,9 +12,6 @@ import {
 // Sesuaikan import Input, Textarea, dan Button dengan struktur folder Anda
 import { Input } from "@/components/atoms/Input";
 import { Textarea } from "@/components/atoms/Textarea";
-import { Button } from "@/components/atoms/Button";
-import { FileEdit, Save } from "lucide-react";
-import { PickUpdateNote } from "@repo";
 
 interface EditNoteDialogProps {
   open: boolean;

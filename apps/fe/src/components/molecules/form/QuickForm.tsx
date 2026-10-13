@@ -1,11 +1,12 @@
-import { modeQuick } from "@/components/molecules/QuickAddFab";
-import { Button, Input, Label, Textarea } from "@/components/atoms";
 import {
   PickCreateNote,
   PickCreateTodo,
   PickRegisterCompany,
 } from "@repo/types";
 import { Building2, CheckSquare, Eye, EyeOff, FileText } from "lucide-react";
+
+import { Button, Input, Label, Textarea } from "@/components/atoms";
+import { modeQuick } from "@/components/molecules/QuickAddFab";
 
 interface QuickAddFormProps {
   formCreateTodo: PickCreateTodo;

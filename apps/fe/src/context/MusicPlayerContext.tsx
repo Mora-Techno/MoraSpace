@@ -1,13 +1,13 @@
 "use client";
 
+import type { IMusicPlayListItem } from "@repo/types";
 import React, {
   createContext,
-  useContext,
-  useState,
   useCallback,
+  useContext,
   useRef,
+  useState,
 } from "react";
-import type { IMusicPlayListItem } from "@repo/types";
 
 export interface MusicPlayerState {
   /** The track currently playing (null = nothing playing) */
