@@ -1,5 +1,9 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
+
+  // =====================================
+  // Production (Default)
+  // =====================================
   "name": "moraspace",
   "main": ".open-next/worker.js",
 
@@ -7,7 +11,6 @@
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
 
   "workers_dev": true,
-  "preview_urls": true,
   "keep_vars": true,
 
   "assets": {
@@ -29,16 +32,28 @@
     "NEXT_PRIVATE_MINIMAL_MODE": "1"
   },
 
-  "previews": {
-    "vars": {
-      "NODE_ENV": "production",
-      "APP_ENV": "preview",
-      "NEXT_PUBLIC_BASEPATH": "/home",
-      "NEXT_PRIVATE_MINIMAL_MODE": "1"
-    },
+  // =====================================
+  // Staging Environment
+  // =====================================
+  "env": {
+    "staging": {
+      "name": "moraspace-staging",
 
-    "observability": {
-      "enabled": true
+      "workers_dev": true,
+
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "moraspace-staging"
+        }
+      ],
+
+      "vars": {
+        "NODE_ENV": "production",
+        "APP_ENV": "staging",
+        "NEXT_PUBLIC_BASEPATH": "/home",
+        "NEXT_PRIVATE_MINIMAL_MODE": "1"
+      }
     }
   }
 }
