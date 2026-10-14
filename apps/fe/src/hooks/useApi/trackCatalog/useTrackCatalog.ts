@@ -1,10 +1,5 @@
-import {
-  useApproveTrack,
-  useDeleteTrack,
-  useRejectTrack,
-  useSubmitTrack,
-} from "./state/mutate";
-import { usePendingTracks, useTrackCatalogList } from "./state/query";
+import { useApproveTrack, useDeleteTrack, useRejectTrack, useSubmitTrack } from './state/mutate';
+import { usePendingTracks, useTrackCatalogList } from './state/query';
 
 export const useTrackCatalog = () => {
   return {

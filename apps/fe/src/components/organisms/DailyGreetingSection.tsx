@@ -1,7 +1,8 @@
-import * as React from "react";
-import { StatMiniCard } from "@/components/molecules/StatMiniCard";
-import { CheckCircle2, Clock, CalendarIcon } from "lucide-react";
-import { GlassCard } from "@/components/molecules/GlassCard";
+import { CalendarIcon, CheckCircle2, Clock } from 'lucide-react';
+import * as React from 'react';
+
+import { GlassCard } from '@/components/molecules/GlassCard';
+import { StatMiniCard } from '@/components/molecules/StatMiniCard';
 
 interface DailyStats {
   completedTodos: number;
@@ -41,19 +42,19 @@ export function DailyGreetingSection({ state }: DailyGreetingSectionProps) {
           title="Tugas Belum Selesai"
           value={stats.completedTodos}
           icon={<CheckCircle2 className="size-4" />}
-          className="min-w-[140px] bg-background/50 flex-1"
+          className="min-w-[140px] flex-1"
         />
         <StatMiniCard
           title="Menit Fokus"
           value={stats.pomodoroMinutes}
           icon={<Clock className="size-4" />}
-          className="min-w-[140px] bg-background/50 flex-1"
+          className="min-w-[140px] flex-1"
         />
         <StatMiniCard
           title="Meeting Hari Ini"
           value={stats.totalMeetings}
           icon={<CalendarIcon className="size-4" />}
-          className="min-w-[140px] bg-background/50 flex-1"
+          className="min-w-[140px] flex-1"
         />
       </div>
     </GlassCard>

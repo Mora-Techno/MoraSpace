@@ -9,11 +9,12 @@ import type {
   PickUpdateCompanySubscription,
 } from '@repo/types/company.types';
 
-import { useAppMutation } from '@/hooks/useAppMutation';
 import { queryKey } from '@/configs';
+import { useAppMutation } from '@/hooks/useAppMutation';
 import { saveTokens } from '@/server/auth-cookie';
 import Api from '@/services/api';
 import { persistAuthSessionFromResponse } from '@/utils/storage';
+
 import { type CompanyCacheContext, companyRooyKey, readCompanySnapshot } from './utils';
 
 export function useRegisterCompany() {

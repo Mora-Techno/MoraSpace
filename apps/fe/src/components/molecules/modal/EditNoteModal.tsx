@@ -1,16 +1,12 @@
-import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/atoms/Dialog";
+import { PickUpdateNote } from '@repo';
+import { FileEdit, Save } from 'lucide-react';
+import React from 'react';
+
+import { Button } from '@/components/atoms/Button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/Dialog';
 // Sesuaikan import Input, Textarea, dan Button dengan struktur folder Anda
-import { Input } from "@/components/atoms/Input";
-import { Textarea } from "@/components/atoms/Textarea";
-import { Button } from "@/components/atoms/Button";
-import { FileEdit, Save } from "lucide-react";
-import { PickUpdateNote } from "@repo";
+import { Input } from '@/components/atoms/Input';
+import { Textarea } from '@/components/atoms/Textarea';
 
 interface EditNoteDialogProps {
   open: boolean;
@@ -67,23 +63,14 @@ const EditNoteDialog: React.FC<EditNoteDialogProps> = ({
           </div>
 
           <div className="flex items-center justify-end gap-2 border-t border-border/30 px-4 py-3">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="ghost" size="sm" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
             <Button
               type="submit"
               size="sm"
               className="gap-2"
-              disabled={
-                isPending ||
-                !formEditNote.title.trim() ||
-                !formEditNote.content.trim()
-              }
+              disabled={isPending || !formEditNote.title.trim() || !formEditNote.content.trim()}
             >
               <Save className="size-4" />
               Simpan

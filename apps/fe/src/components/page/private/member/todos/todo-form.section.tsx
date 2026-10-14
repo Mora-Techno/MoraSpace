@@ -1,5 +1,5 @@
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
 
 interface TodoFormSectionProps {
   service: {
@@ -34,12 +34,8 @@ export function TodoFormSection({ service, state }: TodoFormSectionProps) {
           onChange={(e) => setDueDate(e.target.value)}
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
-        <Button
-          type="submit"
-          className="ghibli-btn w-full"
-          disabled={isPending}
-        >
-          {isPending ? "Menambahkan..." : "Tambah Tugas"}
+        <Button type="submit" className="ghibli-btn w-full" disabled={isPending}>
+          {isPending ? 'Menambahkan...' : 'Tambah Tugas'}
         </Button>
       </form>
     </GhibliCard>

@@ -1,22 +1,35 @@
-"use client";
+'use client';
 
 import {
-  CtaSection,
-  FeaturesSection,
+  AudienceStrip,
+  BottomCtaSection,
+  CollaborationSection,
+  FaqSection,
+  FocusSection,
   HeroSection,
-  ShowcaseSection,
-  StatsSection,
-} from "@/components/page/public";
-import NavLayout from "@/core/layouts/nav.layout";
+  PersonalWorkspaceSection,
+  PhilosophySection,
+  RoadmapSection,
+  StepsSection,
+  WorkflowSection,
+} from '@/components/page/public/home';
+import NavLayout from '@/core/layouts/nav.layout';
+
 export default function ContainerHome() {
   return (
     <NavLayout>
-      <div className="landing-dark min-h-screen bg-background pt-24 ">
+      <div className="min-h-screen bg-background text-foreground pt-16 md:pt-20">
         <HeroSection />
-        <StatsSection />
-        <FeaturesSection />
-        <ShowcaseSection />
-        <CtaSection />
+        <WorkflowSection />
+        <CollaborationSection />
+        <PersonalWorkspaceSection />
+        <StepsSection />
+        <PhilosophySection />
+        <FocusSection />
+        <AudienceStrip />
+        <RoadmapSection />
+        <FaqSection />
+        <BottomCtaSection />
       </div>
     </NavLayout>
   );

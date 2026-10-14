@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import CompanyTeamSection from "@/components/page/private/owner/dashboard/company/team/CompanyTeamSection";
-import { PickCreateTeam } from "@repo";
+import { PickCreateTeam } from '@repo';
+import { useState } from 'react';
+
+import CompanyTeamSection from '@/components/page/private/owner/dashboard/company/team/CompanyTeamSection';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function CompanyTeamContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const debounceSearch = useDebounce(searchTerm, 500);
   const { data: teams = [], isLoading } = api.team.query.list();
 
@@ -22,10 +23,10 @@ export default function CompanyTeamContainer() {
   const [open, setOpen] = useState<boolean>(false);
 
   const [formCreate, setFormCreate] = useState<PickCreateTeam>({
-    name: "",
-    description: "",
-    leaderId: "",
-    departmentId: "",
+    name: '',
+    description: '',
+    leaderId: '',
+    departmentId: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,7 +34,7 @@ export default function CompanyTeamContainer() {
     createTeam.mutate(formCreate, {
       onSuccess: () => {
         setOpen(false);
-        setFormCreate({ name: "", departmentId: "" });
+        setFormCreate({ name: '', departmentId: '' });
       },
     });
   };

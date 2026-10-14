@@ -15,8 +15,8 @@ import {
   useGetTask,
   useListTaskActivities,
   useListTaskPriorities,
-  useListTaskStatuses,
   useListTasks,
+  useListTaskStatuses,
 } from './state/query';
 
 export const useTask = () => {

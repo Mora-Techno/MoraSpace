@@ -42,14 +42,15 @@ export function ShowcaseSection() {
               Alur Kerja yang Human-Centered
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Teknologi seharusnya membantu manusia bekerja lebih baik, bukan membuat pekerjaan menjadi lebih rumit.
+              Teknologi seharusnya membantu manusia bekerja lebih baik, bukan membuat pekerjaan
+              menjadi lebih rumit.
             </p>
           </div>
           <Link
             href="/login"
             className="group inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-6 py-3 text-sm font-semibold text-primary transition-all duration-300 hover:bg-primary/10 hover:border-primary/40"
           >
-            Lihat Semua Fitur 
+            Lihat Semua Fitur
             <ArrowUpRight className="size-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
           </Link>
         </div>
@@ -61,7 +62,9 @@ export function ShowcaseSection() {
               data-stagger-item
               className="group overflow-hidden rounded-3xl border border-border/60 bg-card/30 backdrop-blur-md transition-all duration-500 hover:border-primary/50 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1"
             >
-              <div className={`relative flex h-56 items-start justify-end bg-gradient-to-br ${workflow.gradient} p-6 overflow-hidden`}>
+              <div
+                className={`relative flex h-56 items-start justify-end bg-gradient-to-br ${workflow.gradient} p-6 overflow-hidden`}
+              >
                 <div className="absolute inset-0 bg-black/5 dark:bg-black/20 mix-blend-overlay transition-opacity group-hover:opacity-0" />
                 <Badge className="relative z-10 border-white/20 bg-background/50 text-foreground backdrop-blur-md px-3 py-1 shadow-sm">
                   <Sparkles className="size-3.5 mr-1.5 inline" />
@@ -72,7 +75,9 @@ export function ShowcaseSection() {
                 <h3 className="font-serif text-2xl font-bold leading-tight text-foreground transition-colors duration-300 group-hover:text-primary">
                   {workflow.title}
                 </h3>
-                <p className="mt-4 text-base text-muted-foreground leading-relaxed">{workflow.excerpt}</p>
+                <p className="mt-4 text-base text-muted-foreground leading-relaxed">
+                  {workflow.excerpt}
+                </p>
                 <div className="mt-6 flex items-center gap-2 text-sm font-medium text-primary">
                   <Clock className="size-4" />
                   {workflow.date}

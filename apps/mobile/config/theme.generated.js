@@ -1,5 +1,5 @@
 /* AUTO-GENERATED from packages/shared/config/theme.tokens.ts. Do not edit manually. */
- 
+/* eslint-disable */
 module.exports = {
   "colors": {
     "background": "rgb(var(--background) / <alpha-value>)",

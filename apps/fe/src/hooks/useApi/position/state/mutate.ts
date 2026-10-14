@@ -1,17 +1,9 @@
-import type {
-  IPosition,
-  PickCreatePosition,
-  PickUpdatePosition,
-} from "@repo/types";
+import type { IPosition, PickCreatePosition, PickUpdatePosition } from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type PositionCacheContext,
-  positionsRoot,
-  readPositionSnapshot,
-} from "./utils";
+import { type PositionCacheContext, positionsRoot, readPositionSnapshot } from './utils';
 
 export function useCreatePosition() {
   return useAppMutation<IPosition, PickCreatePosition, PositionCacheContext>({

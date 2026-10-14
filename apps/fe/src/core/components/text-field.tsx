@@ -142,12 +142,18 @@ const TextField = forwardRef<HTMLInputElement, InputBaseProps>(
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           {label && (
-            <label className={cn('text-zinc-800 text-sm font-medium', labelClassName)} htmlFor={id}>
+            <label
+              className={cn('text-foreground text-sm font-medium', labelClassName)}
+              htmlFor={id}
+            >
               {label}
             </label>
           )}
           {forgotPassword && type === 'password' && (
-            <Link href="/auth/forgot-password" className="text-blue-500 text-sm font-normal">
+            <Link
+              href="/auth/forgot-password"
+              className="text-primary hover:underline text-sm font-normal"
+            >
               Forgot Password ?
             </Link>
           )}
@@ -163,7 +169,7 @@ const TextField = forwardRef<HTMLInputElement, InputBaseProps>(
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-gray-400 hover:text-gray-600"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer text-muted-foreground hover:text-foreground"
             >
               <Icon icon={showPassword ? 'lucide:eye-off' : 'akar-icons:eye'} className="size-5" />
             </button>
@@ -174,7 +180,7 @@ const TextField = forwardRef<HTMLInputElement, InputBaseProps>(
             </div>
           )}
         </div>
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && <p className="text-destructive text-xs mt-1">{error}</p>}
       </div>
     );
   },

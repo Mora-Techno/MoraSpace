@@ -1,5 +1,5 @@
-import Elysia from "elysia";
-import AuthController from "@/controllers/AuthController";
+import Elysia from 'elysia';
+import AuthController from '@/controllers/AuthController';
 import {
   ForgotPasswordDto,
   LoginDto,
@@ -12,171 +12,132 @@ import {
   UserQueryDto,
   VerifyMagicLinkDto,
   VerifyOtpDto,
-} from "@/dto/auth.dto";
-import type { AppContext } from "@/contex";
-import { verifyToken } from "@/middlewares/auth";
+} from '@/dto/auth.dto';
+import type { AppContext } from '@/contex';
+import { verifyToken } from '@/middlewares/auth';
 
 class AuthRouter {
   public authRouter;
 
   constructor() {
-    this.authRouter = new Elysia({ prefix: "/auth" });
+    this.authRouter = new Elysia({ prefix: '/auth' });
     this.routes();
   }
 
   private routes() {
-    this.authRouter.post(
-      "/register",
-      (c: AppContext) => AuthController.register(c),
-      {
-        body: RegisterDto,
-        detail: {
-          summary: "Registrasi akun baru",
-          description: "Mendaftarkan pengguna baru ke sistem.",
-          tags: ["Auth"],
-        },
+    this.authRouter.post('/register', (c: AppContext) => AuthController.register(c), {
+      body: RegisterDto,
+      detail: {
+        summary: 'Registrasi akun baru',
+        description: 'Mendaftarkan pengguna baru ke sistem.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.post("/login", (c: AppContext) => AuthController.login(c), {
+    });
+    this.authRouter.post('/login', (c: AppContext) => AuthController.login(c), {
       body: LoginDto,
       detail: {
-        summary: "Login pengguna",
+        summary: 'Login pengguna',
         description:
-          "Autentikasi dengan email dan password. Mengembalikan accessToken + refreshToken.",
-        tags: ["Auth"],
+          'Autentikasi dengan email dan password. Mengembalikan accessToken + refreshToken.',
+        tags: ['Auth'],
+      },
+    });
+    this.authRouter.post('/refresh', (c: AppContext) => AuthController.refresh(c), {
+      body: RefreshTokenDto,
+      detail: {
+        summary: 'Refresh access token',
+        description: 'Menukar refresh token dengan pasangan access + refresh token baru.',
+        tags: ['Auth'],
+      },
+    });
+    this.authRouter.post('/magic-link/send', (c: AppContext) => AuthController.sendMagicLink(c), {
+      body: SendMagicLinkDto,
+      detail: {
+        summary: 'Kirim magic link login',
+        description: 'Mengirim link login sekali pakai ke email pengguna.',
+        tags: ['Auth'],
       },
     });
     this.authRouter.post(
-      "/refresh",
-      (c: AppContext) => AuthController.refresh(c),
-      {
-        body: RefreshTokenDto,
-        detail: {
-          summary: "Refresh access token",
-          description:
-            "Menukar refresh token dengan pasangan access + refresh token baru.",
-          tags: ["Auth"],
-        },
-      },
-    );
-    this.authRouter.post(
-      "/magic-link/send",
-      (c: AppContext) => AuthController.sendMagicLink(c),
-      {
-        body: SendMagicLinkDto,
-        detail: {
-          summary: "Kirim magic link login",
-          description: "Mengirim link login sekali pakai ke email pengguna.",
-          tags: ["Auth"],
-        },
-      },
-    );
-    this.authRouter.post(
-      "/magic-link/verify",
+      '/magic-link/verify',
       (c: AppContext) => AuthController.verifyMagicLink(c),
       {
         body: VerifyMagicLinkDto,
         detail: {
-          summary: "Verifikasi magic link",
-          description: "Menukar token magic link menjadi session JWT.",
-          tags: ["Auth"],
+          summary: 'Verifikasi magic link',
+          description: 'Menukar token magic link menjadi session JWT.',
+          tags: ['Auth'],
         },
       },
     );
-    this.authRouter.post(
-      "/logout",
-      (c: AppContext) => AuthController.logout(c),
-      {
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Logout pengguna",
-          description:
-            "Membatalkan access dan refresh token. Membutuhkan header Authorization Bearer.",
-          tags: ["Auth"],
-        },
+    this.authRouter.post('/logout', (c: AppContext) => AuthController.logout(c), {
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: 'Logout pengguna',
+        description:
+          'Membatalkan access dan refresh token. Membutuhkan header Authorization Bearer.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.post(
-      "/otp/send",
-      (c: AppContext) => AuthController.sendOtp(c),
-      {
-        body: SendOtpDto,
-        detail: {
-          summary: "Kirim OTP (mobile/email)",
-          description:
-            "Mengirim kode OTP 6 digit via email atau nomor telepon terdaftar.",
-          tags: ["Auth"],
-        },
+    });
+    this.authRouter.post('/otp/send', (c: AppContext) => AuthController.sendOtp(c), {
+      body: SendOtpDto,
+      detail: {
+        summary: 'Kirim OTP (mobile/email)',
+        description: 'Mengirim kode OTP 6 digit via email atau nomor telepon terdaftar.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.post(
-      "/otp/verify",
-      (c: AppContext) => AuthController.verifyOtp(c),
-      {
-        body: VerifyOtpDto,
-        detail: {
-          summary: "Verifikasi OTP",
-          description: "Memverifikasi OTP dan mengembalikan session JWT.",
-          tags: ["Auth"],
-        },
+    });
+    this.authRouter.post('/otp/verify', (c: AppContext) => AuthController.verifyOtp(c), {
+      body: VerifyOtpDto,
+      detail: {
+        summary: 'Verifikasi OTP',
+        description: 'Memverifikasi OTP dan mengembalikan session JWT.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.post(
-      "/forgot-password",
-      (c: AppContext) => AuthController.forgotPassword(c),
-      {
-        body: ForgotPasswordDto,
-        detail: {
-          summary: "Lupa password",
-          description: "Mengirim email berisi link untuk reset password.",
-          tags: ["Auth"],
-        },
+    });
+    this.authRouter.post('/forgot-password', (c: AppContext) => AuthController.forgotPassword(c), {
+      body: ForgotPasswordDto,
+      detail: {
+        summary: 'Lupa password',
+        description: 'Mengirim email berisi link untuk reset password.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.post(
-      "/reset-password",
-      (c: AppContext) => AuthController.ResetPassword(c),
-      {
-        body: ResetPasswordDto,
-        detail: {
-          summary: "Reset password",
-          description:
-            "Mereset password pengguna menggunakan token dari email.",
-          tags: ["Auth"],
-        },
+    });
+    this.authRouter.post('/reset-password', (c: AppContext) => AuthController.ResetPassword(c), {
+      body: ResetPasswordDto,
+      detail: {
+        summary: 'Reset password',
+        description: 'Mereset password pengguna menggunakan token dari email.',
+        tags: ['Auth'],
       },
-    );
-    this.authRouter.get("/users", (c: AppContext) => AuthController.list(c), {
+    });
+    this.authRouter.get('/users', (c: AppContext) => AuthController.list(c), {
       query: UserQueryDto,
       beforeHandle: [verifyToken().beforeHandle],
       detail: {
-        summary: "Daftar pengguna",
-        description: "Menampilkan semua pengguna di perusahaan.",
-        tags: ["Auth"],
+        summary: 'Daftar pengguna',
+        description: 'Menampilkan semua pengguna di perusahaan.',
+        tags: ['Auth'],
       },
     });
-    this.authRouter.get(
-      "/workspaces",
-      (c: AppContext) => AuthController.listWorkspaces(c),
-      {
-        beforeHandle: [verifyToken().beforeHandle],
-        detail: {
-          summary: "Daftar workspace",
-          description: "Melihat daftar workspace personal dan company yang dimiliki user.",
-          tags: ["Auth"],
-        },
+    this.authRouter.get('/workspaces', (c: AppContext) => AuthController.listWorkspaces(c), {
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: 'Daftar workspace',
+        description: 'Melihat daftar workspace personal dan company yang dimiliki user.',
+        tags: ['Auth'],
       },
-    );
+    });
     this.authRouter.post(
-      "/switch-workspace",
+      '/switch-workspace',
       (c: AppContext) => AuthController.switchWorkspace(c),
       {
         body: SwitchWorkspaceDto,
         beforeHandle: [verifyToken().beforeHandle],
         detail: {
-          summary: "Pindah workspace",
-          description: "Berpindah ke workspace personal atau company lain.",
-          tags: ["Auth"],
+          summary: 'Pindah workspace',
+          description: 'Berpindah ke workspace personal atau company lain.',
+          tags: ['Auth'],
         },
       },
     );

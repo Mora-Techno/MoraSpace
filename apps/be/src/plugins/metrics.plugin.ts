@@ -1,6 +1,6 @@
-import { Elysia } from "elysia";
-import { trace } from "@opentelemetry/api";
-import { logger } from "@/utils/logger.utils";
+import { Elysia } from 'elysia';
+import { trace } from '@opentelemetry/api';
+import { logger } from '@/utils/logger.utils';
 
 /**
  * metricsPlugin
@@ -39,8 +39,7 @@ function recordMetrics(
   const duration = Math.round(durationMs);
   const method = request.method;
   const pathname = new URL(request.url).pathname;
-  const status =
-    typeof set?.status === "number" ? set.status : error ? 500 : 200;
+  const status = typeof set?.status === 'number' ? set.status : error ? 500 : 200;
 
   logger.debug(
     {
@@ -48,11 +47,9 @@ function recordMetrics(
       endpoint: pathname,
       status,
       duration_ms: duration,
-      ...(error
-        ? { error: error instanceof Error ? error.message : String(error) }
-        : {}),
+      ...(error ? { error: error instanceof Error ? error.message : String(error) } : {}),
     },
-    "Metrics",
+    'Metrics',
   );
 
   // Attach metric attributes to the active span (the root span created by
@@ -60,14 +57,11 @@ function recordMetrics(
   const span = trace.getActiveSpan();
   if (!span) return;
 
-  span.setAttribute("http.request.method", method);
-  span.setAttribute("http.route", pathname);
-  span.setAttribute("http.response.status_code", status);
-  span.setAttribute("http.duration_ms", duration);
+  span.setAttribute('http.request.method', method);
+  span.setAttribute('http.route', pathname);
+  span.setAttribute('http.response.status_code', status);
+  span.setAttribute('http.duration_ms', duration);
   if (error) {
-    span.setAttribute(
-      "error.type",
-      error instanceof Error ? error.name : typeof error,
-    );
+    span.setAttribute('error.type', error instanceof Error ? error.name : typeof error);
   }
 }

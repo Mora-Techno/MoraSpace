@@ -1,4 +1,7 @@
-import { Plus, Users } from "lucide-react";
+import { AdminUser, PickCreateAdmin } from '@repo';
+import { Plus, Users } from 'lucide-react';
+import { useState } from 'react';
+
 import {
   Button,
   Card,
@@ -16,13 +19,12 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { AdminUser, PickCreateAdmin } from "@repo";
-import { AdminRow } from "@/components/molecules/AdminRow";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
-import { MemberRow } from "@/components/molecules/MemberRow";
+} from '@/components/atoms';
+import { AdminRow } from '@/components/molecules/AdminRow';
+import { MemberRow } from '@/components/molecules/MemberRow';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface OwnerCompanyMemberSectionProps {
   template: {
@@ -35,6 +37,8 @@ interface OwnerCompanyMemberSectionProps {
     member: AdminUser[];
     handleUpdateStatus?: (id: string, status: string) => void;
     handleDeleteMember?: (id: string) => void;
+    handleInvite?: (email: string) => void;
+    isInvitePending?: boolean;
   };
   state: {
     open: boolean;
@@ -56,15 +60,30 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
     member,
     handleDeleteMember,
     handleUpdateStatus,
+    handleInvite,
+    isInvitePending,
   } = service;
   const { open, setOpen, alert, searchTerm, setSearchTerm } = state;
+  const [inviteEmail, setInviteEmail] = useState('');
+
+  const submitInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail.trim() || isInvitePending) return;
+    handleInvite?.(inviteEmail.trim());
+  };
   return (
     <div className="w-full space-y-6">
       <PageHeader
         title={title}
         description={description}
         action={
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog
+            open={open}
+            onOpenChange={(v) => {
+              if (!v) setInviteEmail('');
+              setOpen(v);
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="size-4" />
@@ -74,10 +93,29 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Tambah Anggota Baru</DialogTitle>
-                <DialogDescription>
-                  Undang anggota baru ke perusahaan Anda.
-                </DialogDescription>
+                <DialogDescription>Undang anggota baru ke perusahaan Anda.</DialogDescription>
               </DialogHeader>
+              <form onSubmit={submitInvite} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="inviteEmail">Email</Label>
+                  <Input
+                    id="inviteEmail"
+                    type="email"
+                    required
+                    placeholder="nama@email.com"
+                    value={inviteEmail}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setInviteEmail(e.target.value)
+                    }
+                    disabled={isInvitePending}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="submit" disabled={isInvitePending}>
+                    {isInvitePending ? 'Mengirim...' : 'Kirim Undangan'}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         }
@@ -89,9 +127,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             <Users className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Anggota</CardTitle>
-          <CardDescription>
-            Total {member.length} anggota terdaftar.
-          </CardDescription>
+          <CardDescription>Total {member.length} anggota terdaftar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -100,13 +136,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <AdminRow />
             </phantom-ui>
           ) : member.length === 0 ? (
@@ -120,9 +150,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
                   key={user.id}
                   user={user as any}
                   alert={alert}
-                  onUpdateStatus={(status: string) =>
-                    handleUpdateStatus?.(user.id, status)
-                  }
+                  onUpdateStatus={(status: string) => handleUpdateStatus?.(user.id, status)}
                   onDelete={() => handleDeleteMember?.(user.id)}
                   isPending={isPending}
                 />

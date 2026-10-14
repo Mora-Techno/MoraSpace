@@ -1,13 +1,10 @@
-import MusicService from "@/service/MusicService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type { PickCreatePlaylist } from "@repo/types/music.types";
-import {
-  paramsValidate,
-  personalContextValidate,
-} from "@/validation/auth.validate";
-import { CreateMusicValidate } from "@/validation/music.validate";
-import { getUser } from "@/utils/authTokens";
+import MusicService from '@/service/MusicService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreatePlaylist } from '@repo/types/music.types';
+import { paramsValidate, personalContextValidate } from '@/validation/auth.validate';
+import { CreateMusicValidate } from '@/validation/music.validate';
+import { getUser } from '@/utils/authTokens';
 
 interface AddItemBody {
   trackCatalogId: string;
@@ -33,7 +30,7 @@ class MusicController {
       return HttpResponse(c).ok(
         queryService.data,
         queryService.meta,
-        "Berhasil mengambil daftar playlist",
+        'Berhasil mengambil daftar playlist',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -51,18 +48,11 @@ class MusicController {
       const validateRespone = await CreateMusicValidate(c, input);
       if (validateRespone) return validateRespone;
 
-      const queryService = await MusicService.create(
-        user.companyMemberId ?? null,
-        user.id,
-        input,
-      );
+      const queryService = await MusicService.create(user.companyMemberId ?? null, user.id, input);
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(
-        queryService,
-        "Playlist berhasil ditambahkan",
-      );
+      return HttpResponse(c).created(queryService, 'Playlist berhasil ditambahkan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -81,7 +71,7 @@ class MusicController {
       if (validateParams) return validateParams;
 
       if (!input?.trackCatalogId) {
-        return HttpResponse(c).badRequest("trackCatalogId wajib diisi");
+        return HttpResponse(c).badRequest('trackCatalogId wajib diisi');
       }
 
       const queryService = await MusicService.addItem(
@@ -91,13 +81,9 @@ class MusicController {
         input,
       );
 
-      if (!queryService)
-        return HttpResponse(c).notFound("Playlist tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Playlist tidak ditemukan');
 
-      return HttpResponse(c).created(
-        queryService,
-        "Musik berhasil ditambahkan ke playlist",
-      );
+      return HttpResponse(c).created(queryService, 'Musik berhasil ditambahkan ke playlist');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -121,14 +107,9 @@ class MusicController {
         user.id,
       );
 
-      if (!queryService)
-        return HttpResponse(c).notFound("Item tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Item tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Musik berhasil dihapus dari playlist",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Musik berhasil dihapus dari playlist');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -150,14 +131,9 @@ class MusicController {
         user.companyMemberId ?? null,
         user.id,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Playlist tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Playlist tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Playlist berhasil dihapus",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Playlist berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

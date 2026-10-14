@@ -1,14 +1,14 @@
-import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from "lucide-react";
-import Link from "next/link";
+import { formatDateOnly } from '@repo';
+import type { Note, NoteQuery, PickCreateNote } from '@repo/types';
+import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 
-import { Button } from "@/components/atoms";
-import { Input } from "@/components/atoms/Input";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
-import { NoteModal } from "@/components/molecules/modal/NoteModal";
-import { cn } from "@/utils/classname";
-import type { Note, NoteQuery, PickCreateNote } from "@repo/types";
-import { formatDateOnly } from "@repo";
+import { Button } from '@/components/atoms';
+import { Input } from '@/components/atoms/Input';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { NoteModal } from '@/components/molecules/modal/NoteModal';
+import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
+import { cn } from '@/utils/classname';
 
 interface NoteListSectionProps {
   service: {
@@ -33,14 +33,7 @@ interface NoteListSectionProps {
 }
 
 export function NoteListSection({ service, state }: NoteListSectionProps) {
-  const {
-    handleDelete,
-    handleSelect,
-    isPending,
-    handleSubmit,
-    onSearch,
-    onPageChange,
-  } = service;
+  const { handleDelete, handleSelect, isPending, handleSubmit, onSearch, onPageChange } = service;
   const {
     notes,
     isLoading,
@@ -57,17 +50,14 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button
-          onClick={() => setShowModal(true)}
-          className="ghibli-btn w-full sm:w-auto"
-        >
+        <Button onClick={() => setShowModal(true)} className="ghibli-btn w-full sm:w-auto">
           <Plus className="size-4" /> Catatan Baru
         </Button>
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Cari catatan..."
-            value={query.search || ""}
+            value={query.search || ''}
             onChange={(e) => onSearch(e.target.value)}
             className="pl-9"
           />
@@ -107,18 +97,16 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
                 key={note.id}
                 data-stagger-item
                 className={cn(
-                  "flex min-h-[160px] cursor-pointer flex-col p-4 transition-all hover:shadow-lg",
-                  activeId === note.id && "ring-2 ring-primary/50",
+                  'flex min-h-[160px] cursor-pointer flex-col p-4 transition-all hover:shadow-lg',
+                  activeId === note.id && 'ring-2 ring-primary/50',
                 )}
                 onClick={() => handleSelect(note.id)}
               >
                 <div className="flex flex-grow items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate font-serif text-lg font-medium">
-                      {note.title}
-                    </h3>
+                    <h3 className="truncate font-serif text-lg font-medium">{note.title}</h3>
                     <p className="mt-2 line-clamp-3 break-words whitespace-pre-wrap text-sm text-muted-foreground">
-                      {note.content || "Kosong..."}
+                      {note.content || 'Kosong...'}
                     </p>
                   </div>
                   <Button
@@ -157,9 +145,7 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
               >
                 <ChevronLeft />
               </Button>
-              <div className="flex items-center px-4 text-sm font-medium">
-                {query.page || 1}
-              </div>
+              <div className="flex items-center px-4 text-sm font-medium">{query.page || 1}</div>
               <Button
                 variant="outline"
                 size="sm"

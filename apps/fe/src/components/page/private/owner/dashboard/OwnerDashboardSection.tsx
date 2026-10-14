@@ -1,18 +1,5 @@
-"use client";
+'use client';
 
-import {
-  Avatar,
-  AvatarFallback,
-  Badge,
-  Button,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Progress,
-  Separator,
-} from "@/components/atoms";
-import { cn } from "@/utils/classname";
 import {
   ArrowUpRight,
   Banknote,
@@ -26,7 +13,7 @@ import {
   Loader2,
   Users,
   XCircle,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   Bar,
   BarChart,
@@ -38,7 +25,22 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts";
+} from 'recharts';
+
+import {
+  Avatar,
+  AvatarFallback,
+  Badge,
+  Button,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Progress,
+  Separator,
+} from '@/components/atoms';
+import { GlassCard } from '@/components/molecules/GlassCard';
+import { cn } from '@/utils/classname';
 
 /* ────────────────────────────────────────── */
 /*  Mock Data & Types                          */
@@ -58,7 +60,7 @@ interface TaskDistribution {
 
 interface PendingApproval {
   id: string;
-  type: "cuti" | "wfh" | "budget" | "invitation";
+  type: 'cuti' | 'wfh' | 'budget' | 'invitation';
   user: string;
   initials: string;
   description: string;
@@ -74,136 +76,118 @@ interface ActivityLog {
 }
 
 const departmentData: DepartmentProductivity[] = [
-  { name: "Engineering", completed: 84, pending: 12 },
-  { name: "Product", completed: 52, pending: 18 },
-  { name: "Marketing", completed: 38, pending: 24 },
-  { name: "HR", completed: 26, pending: 8 },
-  { name: "Finance", completed: 31, pending: 6 },
+  { name: 'Engineering', completed: 84, pending: 12 },
+  { name: 'Product', completed: 52, pending: 18 },
+  { name: 'Marketing', completed: 38, pending: 24 },
+  { name: 'HR', completed: 26, pending: 8 },
+  { name: 'Finance', completed: 31, pending: 6 },
 ];
 
 const taskDistributionData: TaskDistribution[] = [
-  { name: "Selesai", value: 142, color: "var(--color-success, #7DAF74)" },
-  { name: "Berjalan", value: 89, color: "var(--color-info, #AEC6CF)" },
-  { name: "Review", value: 34, color: "var(--color-warning, #F2C94C)" },
-  { name: "Terblokir", value: 12, color: "var(--color-destructive, #D97757)" },
+  { name: 'Selesai', value: 142, color: 'var(--color-success, #7DAF74)' },
+  { name: 'Berjalan', value: 89, color: 'var(--color-info, #AEC6CF)' },
+  { name: 'Review', value: 34, color: 'var(--color-warning, #F2C94C)' },
+  { name: 'Terblokir', value: 12, color: 'var(--color-destructive, #D97757)' },
 ];
 
 const pendingApprovals: PendingApproval[] = [
   {
-    id: "1",
-    type: "cuti",
-    user: "Ayu Lestari",
-    initials: "AL",
-    description: "Cuti tahunan — 5 hari (12–16 Mei)",
-    timeAgo: "2 jam lalu",
+    id: '1',
+    type: 'cuti',
+    user: 'Ayu Lestari',
+    initials: 'AL',
+    description: 'Cuti tahunan — 5 hari (12–16 Mei)',
+    timeAgo: '2 jam lalu',
   },
   {
-    id: "2",
-    type: "budget",
-    user: "Dimas Prayoga",
-    initials: "DP",
-    description: "Persetujuan budget campaign Q3 — Rp 45.000.000",
-    timeAgo: "4 jam lalu",
+    id: '2',
+    type: 'budget',
+    user: 'Dimas Prayoga',
+    initials: 'DP',
+    description: 'Persetujuan budget campaign Q3 — Rp 45.000.000',
+    timeAgo: '4 jam lalu',
   },
   {
-    id: "3",
-    type: "wfh",
-    user: "Rina Wijaya",
-    initials: "RW",
-    description: "WFH request — 3 hari (Senin–Rabu)",
-    timeAgo: "6 jam lalu",
+    id: '3',
+    type: 'wfh',
+    user: 'Rina Wijaya',
+    initials: 'RW',
+    description: 'WFH request — 3 hari (Senin–Rabu)',
+    timeAgo: '6 jam lalu',
   },
   {
-    id: "4",
-    type: "invitation",
-    user: "Budi Santoso",
-    initials: "BS",
-    description: "Undangan 2 engineer baru — Tim Backend",
-    timeAgo: "1 hari lalu",
+    id: '4',
+    type: 'invitation',
+    user: 'Budi Santoso',
+    initials: 'BS',
+    description: 'Undangan 2 engineer baru — Tim Backend',
+    timeAgo: '1 hari lalu',
   },
   {
-    id: "5",
-    type: "cuti",
-    user: "Sari Indah",
-    initials: "SI",
-    description: "Cuti melahirkan — mulai 1 Juni",
-    timeAgo: "1 hari lalu",
+    id: '5',
+    type: 'cuti',
+    user: 'Sari Indah',
+    initials: 'SI',
+    description: 'Cuti melahirkan — mulai 1 Juni',
+    timeAgo: '1 hari lalu',
   },
 ];
 
 const activityLogs: ActivityLog[] = [
   {
-    id: "1",
-    user: "Budi Santoso",
-    initials: "BS",
-    action: "menyelesaikan milestone Fluxo App v2.0",
-    timeAgo: "12 menit lalu",
+    id: '1',
+    user: 'Budi Santoso',
+    initials: 'BS',
+    action: 'menyelesaikan milestone Fluxo App v2.0',
+    timeAgo: '12 menit lalu',
   },
   {
-    id: "2",
-    user: "Siti Rahayu",
-    initials: "SR",
-    action: "mengundang 2 engineer baru ke Tim Backend",
-    timeAgo: "28 menit lalu",
+    id: '2',
+    user: 'Siti Rahayu',
+    initials: 'SR',
+    action: 'mengundang 2 engineer baru ke Tim Backend',
+    timeAgo: '28 menit lalu',
   },
   {
-    id: "3",
-    user: "Dimas Prayoga",
-    initials: "DP",
-    action: "membuat campaign marketing Q3",
-    timeAgo: "45 menit lalu",
+    id: '3',
+    user: 'Dimas Prayoga',
+    initials: 'DP',
+    action: 'membuat campaign marketing Q3',
+    timeAgo: '45 menit lalu',
   },
   {
-    id: "4",
-    user: "Ayu Lestari",
-    initials: "AL",
-    action: "menyetujui budget pembelian server senilai Rp 12.000.000",
-    timeAgo: "1 jam lalu",
+    id: '4',
+    user: 'Ayu Lestari',
+    initials: 'AL',
+    action: 'menyetujui budget pembelian server senilai Rp 12.000.000',
+    timeAgo: '1 jam lalu',
   },
   {
-    id: "5",
-    user: "Rina Wijaya",
-    initials: "RW",
-    action: "menyelesaikan sesi deep work — 2.5 jam",
-    timeAgo: "2 jam lalu",
+    id: '5',
+    user: 'Rina Wijaya',
+    initials: 'RW',
+    action: 'menyelesaikan sesi deep work — 2.5 jam',
+    timeAgo: '2 jam lalu',
   },
   {
-    id: "6",
-    user: "System",
-    initials: "SY",
-    action: "Rencana pengisian ulang otomatis — Storage 72% terpakai",
-    timeAgo: "3 jam lalu",
+    id: '6',
+    user: 'System',
+    initials: 'SY',
+    action: 'Rencana pengisian ulang otomatis — Storage 72% terpakai',
+    timeAgo: '3 jam lalu',
   },
   {
-    id: "7",
-    user: "Fajar Hidayat",
-    initials: "FH",
-    action: "bergabung ke Tim Product sebagai Product Designer",
-    timeAgo: "5 jam lalu",
+    id: '7',
+    user: 'Fajar Hidayat',
+    initials: 'FH',
+    action: 'bergabung ke Tim Product sebagai Product Designer',
+    timeAgo: '5 jam lalu',
   },
 ];
 
 /* ────────────────────────────────────────── */
 /*  Helper Components                          */
 /* ────────────────────────────────────────── */
-
-function GlassCard({
-  className,
-  children,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "gsap-widget rounded-2xl border border-border/40 bg-card/70 shadow-lg shadow-black/[0.02] backdrop-blur-xl transition-all duration-300 hover:shadow-xl hover:shadow-black/[0.04] dark:border-border/30 dark:bg-card/60 dark:shadow-black/[0.08]",
-        className,
-      )}
-      {...props}
-    >
-      {children}
-    </div>
-  );
-}
 
 /* ────────────────────────────────────────── */
 /*  Widget 1 — Executive KPI Cards            */
@@ -213,37 +197,37 @@ function KpiCards() {
   const kpis = [
     {
       icon: Users,
-      label: "Utilisasi Kursi",
-      value: "32 / 40",
+      label: 'Utilisasi Kursi',
+      value: '32 / 40',
       detail: <Progress value={32} max={40} className="mt-2 h-1.5" />,
-      badge: "80% terpakai",
-      badgeVariant: "default" as const,
+      badge: '80% terpakai',
+      badgeVariant: 'default' as const,
     },
     {
       icon: GraduationCap,
-      label: "Tingkat Produktivitas",
-      value: "88.4%",
-      badge: "+5.2% minggu lalu",
-      badgeVariant: "default" as const,
+      label: 'Tingkat Produktivitas',
+      value: '88.4%',
+      badge: '+5.2% minggu lalu',
+      badgeVariant: 'default' as const,
     },
     {
       icon: CalendarCheck,
-      label: "Kesehatan Tugas",
-      value: "142 Aktif",
+      label: 'Kesehatan Tugas',
+      value: '142 Aktif',
       detail: (
         <p className="mt-1 text-xs text-muted-foreground">
           <span className="font-medium text-destructive">12 Overdue</span>
         </p>
       ),
-      badge: "92% on-track",
-      badgeVariant: "secondary" as const,
+      badge: '92% on-track',
+      badgeVariant: 'secondary' as const,
     },
     {
       icon: Clock,
-      label: "Total Deep Work",
-      value: "420 Jam",
-      badge: "Minggu ini",
-      badgeVariant: "outline" as const,
+      label: 'Total Deep Work',
+      value: '420 Jam',
+      badge: 'Minggu ini',
+      badgeVariant: 'outline' as const,
     },
   ];
 
@@ -261,9 +245,7 @@ function KpiCards() {
           </CardHeader>
           <CardContent className="px-5 pb-5">
             <div className="flex items-baseline justify-between">
-              <CardTitle className="text-2xl font-bold tracking-tight">
-                {kpi.value}
-              </CardTitle>
+              <CardTitle className="text-2xl font-bold tracking-tight">{kpi.value}</CardTitle>
               <Badge
                 variant={kpi.badgeVariant}
                 className="rounded-full px-2.5 py-0.5 text-[10px] font-medium"
@@ -298,10 +280,7 @@ function AiInsightsBanner() {
           <div>
             <CardTitle className="flex items-center gap-2 text-base font-semibold">
               AI Briefing
-              <Badge
-                variant="default"
-                className="rounded-full px-2 py-0.5 text-[10px] font-normal"
-              >
+              <Badge variant="default" className="rounded-full px-2 py-0.5 text-[10px] font-normal">
                 Live
               </Badge>
             </CardTitle>
@@ -313,12 +292,10 @@ function AiInsightsBanner() {
       </CardHeader>
       <CardContent className="relative px-6 pb-6">
         <p className="text-sm leading-relaxed text-foreground/85">
-          <span className="font-medium text-primary">Tim Engineering</span>{" "}
-          mencapai efisiensi 92%, namun{" "}
-          <span className="font-medium text-destructive">Tim Marketing</span>{" "}
-          mengalami bottleneck pada 3 campaign utama. Disarankan meninjau ulang
-          beban meeting mingguan dan mengalokasikan 2 engineer untuk
-          mempercepat.
+          <span className="font-medium text-primary">Tim Engineering</span> mencapai efisiensi 92%,
+          namun <span className="font-medium text-destructive">Tim Marketing</span> mengalami
+          bottleneck pada 3 campaign utama. Disarankan meninjau ulang beban meeting mingguan dan
+          mengalokasikan 2 engineer untuk mempercepat.
         </p>
         <Button
           variant="ghost"
@@ -341,45 +318,38 @@ function ProductivityChart() {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">
-        <CardTitle className="text-sm font-semibold">
-          Produktivitas per Divisi
-        </CardTitle>
-        <CardDescription className="text-xs">
-          Tasks completed vs. pending
-        </CardDescription>
+        <CardTitle className="text-sm font-semibold">Produktivitas per Divisi</CardTitle>
+        <CardDescription className="text-xs">Tasks completed vs. pending</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-5">
         <ResponsiveContainer width="100%" height={280}>
-          <BarChart
-            data={departmentData}
-            margin={{ top: 8, right: 16, left: -8, bottom: 4 }}
-          >
+          <BarChart data={departmentData} margin={{ top: 8, right: 16, left: -8, bottom: 4 }}>
             <XAxis
               dataKey="name"
-              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 11, fill: "var(--color-muted-foreground)" }}
+              tick={{ fontSize: 11, fill: 'var(--color-muted-foreground)' }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
               contentStyle={{
-                borderRadius: "12px",
-                border: "1px solid var(--border)",
-                background: "var(--color-popover)",
-                color: "var(--color-popover-foreground)",
-                fontSize: "12px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                borderRadius: '12px',
+                border: '1px solid var(--border)',
+                background: 'var(--color-popover)',
+                color: 'var(--color-popover-foreground)',
+                fontSize: '12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
               }}
-              cursor={{ fill: "var(--color-muted)", radius: 6 }}
+              cursor={{ fill: 'var(--color-muted)', radius: 6 }}
             />
             <Legend
               wrapperStyle={{
-                fontSize: "11px",
-                color: "var(--color-muted-foreground)",
+                fontSize: '11px',
+                color: 'var(--color-muted-foreground)',
               }}
             />
             <Bar
@@ -414,12 +384,8 @@ function TaskDistributionChart() {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">
-        <CardTitle className="text-sm font-semibold">
-          Distribusi Status Tugas
-        </CardTitle>
-        <CardDescription className="text-xs">
-          {total} total tasks
-        </CardDescription>
+        <CardTitle className="text-sm font-semibold">Distribusi Status Tugas</CardTitle>
+        <CardDescription className="text-xs">{total} total tasks</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-5">
         <ResponsiveContainer width="100%" height={280}>
@@ -440,19 +406,19 @@ function TaskDistributionChart() {
             </Pie>
             <Tooltip
               contentStyle={{
-                borderRadius: "12px",
-                border: "1px solid var(--border)",
-                background: "var(--color-popover)",
-                color: "var(--color-popover-foreground)",
-                fontSize: "12px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                borderRadius: '12px',
+                border: '1px solid var(--border)',
+                background: 'var(--color-popover)',
+                color: 'var(--color-popover-foreground)',
+                fontSize: '12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
               }}
-              formatter={(value) => [`${value} tugas`, "Jumlah"]}
+              formatter={(value) => [`${value} tugas`, 'Jumlah']}
             />
             <Legend
               wrapperStyle={{
-                fontSize: "11px",
-                color: "var(--color-muted-foreground)",
+                fontSize: '11px',
+                color: 'var(--color-muted-foreground)',
               }}
               iconType="circle"
               iconSize={8}
@@ -472,9 +438,7 @@ function TaskDistributionChart() {
                 style={{ backgroundColor: item.color }}
               />
               <span className="truncate">{item.name}</span>
-              <span className="ml-auto font-medium text-foreground/80">
-                {item.value}
-              </span>
+              <span className="ml-auto font-medium text-foreground/80">{item.value}</span>
             </div>
           ))}
         </div>
@@ -492,9 +456,7 @@ function BillingWidget() {
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-semibold">
-            Langganan & Tagihan
-          </CardTitle>
+          <CardTitle className="text-sm font-semibold">Langganan & Tagihan</CardTitle>
           <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <CreditCard className="size-4" />
           </div>
@@ -508,34 +470,24 @@ function BillingWidget() {
           </div>
           <Separator className="opacity-50" />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              Tanggal Perpanjangan
-            </span>
+            <span className="text-xs text-muted-foreground">Tanggal Perpanjangan</span>
             <span className="text-sm font-medium">15 Des 2025</span>
           </div>
           <Separator className="opacity-50" />
           <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              Pengeluaran Bulanan
-            </span>
-            <span className="text-sm font-semibold text-primary">
-              Rp 2.450.000
-            </span>
+            <span className="text-xs text-muted-foreground">Pengeluaran Bulanan</span>
+            <span className="text-sm font-semibold text-primary">Rp 2.450.000</span>
           </div>
         </div>
 
         <div className="flex items-center gap-2 rounded-xl bg-primary/[0.04] p-3 ring-1 ring-primary/10">
           <Banknote className="size-4 shrink-0 text-primary" />
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Upgrade ke Enterprise untuk unlimited seats, priority support, dan
-            audit log.
+            Upgrade ke Enterprise untuk unlimited seats, priority support, dan audit log.
           </p>
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full gap-1.5 rounded-xl text-xs font-medium"
-        >
+        <Button variant="outline" className="w-full gap-1.5 rounded-xl text-xs font-medium">
           Upgrade Plan
           <ArrowUpRight className="size-3.5" />
         </Button>
@@ -549,38 +501,36 @@ function BillingWidget() {
 /* ────────────────────────────────────────── */
 
 function PendingApprovalsWidget() {
-  const typeIcon = (type: PendingApproval["type"]) => {
+  const typeIcon = (type: PendingApproval['type']) => {
     switch (type) {
-      case "cuti":
+      case 'cuti':
         return <CalendarCheck className="size-3.5 text-primary" />;
-      case "wfh":
+      case 'wfh':
         return <Loader2 className="size-3.5 text-warning" />;
-      case "budget":
+      case 'budget':
         return <Banknote className="size-3.5 text-destructive" />;
-      case "invitation":
+      case 'invitation':
         return <Users className="size-3.5 text-info" />;
     }
   };
 
-  const typeLabel = (type: PendingApproval["type"]) => {
+  const typeLabel = (type: PendingApproval['type']) => {
     switch (type) {
-      case "cuti":
-        return "Cuti";
-      case "wfh":
-        return "WFH";
-      case "budget":
-        return "Budget";
-      case "invitation":
-        return "Undangan";
+      case 'cuti':
+        return 'Cuti';
+      case 'wfh':
+        return 'WFH';
+      case 'budget':
+        return 'Budget';
+      case 'invitation':
+        return 'Undangan';
     }
   };
 
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-3">
-        <CardTitle className="text-sm font-semibold">
-          Persetujuan Tertunda
-        </CardTitle>
+        <CardTitle className="text-sm font-semibold">Persetujuan Tertunda</CardTitle>
         <CardDescription className="text-xs">
           {pendingApprovals.length} permintaan menunggu keputusan Anda
         </CardDescription>
@@ -598,9 +548,7 @@ function PendingApprovalsWidget() {
             </Avatar>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-medium text-foreground/90">
-                  {item.user}
-                </span>
+                <span className="text-sm font-medium text-foreground/90">{item.user}</span>
                 <Badge
                   variant="outline"
                   className="rounded-full px-1.5 py-0 text-[9px] font-normal"
@@ -609,12 +557,8 @@ function PendingApprovalsWidget() {
                   <span className="ml-0.5">{typeLabel(item.type)}</span>
                 </Badge>
               </div>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {item.description}
-              </p>
-              <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                {item.timeAgo}
-              </p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{item.description}</p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground/60">{item.timeAgo}</p>
             </div>
             <div className="flex shrink-0 gap-1">
               <Button
@@ -649,12 +593,8 @@ function ActivityFeedWidget() {
       <CardHeader className="px-5 pt-5 pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm font-semibold">
-              Aktivitas Perusahaan
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Feed real-time aktivitas tim
-            </CardDescription>
+            <CardTitle className="text-sm font-semibold">Aktivitas Perusahaan</CardTitle>
+            <CardDescription className="text-xs">Feed real-time aktivitas tim</CardDescription>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1">
             <span className="size-1.5 animate-pulse rounded-full bg-success" />
@@ -677,14 +617,9 @@ function ActivityFeedWidget() {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-sm leading-snug text-foreground/85">
-                  <span className="font-medium text-foreground">
-                    {log.user}
-                  </span>{" "}
-                  {log.action}
+                  <span className="font-medium text-foreground">{log.user}</span> {log.action}
                 </p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                  {log.timeAgo}
-                </p>
+                <p className="mt-0.5 text-[10px] text-muted-foreground/60">{log.timeAgo}</p>
               </div>
             </div>
           </div>
@@ -702,9 +637,7 @@ interface OwnerDashboardSectionProps {
   gridRef: React.RefObject<HTMLDivElement | null>;
 }
 
-export default function OwnerDashboardSection({
-  gridRef,
-}: OwnerDashboardSectionProps) {
+export default function OwnerDashboardSection({ gridRef }: OwnerDashboardSectionProps) {
   return (
     <section className="w-full min-h-screen pb-12">
       <div className="mb-6">

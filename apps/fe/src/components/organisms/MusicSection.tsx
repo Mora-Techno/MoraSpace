@@ -1,28 +1,30 @@
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
+import type {
+  IMusicPlayListItem,
+  MusicPlaylist,
+  PickCreatePlaylist,
+  TrackCatalog,
+} from '@repo/types';
 import {
-  Music,
-  Plus,
-  Pause,
-  Play,
-  Trash2,
   ChevronDown,
   ChevronRight,
-  Shuffle,
-  ListPlus,
   Disc3,
-} from "lucide-react";
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { Button, Input } from "@/components/atoms";
-import type {
-  PickCreatePlaylist,
-  MusicPlaylist,
-  IMusicPlayListItem,
-  TrackCatalog,
-} from "@repo/types";
-import { cn } from "@/utils/classname";
-import PlaylistModal from "../molecules/modal/PlayListModal";
-import CatalogModal from "../molecules/modal/CatalogModal";
+  ListPlus,
+  Music,
+  Pause,
+  Play,
+  Plus,
+  Shuffle,
+  Trash2,
+} from 'lucide-react';
+
+import { Button, Input } from '@/components/atoms';
+import { Skeleton } from '@/components/atoms/Skeleton';
+import { WidgetHeader } from '@/components/atoms/WidgetHeader';
+import { GlassCard } from '@/components/molecules/GlassCard';
+import { cn } from '@/utils/classname';
+
+import CatalogModal from '../molecules/modal/CatalogModal';
+import PlaylistModal from '../molecules/modal/PlayListModal';
 
 interface MusicSectionProps {
   service: {
@@ -42,13 +44,9 @@ interface MusicSectionProps {
     expandedPlaylistId: string | null;
 
     selectedPlaylistForAdd: string | null;
-    setSelectedPlaylistForAdd: React.Dispatch<
-      React.SetStateAction<string | null>
-    >;
+    setSelectedPlaylistForAdd: React.Dispatch<React.SetStateAction<string | null>>;
     formCreatePlaylistMusic: PickCreatePlaylist;
-    setFormCreatePlaylistMusic: React.Dispatch<
-      React.SetStateAction<PickCreatePlaylist>
-    >;
+    setFormCreatePlaylistMusic: React.Dispatch<React.SetStateAction<PickCreatePlaylist>>;
 
     currentTrack: IMusicPlayListItem | null;
     isPlaying: boolean;
@@ -122,9 +120,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
         ) : playlists.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground opacity-70">
             <span className="text-4xl mb-2">🎧</span>
-            <p className="text-sm">
-              Belum ada playlist lofi/fokus yang tersimpan.
-            </p>
+            <p className="text-sm">Belum ada playlist lofi/fokus yang tersimpan.</p>
           </div>
         ) : (
           playlists.map((playlist: MusicPlaylist) => {
@@ -132,18 +128,16 @@ export function MusicSection({ service, state }: MusicSectionProps) {
             const items = playlist.items ?? [];
             const hasItems = items.length > 0;
 
-            const isActivePlaylist = items.some(
-              (item) => item.id === currentTrack?.id,
-            );
+            const isActivePlaylist = items.some((item) => item.id === currentTrack?.id);
 
             return (
               <div
                 key={playlist.id}
                 className={cn(
-                  "rounded-xl border transition-colors",
+                  'rounded-xl border transition-colors',
                   isActivePlaylist
-                    ? "border-primary/30 bg-primary/5"
-                    : "border-border/30 bg-background/30",
+                    ? 'border-primary/30 bg-primary/5'
+                    : 'border-border/30 bg-background/30',
                 )}
               >
                 <div className="flex w-full items-center gap-3 p-3 text-left">
@@ -163,9 +157,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                     className="min-w-0 flex-1 cursor-pointer"
                     onClick={() => toggleExpand(playlist.id)}
                   >
-                    <p className="truncate text-sm font-medium">
-                      {playlist.name}
-                    </p>
+                    <p className="truncate text-sm font-medium">{playlist.name}</p>
                     <p className="text-xs text-muted-foreground">
                       {playlist.description}
                       {hasItems && ` · ${items.length} lagu`}
@@ -177,9 +169,7 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                       <>
                         <button
                           type="button"
-                          onClick={() =>
-                            onPlayPlaylist(items, 0, playlist.name)
-                          }
+                          onClick={() => onPlayPlaylist(items, 0, playlist.name)}
                           className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted/50 hover:text-primary"
                           title="Putar semua"
                         >
@@ -192,10 +182,10 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                             if (!isShuffle) onToggleShuffle();
                           }}
                           className={cn(
-                            "flex size-7 shrink-0 items-center justify-center rounded-md transition-colors",
+                            'flex size-7 shrink-0 items-center justify-center rounded-md transition-colors',
                             isShuffle && isActivePlaylist
-                              ? "text-primary bg-primary/10"
-                              : "text-muted-foreground hover:bg-muted/50 hover:text-primary",
+                              ? 'text-primary bg-primary/10'
+                              : 'text-muted-foreground hover:bg-muted/50 hover:text-primary',
                           )}
                           title="Putar acak"
                         >
@@ -228,8 +218,8 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                         <div
                           key={item.id}
                           className={cn(
-                            "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/30",
-                            isCurrentTrack && "bg-primary/5",
+                            'flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/30',
+                            isCurrentTrack && 'bg-primary/5',
                           )}
                         >
                           <button
@@ -244,10 +234,10 @@ export function MusicSection({ service, state }: MusicSectionProps) {
                               }
                             }}
                             className={cn(
-                              "flex size-7 shrink-0 items-center justify-center rounded-full transition-colors",
+                              'flex size-7 shrink-0 items-center justify-center rounded-full transition-colors',
                               isCurrentTrack
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary",
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary',
                             )}
                           >
                             {isItemPlaying ? (
@@ -259,11 +249,11 @@ export function MusicSection({ service, state }: MusicSectionProps) {
 
                           <p
                             className={cn(
-                              "min-w-0 flex-1 truncate text-xs",
-                              isCurrentTrack && "text-primary font-medium",
+                              'min-w-0 flex-1 truncate text-xs',
+                              isCurrentTrack && 'text-primary font-medium',
                             )}
                           >
-                            {item.title || "No Title"}
+                            {item.title || 'No Title'}
                           </p>
 
                           <button

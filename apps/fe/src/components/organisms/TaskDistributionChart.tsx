@@ -1,21 +1,9 @@
-"use client";
+'use client';
 
-import {
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/atoms";
-import { GlassCard } from "@/components/molecules/GlassCard";
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 interface TaskDistribution {
   name: string;
@@ -24,10 +12,10 @@ interface TaskDistribution {
 }
 
 const taskDistributionData: TaskDistribution[] = [
-  { name: "Selesai", value: 142, color: "var(--color-success, #7DAF74)" },
-  { name: "Berjalan", value: 89, color: "var(--color-info, #AEC6CF)" },
-  { name: "Review", value: 34, color: "var(--color-warning, #F2C94C)" },
-  { name: "Terblokir", value: 12, color: "var(--color-destructive, #D97757)" },
+  { name: 'Selesai', value: 142, color: 'var(--color-success, #7DAF74)' },
+  { name: 'Berjalan', value: 89, color: 'var(--color-info, #AEC6CF)' },
+  { name: 'Review', value: 34, color: 'var(--color-warning, #F2C94C)' },
+  { name: 'Terblokir', value: 12, color: 'var(--color-destructive, #D97757)' },
 ];
 
 export function TaskDistributionChart() {
@@ -36,12 +24,8 @@ export function TaskDistributionChart() {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">
-        <CardTitle className="text-sm font-semibold">
-          Distribusi Status Tugas
-        </CardTitle>
-        <CardDescription className="text-xs">
-          {total} total tasks
-        </CardDescription>
+        <CardTitle className="text-sm font-semibold">Distribusi Status Tugas</CardTitle>
+        <CardDescription className="text-xs">{total} total tasks</CardDescription>
       </CardHeader>
       <CardContent className="px-2 pb-5">
         <ResponsiveContainer width="100%" height={280}>
@@ -62,19 +46,19 @@ export function TaskDistributionChart() {
             </Pie>
             <Tooltip
               contentStyle={{
-                borderRadius: "12px",
-                border: "1px solid var(--border)",
-                background: "var(--color-popover)",
-                color: "var(--color-popover-foreground)",
-                fontSize: "12px",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                borderRadius: '12px',
+                border: '1px solid var(--border)',
+                background: 'var(--color-popover)',
+                color: 'var(--color-popover-foreground)',
+                fontSize: '12px',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.08)',
               }}
-              formatter={(value) => [`${value} tugas`, "Jumlah"]}
+              formatter={(value) => [`${value} tugas`, 'Jumlah']}
             />
             <Legend
               wrapperStyle={{
-                fontSize: "11px",
-                color: "var(--color-muted-foreground)",
+                fontSize: '11px',
+                color: 'var(--color-muted-foreground)',
               }}
               iconType="circle"
               iconSize={8}
@@ -94,9 +78,7 @@ export function TaskDistributionChart() {
                 style={{ backgroundColor: item.color }}
               />
               <span className="truncate">{item.name}</span>
-              <span className="ml-auto font-medium text-foreground/80">
-                {item.value}
-              </span>
+              <span className="ml-auto font-medium text-foreground/80">{item.value}</span>
             </div>
           ))}
         </div>

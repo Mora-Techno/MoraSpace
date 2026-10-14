@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { formatDateTime } from "@repo/utils/time-format";
-import { Bell } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { formatDateTime } from '@repo/utils/time-format';
+import { Bell } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
 
 import {
   Badge,
@@ -13,23 +13,21 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/atoms";
-import { useApi } from "@/hooks/useApi/useApi";
+} from '@/components/atoms';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function NotificationDropdown() {
   const api = useApi();
   const router = useRouter();
   const pathname = usePathname();
-  const listRoute = pathname.includes("/owner/")
-    ? "/owner/member/notifications"
-    : "/member/notifications";
+  const listRoute = pathname.includes('/owner/')
+    ? '/owner/member/notifications'
+    : '/member/notifications';
 
   const { data: notifications = [] } = api.notification.query.get({ limit: 5 });
   const markAllRead = api.notification.mutate.markAllRead();
 
-  const unreadCount = notifications.filter(
-    (notification) => !notification.readAt,
-  ).length;
+  const unreadCount = notifications.filter((notification) => !notification.readAt).length;
 
   const handleSelect = (id: string) => {
     router.push(`${listRoute}/${id}`);
@@ -81,7 +79,7 @@ export default function NotificationDropdown() {
                 <div className="flex items-center gap-2">
                   <span
                     className={`truncate text-sm font-semibold ${
-                      !notification.readAt ? "text-primary" : "text-foreground"
+                      !notification.readAt ? 'text-primary' : 'text-foreground'
                     }`}
                   >
                     {notification.title}

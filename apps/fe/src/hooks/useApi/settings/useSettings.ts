@@ -1,5 +1,5 @@
-import { useTestingEmail, useUpdateSettings } from "./state/mutate";
-import { useGetSettings } from "./state/query";
+import { useTestingEmail, useUpdateSettings } from './state/mutate';
+import { useGetSettings } from './state/query';
 
 export const useSettings = () => {
   return {

@@ -2,5 +2,48 @@
   "welcome": "Welcome",
   "language": "Language",
   "change_language": "Change Language",
-  "select_language": "Select Language"
+  "select_language": "Select Language",
+  "nav": {
+    "home": "Home",
+    "pricing": "Pricing",
+    "blogs": "Blog",
+    "resources": "Resources",
+    "login": "Sign In",
+    "register": "Get Started",
+    "my_account": "My Account"
+  },
+  "footer": {
+    "tagline": "One Workspace. Better Work.",
+    "description": "Digital workspace prioritizing mental calm, deep focus, and distraction-free collaboration.",
+    "products": "Products",
+    "featured": "Key Features",
+    "doc_editor": "Document Editor",
+    "kanban": "Kanban & Tasks",
+    "calendar": "Calendar & Rhythm",
+    "focus_mode": "Focus Mode",
+    "company": "Company",
+    "about": "About Us",
+    "manifesto": "Manifesto",
+    "careers": "Careers",
+    "contact": "Contact",
+    "resources_col": "Resources",
+    "guides": "Guidebook",
+    "community": "Community",
+    "help": "Help Center",
+    "changelog": "Changelog",
+    "legal": "Legal & Privacy",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "security": "Security",
+    "cookies": "Cookie Policy",
+    "copyright": "Spaces © 2025. Designed for serenity and deep productivity."
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "continue": "Continue",
+    "back": "Back",
+    "loading": "Loading..."
+  }
 }

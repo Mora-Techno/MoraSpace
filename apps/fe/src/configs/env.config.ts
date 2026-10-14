@@ -1,14 +1,12 @@
-import { createEnv } from "@t3-oss/env-nextjs";
-import { NEVER, z } from "zod";
+import { createEnv } from '@t3-oss/env-nextjs';
+import { NEVER, z } from 'zod';
 
-const requiredString = z.string().trim().min(1, "This field is required");
+const requiredString = z.string().trim().min(1, 'This field is required');
 
 export const env = createEnv({
   // Server Environment Variables Configuration
   server: {
-    NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
+    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     AUTH_SECRET_KEY: requiredString,
     NEXT_INTERNAL_API_SECRET: requiredString,
     GOOGLE_CLIENT_SECRET: requiredString,
@@ -41,8 +39,7 @@ export const env = createEnv({
     NEXT_ACCESS_KEY_ID: process.env.NEXT_ACCESS_KEY_ID,
     NEXT_SECRET_ACCESS_KEY: process.env.NEXT_SECRET_ACCESS_KEY,
     NEXT_INTERNAL_API_SECRET: process.env.NEXT_INTERNAL_API_SECRET,
-    NEXT_PUBLIC_INTERNAL_API_SECRET:
-      process.env.NEXT_PUBLIC_INTERNAL_API_SECRET,
+    NEXT_PUBLIC_INTERNAL_API_SECRET: process.env.NEXT_PUBLIC_INTERNAL_API_SECRET,
     NEXT_PUBLIC_GATE_API: process.env.NEXT_PUBLIC_GATE_API,
     NEXT_PUBLIC_VERSION_API: process.env.NEXT_PUBLIC_VERSION_API,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,

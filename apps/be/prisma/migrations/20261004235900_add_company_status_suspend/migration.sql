@@ -6,4 +6,5 @@ ALTER TABLE "companies" ADD COLUMN "suspended_at" TIMESTAMP(3);
 
 -- Repair drift: kolom `country` hilang di DB (migrasi contry yang hilang),
 -- schema.prisma butuh. Additive, nullable, tanpa sentuh data.
-ALTER TABLE "companies" ADD COLUMN "country" TEXT;
+-- IF NOT EXISTS: fresh DB sudah punya kolom ini dari 20260701132745.
+ALTER TABLE "companies" ADD COLUMN IF NOT EXISTS "country" TEXT;

@@ -1,18 +1,10 @@
-import type { PickApiID } from "@repo/types/api.types";
-import type {
-  CalendarEvent,
-  PickCreateEvent,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
+import type { PickApiID } from '@repo/types/api.types';
+import type { CalendarEvent, PickCreateEvent, PickUpdateEvent } from '@repo/types/calendar.types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type CalendarCacheContext,
-  calenderRootKey,
-  readEventSnapshot,
-} from "./utils";
+import { type CalendarCacheContext, calenderRootKey, readEventSnapshot } from './utils';
 
 export function useCreateEvent() {
   return useAppMutation<CalendarEvent, PickCreateEvent, CalendarCacheContext>({
@@ -26,7 +18,7 @@ export function useCreateEvent() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -44,7 +36,7 @@ export function useDeleteEvent() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -66,7 +58,7 @@ export function useUpdateEvent() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

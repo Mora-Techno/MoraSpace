@@ -76,27 +76,29 @@ const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
   },
 ];
 
+const MEMBER_NAV_ITEMS: NavItem[] = [
+  { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+  { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
+  { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
+  { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
+  { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
+  {
+    title: 'Calendar',
+    url: '/member/calendar',
+    icon: Calendar,
+    mobile: true,
+  },
+  { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
+  {
+    title: 'Settings',
+    url: '/member/settings',
+    icon: Settings,
+    mobile: true,
+  },
+];
+
 const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
-  member: [
-    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
-    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
-    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
-    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
-    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
-    {
-      title: 'Calendar',
-      url: '/member/calendar',
-      icon: Calendar,
-      mobile: true,
-    },
-    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
-    {
-      title: 'Settings',
-      url: '/member/settings',
-      icon: Settings,
-      mobile: true,
-    },
-  ],
+  member: MEMBER_NAV_ITEMS,
   owner: [
     { title: 'Dashboard', url: '/owner/dashboard', icon: Home, mobile: true },
 
@@ -127,46 +129,9 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
     },
     { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
-  personal: [
-    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
-    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
-    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
-    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
-    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
-    {
-      title: 'Calendar',
-      url: '/member/calendar',
-      icon: Calendar,
-      mobile: true,
-    },
-    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
-    {
-      title: 'Settings',
-      url: '/member/settings',
-      icon: Settings,
-      mobile: true,
-    },
-  ],
-  individual: [
-    { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
-    { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
-    { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
-    { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
-    { title: 'Notes', url: '/member/notes', icon: FileText, mobile: true },
-    {
-      title: 'Calendar',
-      url: '/member/calendar',
-      icon: Calendar,
-      mobile: true,
-    },
-    { title: 'Music', url: '/member/music', icon: Music2, mobile: false },
-    {
-      title: 'Settings',
-      url: '/member/settings',
-      icon: Settings,
-      mobile: true,
-    },
-  ],
+  // Personal & individual langsung pakai nav member (tanpa embed duplikat).
+  personal: MEMBER_NAV_ITEMS,
+  individual: MEMBER_NAV_ITEMS,
 };
 
 export function getNavItems(role?: Role | string | null): NavItem[] {

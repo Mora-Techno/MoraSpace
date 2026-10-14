@@ -1,17 +1,19 @@
-import crypto from "node:crypto";
+import crypto from 'node:crypto';
 
 export const InternalApiKey = (app: any) => {
   app.onBeforeHandle(
     ({ headers, set, request }: { headers: Record<string, any>; set: any; request: Request }) => {
       try {
-        const path = new URL(request.url).pathname.replace(/\/$/, "");
+        const path = new URL(request.url).pathname.replace(/\/$/, '');
         // These handlers authenticate the provider signature/callback token themselves.
-        if (request.method === "POST" && (
-          path === "/api/v1/subscriptions/webhooks/stripe" ||
-          path === "/api/v1/subscriptions/webhooks/xendit"
-        )) return;
+        if (
+          request.method === 'POST' &&
+          (path === '/api/v1/subscriptions/webhooks/stripe' ||
+            path === '/api/v1/subscriptions/webhooks/xendit')
+        )
+          return;
 
-        const rawKey = headers["."] ?? headers["x-internal-api-key"];
+        const rawKey = headers['.'] ?? headers['x-internal-api-key'];
         const clientKey = Array.isArray(rawKey) ? rawKey[0] : rawKey;
 
         const serverKey = process.env.INTERNAL_API_SECRET;
@@ -20,12 +22,12 @@ export const InternalApiKey = (app: any) => {
           set.status = 401;
           return {
             status: 401,
-            message: "Kunci API internal tidak ditemukan",
+            message: 'Kunci API internal tidak ditemukan',
           };
         }
 
         if (!serverKey) {
-          throw new Error("INTERNAL_API_SECRET is not defined");
+          throw new Error('INTERNAL_API_SECRET is not defined');
         }
 
         const clientBuffer = Buffer.from(String(clientKey));
@@ -35,7 +37,7 @@ export const InternalApiKey = (app: any) => {
           set.status = 403;
           return {
             status: 403,
-            message: "Kunci API internal tidak valid",
+            message: 'Kunci API internal tidak valid',
           };
         }
 
@@ -45,14 +47,14 @@ export const InternalApiKey = (app: any) => {
           set.status = 403;
           return {
             status: 403,
-            message: "Kunci API internal tidak valid",
+            message: 'Kunci API internal tidak valid',
           };
         }
       } catch (_error) {
         set.status = 500;
         return {
           status: 500,
-          message: "Terjadi kesalahan autentikasi API internal",
+          message: 'Terjadi kesalahan autentikasi API internal',
         };
       }
     },

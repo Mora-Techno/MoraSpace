@@ -1,6 +1,6 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/calendar/events";
+const mount = '/calendar/events';
 
 export const CALENDAR_ENDPOINTS = {
   LIST: buildEndpoint(mount),

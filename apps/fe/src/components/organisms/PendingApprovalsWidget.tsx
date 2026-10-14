@@ -1,11 +1,4 @@
-import {
-  Banknote,
-  CalendarCheck,
-  CheckCircle2,
-  Loader2,
-  Users,
-  XCircle,
-} from "lucide-react";
+import { Banknote, CalendarCheck, CheckCircle2, Loader2, Users, XCircle } from 'lucide-react';
 
 import {
   Avatar,
@@ -16,12 +9,12 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/atoms";
-import { GlassCard } from "@/components/molecules/GlassCard";
+} from '@/components/atoms';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 interface PendingApproval {
   id: string;
-  type: "cuti" | "wfh" | "budget" | "invitation";
+  type: 'cuti' | 'wfh' | 'budget' | 'invitation';
   user: string;
   initials: string;
   description: string;
@@ -30,70 +23,70 @@ interface PendingApproval {
 
 const pendingApprovals: PendingApproval[] = [
   {
-    id: "1",
-    type: "cuti",
-    user: "Ayu Lestari",
-    initials: "AL",
-    description: "Cuti tahunan — 5 hari (12–16 Mei)",
-    timeAgo: "2 jam lalu",
+    id: '1',
+    type: 'cuti',
+    user: 'Ayu Lestari',
+    initials: 'AL',
+    description: 'Cuti tahunan — 5 hari (12–16 Mei)',
+    timeAgo: '2 jam lalu',
   },
   {
-    id: "2",
-    type: "budget",
-    user: "Dimas Prayoga",
-    initials: "DP",
-    description: "Persetujuan budget campaign Q3 — Rp 45.000.000",
-    timeAgo: "4 jam lalu",
+    id: '2',
+    type: 'budget',
+    user: 'Dimas Prayoga',
+    initials: 'DP',
+    description: 'Persetujuan budget campaign Q3 — Rp 45.000.000',
+    timeAgo: '4 jam lalu',
   },
   {
-    id: "3",
-    type: "wfh",
-    user: "Rina Wijaya",
-    initials: "RW",
-    description: "WFH request — 3 hari (Senin–Rabu)",
-    timeAgo: "6 jam lalu",
+    id: '3',
+    type: 'wfh',
+    user: 'Rina Wijaya',
+    initials: 'RW',
+    description: 'WFH request — 3 hari (Senin–Rabu)',
+    timeAgo: '6 jam lalu',
   },
   {
-    id: "4",
-    type: "invitation",
-    user: "Budi Santoso",
-    initials: "BS",
-    description: "Undangan 2 engineer baru — Tim Backend",
-    timeAgo: "1 hari lalu",
+    id: '4',
+    type: 'invitation',
+    user: 'Budi Santoso',
+    initials: 'BS',
+    description: 'Undangan 2 engineer baru — Tim Backend',
+    timeAgo: '1 hari lalu',
   },
   {
-    id: "5",
-    type: "cuti",
-    user: "Sari Indah",
-    initials: "SI",
-    description: "Cuti melahirkan — mulai 1 Juni",
-    timeAgo: "1 hari lalu",
+    id: '5',
+    type: 'cuti',
+    user: 'Sari Indah',
+    initials: 'SI',
+    description: 'Cuti melahirkan — mulai 1 Juni',
+    timeAgo: '1 hari lalu',
   },
 ];
 
-const typeIcon = (type: PendingApproval["type"]) => {
+const typeIcon = (type: PendingApproval['type']) => {
   switch (type) {
-    case "cuti":
+    case 'cuti':
       return <CalendarCheck className="size-3.5 text-primary" />;
-    case "wfh":
+    case 'wfh':
       return <Loader2 className="size-3.5 text-warning" />;
-    case "budget":
+    case 'budget':
       return <Banknote className="size-3.5 text-destructive" />;
-    case "invitation":
+    case 'invitation':
       return <Users className="size-3.5 text-info" />;
   }
 };
 
-const typeLabel = (type: PendingApproval["type"]) => {
+const typeLabel = (type: PendingApproval['type']) => {
   switch (type) {
-    case "cuti":
-      return "Cuti";
-    case "wfh":
-      return "WFH";
-    case "budget":
-      return "Budget";
-    case "invitation":
-      return "Undangan";
+    case 'cuti':
+      return 'Cuti';
+    case 'wfh':
+      return 'WFH';
+    case 'budget':
+      return 'Budget';
+    case 'invitation':
+      return 'Undangan';
   }
 };
 
@@ -101,9 +94,7 @@ export function PendingApprovalsWidget() {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-3">
-        <CardTitle className="text-sm font-semibold">
-          Persetujuan Tertunda
-        </CardTitle>
+        <CardTitle className="text-sm font-semibold">Persetujuan Tertunda</CardTitle>
         <CardDescription className="text-xs">
           {pendingApprovals.length} permintaan menunggu keputusan Anda
         </CardDescription>
@@ -121,9 +112,7 @@ export function PendingApprovalsWidget() {
             </Avatar>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-sm font-medium text-foreground/90">
-                  {item.user}
-                </span>
+                <span className="text-sm font-medium text-foreground/90">{item.user}</span>
                 <Badge
                   variant="outline"
                   className="rounded-full px-1.5 py-0 text-[9px] font-normal"
@@ -132,12 +121,8 @@ export function PendingApprovalsWidget() {
                   <span className="ml-0.5">{typeLabel(item.type)}</span>
                 </Badge>
               </div>
-              <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                {item.description}
-              </p>
-              <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                {item.timeAgo}
-              </p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{item.description}</p>
+              <p className="mt-0.5 text-[10px] text-muted-foreground/60">{item.timeAgo}</p>
             </div>
             <div className="flex shrink-0 gap-1">
               <Button

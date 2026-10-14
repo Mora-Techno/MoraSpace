@@ -1,4 +1,4 @@
-import ResetPasswordContainer from "./_container/ResetPassword";
+import ResetPasswordContainer from './_container/ResetPassword';
 
 export default function ResetPassword() {
   return <ResetPasswordContainer />;

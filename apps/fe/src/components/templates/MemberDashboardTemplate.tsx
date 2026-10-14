@@ -1,6 +1,7 @@
-import * as React from "react";
-import type { ReactNode } from "react";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
+import type { ReactNode } from 'react';
+import * as React from 'react';
+
+import { useGsapStagger } from '@/hooks/useGsapStagger';
 
 interface MemberDashboardTemplateProps {
   dailyGreeting: ReactNode;

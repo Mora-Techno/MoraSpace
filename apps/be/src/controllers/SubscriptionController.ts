@@ -1,18 +1,14 @@
-import SubscriptionService from "@/service/SubscriptionService";
-import { HttpResponse } from "@/http";
-import { getUser } from "@/utils/authTokens";
-import type { PickCreateCheckout } from "@repo/types/subscription.types";
-import type { AppContext } from "@/contex";
+import SubscriptionService from '@/service/SubscriptionService';
+import { HttpResponse } from '@/http';
+import { getUser } from '@/utils/authTokens';
+import type { PickCreateCheckout } from '@repo/types/subscription.types';
+import type { AppContext } from '@/contex';
 
 class SubscriptionController {
   public async listPlans(c: AppContext) {
     try {
       const queryService = SubscriptionService.listPlans();
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Berhasil mengambil daftar paket",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil mengambil daftar paket');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -26,25 +22,25 @@ class SubscriptionController {
       if (!user.companyId) {
         return HttpResponse(c).ok(
           {
-            plan: "Free",
-            tier: "free",
-            status: "active",
-            billingCycle: "monthly",
+            plan: 'Free',
+            tier: 'free',
+            status: 'active',
+            billingCycle: 'monthly',
             maxMembers: 1,
             features: [
-              "personal_workspace",
-              "tasks",
-              "todos",
-              "notes",
-              "pomodoro",
-              "music",
-              "calendar",
+              'personal_workspace',
+              'tasks',
+              'todos',
+              'notes',
+              'pomodoro',
+              'music',
+              'calendar',
             ],
             currentPeriodEnd: null,
             isIndividual: true,
           },
           undefined,
-          "Berhasil mengambil langganan individual",
+          'Berhasil mengambil langganan individual',
         );
       }
 
@@ -52,32 +48,28 @@ class SubscriptionController {
       if (!queryService) {
         return HttpResponse(c).ok(
           {
-            plan: "Free",
-            tier: "free",
-            status: "active",
-            billingCycle: "monthly",
+            plan: 'Free',
+            tier: 'free',
+            status: 'active',
+            billingCycle: 'monthly',
             maxMembers: 5,
             features: [
-              "company_workspace",
-              "tasks",
-              "todos",
-              "notes",
-              "pomodoro",
-              "music",
-              "calendar",
+              'company_workspace',
+              'tasks',
+              'todos',
+              'notes',
+              'pomodoro',
+              'music',
+              'calendar',
             ],
             currentPeriodEnd: null,
           },
           undefined,
-          "Berhasil mengambil langganan default",
+          'Berhasil mengambil langganan default',
         );
       }
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Berhasil mengambil langganan",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil mengambil langganan');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -88,14 +80,12 @@ class SubscriptionController {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== "Owner") {
-        return HttpResponse(c).forbidden(
-          "Hanya owner yang dapat mengelola langganan",
-        );
+      if (user.companyRole !== 'Owner') {
+        return HttpResponse(c).forbidden('Hanya owner yang dapat mengelola langganan');
       }
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
       const body = c.body as PickCreateCheckout;
@@ -105,11 +95,7 @@ class SubscriptionController {
         body,
       );
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Checkout berhasil dibuat",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Checkout berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -119,28 +105,19 @@ class SubscriptionController {
     try {
       const user = getUser(c);
 
-      if (user.companyRole !== "Owner") {
-        return HttpResponse(c).forbidden(
-          "Hanya owner yang dapat membatalkan langganan",
-        );
+      if (user.companyRole !== 'Owner') {
+        return HttpResponse(c).forbidden('Hanya owner yang dapat membatalkan langganan');
       }
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const queryService = await SubscriptionService.cancelSubscription(
-        user.companyId,
-      );
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Langganan berhasil dibatalkan",
-      );
+      const queryService = await SubscriptionService.cancelSubscription(user.companyId);
+      return HttpResponse(c).ok(queryService, undefined, 'Langganan berhasil dibatalkan');
     } catch (error) {
       console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Gagal membatalkan langganan";
+      const message = error instanceof Error ? error.message : 'Gagal membatalkan langganan';
       return HttpResponse(c).badRequest(message);
     }
   }
@@ -148,42 +125,29 @@ class SubscriptionController {
   public async stripeWebhook(c: AppContext) {
     try {
       const payload = c.body as string;
-      const signature = c.request.headers.get("stripe-signature");
-      const queryService = await SubscriptionService.handleStripeWebhook(
-        payload,
-        signature,
-      );
+      const signature = c.request.headers.get('stripe-signature');
+      const queryService = await SubscriptionService.handleStripeWebhook(payload, signature);
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Webhook Stripe diterima",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Webhook Stripe diterima');
     } catch (error) {
       console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Webhook Stripe gagal";
+      const message = error instanceof Error ? error.message : 'Webhook Stripe gagal';
       return HttpResponse(c).badRequest(message);
     }
   }
 
   public async xenditWebhook(c: AppContext) {
     try {
-      const callbackToken = c.request.headers.get("x-callback-token");
+      const callbackToken = c.request.headers.get('x-callback-token');
       const queryService = await SubscriptionService.handleXenditWebhook(
         c.body as Record<string, unknown>,
         callbackToken,
       );
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined,
-        "Webhook Xendit diterima",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Webhook Xendit diterima');
     } catch (error) {
       console.error(error);
-      const message =
-        error instanceof Error ? error.message : "Webhook Xendit gagal";
+      const message = error instanceof Error ? error.message : 'Webhook Xendit gagal';
       return HttpResponse(c).badRequest(message);
     }
   }
@@ -193,18 +157,11 @@ class SubscriptionController {
       const user = getUser(c);
 
       if (!user.companyId) {
-        return HttpResponse(c).notFound("Company tidak ditemukan");
+        return HttpResponse(c).notFound('Company tidak ditemukan');
       }
 
-      const result = await SubscriptionService.list(
-        user.companyId,
-        c.query as any,
-      );
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar langganan",
-      );
+      const result = await SubscriptionService.list(user.companyId, c.query as any);
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar langganan');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);

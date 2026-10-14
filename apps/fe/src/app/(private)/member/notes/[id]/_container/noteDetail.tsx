@@ -1,27 +1,25 @@
-"use client";
+'use client';
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { PickCreateNote } from '@repo';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { NoteEditorSection } from "@/components/page/private/member/notes/note-editor.section";
-import { useApi } from "@/hooks/useApi/useApi";
-import { PickCreateNote } from "@repo";
+import { Button } from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { NoteEditorSection } from '@/components/page/private/member/notes/note-editor.section';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function NoteDetailContainer({ id }: { id: string }) {
   const api = useApi();
   const pathname = usePathname();
-  const listRoute = pathname.includes("/owner/")
-    ? "/owner/notes"
-    : "/member/notes";
+  const listRoute = pathname.includes('/owner/') ? '/owner/notes' : '/member/notes';
   const { data: note, isLoading } = api.note.query.getByID(id);
   const updateNote = api.note.mutate.update();
   const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
-    content: "",
-    title: "",
+    content: '',
+    title: '',
   });
 
   useEffect(() => {

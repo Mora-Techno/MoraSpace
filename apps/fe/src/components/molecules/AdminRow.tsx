@@ -1,15 +1,16 @@
-import { AlertContexType } from "@/types/ui";
-import { AdminUser } from "@repo";
-import { Trash2, UserX, UserCheck } from "lucide-react";
-import { Button } from "@/components/atoms";
+import type { AdminUser } from '@repo';
+import { Trash2, UserCheck, UserX } from 'lucide-react';
+
+import { Button } from '@/components/atoms';
+import type { AlertContexType } from '@/types/ui';
 
 function getInitials(name: string): string {
   return name
-    .split(" ")
+    .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
 }
 
 interface AdminRowProps {
@@ -20,24 +21,18 @@ interface AdminRowProps {
   isPending?: boolean;
 }
 
-export function AdminRow({
-  admin,
-  alert,
-  onDelete,
-  onUpdateStatus,
-  isPending,
-}: AdminRowProps) {
+export function AdminRow({ admin, alert, onDelete, onUpdateStatus, isPending }: AdminRowProps) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border bg-card p-4">
+    <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md p-4 transition-all hover:border-border/80">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
-        {admin ? getInitials(admin.fullName) : ""}
+        {admin ? getInitials(admin.fullName) : ''}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">
-          {admin?.fullName ?? "Nama Admin"}
+        <p className="truncate text-sm font-semibold text-foreground">
+          {admin?.fullName ?? 'Nama Admin'}
         </p>
         <p className="truncate text-xs text-muted-foreground">
-          {admin?.email ?? "admin@company.com"}
+          {admin?.email ?? 'admin@company.com'}
         </p>
       </div>
 
@@ -49,24 +44,21 @@ export function AdminRow({
             disabled={isPending}
             onClick={() =>
               alert?.modal({
-                title:
-                  admin?.status === "active" ? "Nonaktifkan ?" : "Aktifkan ?",
+                title: admin?.status === 'active' ? 'Nonaktifkan ?' : 'Aktifkan ?',
                 deskripsi: `Apakah Anda yakin ingin ${
-                  admin?.status === "active" ? "menonaktifkan" : "mengaktifkan"
+                  admin?.status === 'active' ? 'menonaktifkan' : 'mengaktifkan'
                 } admin ini?`,
-                icon: "warning",
+                icon: 'warning',
                 onConfirm: () => {
-                  onUpdateStatus(
-                    admin?.status === "active" ? "inactive" : "active",
-                  );
+                  onUpdateStatus(admin?.status === 'active' ? 'inactive' : 'active');
                 },
               })
             }
           >
-            {admin?.status === "active" ? (
-              <UserX className="size-4 text-red-500" />
+            {admin?.status === 'active' ? (
+              <UserX className="size-4 text-destructive" />
             ) : (
-              <UserCheck className="size-4 text-green-500" />
+              <UserCheck className="size-4 text-success" />
             )}
           </Button>
         )}
@@ -76,11 +68,13 @@ export function AdminRow({
           disabled={isPending}
           onClick={() =>
             alert?.modal({
-              title: "Hapus ?",
-              deskripsi: "Apakah Anda Yakin Menghapus Admin ini",
-              icon: "warning",
+              title: 'Hapus ?',
+              deskripsi: 'Apakah Anda Yakin Menghapus Admin ini',
+              icon: 'warning',
               onConfirm: () => {
-                onDelete!(admin?.id!);
+                if (onDelete && admin?.id) {
+                  onDelete(admin.id);
+                }
               },
             })
           }

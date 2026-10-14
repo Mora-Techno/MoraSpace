@@ -1,16 +1,9 @@
-import type {
-  ICompanyMember,
-  PickUpdateCompanyMember,
-} from "@repo/types";
+import type { ICompanyMember, PickUpdateCompanyMember } from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type MemberCacheContext,
-  membersRoot,
-  readMemberSnapshot,
-} from "./utils";
+import { type MemberCacheContext, membersRoot, readMemberSnapshot } from './utils';
 
 export function useUpdateMember() {
   return useAppMutation<
@@ -25,11 +18,7 @@ export function useUpdateMember() {
 }
 
 export function useDeleteMember() {
-  return useAppMutation<
-    ICompanyMember,
-    { id: string },
-    MemberCacheContext
-  >({
+  return useAppMutation<ICompanyMember, { id: string }, MemberCacheContext>({
     mutationFn: ({ id }) => Api.Member.DeleteMember(id),
     invalidateKeys: [membersRoot],
     optimistic: (ns) => ({ previousData: readMemberSnapshot(ns) }),

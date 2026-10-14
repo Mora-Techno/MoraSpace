@@ -3,23 +3,15 @@ import type {
   PickAcceptInvitation,
   PickCreateInvitation,
   PickRejectInvitation,
-} from "@repo/types";
+} from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type InvitationCacheContext,
-  invitationsRootKey,
-  readInvitationSnapshot,
-} from "./utils";
+import { type InvitationCacheContext, invitationsRootKey, readInvitationSnapshot } from './utils';
 
 export function useCreateInvitation() {
-  return useAppMutation<
-    IInvitation,
-    PickCreateInvitation,
-    InvitationCacheContext
-  >({
+  return useAppMutation<IInvitation, PickCreateInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.CreateInvitation(payload),
     invalidateKeys: [invitationsRootKey],
     optimistic: (ns) => ({ previousData: readInvitationSnapshot(ns) }),
@@ -27,11 +19,7 @@ export function useCreateInvitation() {
 }
 
 export function useAcceptInvitation() {
-  return useAppMutation<
-    IInvitation,
-    PickAcceptInvitation,
-    InvitationCacheContext
-  >({
+  return useAppMutation<IInvitation, PickAcceptInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.AcceptInvitation(payload),
     invalidateKeys: [invitationsRootKey],
     optimistic: (ns) => ({ previousData: readInvitationSnapshot(ns) }),
@@ -39,11 +27,7 @@ export function useAcceptInvitation() {
 }
 
 export function useRejectInvitation() {
-  return useAppMutation<
-    IInvitation,
-    PickRejectInvitation,
-    InvitationCacheContext
-  >({
+  return useAppMutation<IInvitation, PickRejectInvitation, InvitationCacheContext>({
     mutationFn: (payload) => Api.Invitation.RejectInvitation(payload),
     invalidateKeys: [invitationsRootKey],
     optimistic: (ns) => ({ previousData: readInvitationSnapshot(ns) }),

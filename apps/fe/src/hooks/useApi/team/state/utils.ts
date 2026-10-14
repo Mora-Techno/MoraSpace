@@ -1,7 +1,7 @@
-import type { ITeam } from "@repo/types";
+import type { ITeam } from '@repo/types';
 
-import { queryKey } from "@/configs";
-import type { AppNameSpace } from "@/hooks/useAppNameSpace";
+import { queryKey } from '@/configs';
+import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type TeamCacheContext = {
   previousData?: ITeam[];

@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
-import { NoteListSection } from "@/components/page/private/member/notes/note-list.section";
-import type { NoteQuery, PickCreateNote } from "@repo/types";
-import { useRouter } from "next/navigation";
+import type { NoteQuery, PickCreateNote } from '@repo/types';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { NoteListSection } from '@/components/page/private/member/notes/note-list.section';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useGsapStagger } from '@/hooks/useGsapStagger';
 
 export default function NotesContainer() {
   const api = useApi();
@@ -15,7 +16,7 @@ export default function NotesContainer() {
   const [query, setQuery] = useState<NoteQuery>({
     page: 1,
     limit: 10,
-    search: "",
+    search: '',
   });
 
   const useNoteQuery = api.note.query.get(query);
@@ -26,8 +27,8 @@ export default function NotesContainer() {
   const gridRef = useGsapStagger<HTMLDivElement>([notes.length]);
 
   const [formCreateNote, setFormCreateNote] = useState<PickCreateNote>({
-    content: "",
-    title: "",
+    content: '',
+    title: '',
   });
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -37,7 +38,7 @@ export default function NotesContainer() {
     createNote.mutate(payload, {
       onSuccess: (res) => {
         setShowModal(false);
-        setFormCreateNote({ content: "", title: "" });
+        setFormCreateNote({ content: '', title: '' });
         router.push(`/member/notes/${res.data.id}`);
       },
     });
@@ -61,10 +62,7 @@ export default function NotesContainer() {
 
   return (
     <div className="animate-in fade-in duration-700">
-      <PageHeader
-        title="Notes"
-        description="Simpan ide, jurnal harian, dan snippet kode."
-      />
+      <PageHeader title="Notes" description="Simpan ide, jurnal harian, dan snippet kode." />
       <div className="w-full">
         <NoteListSection
           service={{

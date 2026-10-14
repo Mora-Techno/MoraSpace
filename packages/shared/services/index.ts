@@ -1,29 +1,30 @@
-import { WrapApi } from "../utils/wrapApi";
-import authService from "./auth.service";
-import calendarService from "./calendar.service";
-import companyService from "./company.service";
-import departmentService from "./department.service";
-import invitationService from "./invitation.service";
-import memberService from "./member.service";
-import musicService from "./music.service";
-import noteService from "./note.service";
-import notificationService from "./notification.service";
-import pomodoroService from "./pomodoro.service";
-import positionService from "./position.service";
-import roleService from "./role.service";
-import sessionService from "./session.service";
-import settingsService from "./settings.service";
-import subscriptionService from "./subscription.service";
-import taskService from "./task.service";
-import teamService from "./team.service";
-import todoService from "./todo.service";
-import trackCatalogService from "./trackCatalog.service";
+import { WrapApi } from '../utils/wrapApi';
+import authService from './auth.service';
+import calendarService from './calendar.service';
+import companyService from './company.service';
+import departmentService from './department.service';
+import invitationService from './invitation.service';
+import memberService from './member.service';
+import musicService from './music.service';
+import noteService from './note.service';
+import notificationService from './notification.service';
+import pomodoroService from './pomodoro.service';
+import positionService from './position.service';
+import roleService from './role.service';
+import sessionService from './session.service';
+import settingsService from './settings.service';
+import subscriptionService from './subscription.service';
+import taskService from './task.service';
+import teamService from './team.service';
+import todoService from './todo.service';
+import trackCatalogService from './trackCatalog.service';
+import chatService from './chat.service';
 export {
   setAuthErrorHandler,
   setBaseURLProvider,
   setTokenProvider,
-} from "../api/client/client-http";
-import systemService from "./system.service";
+} from '../api/client/client-http';
+import systemService from './system.service';
 
 class ApiServicePackage {
   static Auth = WrapApi(authService);
@@ -47,28 +48,30 @@ class ApiServicePackage {
   static Pomodoro = WrapApi(pomodoroService);
   static System = WrapApi(systemService);
   static TrackCatalog = WrapApi(trackCatalogService);
+  static Chat = WrapApi(chatService);
 }
 
-export { default as AuthService } from "./auth.service";
-export { default as CalendarService } from "./calendar.service";
-export { default as CompanyService } from "./company.service";
-export { default as MusicService } from "./music.service";
-export { default as NoteService } from "./note.service";
-export { default as NotificationService } from "./notification.service";
-export { default as SessionService } from "./session.service";
-export { default as SettingsService } from "./settings.service";
-export { default as SubscriptionService } from "./subscription.service";
-export { default as TodoService } from "./todo.service";
-export { default as DepartmentService } from "./department.service";
-export { default as TeamService } from "./team.service";
-export { default as PositionService } from "./position.service";
-export { default as MemberService } from "./member.service";
-export { default as InvitationService } from "./invitation.service";
-export { default as RoleService } from "./role.service";
-export { default as TaskService } from "./task.service";
-export { default as PomodoroService } from "./pomodoro.service";
-export { default as SystemService } from "./system.service";
-export { default as TrackCatalogService } from "./trackCatalog.service";
-export { toServiceResponse } from "./service-response";
+export { default as AuthService } from './auth.service';
+export { default as CalendarService } from './calendar.service';
+export { default as CompanyService } from './company.service';
+export { default as MusicService } from './music.service';
+export { default as NoteService } from './note.service';
+export { default as NotificationService } from './notification.service';
+export { default as SessionService } from './session.service';
+export { default as SettingsService } from './settings.service';
+export { default as SubscriptionService } from './subscription.service';
+export { default as TodoService } from './todo.service';
+export { default as DepartmentService } from './department.service';
+export { default as TeamService } from './team.service';
+export { default as PositionService } from './position.service';
+export { default as MemberService } from './member.service';
+export { default as InvitationService } from './invitation.service';
+export { default as RoleService } from './role.service';
+export { default as TaskService } from './task.service';
+export { default as PomodoroService } from './pomodoro.service';
+export { default as SystemService } from './system.service';
+export { default as TrackCatalogService } from './trackCatalog.service';
+export { default as ChatService } from './chat.service';
+export { toServiceResponse } from './service-response';
 export { ApiServicePackage as Api };
 export default ApiServicePackage;

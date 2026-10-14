@@ -20,7 +20,9 @@
       "!**/apps/mobile/ios",
       "!**/apps/mobile/script",
       "!**/apps/mobile/config/theme.generated.js",
+      "!**/theme.generated.*",
       "!**/apps/fe/src/styles/theme.generated.css",
+      "!**/apps/fe/src/styles/globals.css",
       "!**/apps/mobile/styles/global.css",
       "!**/apps/mobile/.vscode",
       "!**/apps/be/prisma/migrations"

@@ -1,4 +1,4 @@
-export type TrackStatus = "PENDING" | "APPROVED" | "REJECTED";
+export type TrackStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export interface ITrackCatalog {
   id: string;
@@ -17,20 +17,20 @@ export interface ITrackCatalog {
 
 export type TrackCatalog = Pick<
   ITrackCatalog,
-  | "id"
-  | "title"
-  | "youtubeUrl"
-  | "youtubeVideoId"
-  | "status"
-  | "rejectionReason"
-  | "reviewedAt"
-  | "createdAt"
-  | "updatedAt"
+  | 'id'
+  | 'title'
+  | 'youtubeUrl'
+  | 'youtubeVideoId'
+  | 'status'
+  | 'rejectionReason'
+  | 'reviewedAt'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
   submittedBy?: string;
 };
 
-export type PickSubmitTrack = Pick<ITrackCatalog, "title" | "youtubeUrl">;
+export type PickSubmitTrack = Pick<ITrackCatalog, 'title' | 'youtubeUrl'>;
 
 export type PickReviewTrack = {
   rejectionReason?: string;
@@ -42,5 +42,5 @@ export type TrackCatalogQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 };

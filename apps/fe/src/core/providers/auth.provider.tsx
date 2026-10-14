@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter } from "next/navigation";
-import React from "react";
-import { isAuthRoute, isPublicRoute } from "@/configs/routes.config";
-import { loadAuthSession } from "@/utils/storage";
+import { usePathname, useRouter } from 'next/navigation';
+import React from 'react';
+
+import { isAuthRoute, isPublicRoute } from '@/configs/routes.config';
+import { loadAuthSession } from '@/utils/storage';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -38,11 +39,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!authenticated && !onPublic && !onAuth) {
       const stored = loadAuthSession();
       const isRecentlyUpdated =
-        stored?.updatedAt != null &&
-        Date.now() - stored.updatedAt < 5 * 60 * 1000;
+        stored?.updatedAt != null && Date.now() - stored.updatedAt < 5 * 60 * 1000;
 
       if (!isRecentlyUpdated) {
-        router.replace("/login");
+        router.replace('/login');
       }
       return;
     }

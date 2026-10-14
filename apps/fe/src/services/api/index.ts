@@ -1,14 +1,15 @@
-import { setAuthErrorHandler, setTokenProvider } from "@repo/services";
-import ApiServicePackage from "@repo/services";
-import { clearAuthSession, loadAuthSession } from "@/utils/storage";
+import { setAuthErrorHandler, setTokenProvider } from '@repo/services';
+import ApiServicePackage from '@repo/services';
 
-if (typeof window !== "undefined") {
+import { clearAuthSession, loadAuthSession } from '@/utils/storage';
+
+if (typeof window !== 'undefined') {
   setTokenProvider(() => loadAuthSession()?.accessToken);
   setAuthErrorHandler(() => {
     clearAuthSession();
     const currentPath = window.location.pathname;
-    if (!currentPath.startsWith("/login")) {
-      window.location.href = "/login";
+    if (!currentPath.startsWith('/login')) {
+      window.location.href = '/login';
     }
   });
 }
@@ -35,6 +36,7 @@ const Api = {
   Pomodoro: ApiServicePackage.Pomodoro,
   System: ApiServicePackage.System,
   TrackCatalog: ApiServicePackage.TrackCatalog,
+  Chat: ApiServicePackage.Chat,
 } as const;
 
 export default Api;
