@@ -21,7 +21,7 @@
     "turbo": "^2.11.4"
   },
   "scripts": {
-    "postinstall": "bun ./scripts/patch-opennext.mjs",
+    "postinstall": "bun -e \"if (require('fs').existsSync('./scripts/patch-opennext.mjs')) await import('./scripts/patch-opennext.mjs')\"",
     "theme:generate": "bun packages/shared/scripts/generate-theme-css.mjs",
     "theme:check": "bun packages/shared/scripts/check-contrast.mjs && bun packages/shared/scripts/generate-theme-css.mjs --check",
     "dev": "turbo run dev --parallel --filter=!mobile",
