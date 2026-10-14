@@ -1,7 +1,6 @@
 'use server';
 
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import sharp from 'sharp';
 
 import { env } from '@/configs';
 
@@ -87,26 +86,12 @@ export async function uploadAvatar(
 }
 
 /**
- * Konversi buffer gambar ke WebP. Kembalikan null bila tidak perlu
- * (sudah webp/svg/bukan gambar) atau convert gagal.
+ * Konversi buffer gambar ke WebP.
+ * Catatan: Pada Cloudflare Workers runtime (V8 isolate), native binary seperti sharp tidak dapat dieksekusi.
+ * Return null agar file asli tetap diupload ke R2 secara aman dan efisien.
  */
-async function toWebpBuffer(input: Buffer, mimeType: string): Promise<Buffer | null> {
-  if (mimeType === 'image/webp' || mimeType === 'image/svg+xml') return null;
-  if (mimeType && !mimeType.startsWith('image/')) return null;
-  try {
-    return await sharp(input, { animated: false })
-      .rotate()
-      .resize({
-        width: WEBP_MAX_DIMENSION,
-        height: WEBP_MAX_DIMENSION,
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .webp({ quality: WEBP_QUALITY })
-      .toBuffer();
-  } catch {
-    return null;
-  }
+async function toWebpBuffer(_input: Buffer, _mimeType: string): Promise<Buffer | null> {
+  return null;
 }
 
 export async function deleteObject(fileUrl: string): Promise<void> {

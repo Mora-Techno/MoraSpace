@@ -22,6 +22,7 @@ import systemRoutes from './systemRoutes';
 import trackCatalogRoutes from './trackCatalogRoutes';
 import settingsRoutes from './settingsRoutes';
 import chatRoutes from './chatRoutes';
+import blogRoutes from './blogRoutes';
 import { InternalApiKey } from '@/middlewares/apiKey';
 import { errorPlugin, loggerPlugin, metricsPlugin } from '@/plugins';
 
@@ -68,7 +69,8 @@ class ApiRouter {
       .use(systemRoutes)
       .use(trackCatalogRoutes)
       .use(settingsRoutes)
-      .use(chatRoutes);
+      .use(chatRoutes)
+      .use(blogRoutes);
   }
 }
 

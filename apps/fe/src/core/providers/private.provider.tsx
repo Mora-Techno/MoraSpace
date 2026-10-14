@@ -3,6 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { ChatSocketProvider } from '@/hooks/useChatSocket';
 import { clearTokens, saveTokens } from '@/server/auth-cookie';
 import Api from '@/services/api';
 import { clearAuthSession, loadAuthSession, syncAuthFromRefreshResponse } from '@/utils/storage';
@@ -142,5 +143,9 @@ export default function PrivateProviders({ children }: { children: React.ReactNo
     }
   }, [isReady, isAuthenticated, pathname, role, router]);
 
-  return <>{isReady && isAuthenticated ? children : null}</>;
+  return (
+    <ChatSocketProvider>
+      <>{isReady && isAuthenticated ? children : null}</>
+    </ChatSocketProvider>
+  );
 }

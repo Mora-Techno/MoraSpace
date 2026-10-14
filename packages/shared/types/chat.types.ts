@@ -97,6 +97,7 @@ export interface ChatConversationQuery {
 export interface ChatMessagesQuery {
   cursor?: number;
   limit?: number;
+  direction?: 'before' | 'after';
 }
 
 export interface ChatUserSearchQuery {
@@ -145,3 +146,24 @@ export interface ChatWsMembershipPayload {
   change: 'joined' | 'left' | 'removed' | 'role';
   role?: ConversationRole;
 }
+
+export const CHAT_WS_PATH = '/ws/chat';
+
+export const CHAT_WS_EVENTS = {
+  AUTH: 'connection:auth',
+  AUTH_OK: 'auth:ok',
+  SUBSCRIBE: 'conversation:subscribe',
+  SUBSCRIBED: 'conversation:subscribed',
+  UNSUBSCRIBE: 'conversation:unsubscribe',
+  UNSUBSCRIBED: 'conversation:unsubscribed',
+  SEND: 'message:send',
+  ACK: 'message:ack',
+  NEW: 'message:new',
+  READ: 'message:read',
+  TYPING_START: 'typing:start',
+  TYPING_STOP: 'typing:stop',
+  TYPING_UPDATE: 'typing:update',
+  CONVERSATION_UPDATED: 'conversation:updated',
+  MEMBERSHIP_CHANGED: 'conversation:membership_changed',
+  ERROR: 'error',
+} as const;

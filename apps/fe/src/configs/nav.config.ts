@@ -8,6 +8,7 @@ import {
   Home,
   Kanban,
   type LucideIcon,
+  MessageCircle,
   Music2,
   Radio,
   Settings,
@@ -32,6 +33,12 @@ type Role = 'member' | 'owner' | 'individual' | 'personal';
  * laman utama milik owner.
  */
 const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
+  {
+    title: 'Chat',
+    url: '/owner/member/chat',
+    icon: MessageCircle,
+    mobile: true,
+  },
   {
     title: 'Tasks',
     url: '/owner/member/tasks',
@@ -78,6 +85,7 @@ const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
 
 const MEMBER_NAV_ITEMS: NavItem[] = [
   { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+  { title: 'Chat', url: '/member/chat', icon: MessageCircle, mobile: true },
   { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
   { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
   { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },
@@ -129,9 +137,9 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
     },
     { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
-  // Personal & individual langsung pakai nav member (tanpa embed duplikat).
-  personal: MEMBER_NAV_ITEMS,
-  individual: MEMBER_NAV_ITEMS,
+  // Personal & individual: fitur obrolan disembunyikan karena chat bersifat company-scoped.
+  personal: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
+  individual: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
 };
 
 export function getNavItems(role?: Role | string | null): NavItem[] {
