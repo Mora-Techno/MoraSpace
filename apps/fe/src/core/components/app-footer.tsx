@@ -4,9 +4,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { useTheme } from '@/core/providers/theme.provider';
+import { useTranslation } from '@/pkg/i18n';
 
 export default function AppFooter() {
   const { theme } = useTheme();
+  const { t } = useTranslation('common');
 
   return (
     <footer className="border-t border-border/60 bg-background/80 px-6 py-16 md:px-12 lg:px-16 text-foreground">
@@ -31,12 +33,14 @@ export default function AppFooter() {
             </Link>
 
             <h3 className="font-serif text-lg font-semibold text-foreground">
-              One Workspace. Better Work.
+              {t('footer.tagline', { defaultValue: 'One Workspace. Better Work.' })}
             </h3>
 
             <p className="text-xs leading-relaxed text-muted-foreground max-w-sm">
-              Ruang kerja digital yang mengutamakan ketenangan mental, fokus literer, dan kolaborasi
-              tanpa distraksi.
+              {t('footer.description', {
+                defaultValue:
+                  'Ruang kerja digital yang mengutamakan ketenangan mental, fokus literer, dan kolaborasi tanpa distraksi.',
+              })}
             </p>
           </div>
 
@@ -45,27 +49,27 @@ export default function AppFooter() {
             {/* Produk */}
             <div className="space-y-3">
               <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
-                Produk
+                {t('footer.products', { defaultValue: 'Produk' })}
               </h4>
               <ul className="space-y-2.5 text-muted-foreground">
                 <li>
                   <Link href="#fitur" className="hover:text-foreground transition-colors">
-                    Fitur Unggulan
+                    {t('footer.featured', { defaultValue: 'Fitur Unggulan' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="#fitur" className="hover:text-foreground transition-colors">
-                    Editor Dokumen
+                    {t('footer.doc_editor', { defaultValue: 'Editor Dokumen' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="#fitur" className="hover:text-foreground transition-colors">
-                    Jadwal & Ritme
+                    {t('footer.calendar', { defaultValue: 'Kalender & Ritme' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="#fitur" className="hover:text-foreground transition-colors">
-                    Arsip Pengetahuan
+                    {t('footer.focus_mode', { defaultValue: 'Mode Fokus' })}
                   </Link>
                 </li>
               </ul>
@@ -103,17 +107,17 @@ export default function AppFooter() {
             {/* Sumber Daya */}
             <div className="space-y-3">
               <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
-                Sumber Daya
+                {t('footer.resources_col', { defaultValue: 'Sumber Daya' })}
               </h4>
               <ul className="space-y-2.5 text-muted-foreground">
                 <li>
                   <Link href="#cara-kerja" className="hover:text-foreground transition-colors">
-                    Panduan Memulai
+                    {t('footer.guides', { defaultValue: 'Buku Panduan' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="#faq" className="hover:text-foreground transition-colors">
-                    Pertanyaan Umum
+                    {t('footer.help', { defaultValue: 'Pertanyaan Umum' })}
                   </Link>
                 </li>
                 <li>
@@ -132,27 +136,27 @@ export default function AppFooter() {
             {/* Perusahaan */}
             <div className="space-y-3">
               <h4 className="font-bold uppercase tracking-wider text-[11px] text-foreground">
-                Perusahaan
+                {t('footer.company', { defaultValue: 'Perusahaan' })}
               </h4>
               <ul className="space-y-2.5 text-muted-foreground">
                 <li>
                   <Link href="/home" className="hover:text-foreground transition-colors">
-                    Tentang Mora
+                    {t('footer.about', { defaultValue: 'Tentang Kami' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="/pricing" className="hover:text-foreground transition-colors">
-                    Manifesto Desain
+                    {t('footer.manifesto', { defaultValue: 'Manifesto' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="/privacy" className="hover:text-foreground transition-colors">
-                    Kebijakan Privasi
+                    {t('footer.privacy', { defaultValue: 'Kebijakan Privasi' })}
                   </Link>
                 </li>
                 <li>
                   <Link href="/contact" className="hover:text-foreground transition-colors">
-                    Hubungi Tim
+                    {t('footer.contact', { defaultValue: 'Kontak' })}
                   </Link>
                 </li>
               </ul>
@@ -162,7 +166,11 @@ export default function AppFooter() {
 
         {/* Bottom Line Bar */}
         <div className="border-t border-border/40 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© 2025 Spaces by Mora. Hak cipta dilindungi undang-undang.</p>
+          <p>
+            {t('footer.copyright', {
+              defaultValue: 'Spaces © 2025. Hak cipta dilindungi undang-undang.',
+            })}
+          </p>
           <div className="flex items-center gap-2">
             <span>Dirancang untuk ketenangan kerja di Asia Tenggara</span>
             <span>•</span>

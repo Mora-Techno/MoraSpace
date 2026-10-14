@@ -2,6 +2,10 @@
 
 import { ArrowRight, Blocks, Book, FileText, LifeBuoy, Search, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
+import type React from 'react';
+import { useMemo } from 'react';
+
+import { useTranslation } from '@/pkg/i18n';
 
 interface ResourceHeroSectionProps {
   template: {
@@ -10,42 +14,46 @@ interface ResourceHeroSectionProps {
   };
 }
 
-const CATEGORIES = [
-  {
-    title: 'Getting Started',
-    desc: 'Pelajari dasar-dasar Spaces, mulai dari pengaturan profil hingga membuat tugas pertama Anda.',
+interface ResourceCategory {
+  id: string;
+  title: string;
+  desc: string;
+  links: string[];
+}
+
+const CATEGORY_META: Record<string, { icon: typeof Zap; color: string; bg: string }> = {
+  'getting-started': {
     icon: Zap,
     color: 'text-orange-500',
     bg: 'bg-orange-500/10',
-    links: ['Panduan Onboarding', 'Mengundang Tim', 'Pengaturan Workspace'],
   },
-  {
-    title: 'Tutorial & Fitur',
-    desc: 'Panduan mendalam menggunakan Kalender, Mode Fokus, dan Asisten AI secara maksimal.',
+  tutorial: {
     icon: Book,
     color: 'text-primary',
     bg: 'bg-primary/10',
-    links: ['Cara Kerja Pomodoro', 'Integrasi Google Calendar', 'Perintah Cepat AI'],
   },
-  {
-    title: 'API & Integrasi',
-    desc: 'Dokumentasi teknis untuk developer yang ingin menghubungkan sistem internal dengan Spaces.',
+  api: {
     icon: Blocks,
     color: 'text-secondary-foreground',
     bg: 'bg-secondary/25',
-    links: ['API Reference', 'Webhooks', 'Membuat Custom Plugin'],
   },
-  {
-    title: 'Keamanan & Privasi',
-    desc: 'Pelajari infrastruktur keamanan Spaces, standar enkripsi, dan kepatuhan privasi data.',
+  security: {
     icon: Shield,
     color: 'text-accent-foreground',
     bg: 'bg-accent',
-    links: ['Arsitektur Keamanan', 'Konfigurasi SSO', 'Audit Log & Akses'],
   },
-];
+};
 
 const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
+  const { t } = useTranslation('public');
+
+  const rawCategories =
+    (t('resource.categories', { returnObjects: true }) as ResourceCategory[]) || [];
+
+  const categories = useMemo(() => {
+    return Array.isArray(rawCategories) ? rawCategories : [];
+  }, [rawCategories]);
+
   return (
     <section className="relative px-4 pb-32 pt-24 md:px-6 md:pt-32 min-h-screen">
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,var(--background),transparent)] z-[-1]" />
@@ -56,14 +64,13 @@ const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
             <LifeBuoy className="size-8 text-primary" />
           </div>
           <h1 className="font-serif text-4xl font-extrabold text-foreground md:text-6xl tracking-tight">
-            Pusat Bantuan &{' '}
+            {t('resource.badge')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent-foreground">
-              Sumber Daya
+              {t('resource.highlight')}
             </span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Temukan jawaban, panduan, dan dokumentasi API untuk membantu Anda memaksimalkan
-            ekosistem Spaces.
+            {t('resource.desc')}
           </p>
 
           <div className="mt-10 flex w-full max-w-2xl items-center gap-3 rounded-full border border-border/50 bg-card/60 p-2 shadow-lg shadow-primary/5 backdrop-blur-xl focus-within:border-primary/50 focus-within:ring-4 focus-within:ring-primary/10">
@@ -71,29 +78,34 @@ const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
             <input
               type="text"
               aria-label="Cari dokumentasi"
-              placeholder="Cari dokumentasi atau panduan..."
+              placeholder={t('resource.search_placeholder')}
               className="flex-1 bg-transparent py-3 text-base text-foreground outline-none placeholder:text-muted-foreground"
             />
             <button
               type="button"
-              className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-sm font-semibold transition-all duration-300"
+              className="rounded-full bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-sm font-semibold transition-all duration-300 cursor-pointer"
             >
-              Cari
+              {t('resource.search_btn')}
             </button>
           </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          {CATEGORIES.map((category) => {
-            const Icon = category.icon;
+          {categories.map((category) => {
+            const meta = CATEGORY_META[category.id] || {
+              icon: Book,
+              color: 'text-primary',
+              bg: 'bg-primary/10',
+            };
+            const Icon = meta.icon;
             return (
               <div
-                key={category.title}
+                key={category.id || category.title}
                 className="rounded-[2rem] border border-border/50 bg-card/30 p-8 transition-all duration-300 hover:bg-card/50 hover:border-primary/30 backdrop-blur-sm"
               >
                 <div className="flex items-start gap-5">
                   <div
-                    className={`flex size-14 items-center justify-center rounded-2xl ${category.bg} ${category.color} shrink-0`}
+                    className={`flex size-14 items-center justify-center rounded-2xl ${meta.bg} ${meta.color} shrink-0`}
                   >
                     <Icon className="size-7" />
                   </div>
@@ -103,7 +115,7 @@ const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
                       {category.desc}
                     </p>
                     <ul className="space-y-3">
-                      {category.links.map((link) => (
+                      {(category.links || []).map((link) => (
                         <li key={link}>
                           <Link
                             href="#"
@@ -119,7 +131,7 @@ const ResourceHeroSection: React.FC<ResourceHeroSectionProps> = () => {
                       href="#"
                       className="inline-flex items-center mt-6 text-sm font-semibold text-primary hover:text-primary/80"
                     >
-                      Lihat semua artikel <ArrowRight className="ml-1.5 size-4" />
+                      {t('resource.view_all')} <ArrowRight className="ml-1.5 size-4" />
                     </Link>
                   </div>
                 </div>

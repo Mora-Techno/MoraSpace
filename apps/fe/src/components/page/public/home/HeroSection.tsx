@@ -3,7 +3,11 @@
 import { ArrowRight, Bell, Calendar, CheckSquare, Clock, FileText, Play } from 'lucide-react';
 import Link from 'next/link';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function HeroSection() {
+  const { t } = useTranslation('public');
+
   return (
     <section className="relative overflow-hidden px-4 pt-8 pb-16 md:px-8 md:pt-14 md:pb-24">
       <div className="mx-auto max-w-7xl">
@@ -13,25 +17,24 @@ export function HeroSection() {
             {/* Pill Tag */}
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
               <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-              <span>Ruang Kerja Kalem & Terpadu</span>
+              <span>{t('hero.badge')}</span>
             </div>
 
             {/* Main Headline with Highlight Pill */}
             <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-bold leading-[1.12] tracking-tight text-foreground">
-              Lebih terarah.
+              {t('hero.headline_1')}
               <br />
-              Lebih ringan.
+              {t('hero.headline_2')}
               <br />
-              Dalam{' '}
+              {t('hero.headline_in')}{' '}
               <span className="inline-block rounded-2xl border border-primary/30 bg-primary/10 px-3 py-0.5 text-primary">
-                satu ruang.
+                {t('hero.headline_highlight')}
               </span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-xl">
-              Satukan tugas, agenda, dan catatan tim. Spaces membantu pekerjaan tetap terorganisir,
-              tanpa mengorbankan waktu untuk diri sendiri.
+              {t('hero.subtitle')}
             </p>
 
             {/* Action Buttons */}
@@ -40,14 +43,14 @@ export function HeroSection() {
                 href="/register/company"
                 className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:opacity-90 active:scale-98"
               >
-                <span>Buat ruang kerja</span>
+                <span>{t('hero.cta_create')}</span>
                 <ArrowRight className="size-4" />
               </Link>
               <Link
                 href="#fitur"
                 className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/60 px-6 py-3.5 text-sm font-semibold text-foreground transition-all hover:bg-muted/80"
               >
-                Pelajari fitur
+                {t('hero.cta_features')}
               </Link>
             </div>
 
@@ -64,7 +67,7 @@ export function HeroSection() {
                   MK
                 </span>
               </div>
-              <span>Dipercaya oleh 420+ studio kreatif & tim digital di Asia Tenggara</span>
+              <span>{t('hero.proof')}</span>
             </div>
           </div>
 
@@ -75,13 +78,11 @@ export function HeroSection() {
               <div className="flex items-center justify-between border-b border-border/50 pb-4 text-xs">
                 <div className="flex items-center gap-2">
                   <span className="size-2 rounded-full bg-primary" />
-                  <span className="font-semibold text-foreground">
-                    Spaces • Studio Nusantara Workspace
-                  </span>
+                  <span className="font-semibold text-foreground">{t('hero.mockup_header')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-muted-foreground text-[11px]">
                   <Bell className="size-3.5 text-primary" />
-                  <span>Notifikasi mengikuti jam kerja (09.00 - 17.00)</span>
+                  <span>{t('hero.mockup_notif')}</span>
                 </div>
               </div>
 
@@ -91,24 +92,24 @@ export function HeroSection() {
                 <div className="sm:col-span-4 space-y-1 text-xs border-b sm:border-b-0 sm:border-r border-border/40 pb-4 sm:pb-0 sm:pr-3">
                   <div className="flex items-center gap-2 rounded-xl bg-primary/15 text-primary font-semibold px-3 py-2">
                     <Calendar className="size-3.5" />
-                    <span>Hari ini</span>
+                    <span>{t('hero.nav_today')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground px-3 py-2 hover:text-foreground">
                     <CheckSquare className="size-3.5" />
-                    <span>Semua Tugas</span>
+                    <span>{t('hero.nav_all_tasks')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground px-3 py-2 hover:text-foreground">
                     <FileText className="size-3.5" />
-                    <span>Catatan Tim</span>
+                    <span>{t('hero.nav_notes')}</span>
                   </div>
                   <div className="flex items-center gap-2 text-muted-foreground px-3 py-2 hover:text-foreground">
                     <Clock className="size-3.5" />
-                    <span>Fokus</span>
+                    <span>{t('hero.nav_focus')}</span>
                   </div>
 
                   <div className="pt-6 sm:pt-8 text-[11px] text-muted-foreground">
                     <div className="flex items-center justify-between mb-1.5">
-                      <span>Ritme Pekan</span>
+                      <span>{t('hero.rhythm')}</span>
                       <span className="font-bold text-foreground">84%</span>
                     </div>
                     <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
@@ -122,10 +123,10 @@ export function HeroSection() {
                   {/* Agenda Title + Quick Timer Pill */}
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-bold text-sm text-foreground">Agenda Hari Ini</h4>
-                      <p className="text-[11px] text-muted-foreground">
-                        Selasa, 24 Oktober • 3 prioritas aktif
-                      </p>
+                      <h4 className="font-bold text-sm text-foreground">
+                        {t('hero.agenda_title')}
+                      </h4>
+                      <p className="text-[11px] text-muted-foreground">{t('hero.agenda_meta')}</p>
                     </div>
                     <div className="inline-flex items-center gap-1.5 rounded-full bg-card border border-border/60 px-2.5 py-1 text-xs font-mono font-bold text-foreground shadow-xs">
                       <Play className="size-3 fill-primary text-primary" />
@@ -141,11 +142,11 @@ export function HeroSection() {
                         <div className="flex items-center gap-2">
                           <span className="size-1.5 rounded-full bg-primary" />
                           <span className="font-semibold text-xs text-foreground">
-                            Review desain onboarding
+                            {t('hero.task1_title')}
                           </span>
                         </div>
                         <span className="rounded-md bg-destructive/15 px-1.5 py-0.5 text-[10px] font-bold text-destructive">
-                          Tinggi
+                          {t('hero.task1_priority')}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-[11px] text-muted-foreground pl-3.5">
@@ -162,7 +163,7 @@ export function HeroSection() {
                         <div className="flex items-center gap-2">
                           <span className="size-1.5 rounded-full bg-secondary" />
                           <span className="font-semibold text-xs text-foreground">
-                            Sinkronisasi tim produk
+                            {t('hero.task2_title')}
                           </span>
                         </div>
                         <span className="rounded-md bg-primary/15 px-1.5 py-0.5 text-[10px] font-bold text-primary">
@@ -183,11 +184,11 @@ export function HeroSection() {
                         <div className="flex items-center gap-2">
                           <span className="size-1.5 rounded-full bg-muted-foreground" />
                           <span className="font-semibold text-xs text-foreground">
-                            Finalisasi dokumentasi API
+                            {t('hero.task3_title')}
                           </span>
                         </div>
                         <span className="rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                          Besok
+                          {t('hero.task3_due')}
                         </span>
                       </div>
                       <div className="flex items-center justify-between text-[11px] text-muted-foreground pl-3.5">

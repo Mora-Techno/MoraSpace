@@ -6,6 +6,8 @@ import Link from 'next/link';
 import type React from 'react';
 import { useMemo } from 'react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 interface CompanyRegisterFormSectionProps {
   service: {
     onSubmit: (e: React.FormEvent) => void;
@@ -24,6 +26,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
   service,
   state,
 }) => {
+  const { t } = useTranslation('auth');
   const { isPending, onSubmit } = service;
   const { formRegister, setFormRegister, showPassword, setShowPassword } = state;
 
@@ -35,24 +38,24 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
   const hasNumber = /[0-9]/.test(password);
 
   const passwordStrength = useMemo(() => {
-    if (!password) return { label: 'Kosong', color: 'text-muted-foreground' };
+    if (!password) return { label: t('register.strength_empty'), color: 'text-muted-foreground' };
     let score = 0;
     if (hasMinLength) score++;
     if (hasUpperLower) score++;
     if (hasNumber) score++;
     if (/[^A-Za-z0-9]/.test(password)) score++;
 
-    if (score <= 1) return { label: 'Lemah', color: 'text-destructive' };
-    if (score === 2) return { label: 'Sedang', color: 'text-amber-500' };
-    return { label: 'Kuat', color: 'text-primary' };
-  }, [password, hasMinLength, hasUpperLower, hasNumber]);
+    if (score <= 1) return { label: t('register.strength_weak'), color: 'text-destructive' };
+    if (score === 2) return { label: t('register.strength_medium'), color: 'text-amber-500' };
+    return { label: t('register.strength_strong'), color: 'text-primary' };
+  }, [password, hasMinLength, hasUpperLower, hasNumber, t]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       {/* Full Name */}
       <div className="space-y-1.5">
         <label htmlFor="fullName" className="text-sm font-medium text-foreground block">
-          Nama lengkap
+          {t('register.fullname_label')}
         </label>
         <div className="relative flex items-center">
           <input
@@ -66,7 +69,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
               }))
             }
             required
-            placeholder="Nama Anda"
+            placeholder={t('register.fullname_placeholder')}
             className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
           />
           <div className="absolute right-3.5 flex items-center justify-center text-muted-foreground pointer-events-none">
@@ -78,7 +81,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
       {/* Company Name */}
       <div className="space-y-1.5">
         <label htmlFor="companyName" className="text-sm font-medium text-foreground block">
-          Nama perusahaan
+          {t('register.company_name_label')}
         </label>
         <div className="relative flex items-center">
           <input
@@ -92,7 +95,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
               }))
             }
             required
-            placeholder="Nama tim atau perusahaan"
+            placeholder={t('register.company_name_placeholder')}
             className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
           />
           <div className="absolute right-3.5 flex items-center justify-center text-muted-foreground pointer-events-none">
@@ -104,7 +107,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
       {/* Work Email */}
       <div className="space-y-1.5">
         <label htmlFor="email" className="text-sm font-medium text-foreground block">
-          Email kerja
+          {t('register.email_label')}
         </label>
         <div className="relative flex items-center">
           <input
@@ -118,7 +121,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
               }))
             }
             required
-            placeholder="nama@perusahaan.com"
+            placeholder={t('register.email_placeholder')}
             className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
           />
           <div className="absolute right-3.5 flex items-center justify-center text-muted-foreground pointer-events-none">
@@ -131,11 +134,11 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="text-sm font-medium text-foreground">
-            Password
+            {t('register.password_label')}
           </label>
           {password.length > 0 && (
             <span className={`text-xs font-semibold ${passwordStrength.color}`}>
-              Kekuatan: {passwordStrength.label}
+              {t('register.strength')}: {passwordStrength.label}
             </span>
           )}
         </div>
@@ -151,12 +154,12 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
               }))
             }
             required
-            placeholder="Buat password aman"
+            placeholder={t('register.password_placeholder')}
             className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
           />
           <button
             type="button"
-            aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3.5 flex items-center justify-center text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
           >
@@ -167,7 +170,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
         {/* Security Criteria Checklist matching auth-style.png */}
         <div className="space-y-1.5 pt-2 text-xs">
           <p className="font-semibold tracking-wider uppercase text-[11px] text-muted-foreground">
-            KRITERIA KEAMANAN:
+            {t('register.criteria_title')}
           </p>
           <div className="space-y-1 text-muted-foreground">
             <div className="flex items-center gap-2">
@@ -181,7 +184,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
                 {hasMinLength && <Check className="size-2.5 stroke-[3]" />}
               </span>
               <span className={hasMinLength ? 'text-foreground font-medium' : ''}>
-                Minimal 8 karakter
+                {t('register.criteria_min')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -195,7 +198,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
                 {hasUpperLower && <Check className="size-2.5 stroke-[3]" />}
               </span>
               <span className={hasUpperLower ? 'text-foreground font-medium' : ''}>
-                Mengandung huruf besar dan huruf kecil
+                {t('register.criteria_case')}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -209,7 +212,7 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
                 {hasNumber && <Check className="size-2.5 stroke-[3]" />}
               </span>
               <span className={hasNumber ? 'text-foreground font-medium' : ''}>
-                Mengandung angka (simbol opsional)
+                {t('register.criteria_num')}
               </span>
             </div>
           </div>
@@ -225,11 +228,11 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
         {isPending ? (
           <>
             <Loader2 className="size-4 animate-spin" />
-            <span>Memproses...</span>
+            <span>{t('register.submitting')}</span>
           </>
         ) : (
           <>
-            <span>Buat akun</span>
+            <span>{t('register.submit_btn')}</span>
             <ArrowRight className="size-4" />
           </>
         )}
@@ -237,13 +240,13 @@ const CompanyRegisterFormSection: React.FC<CompanyRegisterFormSectionProps> = ({
 
       {/* Terms disclaimer matching auth-style.png */}
       <p className="text-center text-xs text-muted-foreground leading-relaxed pt-1">
-        Dengan membuat akun, kamu menyetujui{' '}
+        {t('register.terms_agree')}{' '}
         <Link href="/terms" className="underline hover:text-foreground">
-          Ketentuan
+          {t('register.terms')}
         </Link>{' '}
-        dan{' '}
+        {t('register.and')}{' '}
         <Link href="/privacy" className="underline hover:text-foreground">
-          Kebijakan Privasi
+          {t('register.privacy')}
         </Link>
         .
       </p>

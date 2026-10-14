@@ -773,7 +773,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
       <Dialog open={!!deletingStatus} onOpenChange={(open) => !open && setDeletingStatus(null)}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Hapus Status "{deletingStatus?.name}"?</DialogTitle>
+            <DialogTitle>Hapus Status &quot;{deletingStatus?.name}&quot;?</DialogTitle>
           </DialogHeader>
 
           {deletingStatus && (

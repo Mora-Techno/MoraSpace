@@ -2,7 +2,11 @@
 
 import { BellOff, Clock, ShieldCheck } from 'lucide-react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function PhilosophySection() {
+  const { t } = useTranslation('public');
+
   return (
     <section className="px-4 py-16 md:px-8 md:py-24">
       <div className="mx-auto max-w-7xl">
@@ -15,19 +19,17 @@ export function PhilosophySection() {
             {/* Left Column: Manifesto & Philosophy */}
             <div className="lg:col-span-6 space-y-6">
               <span className="font-mono text-xs font-bold tracking-wider text-[#F2C94C] uppercase">
-                FILOSOFI BATAS SEHAT
+                {t('philosophy.tag')}
               </span>
 
               <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-                Kerja punya waktunya.
+                {t('philosophy.title_line1')}
                 <br />
-                Istirahat juga.
+                {t('philosophy.title_line2')}
               </h2>
 
               <p className="text-sm sm:text-base text-[#E8E6E1]/80 leading-relaxed max-w-xl">
-                Spaces dirancang dengan keyakinan bahwa manusia bekerja lebih baik ketika memiliki
-                ruang hening yang terjaga. Atur jam kerja dan waktu tenang agar notifikasi hadir
-                pada waktu yang lebih tepat — bukan di tengah malam.
+                {t('philosophy.desc')}
               </p>
 
               {/* Feature Badges */}
@@ -36,14 +38,14 @@ export function PhilosophySection() {
                   <div className="flex size-7 items-center justify-center rounded-lg bg-white/10 text-[#F2C94C]">
                     <BellOff className="size-4" />
                   </div>
-                  <span>Tanpa dengung pesan larut malam</span>
+                  <span>{t('philosophy.point1')}</span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <div className="flex size-7 items-center justify-center rounded-lg bg-white/10 text-[#7DAF74]">
                     <Clock className="size-4" />
                   </div>
-                  <span>Penjadwalan otomatis sesuai zona</span>
+                  <span>{t('philosophy.point2')}</span>
                 </div>
               </div>
             </div>
@@ -54,30 +56,29 @@ export function PhilosophySection() {
                 <div className="flex items-center justify-between border-b border-white/10 pb-4 text-xs">
                   <div className="flex items-center gap-2 font-semibold text-white">
                     <span className="size-2 rounded-full bg-[#F2C94C] animate-pulse" />
-                    <span>Status Waktu Tenang</span>
+                    <span>{t('philosophy.card_title')}</span>
                   </div>
                   <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-bold text-[#F2C94C]">
-                    Aktif
+                    {t('philosophy.card_active')}
                   </span>
                 </div>
 
                 {/* Operating Schedule Box */}
                 <div className="rounded-xl border border-white/10 bg-[#16202A] p-4 space-y-1">
                   <span className="text-[10px] uppercase font-bold tracking-wider text-[#E8E6E1]/60">
-                    Jadwal Operasional Studio
+                    {t('philosophy.sched_title')}
                   </span>
-                  <p className="text-lg font-bold font-mono text-white">09.00 — 17.00 WIB</p>
+                  <p className="text-lg font-bold font-mono text-white">
+                    {t('philosophy.sched_time')}
+                  </p>
                 </div>
 
                 {/* Scheduled Notification Box */}
                 <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-[#16202A]/80 p-4 text-xs">
                   <ShieldCheck className="size-5 text-[#7DAF74] shrink-0 mt-0.5" />
                   <div className="space-y-1 leading-relaxed text-[#E8E6E1]/80">
-                    <p className="font-bold text-white">Notifikasi dijadwalkan</p>
-                    <p>
-                      Pesan baru akan dihadirkan besok pagi pukul 09.00 saat tim kembali ke meja
-                      kerja.
-                    </p>
+                    <p className="font-bold text-white">{t('philosophy.notif_title')}</p>
+                    <p>{t('philosophy.notif_desc')}</p>
                   </div>
                 </div>
               </div>

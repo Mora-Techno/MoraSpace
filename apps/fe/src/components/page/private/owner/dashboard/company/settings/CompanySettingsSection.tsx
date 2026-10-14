@@ -25,6 +25,7 @@ interface CompanySettingsSectionProps {
       country: string;
       workingHourStart?: string;
       workingHourEnd?: string;
+      workDays: string;
       respectWorkingHours?: boolean;
       queueNotification?: boolean;
     };
@@ -34,6 +35,7 @@ interface CompanySettingsSectionProps {
         country: string;
         workingHourStart?: string;
         workingHourEnd?: string;
+        workDays: string;
         respectWorkingHours?: boolean;
         queueNotification?: boolean;
       }>
@@ -41,10 +43,38 @@ interface CompanySettingsSectionProps {
   };
 }
 
+const WORK_DAY_ORDER = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+const WORK_DAY_LABELS: Record<string, string> = {
+  mon: 'Sen',
+  tue: 'Sel',
+  wed: 'Rab',
+  thu: 'Kam',
+  fri: 'Jum',
+  sat: 'Sab',
+  sun: 'Min',
+};
+
 const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
   service: { handleSubmit, isPending, isLoading },
   state: { formUpdate, setFormUpdate },
 }) => {
+  const activeDays = (formUpdate.workDays || '')
+    .split(',')
+    .map((d) => d.trim())
+    .filter(Boolean);
+
+  const toggleDay = (day: string) => {
+    const next = new Set(activeDays);
+    if (next.has(day)) {
+      next.delete(day);
+    } else {
+      next.add(day);
+    }
+    const workDays = WORK_DAY_ORDER.filter((d) => next.has(d)).join(',');
+    setFormUpdate((prev) => ({ ...prev, workDays }));
+  };
+
   return (
     <div className="w-full space-y-6">
       <PageHeader
@@ -141,6 +171,24 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Hari Kerja</Label>
+              <div className="flex flex-wrap gap-2">
+                {WORK_DAY_ORDER.map((day) => (
+                  <Button
+                    key={day}
+                    type="button"
+                    size="sm"
+                    variant={activeDays.includes(day) ? 'default' : 'outline'}
+                    onClick={() => toggleDay(day)}
+                    disabled={isPending || isLoading}
+                  >
+                    {WORK_DAY_LABELS[day]}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
             <div className="pt-2 border-t border-border/50 space-y-3">
               <label className="flex items-start gap-3 cursor-pointer">
                 <input
@@ -182,7 +230,8 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                     Antrekan Notifikasi Otomatis
                   </div>
                   <div className="text-xs text-muted-foreground">
-                    Hanya notifikasi prioritas "Critical" yang langsung diteruskan seketika.
+                    Hanya notifikasi prioritas &quot;Critical&quot; yang langsung diteruskan
+                    seketika.
                   </div>
                 </div>
               </label>

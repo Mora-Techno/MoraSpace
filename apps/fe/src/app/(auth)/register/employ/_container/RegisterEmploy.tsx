@@ -8,8 +8,10 @@ import { useState } from 'react';
 import GoogleSignInButton from '@/components/molecules/GoogleSignButton';
 import { RegisterFormSection } from '@/components/page/auth';
 import { useApi } from '@/hooks/useApi/useApi';
+import { useTranslation } from '@/pkg/i18n';
 
 export default function RegisterEmployContainer() {
+  const { t } = useTranslation('auth');
   const api = useApi();
 
   const [formRegister, setFormRegister] = useState<PickRegister>({
@@ -45,10 +47,10 @@ export default function RegisterEmployContainer() {
       {/* Form Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Bergabung ke ruang kerja tim
+          {t('register.employ_title')}
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Buat akun karyawan dan mulai berkolaborasi di Spaces.
+          {t('register.employ_subtitle')}
         </p>
       </div>
 
@@ -70,7 +72,7 @@ export default function RegisterEmployContainer() {
       <div className="relative flex items-center justify-center my-4">
         <div className="w-full border-t border-border/60" />
         <span className="absolute bg-background px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          atau
+          {t('register.or')}
         </span>
       </div>
 
@@ -86,15 +88,15 @@ export default function RegisterEmployContainer() {
       {/* Account Switching Links */}
       <div className="space-y-2 pt-2 text-center text-sm">
         <p className="text-muted-foreground">
-          Sudah punya akun?{' '}
+          {t('register.have_account')}{' '}
           <Link href="/login" className="font-semibold text-primary hover:underline">
-            Masuk
+            {t('register.login_now')}
           </Link>
         </p>
         <p className="text-xs text-muted-foreground">
-          Ingin mendaftarkan perusahaan baru?{' '}
+          {t('register.as_company')}{' '}
           <Link href="/register/company" className="font-medium text-foreground hover:underline">
-            Daftar sebagai perusahaan
+            {t('register.as_company_link')}
           </Link>
         </p>
       </div>

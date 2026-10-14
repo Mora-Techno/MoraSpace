@@ -8,9 +8,11 @@ import { useState } from 'react';
 import GoogleSignInButton from '@/components/molecules/GoogleSignButton';
 import { LoginFormSection } from '@/components/page/auth';
 import { useApi } from '@/hooks/useApi/useApi';
+import { useTranslation } from '@/pkg/i18n';
 
 export default function LoginContainer() {
   const api = useApi();
+  const { t } = useTranslation('auth');
   const [formLogin, setFormLogin] = useState<PickLogin>({
     email: '',
     password: '',
@@ -39,10 +41,12 @@ export default function LoginContainer() {
       {/* Form Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Selamat datang kembali
+          {t('login.title', { defaultValue: 'Selamat datang kembali' })}
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Masuk untuk melanjutkan ke ruang kerja Spaces Anda.
+          {t('login.subtitle', {
+            defaultValue: 'Masuk untuk melanjutkan ke ruang kerja Spaces Anda.',
+          })}
         </p>
       </div>
 
@@ -64,7 +68,7 @@ export default function LoginContainer() {
       <div className="relative flex items-center justify-center my-4">
         <div className="w-full border-t border-border/60" />
         <span className="absolute bg-background px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          atau
+          {t('login.or_continue_with', { defaultValue: 'atau' })}
         </span>
       </div>
 
@@ -80,9 +84,9 @@ export default function LoginContainer() {
       {/* Footer Links */}
       <div className="space-y-2 pt-2 text-center text-sm">
         <p className="text-muted-foreground">
-          Belum punya akun?{' '}
+          {t('login.no_account', { defaultValue: 'Belum punya akun?' })}{' '}
           <Link href="/register/company" className="font-semibold text-primary hover:underline">
-            Mulai ruang kerja baru
+            {t('login.register_now', { defaultValue: 'Daftar sekarang' })}
           </Link>
         </p>
         <p className="text-xs text-muted-foreground">

@@ -1,5 +1,6 @@
 import { AdminUser, PickCreateAdmin } from '@repo';
 import { Plus, Users } from 'lucide-react';
+import { useState } from 'react';
 
 import {
   Button,
@@ -36,6 +37,8 @@ interface OwnerCompanyMemberSectionProps {
     member: AdminUser[];
     handleUpdateStatus?: (id: string, status: string) => void;
     handleDeleteMember?: (id: string) => void;
+    handleInvite?: (email: string) => void;
+    isInvitePending?: boolean;
   };
   state: {
     open: boolean;
@@ -51,15 +54,36 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
   state,
 }) => {
   const { description, title } = template;
-  const { isLoading, isPending, member, handleDeleteMember, handleUpdateStatus } = service;
+  const {
+    isLoading,
+    isPending,
+    member,
+    handleDeleteMember,
+    handleUpdateStatus,
+    handleInvite,
+    isInvitePending,
+  } = service;
   const { open, setOpen, alert, searchTerm, setSearchTerm } = state;
+  const [inviteEmail, setInviteEmail] = useState('');
+
+  const submitInvite = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inviteEmail.trim() || isInvitePending) return;
+    handleInvite?.(inviteEmail.trim());
+  };
   return (
     <div className="w-full space-y-6">
       <PageHeader
         title={title}
         description={description}
         action={
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog
+            open={open}
+            onOpenChange={(v) => {
+              if (!v) setInviteEmail('');
+              setOpen(v);
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="size-4" />
@@ -71,6 +95,27 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
                 <DialogTitle>Tambah Anggota Baru</DialogTitle>
                 <DialogDescription>Undang anggota baru ke perusahaan Anda.</DialogDescription>
               </DialogHeader>
+              <form onSubmit={submitInvite} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="inviteEmail">Email</Label>
+                  <Input
+                    id="inviteEmail"
+                    type="email"
+                    required
+                    placeholder="nama@email.com"
+                    value={inviteEmail}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setInviteEmail(e.target.value)
+                    }
+                    disabled={isInvitePending}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button type="submit" disabled={isInvitePending}>
+                    {isInvitePending ? 'Mengirim...' : 'Kirim Undangan'}
+                  </Button>
+                </DialogFooter>
+              </form>
             </DialogContent>
           </Dialog>
         }

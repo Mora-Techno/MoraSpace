@@ -4,11 +4,15 @@ import { ArrowRight, Check, CheckSquare } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function WorkflowSection() {
+  const { t } = useTranslation('public');
+
   const [subtasks, setSubtasks] = useState([
-    { id: 1, text: 'Pairing font headline & body DM Sans', done: true },
-    { id: 2, text: 'Kalibrasi skala rasio hierarki desktop (1920px)', done: true },
-    { id: 3, text: 'Review bersama art director pukul 14.00', done: false },
+    { id: 1, textKey: 'workflow.subtask1', done: true },
+    { id: 2, textKey: 'workflow.subtask2', done: true },
+    { id: 3, textKey: 'workflow.subtask3', done: false },
   ]);
 
   const toggleSubtask = (id: number) => {
@@ -22,18 +26,17 @@ export function WorkflowSection() {
           {/* Left Column: Description & Features */}
           <div className="lg:col-span-5 space-y-6">
             <span className="font-mono text-xs font-bold tracking-wider text-muted-foreground uppercase">
-              01 — MANAJEMEN ALUR KERJA
+              {t('workflow.tag')}
             </span>
 
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
-              Prioritas jelas.
+              {t('workflow.title_line1')}
               <br />
-              Pekerjaan terarah.
+              {t('workflow.title_line2')}
             </h2>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Bagikan tugas, tentukan tenggat, dan simpan detail pekerjaan agar setiap anggota tim
-              tahu langkah berikutnya tanpa harus bolak-balik bertanya di grup chat.
+              {t('workflow.desc')}
             </p>
 
             {/* Checklist Points */}
@@ -44,11 +47,10 @@ export function WorkflowSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-foreground">
-                    Bukan papan kartu yang melelahkan
+                    {t('workflow.point1_title')}
                   </h4>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    Daftar terstruktur dengan garis pandang bersih yang menenangkan mata saat
-                    membaca puluhan tiket kerja.
+                    {t('workflow.point1_desc')}
                   </p>
                 </div>
               </div>
@@ -59,10 +61,10 @@ export function WorkflowSection() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-sm text-foreground">
-                    Tenggat yang menghargai jam kerja
+                    {t('workflow.point2_title')}
                   </h4>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    Penetapan batas waktu realistis yang mengkalkulasi waktu istirahat anggota tim.
+                    {t('workflow.point2_desc')}
                   </p>
                 </div>
               </div>
@@ -73,7 +75,7 @@ export function WorkflowSection() {
                 href="/register/company"
                 className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
               >
-                <span>Lihat cara kerjanya</span>
+                <span>{t('workflow.cta')}</span>
                 <ArrowRight className="size-4" />
               </Link>
             </div>
@@ -90,15 +92,15 @@ export function WorkflowSection() {
                   </div>
                   <div>
                     <h4 className="font-bold text-sm text-foreground">
-                      Siklus Sprint 14 • Redesain Studio
+                      {t('workflow.mockup_sprint')}
                     </h4>
                     <p className="text-[11px] text-muted-foreground">
-                      6 dari 8 tugas selesai pekan ini
+                      {t('workflow.mockup_progress')}
                     </p>
                   </div>
                 </div>
                 <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-                  Semua Anggota
+                  {t('workflow.mockup_badge')}
                 </span>
               </div>
 
@@ -110,15 +112,15 @@ export function WorkflowSection() {
                       <Check className="size-3 stroke-[3]" />
                     </span>
                     <span className="font-bold text-sm text-foreground">
-                      Eksplorasi Tipografi Editorial Fraunces
+                      {t('workflow.task_primary_title')}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-[10px]">
                     <span className="rounded-md bg-destructive/15 px-2 py-0.5 font-bold text-destructive">
-                      Prioritas Utama
+                      {t('workflow.priority_high')}
                     </span>
                     <span className="rounded-md bg-muted px-2 py-0.5 font-medium text-muted-foreground">
-                      Kemarin
+                      {t('workflow.yesterday')}
                     </span>
                   </div>
                 </div>
@@ -146,7 +148,7 @@ export function WorkflowSection() {
                           task.done ? 'line-through text-muted-foreground/70' : 'text-foreground'
                         }
                       >
-                        {task.text}
+                        {t(task.textKey as any)}
                       </span>
                     </button>
                   ))}
@@ -157,15 +159,15 @@ export function WorkflowSection() {
               <div className="flex items-center justify-between rounded-xl border border-border/40 bg-card/60 p-3 text-xs">
                 <div className="flex items-center gap-2.5">
                   <span className="size-3.5 rounded border border-muted-foreground/40" />
-                  <span className="font-medium text-foreground">
-                    Penyelarasan Palet Sage & Terracotta
-                  </span>
+                  <span className="font-medium text-foreground">{t('workflow.task2_title')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="rounded-md bg-secondary/20 px-2 py-0.5 text-[10px] font-semibold text-foreground">
-                    Normal
+                    {t('workflow.task2_priority')}
                   </span>
-                  <span className="text-[11px] text-muted-foreground">Hari ini, 16.00</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t('workflow.task2_time')}
+                  </span>
                   <span className="size-5 rounded-full bg-primary/20 flex items-center justify-center font-bold text-[9px] text-primary">
                     MK
                   </span>
@@ -176,15 +178,15 @@ export function WorkflowSection() {
               <div className="flex items-center justify-between rounded-xl border border-border/40 bg-card/60 p-3 text-xs">
                 <div className="flex items-center gap-2.5">
                   <span className="size-3.5 rounded-border border border-muted-foreground/40" />
-                  <span className="font-medium text-foreground">
-                    Uji Kontras Aksesibilitas WCAG AAA
-                  </span>
+                  <span className="font-medium text-foreground">{t('workflow.task3_title')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    Santai
+                    {t('workflow.task3_priority')}
                   </span>
-                  <span className="text-[11px] text-muted-foreground">Kamis</span>
+                  <span className="text-[11px] text-muted-foreground">
+                    {t('workflow.task3_time')}
+                  </span>
                   <span className="size-5 rounded-full bg-secondary/30 flex items-center justify-center font-bold text-[9px] text-foreground">
                     DS
                   </span>

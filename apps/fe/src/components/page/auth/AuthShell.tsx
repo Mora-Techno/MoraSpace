@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type React from 'react';
 
+import LanguageDropdown from '@/core/components/language.dropdown';
 import { useTheme } from '@/core/providers/theme.provider';
+import { useTranslation } from '@/pkg/i18n';
 
 export interface AuthShellProps {
   children: React.ReactNode;
@@ -13,6 +15,7 @@ export interface AuthShellProps {
 
 export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation('auth');
 
   return (
     <div className="min-h-screen w-full bg-background text-foreground flex flex-col justify-between selection:bg-primary/20 selection:text-foreground">
@@ -54,11 +57,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                   <Moon className="size-4 text-foreground/80" />
                 )}
               </button>
-              <div className="rounded-xl border border-border/70 bg-card/60 px-2.5 py-1 text-xs font-semibold text-muted-foreground select-none">
-                <span className="text-foreground">ID</span>
-                <span className="mx-0.5 text-muted-foreground/40">/</span>
-                <span>EN</span>
-              </div>
+              <LanguageDropdown />
             </div>
           </div>
 
@@ -67,19 +66,24 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
 
           {/* Left Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-border/40 pt-6 text-xs text-muted-foreground">
-            <span>Spaces © 2025. Dirancang untuk keheningan dan produktivitas mendalam.</span>
+            <span>
+              {t('shell.copyright', {
+                defaultValue:
+                  'Spaces © 2025. Dirancang untuk keheningan dan produktivitas mendalam.',
+              })}
+            </span>
             <div className="flex items-center gap-4">
               <Link
                 href="/terms"
                 className="transition-colors hover:text-foreground hover:underline"
               >
-                Ketentuan
+                {t('shell.terms', { defaultValue: 'Ketentuan' })}
               </Link>
               <Link
                 href="/privacy"
                 className="transition-colors hover:text-foreground hover:underline"
               >
-                Privasi
+                {t('shell.privacy', { defaultValue: 'Privasi' })}
               </Link>
               <span className="font-mono text-muted-foreground/60">v1.4.0</span>
             </div>
@@ -111,11 +115,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                 <Moon className="size-4 text-foreground/80" />
               )}
             </button>
-            <div className="rounded-xl border border-border/70 bg-card/60 px-3 py-1.5 text-xs font-semibold text-muted-foreground select-none">
-              <span className="text-foreground">ID</span>
-              <span className="mx-1 text-muted-foreground/40">/</span>
-              <span>EN</span>
-            </div>
+            <LanguageDropdown />
           </div>
 
           {/* Center Showcase Area */}

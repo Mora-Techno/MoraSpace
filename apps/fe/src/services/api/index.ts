@@ -36,6 +36,7 @@ const Api = {
   Pomodoro: ApiServicePackage.Pomodoro,
   System: ApiServicePackage.System,
   TrackCatalog: ApiServicePackage.TrackCatalog,
+  Chat: ApiServicePackage.Chat,
 } as const;
 
 export default Api;

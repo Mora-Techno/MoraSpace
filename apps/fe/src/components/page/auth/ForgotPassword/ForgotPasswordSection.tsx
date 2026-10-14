@@ -5,6 +5,8 @@ import { ArrowRight, AtSign, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 interface ForgotPasswordSectionProps {
   service: {
     onForgotPassword: (e: React.FormEvent) => void;
@@ -17,6 +19,7 @@ interface ForgotPasswordSectionProps {
 }
 
 const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, state }) => {
+  const { t } = useTranslation('auth');
   const { formSendMagicLink, setFormSendMagicLink } = state;
   const { onForgotPassword, isPending } = service;
 
@@ -25,11 +28,10 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, 
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          Lupa kata sandi?
+          {t('forgot_password.title')}
         </h1>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Masukkan email kerja Anda dan kami akan mengirimkan instruksi untuk mengatur ulang kata
-          sandi.
+          {t('forgot_password.subtitle')}
         </p>
       </div>
 
@@ -37,7 +39,7 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, 
       <form onSubmit={onForgotPassword} className="space-y-4.5">
         <div className="space-y-1.5">
           <label htmlFor="email" className="text-sm font-medium text-foreground block">
-            Email kerja
+            {t('forgot_password.email_label')}
           </label>
           <div className="relative flex items-center">
             <input
@@ -51,7 +53,7 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, 
                 }))
               }
               required
-              placeholder="nama@perusahaan.com"
+              placeholder={t('forgot_password.email_placeholder')}
               className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
             />
             <div className="absolute right-3.5 flex items-center justify-center text-muted-foreground pointer-events-none">
@@ -69,11 +71,11 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, 
           {isPending ? (
             <>
               <Loader2 className="size-4 animate-spin" />
-              <span>Memproses...</span>
+              <span>{t('forgot_password.submitting')}</span>
             </>
           ) : (
             <>
-              <span>Kirim tautan reset</span>
+              <span>{t('forgot_password.submit_btn')}</span>
               <ArrowRight className="size-4" />
             </>
           )}
@@ -85,7 +87,7 @@ const ForgotPasswordSection: React.FC<ForgotPasswordSectionProps> = ({ service, 
             href="/login"
             className="inline-flex items-center text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
           >
-            ← Kembali ke halaman Masuk
+            ← {t('forgot_password.back_to_login')}
           </Link>
         </div>
       </form>

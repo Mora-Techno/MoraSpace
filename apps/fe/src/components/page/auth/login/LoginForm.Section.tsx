@@ -5,6 +5,8 @@ import { ArrowRight, AtSign, Eye, EyeOff, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import type React from 'react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 interface LoginFormSectionProps {
   state: {
     formLogin: PickLogin;
@@ -21,13 +23,14 @@ interface LoginFormSectionProps {
 
 const LoginFormSection: React.FC<LoginFormSectionProps> = ({ state, service }) => {
   const { formLogin, setFormLogin, setShowPassword, showPassword } = state;
+  const { t } = useTranslation('auth');
 
   return (
     <form onSubmit={service.handleSubmit} className="space-y-4.5">
       {/* Email Input */}
       <div className="space-y-1.5">
         <label htmlFor="email" className="text-sm font-medium text-foreground block">
-          Email kerja
+          {t('login.email_label', { defaultValue: 'Email kerja' })}
         </label>
         <div className="relative flex items-center">
           <input
@@ -54,13 +57,13 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({ state, service }) =
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="text-sm font-medium text-foreground">
-            Password
+            {t('login.password_label', { defaultValue: 'Password' })}
           </label>
           <Link
             href="/forgot-password"
             className="text-xs font-medium text-muted-foreground transition-colors hover:text-primary"
           >
-            Lupa kata sandi?
+            {t('login.forgot_password', { defaultValue: 'Lupa kata sandi?' })}
           </Link>
         </div>
         <div className="relative flex items-center">
@@ -75,7 +78,7 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({ state, service }) =
               }))
             }
             required
-            placeholder="Masukkan password Anda"
+            placeholder="••••••••"
             className="w-full rounded-xl border border-input bg-muted/40 px-3.5 py-3 pr-10 text-sm text-foreground placeholder:text-muted-foreground/60 outline-none transition-all focus:border-ring focus:ring-2 focus:ring-ring/20"
           />
           <button
@@ -98,11 +101,11 @@ const LoginFormSection: React.FC<LoginFormSectionProps> = ({ state, service }) =
         {service.isPending ? (
           <>
             <Loader2 className="size-4 animate-spin" />
-            <span>Memproses...</span>
+            <span>{t('login.submitting', { defaultValue: 'Memproses...' })}</span>
           </>
         ) : (
           <>
-            <span>Masuk</span>
+            <span>{t('login.submit_btn', { defaultValue: 'Masuk ke Akun' })}</span>
             <ArrowRight className="size-4" />
           </>
         )}

@@ -21,6 +21,7 @@ const OwnerCompanyMemberContainer = () => {
   const { data: members = [], isLoading } = api.member.query.list();
   const updateMember = api.member.mutate.update();
   const deleteMember = api.member.mutate.delete();
+  const createInvitation = api.invitation.mutate.create();
 
   const handleUpdateStatus = (id: string, status: string) => {
     updateMember.mutate({ id, payload: { status } as any });
@@ -28,6 +29,10 @@ const OwnerCompanyMemberContainer = () => {
 
   const handleDeleteMember = (id: string) => {
     deleteMember.mutate({ id });
+  };
+
+  const handleInvite = (email: string) => {
+    createInvitation.mutate({ email }, { onSuccess: () => setOpen(false) });
   };
 
   return (
@@ -43,6 +48,8 @@ const OwnerCompanyMemberContainer = () => {
           isPending: updateMember.isPending || deleteMember.isPending,
           handleUpdateStatus,
           handleDeleteMember,
+          handleInvite,
+          isInvitePending: createInvitation.isPending,
         } as any
       }
       state={{

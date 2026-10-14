@@ -1,13 +1,16 @@
 'use client';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function AudienceStrip() {
+  const { t } = useTranslation('public');
   const audiences = ['Startup', 'Software House', 'Digital Agency', 'Creative Studio'];
 
   return (
     <section className="px-4 py-16 md:px-8 md:py-20 border-t border-border/40 text-center">
       <div className="mx-auto max-w-4xl space-y-6">
         <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-          Untuk tim yang membangun sesuatu.
+          {t('audience.title')}
         </h3>
 
         {/* Tags Row */}
@@ -23,8 +26,7 @@ export function AudienceStrip() {
         </div>
 
         <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-lg mx-auto">
-          Bebas dari beban fitur yang berlebihan. Hanya apa yang esensial untuk melahirkan karya
-          berharga.
+          {t('audience.desc')}
         </p>
       </div>
     </section>

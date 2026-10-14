@@ -52,3 +52,4 @@ export {
   trackCatalogApprove,
   trackCatalogReject,
 } from './trackCatalog.endpoints';
+export { CHAT_ENDPOINTS, listChatEndpoints } from './chat.endpoints';

@@ -18,6 +18,7 @@ import taskService from './task.service';
 import teamService from './team.service';
 import todoService from './todo.service';
 import trackCatalogService from './trackCatalog.service';
+import chatService from './chat.service';
 export {
   setAuthErrorHandler,
   setBaseURLProvider,
@@ -47,6 +48,7 @@ class ApiServicePackage {
   static Pomodoro = WrapApi(pomodoroService);
   static System = WrapApi(systemService);
   static TrackCatalog = WrapApi(trackCatalogService);
+  static Chat = WrapApi(chatService);
 }
 
 export { default as AuthService } from './auth.service';
@@ -69,6 +71,7 @@ export { default as TaskService } from './task.service';
 export { default as PomodoroService } from './pomodoro.service';
 export { default as SystemService } from './system.service';
 export { default as TrackCatalogService } from './trackCatalog.service';
+export { default as ChatService } from './chat.service';
 export { toServiceResponse } from './service-response';
 export { ApiServicePackage as Api };
 export default ApiServicePackage;

@@ -2,30 +2,34 @@
 
 import { Bot, Calendar, MessageSquare, Sparkles } from 'lucide-react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function RoadmapSection() {
+  const { t } = useTranslation('public');
+
   const roadmapItems = [
     {
-      title: 'Komunikasi Tim',
-      desc: 'Utas diskusi asinkron yang terikat langsung pada kartu proyek tanpa bising notifikasi konstan.',
-      quarter: 'Kuartal 1 2026',
+      title: t('roadmap.item1_title'),
+      desc: t('roadmap.item1_desc'),
+      quarter: t('roadmap.item1_q'),
       icon: MessageSquare,
     },
     {
-      title: 'Ringkasan Meeting',
-      desc: 'Ekstraksi butir aksi penting secara otomatis dari notulensi diskusi mingguan ke daftar tugas.',
-      quarter: 'Kuartal 2 2026',
+      title: t('roadmap.item2_title'),
+      desc: t('roadmap.item2_desc'),
+      quarter: t('roadmap.item2_q'),
       icon: Sparkles,
     },
     {
-      title: 'Asisten AI Mora',
-      desc: 'Penyusun draf ide, penataan agenda harian, dan pemeriksa kejelasan ringkasan dokumen.',
-      quarter: 'Kuartal 2 2026',
+      title: t('roadmap.item3_title'),
+      desc: t('roadmap.item3_desc'),
+      quarter: t('roadmap.item3_q'),
       icon: Bot,
     },
     {
-      title: 'Integrasi Kalender',
-      desc: 'Sinkronisasi dua arah dengan Google Calendar dan Outlook tanpa duplikasi pengingat.',
-      quarter: 'Kuartal 3 2026',
+      title: t('roadmap.item4_title'),
+      desc: t('roadmap.item4_desc'),
+      quarter: t('roadmap.item4_q'),
       icon: Calendar,
     },
   ];
@@ -36,14 +40,13 @@ export function RoadmapSection() {
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
           <span className="font-mono text-xs font-bold tracking-wider text-muted-foreground uppercase">
-            PETA PENGEMBANGAN
+            {t('roadmap.tag')}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
-            Ruang kerja yang terus bertumbuh.
+            {t('roadmap.title')}
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Fondasi yang sederhana hari ini, dengan lebih banyak kemampuan yang dikembangkan secara
-            bertahap dan penuh pertimbangan.
+            {t('roadmap.desc')}
           </p>
         </div>
 
@@ -62,7 +65,7 @@ export function RoadmapSection() {
                       <Icon className="size-4.5" />
                     </div>
                     <span className="rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
-                      Direncanakan
+                      {t('roadmap.planned')}
                     </span>
                   </div>
 

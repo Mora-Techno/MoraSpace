@@ -5,7 +5,10 @@ import { Compass, FileText, Zap } from 'lucide-react';
 import Image from 'next/image';
 import { useEffect, useRef } from 'react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function CollaborationSection() {
+  const { t } = useTranslation('public');
   const orbitRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,10 +69,10 @@ export function CollaborationSection() {
                   viewBox="0 0 420 420"
                   fill="none"
                   role="img"
-                  aria-label="Garis Orbit Kolaborasi"
+                  aria-label={t('collaboration.orbit_label')}
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <title>Garis Orbit Kolaborasi</title>
+                  <title>{t('collaboration.orbit_label')}</title>
                   <circle
                     cx="210"
                     cy="210"
@@ -81,48 +84,56 @@ export function CollaborationSection() {
                   />
                 </svg>
 
-                {/* Node 1 (Top Left): Sarah N. Memperbarui Moodboard */}
+                {/* Node 1 (Top Left) */}
                 <div className="absolute top-[8%] left-[8%] -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
                   <div className="orbit-node-inner flex items-center gap-2 rounded-2xl border border-border/80 bg-card/90 px-3 py-1.5 shadow-md backdrop-blur-md">
                     <span className="flex size-6 items-center justify-center rounded-full bg-destructive/15 text-[10px] font-bold text-destructive">
                       SN
                     </span>
                     <div className="text-left text-[11px] leading-tight">
-                      <p className="font-bold text-foreground">Sarah N.</p>
-                      <p className="text-[10px] text-muted-foreground">Memperbarui Moodboard</p>
+                      <p className="font-bold text-foreground">
+                        {t('collaboration.orbit_node1_name')}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {t('collaboration.orbit_node1_desc')}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Node 2 (Top Right): Dimas P. Dalam Waktu Fokus */}
+                {/* Node 2 (Top Right) */}
                 <div className="absolute top-[8%] right-[8%] translate-x-1/2 -translate-y-1/2 pointer-events-auto">
                   <div className="orbit-node-inner flex items-center gap-2 rounded-2xl border border-border/80 bg-card/90 px-3 py-1.5 shadow-md backdrop-blur-md">
                     <span className="flex size-6 items-center justify-center rounded-full bg-primary/20 text-[10px] font-bold text-primary">
                       DP
                     </span>
                     <div className="text-left text-[11px] leading-tight">
-                      <p className="font-bold text-foreground">Dimas P.</p>
-                      <p className="text-[10px] text-muted-foreground">Dalam Waktu Fokus</p>
+                      <p className="font-bold text-foreground">
+                        {t('collaboration.orbit_node2_name')}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {t('collaboration.orbit_node2_desc')}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Node 3 (Bottom Left): Catatan Brief Q4.md */}
+                {/* Node 3 (Bottom Left) */}
                 <div className="absolute bottom-[8%] left-[8%] -translate-x-1/2 translate-y-1/2 pointer-events-auto">
                   <div className="orbit-node-inner flex items-center gap-2 rounded-2xl border border-border/80 bg-card/90 px-3 py-1.5 shadow-md backdrop-blur-md">
                     <FileText className="size-4 text-primary" />
                     <span className="text-[11px] font-semibold text-foreground">
-                      Catatan Brief Q4.md
+                      {t('collaboration.orbit_node3')}
                     </span>
                   </div>
                 </div>
 
-                {/* Node 4 (Bottom Right): Sprint Retrospektif */}
+                {/* Node 4 (Bottom Right) */}
                 <div className="absolute bottom-[8%] right-[8%] translate-x-1/2 translate-y-1/2 pointer-events-auto">
                   <div className="orbit-node-inner flex items-center gap-2 rounded-2xl border border-border/80 bg-card/90 px-3 py-1.5 shadow-md backdrop-blur-md">
                     <Zap className="size-4 text-accent-foreground" />
                     <span className="text-[11px] font-semibold text-foreground">
-                      Sprint Retrospektif
+                      {t('collaboration.orbit_node4')}
                     </span>
                   </div>
                 </div>
@@ -133,16 +144,15 @@ export function CollaborationSection() {
           {/* Right Column: Text & Features */}
           <div className="lg:col-span-6 space-y-6">
             <span className="font-mono text-xs font-bold tracking-wider text-muted-foreground uppercase">
-              02 — KOLABORASI KONTEKSTUAL
+              {t('collaboration.tag')}
             </span>
 
             <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
-              Bergerak bersama, dengan konteks yang sama.
+              {t('collaboration.title')}
             </h2>
 
             <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              Hubungkan anggota, tim, dan catatan kerja dalam satu ruang yang mudah dipahami. Tanpa
-              utas obrolan yang tenggelam atau dokumen terpisah di lima tab peramban berbeda.
+              {t('collaboration.desc')}
             </p>
 
             {/* Feature Cards Grid */}
@@ -152,10 +162,11 @@ export function CollaborationSection() {
                 <div className="flex size-8 items-center justify-center rounded-xl bg-primary/15 text-primary">
                   <Compass className="size-4.5" />
                 </div>
-                <h4 className="font-bold text-sm text-foreground">Ruang Tim Mandiri</h4>
+                <h4 className="font-bold text-sm text-foreground">
+                  {t('collaboration.card1_title')}
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Setiap departemen memiliki oasis tersendiri namun tetap terhubung ke tujuan utama
-                  studio.
+                  {t('collaboration.card1_desc')}
                 </p>
               </div>
 
@@ -164,10 +175,11 @@ export function CollaborationSection() {
                 <div className="flex size-8 items-center justify-center rounded-xl bg-secondary/25 text-foreground">
                   <FileText className="size-4.5" />
                 </div>
-                <h4 className="font-bold text-sm text-foreground">Catatan Terintegrasi</h4>
+                <h4 className="font-bold text-sm text-foreground">
+                  {t('collaboration.card2_title')}
+                </h4>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Tautkan keputusan rapat langsung ke lembar tugas sehingga riwayat ide tidak pernah
-                  hilang.
+                  {t('collaboration.card2_desc')}
                 </p>
               </div>
             </div>

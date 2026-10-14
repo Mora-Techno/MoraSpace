@@ -21,6 +21,7 @@ export default function CompanySettingsContainer() {
     country: string;
     workingHourStart?: string;
     workingHourEnd?: string;
+    workDays: string;
     respectWorkingHours?: boolean;
     queueNotification?: boolean;
   }>({
@@ -28,6 +29,7 @@ export default function CompanySettingsContainer() {
     country: '',
     workingHourStart: '09:00',
     workingHourEnd: '17:00',
+    workDays: 'mon,tue,wed,thu,fri',
     respectWorkingHours: true,
     queueNotification: true,
   });
@@ -50,6 +52,7 @@ export default function CompanySettingsContainer() {
         ...prev,
         workingHourStart: s.workingHourStart || prev.workingHourStart,
         workingHourEnd: s.workingHourEnd || prev.workingHourEnd,
+        workDays: s.workDays || prev.workDays,
         respectWorkingHours: s.respectWorkingHours ?? prev.respectWorkingHours,
         queueNotification: s.queueNotification ?? prev.queueNotification,
       }));
@@ -62,6 +65,7 @@ export default function CompanySettingsContainer() {
     updateSettings.mutate({
       workingHourStart: formUpdate.workingHourStart,
       workingHourEnd: formUpdate.workingHourEnd,
+      workDays: formUpdate.workDays,
       respectWorkingHours: formUpdate.respectWorkingHours,
       queueNotification: formUpdate.queueNotification,
     });

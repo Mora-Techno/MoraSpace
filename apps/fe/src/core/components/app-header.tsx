@@ -7,7 +7,10 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { useTheme } from '@/core/providers/theme.provider';
+import { useTranslation } from '@/pkg/i18n';
 import { cn } from '@/utils/classname';
+
+import LanguageDropdown from './language.dropdown';
 
 interface AppHeaderProps {
   state?: {
@@ -21,6 +24,7 @@ export default function AppHeader({ state }: AppHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation('common');
   const currentPathname = usePathname();
 
   const isScrolled = state ? state.isScrolled : scrolled;
@@ -39,10 +43,10 @@ export default function AppHeader({ state }: AppHeaderProps) {
   }, [state]);
 
   const navLinks = [
-    { title: 'Beranda', href: '/home' },
-    { title: 'Harga', href: '/pricing' },
-    { title: 'Blog', href: '/blogs' },
-    { title: 'Sumber Daya', href: '/resource' },
+    { title: t('nav.home', { defaultValue: 'Beranda' }), href: '/home' },
+    { title: t('nav.pricing', { defaultValue: 'Harga' }), href: '/pricing' },
+    { title: t('nav.blogs', { defaultValue: 'Blog' }), href: '/blogs' },
+    { title: t('nav.resources', { defaultValue: 'Sumber Daya' }), href: '/resource' },
   ];
 
   const isLinkActive = (href: string) => {
@@ -122,11 +126,14 @@ export default function AppHeader({ state }: AppHeaderProps) {
             )}
           </button>
 
+          {/* Language Switcher */}
+          <LanguageDropdown />
+
           {/* User profile icon */}
           <Link
             href="/login"
             className="hidden sm:flex size-8 items-center justify-center rounded-full border border-border/70 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Akun Saya"
+            aria-label={t('nav.my_account', { defaultValue: 'Akun Saya' })}
           >
             <User className="size-4" />
           </Link>
@@ -174,7 +181,7 @@ export default function AppHeader({ state }: AppHeaderProps) {
               onClick={() => setMobileMenuOpen(false)}
               className="w-full text-center py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
             >
-              Masuk
+              {t('nav.login', { defaultValue: 'Masuk' })}
             </Link>
           </div>
         </div>

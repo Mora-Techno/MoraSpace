@@ -2,29 +2,33 @@
 
 import { Clock, Link2, Sparkles } from 'lucide-react';
 
+import { useTranslation } from '@/pkg/i18n';
+
 export function StepsSection() {
+  const { t } = useTranslation('public');
+
   const steps = [
     {
       num: '01',
-      title: 'Buat ruang kerja',
-      desc: 'Daftarkan perusahaan atau studio kreatifmu. Susun dasar workspace dengan nama, tema visual awal, dan domain kustom untuk tim.',
-      footer: 'Waktu setup < 2 menit',
+      title: t('steps.step1_title'),
+      desc: t('steps.step1_desc'),
+      footer: t('steps.step1_footer'),
       icon: Clock,
       featured: false,
     },
     {
       num: '02',
-      title: 'Undang tim',
-      desc: 'Atur anggota, divisi, dan tingkat akses sesuai kebutuhan. Kirim tautan undangan cepat via email dengan batas hak akses yang aman dan transparan.',
-      footer: 'Undang lewat link instan',
+      title: t('steps.step2_title'),
+      desc: t('steps.step2_desc'),
+      footer: t('steps.step2_footer'),
       icon: Link2,
       featured: true,
     },
     {
       num: '03',
-      title: 'Susun hari kerja',
-      desc: 'Mulai kelola tugas, agenda harian, dan waktu fokus. Nikmati alur kerja harian yang jernih tanpa gangguan pesan masuk di luar jam kantor.',
-      footer: 'Fokus langsung terjaga',
+      title: t('steps.step3_title'),
+      desc: t('steps.step3_desc'),
+      footer: t('steps.step3_footer'),
       icon: Sparkles,
       featured: false,
     },
@@ -36,14 +40,13 @@ export function StepsSection() {
         {/* Centered Header */}
         <div className="text-center max-w-2xl mx-auto space-y-3 mb-16">
           <span className="font-mono text-xs font-bold tracking-wider text-muted-foreground uppercase">
-            LANGKAH MUDAH
+            {t('steps.tag')}
           </span>
           <h2 className="font-serif text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight">
-            Mulai dengan tiga langkah sederhana.
+            {t('steps.title')}
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Dirancang agar kamu dan tim bisa langsung bekerja dalam hitungan menit, tanpa instalasi
-            rumit atau pelatihan berhari-hari.
+            {t('steps.desc')}
           </p>
         </div>
 
@@ -62,7 +65,7 @@ export function StepsSection() {
               >
                 {step.featured && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[10px] font-bold tracking-wider text-primary-foreground uppercase shadow-xs">
-                    DIREKOMENDASIKAN
+                    {t('steps.badge_rec')}
                   </div>
                 )}
 

@@ -11,6 +11,7 @@ import {
   ScribbleSparkle,
   ScribbleUnderline,
 } from '@/components/atoms/Scribbles';
+import { useTranslation } from '@/pkg/i18n';
 
 export interface PricingSectionProps {
   template?: {
@@ -35,6 +36,7 @@ export function PricingSection({
   onSelectPlan,
   isPrivate = false,
 }: PricingSectionProps) {
+  const { t } = useTranslation('public');
   const [isAnnual, setIsAnnual] = useState(true);
 
   const PLANS = [
@@ -161,9 +163,9 @@ export function PricingSection({
               template.title
             ) : (
               <>
-                Investasi untuk{' '}
+                {t('pricing.title_prefix', { defaultValue: 'Investasi untuk' })}{' '}
                 <span className="relative inline-block text-primary">
-                  Produktivitas Sehat
+                  {t('pricing.title_highlight', { defaultValue: 'Produktivitas Sehat' })}
                   <ScribbleUnderline className="absolute -bottom-4 left-0 w-full text-primary/70" />
                 </span>
               </>
@@ -172,7 +174,10 @@ export function PricingSection({
 
           <p className="mx-auto mt-6 max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed">
             {template?.desc ??
-              'Satu ruang kerja kalem untuk menggantikan puluhan aplikasi yang bising. Tanpa biaya tersembunyi, batalkan kapan saja dengan satu klik.'}
+              t('pricing.subtitle', {
+                defaultValue:
+                  'Satu ruang kerja kalem untuk menggantikan puluhan aplikasi yang bising. Tanpa biaya tersembunyi, batalkan kapan saja dengan satu klik.',
+              })}
           </p>
 
           {/* Active Workspace Subscription Status (Private / Billing View) */}
@@ -218,7 +223,7 @@ export function PricingSection({
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                Bulanan
+                {t('pricing.monthly', { defaultValue: 'Bulanan' })}
               </button>
               <button
                 type="button"
@@ -229,7 +234,7 @@ export function PricingSection({
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
-                Tahunan
+                {t('pricing.annual', { defaultValue: 'Tahunan' })}
               </button>
             </div>
 
@@ -237,7 +242,7 @@ export function PricingSection({
             <div className="hidden sm:flex items-center gap-1.5 text-primary text-xs font-semibold relative">
               <ScribbleArrow className="size-6 text-primary rotate-[-20deg]" />
               <span className="bg-primary/10 border border-primary/20 rounded-full px-2.5 py-1">
-                Hemat 20% (2 Bulan Gratis)
+                {t('pricing.save_note', { defaultValue: 'Hemat 20% (2 Bulan Gratis)' })}
               </span>
             </div>
           </div>
@@ -268,7 +273,9 @@ export function PricingSection({
                 {isCurrent ? (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
                     <Check className="size-3.5" />
-                    <span>Paket Aktif Saat Ini</span>
+                    <span>
+                      {t('pricing.current_plan_badge', { defaultValue: 'Paket Aktif Saat Ini' })}
+                    </span>
                   </div>
                 ) : plan.popular ? (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
@@ -308,7 +315,7 @@ export function PricingSection({
                       disabled
                       className="w-full rounded-2xl py-6 font-semibold shadow-sm text-sm bg-muted text-muted-foreground border border-border/50 cursor-default"
                     >
-                      Paket Aktif Saat Ini
+                      {t('pricing.current_plan_btn', { defaultValue: 'Paket Aktif Saat Ini' })}
                     </Button>
                   ) : isPrivate ? (
                     <Button
@@ -323,9 +330,9 @@ export function PricingSection({
                     >
                       {onSelectPlan
                         ? planTier === 'enterprise'
-                          ? 'Hubungi Tim Penjualan'
-                          : 'Pilih Paket Ini'
-                        : 'Hubungi Super Admin'}
+                          ? t('pricing.contact_sales', { defaultValue: 'Hubungi Tim Penjualan' })
+                          : t('pricing.choose_plan', { defaultValue: 'Pilih Paket Ini' })
+                        : t('pricing.contact_admin', { defaultValue: 'Hubungi Super Admin' })}
                     </Button>
                   ) : (
                     <Button
@@ -385,15 +392,21 @@ export function PricingSection({
           <div className="mb-8 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="font-serif text-2xl font-bold text-foreground">
-                Perbandingan Rinci Paket
+                {t('pricing.comparison_title', { defaultValue: 'Perbandingan Rinci Paket' })}
               </h2>
               <p className="text-xs text-muted-foreground mt-1">
-                Pilih kapasitas yang paling sesuai dengan ritme tim kerja Anda.
+                {t('pricing.comparison_subtitle', {
+                  defaultValue: 'Pilih kapasitas yang paling sesuai dengan ritme tim kerja Anda.',
+                })}
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-xs text-primary font-semibold">
               <ScribbleSparkle className="size-4 text-primary" />
-              <span>Semua paket mendapatkan update berkala</span>
+              <span>
+                {t('pricing.all_plans_update', {
+                  defaultValue: 'Semua paket mendapatkan update berkala',
+                })}
+              </span>
             </div>
           </div>
 
@@ -401,13 +414,15 @@ export function PricingSection({
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="border-b border-border/60 text-muted-foreground">
-                  <th className="pb-4 font-semibold">Fitur / Kapabilitas</th>
+                  <th className="pb-4 font-semibold">
+                    {t('pricing.feature_col', { defaultValue: 'Fitur / Kapabilitas' })}
+                  </th>
                   <th className="pb-4 font-semibold text-center w-28">Starter</th>
                   <th className="pb-4 font-semibold text-center w-28 text-primary">Pro</th>
                   <th className="pb-4 font-semibold text-center w-36">Enterprise</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/40">
+              <tbody className="divide-y border-border/40">
                 {COMPARISON_ROWS.map((row) => (
                   <tr key={row.feature} className="hover:bg-muted/30 transition-colors">
                     <td className="py-4 font-medium text-foreground">{row.feature}</td>
@@ -455,10 +470,10 @@ export function PricingSection({
         <div className="mt-20 max-w-3xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 text-primary text-xs font-semibold mb-3">
             <HelpCircle className="size-4" />
-            <span>Pertanyaan Terkait Pembayaran</span>
+            <span>{t('pricing.faq_badge', { defaultValue: 'Pertanyaan Terkait Pembayaran' })}</span>
           </div>
           <h2 className="font-serif text-2xl font-bold text-foreground mb-8">
-            Punya pertanyaan sebelum memulai?
+            {t('pricing.faq_title', { defaultValue: 'Punya pertanyaan sebelum memulai?' })}
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 text-left">
