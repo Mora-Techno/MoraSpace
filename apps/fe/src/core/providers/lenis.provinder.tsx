@@ -3,7 +3,8 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ReactLenis, useLenis } from 'lenis/react';
-import { ReactNode, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { type ReactNode, useEffect } from 'react';
 
 interface LenisProviderProps {
   children: ReactNode;
@@ -23,9 +24,10 @@ function ScrollTriggerSync() {
     lenis.on('scroll', ScrollTrigger.update);
 
     // Set up GSAP ticker to sync with Lenis
-    gsap.ticker.add((time) => {
+    const updateRaf = (time: number) => {
       lenis.raf(time * 1000);
-    });
+    };
+    gsap.ticker.add(updateRaf);
 
     // Disable Lenis internal RAF since GSAP handles it
     gsap.ticker.lagSmoothing(0);
@@ -35,9 +37,7 @@ function ScrollTriggerSync() {
 
     return () => {
       lenis.off('scroll', ScrollTrigger.update);
-      gsap.ticker.remove((time) => {
-        lenis.raf(time * 1000);
-      });
+      gsap.ticker.remove(updateRaf);
     };
   }, [lenis]);
 
@@ -45,6 +45,13 @@ function ScrollTriggerSync() {
 }
 
 export function LenisProvider({ children }: LenisProviderProps) {
+  const pathname = usePathname();
+  const isPrivate = pathname?.startsWith('/member') || pathname?.startsWith('/owner');
+
+  if (isPrivate) {
+    return <>{children}</>;
+  }
+
   return (
     <ReactLenis
       root

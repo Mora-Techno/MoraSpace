@@ -5,7 +5,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import NextTopLoader from 'nextjs-toploader';
 import React from 'react';
 
-import { SidebarProvider } from '@/components/atoms';
 import { PWAUpdatePrompt } from '@/components/pwa/PWAUpdatePrompt';
 import { env } from '@/configs';
 import { AuthProvider } from '@/core/providers/auth.provider';
@@ -20,7 +19,6 @@ import { composeProviders } from './composeProvinders';
 
 const Providers = composeProviders([
   I18nProvider,
-  ({ children }) => <SidebarProvider defaultOpen={false}>{children}</SidebarProvider>,
   ({ children }) => (
     <GoogleOAuthProvider clientId={env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
       {children}
@@ -55,7 +53,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         zIndex={99999}
       />
       {children}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {process.env.NODE_ENV === 'development' ? <ReactQueryDevtools initialIsOpen={false} /> : null}
     </Providers>
   );
 }

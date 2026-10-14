@@ -22,6 +22,12 @@ export function usePWAUpdate() {
         });
       });
 
+      if (typeof window !== 'undefined' && 'indexedDB' in window) {
+        try {
+          window.indexedDB.deleteDatabase('workbox-expiration');
+        } catch {}
+      }
+
       setUpdateAvailable(false);
       setWaitingWorker(null);
       return;
