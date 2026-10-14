@@ -3,27 +3,25 @@ import { NEVER, z } from 'zod';
 
 const requiredString = z.string().trim().min(1, 'This field is required');
 const requiredKeys = [
-  "AUTH_SECRET_KEY",
-  "NEXT_INTERNAL_API_SECRET",
-  "GOOGLE_CLIENT_SECRET",
-  "NEXT_CLOUDFLARE_ACCOUNT_ID",
-  "NEXT_ACCESS_KEY_ID",
-  "NEXT_SECRET_ACCESS_KEY",
-  "NEXT_PUBLIC_APP_URL",
-  "NEXT_PUBLIC_BACKEND_URL",
-  "NEXT_PUBLIC_BASEPATH",
-  "NEXT_PUBLIC_GOOGLE_CLIENT_ID",
-  "NEXT_PUBLIC_GATE_API",
-  "NEXT_PUBLIC_VERSION_API",
-  "NEXT_PUBLIC_INTERNAL_API_SECRET",
-  "NEXT_PUBLIC_R2_URL",
+  'AUTH_SECRET_KEY',
+  'NEXT_INTERNAL_API_SECRET',
+  'GOOGLE_CLIENT_SECRET',
+  'NEXT_CLOUDFLARE_ACCOUNT_ID',
+  'NEXT_ACCESS_KEY_ID',
+  'NEXT_SECRET_ACCESS_KEY',
+  'NEXT_PUBLIC_APP_URL',
+  'NEXT_PUBLIC_BACKEND_URL',
+  'NEXT_PUBLIC_BASEPATH',
+  'NEXT_PUBLIC_GOOGLE_CLIENT_ID',
+  'NEXT_PUBLIC_GATE_API',
+  'NEXT_PUBLIC_VERSION_API',
+  'NEXT_PUBLIC_INTERNAL_API_SECRET',
+  'NEXT_PUBLIC_R2_URL',
 ] as const;
 
-const missingKeys = requiredKeys.filter(
-  (key) => !process.env[key]?.trim()
-);
+const missingKeys = requiredKeys.filter((key) => !process.env[key]?.trim());
 
-console.error("[ENV CHECK] Missing keys:", missingKeys);
+console.error('[ENV CHECK] Missing keys:', missingKeys);
 
 
 const requiredKeys = [
@@ -97,4 +95,3 @@ export const env = createEnv({
   // Make empty strings from Environment Variables as undefined
   emptyStringAsUndefined: true,
 });
-
