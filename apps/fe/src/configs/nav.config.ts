@@ -8,6 +8,7 @@ import {
   Home,
   Kanban,
   type LucideIcon,
+  MessageCircle,
   Music2,
   Radio,
   Settings,
@@ -32,6 +33,12 @@ type Role = 'member' | 'owner' | 'individual' | 'personal';
  * laman utama milik owner.
  */
 const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
+  {
+    title: 'Chat',
+    url: '/owner/member/chat',
+    icon: MessageCircle,
+    mobile: true,
+  },
   {
     title: 'Tasks',
     url: '/owner/member/tasks',
@@ -78,6 +85,7 @@ const MEMBER_WORKSPACE_ITEMS: NavItem[] = [
 
 const MEMBER_NAV_ITEMS: NavItem[] = [
   { title: 'Dashboard', url: '/member/dashboard', icon: Home, mobile: true },
+  { title: 'Chat', url: '/member/chat', icon: MessageCircle, mobile: true },
   { title: 'Tasks', url: '/member/tasks', icon: Kanban, mobile: true },
   { title: 'Pomodoro', url: '/member/pomodoro', icon: Timer, mobile: true },
   { title: 'Todos', url: '/member/todos', icon: CheckSquare, mobile: true },

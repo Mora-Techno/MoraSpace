@@ -5,6 +5,7 @@ import { opentelemetry } from '@elysia/opentelemetry';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-node';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 import apiRoutes from './routes/apiRoutes';
+import chatGateway from './ws/chat.gateway';
 import swaggerPlugin from './swagger';
 import { getCorsOrigin } from './types/cors';
 
@@ -38,6 +39,7 @@ const app = new Elysia()
 
   .get('/', () => 'Hello Mora Space Api')
   .use(apiRoutes)
+  .use(chatGateway)
   .use(swaggerPlugin);
 
 export default app;

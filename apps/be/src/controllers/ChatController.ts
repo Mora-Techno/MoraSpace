@@ -1,6 +1,7 @@
 import type { AppContext } from '@/contex';
 import { HttpResponse } from '@/http';
 import ChatService, { ChatForbiddenError } from '@/service/ChatService';
+import { emitMembershipChanged } from '@/ws/chat.gateway';
 import { getUser } from '@/utils/authTokens';
 import { memberContextValidate, paramsValidate } from '@/validation/auth.validate';
 
@@ -129,6 +130,7 @@ class ChatController {
       if (invalidParams) return invalidParams;
       const body = c.body as { userId: string };
       const data = await ChatService.addMember(params.id, actor, body.userId);
+      void emitMembershipChanged(params.id, body.userId, 'joined').catch(() => {});
       return HttpResponse(c).created(data, 'Anggota berhasil ditambahkan');
     } catch (error) {
       return chatError(c, error, 'Gagal menambah anggota');
@@ -145,6 +147,7 @@ class ChatController {
       if (invalidParams) return invalidParams;
       const body = c.body as { userId: string; role: 'ADMIN' | 'MEMBER' };
       const data = await ChatService.setMemberRole(params.id, actor, body.userId, body.role);
+      void emitMembershipChanged(params.id, body.userId, 'role').catch(() => {});
       return HttpResponse(c).ok(data, undefined, 'Role anggota diperbarui');
     } catch (error) {
       return chatError(c, error, 'Gagal mengubah role');
@@ -161,6 +164,9 @@ class ChatController {
         (await paramsValidate(params.id, c)) ?? (await paramsValidate(params.userId, c));
       if (invalidParams) return invalidParams;
       const data = await ChatService.removeMember(params.id, actor, params.userId);
+      void emitMembershipChanged(params.id, params.userId, 'removed', { revokeAccess: true }).catch(
+        () => {},
+      );
       return HttpResponse(c).ok(data, undefined, 'Anggota dikeluarkan');
     } catch (error) {
       return chatError(c, error, 'Gagal mengeluarkan anggota');
@@ -176,6 +182,9 @@ class ChatController {
       const invalidParams = await paramsValidate(params.id, c);
       if (invalidParams) return invalidParams;
       const data = await ChatService.leave(params.id, actor);
+      void emitMembershipChanged(params.id, actor.userId, 'left', { revokeAccess: true }).catch(
+        () => {},
+      );
       return HttpResponse(c).ok(data, undefined, 'Keluar dari percakapan');
     } catch (error) {
       return chatError(c, error, 'Gagal keluar');
@@ -192,6 +201,8 @@ class ChatController {
       if (invalidParams) return invalidParams;
       const body = c.body as { newOwnerId: string };
       const data = await ChatService.transfer(params.id, actor, body.newOwnerId);
+      void emitMembershipChanged(params.id, body.newOwnerId, 'role').catch(() => {});
+      void emitMembershipChanged(params.id, actor.userId, 'role').catch(() => {});
       return HttpResponse(c).ok(data, undefined, 'Kepemilikan dipindahkan');
     } catch (error) {
       return chatError(c, error, 'Gagal memindahkan kepemilikan');
