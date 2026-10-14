@@ -92,7 +92,7 @@ export function useRegister() {
   return useAppMutation<SafeAuthUser, PickRegister, AuthCacheContext>({
     mutationFn: (payload: PickRegister) => Api.Auth.Register(payload),
     onSuccess: (_res, _vars, _ctx, ns) => {
-      ns.router.replace('/');
+      ns.router.replace('/login');
     },
   });
 }

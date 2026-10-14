@@ -133,7 +133,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
             {/* Illustration Display: Theme Adaptive */}
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-border/50 shadow-md bg-card/30">
               <Image
-                src="/desain/ilustrasion-light.jpg"
+                src="/desain/ilustrasion-light.webp"
                 alt="Spaces Workspace Illustration - Mode Terang"
                 fill
                 className="object-cover dark:hidden"
@@ -141,7 +141,7 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
                 priority
               />
               <Image
-                src="/desain/ilustrasion-dark.jpg"
+                src="/desain/ilustrasion-dark.webp"
                 alt="Spaces Workspace Illustration - Mode Gelap"
                 fill
                 className="object-cover hidden dark:block"

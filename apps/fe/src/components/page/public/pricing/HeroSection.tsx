@@ -150,11 +150,6 @@ export function PricingSection({
         isPrivate ? 'pt-4 md:pt-6' : 'pt-24 md:pt-32 min-h-screen'
       }`}
     >
-      {/* Background radial glow */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
-        <div className="absolute left-1/2 top-10 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-primary/10 blur-[140px]" />
-      </div>
-
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* Header Title Section */}
         <div className="mb-12 text-center">
