@@ -2,8 +2,6 @@ import { createEnv } from '@t3-oss/env-nextjs';
 import { NEVER, z } from 'zod';
 
 const requiredString = z.string().trim().min(1, 'This field is required');
-
-
 const requiredKeys = [
   "AUTH_SECRET_KEY",
   "NEXT_INTERNAL_API_SECRET",
