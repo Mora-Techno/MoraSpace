@@ -1,13 +1,9 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/atoms/Dialog";
-import { Button } from "@/components/atoms/Button";
-import { Input } from "@/components/atoms/Input";
-import { Textarea } from "@/components/atoms/Textarea";
-import { PickCreateNote } from "@repo";
+import { PickCreateNote } from '@repo';
+
+import { Button } from '@/components/atoms/Button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/Dialog';
+import { Input } from '@/components/atoms/Input';
+import { Textarea } from '@/components/atoms/Textarea';
 
 interface NoteModalProps {
   open: boolean;
@@ -71,18 +67,11 @@ export function NoteModal({
           </div>
 
           <div className="flex justify-end gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Batal
             </Button>
-            <Button
-              type="submit"
-              disabled={!formCreateNote.title.trim() || isPending}
-            >
-              {isPending ? "Menyimpan..." : "Simpan"}
+            <Button type="submit" disabled={!formCreateNote.title.trim() || isPending}>
+              {isPending ? 'Menyimpan...' : 'Simpan'}
             </Button>
           </div>
         </form>

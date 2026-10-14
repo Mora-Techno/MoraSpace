@@ -1,11 +1,8 @@
-import type { AppContext } from "@/contex";
-import { HttpResponse } from "@/http";
-import {
-  personalContextValidate,
-  paramsValidate,
-} from "@/validation/auth.validate";
-import SessionService from "@/service/SessionService";
-import { getUser } from "@/utils/authTokens";
+import type { AppContext } from '@/contex';
+import { HttpResponse } from '@/http';
+import { personalContextValidate, paramsValidate } from '@/validation/auth.validate';
+import SessionService from '@/service/SessionService';
+import { getUser } from '@/utils/authTokens';
 
 class SessionController {
   public async list(c: AppContext) {
@@ -15,10 +12,7 @@ class SessionController {
       const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const queryService = await SessionService.listService(
-        user,
-        c.query as any,
-      );
+      const queryService = await SessionService.listService(user, c.query as any);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
@@ -26,7 +20,7 @@ class SessionController {
       return HttpResponse(c).ok(
         queryService.data,
         queryService.meta,
-        "Berhasil mengambil session users",
+        'Berhasil mengambil session users',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -40,10 +34,7 @@ class SessionController {
       const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const queryService = await SessionService.getSessionByIdService(
-        params.id,
-        user.id,
-      );
+      const queryService = await SessionService.getSessionByIdService(params.id, user.id);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
@@ -51,7 +42,8 @@ class SessionController {
 
       return HttpResponse(c).ok(
         queryService,
-        undefined, "Berhasil mengambil session berdasarkan id",
+        undefined,
+        'Berhasil mengambil session berdasarkan id',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -74,10 +66,7 @@ class SessionController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined, "Berhasil Delete History Session",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil Delete History Session');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -89,18 +78,13 @@ class SessionController {
       const authRespone = await personalContextValidate(user, c);
       if (authRespone) return authRespone;
 
-      const queryService = await SessionService.deleteAllSessionService(
-        user.id,
-      );
+      const queryService = await SessionService.deleteAllSessionService(user.id);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined, "Berhasil Menghapus Seluruh Session",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil Menghapus Seluruh Session');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

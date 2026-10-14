@@ -1,9 +1,8 @@
 'use client';
 
+import type { AdminCompanyItem } from '@repo/types/company.types';
 import { useState } from 'react';
-import { useApi } from '@/hooks/useApi/useApi';
-import { useDebounce } from '@/hooks/useDebounce';
-import { PageHeader } from '@/components/molecules/PageHeader';
+
 import {
   Badge,
   Button,
@@ -14,7 +13,9 @@ import {
   Input,
   Label,
 } from '@/components/atoms';
-import type { AdminCompanyItem } from '@repo/types/company.types';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useDebounce } from '@/hooks/useDebounce';
 
 // v0.0.1 Layer 1 — khusus Super Admin (diakses via URL langsung, tanpa nav).
 // Semua aksi di-guard API; non-admin dapat 403.
@@ -90,7 +91,7 @@ export default function AdminCompaniesContainer() {
 
       {isError && (
         <Card>
-          <CardContent className="py-8 text-center text-sm text-red-500">
+          <CardContent className="py-8 text-center text-sm text-destructive">
             Akses ditolak (403). Halaman ini khusus Super Admin platform.
           </CardContent>
         </Card>

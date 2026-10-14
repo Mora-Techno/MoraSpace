@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { useRef } from "react";
-import { GoogleLogin } from "@react-oauth/google";
-import { Button } from "@/components/atoms";
-import { cn } from "@/utils/classname";
+import { GoogleLogin } from '@react-oauth/google';
+import { useRef } from 'react';
+
+import { Button } from '@/components/atoms';
+import { cn } from '@/utils/classname';
 
 type GoogleSignInButtonProps = {
   onSuccess: (credential: string) => void;
@@ -27,7 +28,7 @@ const GoogleSignInButton = ({
 
     const nativeButton =
       googleButtonRef.current.querySelector<HTMLElement>('[role="button"]') ??
-      googleButtonRef.current.querySelector<HTMLElement>("button");
+      googleButtonRef.current.querySelector<HTMLElement>('button');
 
     nativeButton?.click();
   };
@@ -58,7 +59,7 @@ const GoogleSignInButton = ({
         variant="outline"
         type="button"
         size="lg"
-        className={cn("w-full", className)}
+        className={cn('w-full', className)}
         onClick={handleClick}
         disabled={disabled}
       >

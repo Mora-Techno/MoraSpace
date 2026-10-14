@@ -82,7 +82,7 @@ class CompanyRouter {
       (c: AppContext) => CompanyController.updateSubscription(c),
       {
         body: UpdateSubscriptionDto,
-        beforeHandle: [verifyToken().beforeHandle],
+        beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
         detail: {
           summary: 'Upgrade/downgrade langganan',
           description: 'Leader mengubah tier (free/pro/enterprise). Pro = max 8 user/workstation.',

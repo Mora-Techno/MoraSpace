@@ -2,5 +2,48 @@
   "welcome": "Selamat Datang",
   "language": "Bahasa",
   "change_language": "Ganti Bahasa",
-  "select_language": "Pilih Bahasa"
+  "select_language": "Pilih Bahasa",
+  "nav": {
+    "home": "Beranda",
+    "pricing": "Harga",
+    "blogs": "Blog",
+    "resources": "Sumber Daya",
+    "login": "Masuk",
+    "register": "Mulai Sekarang",
+    "my_account": "Akun Saya"
+  },
+  "footer": {
+    "tagline": "One Workspace. Better Work.",
+    "description": "Ruang kerja digital yang mengutamakan ketenangan mental, fokus literer, dan kolaborasi tanpa distraksi.",
+    "products": "Produk",
+    "featured": "Fitur Unggulan",
+    "doc_editor": "Editor Dokumen",
+    "kanban": "Kanban & Tugas",
+    "calendar": "Kalender & Ritme",
+    "focus_mode": "Mode Fokus",
+    "company": "Perusahaan",
+    "about": "Tentang Kami",
+    "manifesto": "Manifesto",
+    "careers": "Karir",
+    "contact": "Kontak",
+    "resources_col": "Sumber Daya",
+    "guides": "Buku Panduan",
+    "community": "Komunitas",
+    "help": "Pusat Bantuan",
+    "changelog": "Catatan Rilis",
+    "legal": "Legal & Privasi",
+    "privacy": "Kebijakan Privasi",
+    "terms": "Ketentuan Layanan",
+    "security": "Keamanan Data",
+    "cookies": "Kebijakan Cookie",
+    "copyright": "Spaces © 2025. Dirancang untuk keheningan dan produktivitas mendalam."
+  },
+  "buttons": {
+    "save": "Simpan",
+    "cancel": "Batal",
+    "submit": "Kirim",
+    "continue": "Lanjutkan",
+    "back": "Kembali",
+    "loading": "Memuat..."
+  }
 }

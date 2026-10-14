@@ -21,14 +21,10 @@ import type {
   Todo,
   TodoQuery,
   TrackCatalog,
-} from "../../types";
+} from '../../types';
 
-import { queryKey } from "../query-key";
-import {
-  type AppNameSpaceLike,
-  extractQueryClient,
-  type QueryClientLike,
-} from "./client";
+import { queryKey } from '../query-key';
+import { type AppNameSpaceLike, extractQueryClient, type QueryClientLike } from './client';
 
 export type CacheTarget = AppNameSpaceLike | QueryClientLike;
 
@@ -49,12 +45,8 @@ export type CompanyCacheContext = {
 export const companyRootKey = queryKey.companiesRoot();
 export const companyRooyKey = companyRootKey;
 
-export function readCompanySnapshot(
-  target: CacheTarget,
-): CompanyProfile | undefined {
-  return extractQueryClient(target).getQueryData<CompanyProfile>(
-    queryKey.companies.me(),
-  );
+export function readCompanySnapshot(target: CacheTarget): CompanyProfile | undefined {
+  return extractQueryClient(target).getQueryData<CompanyProfile>(queryKey.companies.me());
 }
 
 // Todo
@@ -62,14 +54,10 @@ export type TodoCacheContext = {
   previousData?: Todo[];
 };
 
-export const todosListKey = (filters?: TodoQuery) =>
-  queryKey.todos.list(filters);
+export const todosListKey = (filters?: TodoQuery) => queryKey.todos.list(filters);
 export const todoRootKey = queryKey.todosRoot();
 
-export function readTodoSnapshot(
-  target: CacheTarget,
-  filters?: TodoQuery,
-): Todo[] | undefined {
+export function readTodoSnapshot(target: CacheTarget, filters?: TodoQuery): Todo[] | undefined {
   return extractQueryClient(target).getQueryData<Todo[]>(todosListKey(filters));
 }
 
@@ -83,13 +71,8 @@ export function readNoteListSnapshot(target: CacheTarget): Note[] | undefined {
   return extractQueryClient(target).getQueryData<Note[]>(queryKey.notes.list());
 }
 
-export function readNoteDetailSnapshot(
-  target: CacheTarget,
-  id: string,
-): Note | undefined {
-  return extractQueryClient(target).getQueryData<Note>(
-    queryKey.notes.detail(id),
-  );
+export function readNoteDetailSnapshot(target: CacheTarget, id: string): Note | undefined {
+  return extractQueryClient(target).getQueryData<Note>(queryKey.notes.detail(id));
 }
 
 // Calendar
@@ -98,15 +81,11 @@ export type CalendarCacheContext = {
 };
 
 export const calenderRootKey = queryKey.calendersRoot();
-export const eventsListKey = (query?: import("../../types/calendar.types").EventQuery) =>
+export const eventsListKey = (query?: import('../../types/calendar.types').EventQuery) =>
   queryKey.calendar.list(query);
 
-export function readEventSnapshot(
-  target: CacheTarget,
-): CalendarEvent[] | undefined {
-  return extractQueryClient(target).getQueryData<CalendarEvent[]>(
-    calenderRootKey,
-  );
+export function readEventSnapshot(target: CacheTarget): CalendarEvent[] | undefined {
+  return extractQueryClient(target).getQueryData<CalendarEvent[]>(calenderRootKey);
 }
 
 // Department
@@ -116,12 +95,8 @@ export type DepartmentCacheContext = {
 
 export const departmentRootKey = queryKey.departmentsRoot();
 
-export function readDepartmentSnapshot(
-  target: CacheTarget,
-): IDepartment[] | undefined {
-  return extractQueryClient(target).getQueryData<IDepartment[]>(
-    departmentRootKey,
-  );
+export function readDepartmentSnapshot(target: CacheTarget): IDepartment[] | undefined {
+  return extractQueryClient(target).getQueryData<IDepartment[]>(departmentRootKey);
 }
 
 // Invitation
@@ -131,12 +106,8 @@ export type InvitationCacheContext = {
 
 export const invitationsRootKey = queryKey.invitationsRoot();
 
-export function readInvitationSnapshot(
-  target: CacheTarget,
-): IInvitation[] | undefined {
-  return extractQueryClient(target).getQueryData<IInvitation[]>(
-    invitationsRootKey,
-  );
+export function readInvitationSnapshot(target: CacheTarget): IInvitation[] | undefined {
+  return extractQueryClient(target).getQueryData<IInvitation[]>(invitationsRootKey);
 }
 
 // Member
@@ -146,9 +117,7 @@ export type MemberCacheContext = {
 
 export const membersRoot = queryKey.membersRoot();
 
-export function readMemberSnapshot(
-  target: CacheTarget,
-): ICompanyMember[] | undefined {
+export function readMemberSnapshot(target: CacheTarget): ICompanyMember[] | undefined {
   return extractQueryClient(target).getQueryData<ICompanyMember[]>(membersRoot);
 }
 
@@ -157,12 +126,8 @@ export type MusicCacheContext = {
   previousData?: MusicPlaylist[];
 };
 
-export function readPlaylistSnapshot(
-  target: CacheTarget,
-): MusicPlaylist[] | undefined {
-  return extractQueryClient(target).getQueryData<MusicPlaylist[]>(
-    queryKey.music.list(),
-  );
+export function readPlaylistSnapshot(target: CacheTarget): MusicPlaylist[] | undefined {
+  return extractQueryClient(target).getQueryData<MusicPlaylist[]>(queryKey.music.list());
 }
 
 // Notification
@@ -175,23 +140,16 @@ export type NotificationListCacheContext = {
 };
 
 export const notificationsRootKey = queryKey.notificationsRoot();
-export const notificationLogsKey = (query?: import("../../types/notification.types").NotificationLogQuery) =>
-  queryKey.notifications.logs(query);
+export const notificationLogsKey = (
+  query?: import('../../types/notification.types').NotificationLogQuery,
+) => queryKey.notifications.logs(query);
 
-export function readNotificationLogsSnapshot(
-  target: CacheTarget,
-): NotificationLog[] | undefined {
-  return extractQueryClient(target).getQueryData<NotificationLog[]>(
-    notificationsRootKey,
-  );
+export function readNotificationLogsSnapshot(target: CacheTarget): NotificationLog[] | undefined {
+  return extractQueryClient(target).getQueryData<NotificationLog[]>(notificationsRootKey);
 }
 
-export function readNotificationsSnapshot(
-  target: CacheTarget,
-): NotificationInApp[] | undefined {
-  return extractQueryClient(target).getQueryData<NotificationInApp[]>(
-    notificationsRootKey,
-  );
+export function readNotificationsSnapshot(target: CacheTarget): NotificationInApp[] | undefined {
+  return extractQueryClient(target).getQueryData<NotificationInApp[]>(notificationsRootKey);
 }
 
 // Pomodoro
@@ -201,12 +159,8 @@ export type PomodoroCacheContext = {
 
 export const podomoroRoot = queryKey.pomodoro.active();
 
-export function readPomodoroSnapshot(
-  target: CacheTarget,
-): IPomodoroSession | undefined {
-  return extractQueryClient(target).getQueryData<IPomodoroSession>(
-    podomoroRoot,
-  );
+export function readPomodoroSnapshot(target: CacheTarget): IPomodoroSession | undefined {
+  return extractQueryClient(target).getQueryData<IPomodoroSession>(podomoroRoot);
 }
 
 // Position
@@ -216,9 +170,7 @@ export type PositionCacheContext = {
 
 export const positionsRoot = queryKey.positionsRoot();
 
-export function readPositionSnapshot(
-  target: CacheTarget,
-): IPosition[] | undefined {
+export function readPositionSnapshot(target: CacheTarget): IPosition[] | undefined {
   return extractQueryClient(target).getQueryData<IPosition[]>(positionsRoot);
 }
 
@@ -238,12 +190,8 @@ export type SessionCacheContext = {
   previousData?: Session[];
 };
 
-export function readSessionSnapshot(
-  target: CacheTarget,
-): Session[] | undefined {
-  return extractQueryClient(target).getQueryData<Session[]>(
-    queryKey.session.list(),
-  );
+export function readSessionSnapshot(target: CacheTarget): Session[] | undefined {
+  return extractQueryClient(target).getQueryData<Session[]>(queryKey.session.list());
 }
 
 // Settings
@@ -253,9 +201,7 @@ export type SettingsCacheContext = {
 
 export const SettingsRoot = queryKey.settings.detail();
 
-export function readSettingsSnapshot(
-  target: CacheTarget,
-): Settings | undefined {
+export function readSettingsSnapshot(target: CacheTarget): Settings | undefined {
   return extractQueryClient(target).getQueryData<Settings>(SettingsRoot);
 }
 
@@ -293,10 +239,6 @@ export type TrackCatalogCacheContext = {
 
 export const trackCatalogRootKey = queryKey.trackCatalogRoot();
 
-export function readTrackCatalogSnapshot(
-  target: CacheTarget,
-): TrackCatalog[] | undefined {
-  return extractQueryClient(target).getQueryData<TrackCatalog[]>(
-    trackCatalogRootKey,
-  );
+export function readTrackCatalogSnapshot(target: CacheTarget): TrackCatalog[] | undefined {
+  return extractQueryClient(target).getQueryData<TrackCatalog[]>(trackCatalogRootKey);
 }

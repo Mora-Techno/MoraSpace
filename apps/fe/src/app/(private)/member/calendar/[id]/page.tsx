@@ -1,4 +1,4 @@
-import EventDetailContainer from "./_container/eventDetail";
+import EventDetailContainer from './_container/eventDetail';
 
 export default async function CalendarEventDetailPage({
   params,

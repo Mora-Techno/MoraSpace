@@ -1,5 +1,5 @@
-import prisma from "prisma/client";
-import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
+import prisma from 'prisma/client';
+import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
 
 class NoteService {
   public async list(
@@ -13,7 +13,7 @@ class NoteService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -29,8 +29,8 @@ class NoteService {
 
     if (query.search) {
       where.OR = [
-        { title: { contains: query.search, mode: "insensitive" } },
-        { content: { contains: query.search, mode: "insensitive" } },
+        { title: { contains: query.search, mode: 'insensitive' } },
+        { content: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
@@ -41,20 +41,15 @@ class NoteService {
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate)
-        (where.createdAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.createdAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.createdAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.createdAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ createdAt: "asc" });
+      orderBy.push({ createdAt: 'asc' });
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -84,11 +79,7 @@ class NoteService {
     };
   }
 
-  public async getById(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async getById(id: string, companyMemberId: string | null, userId: string) {
     const whereFilter: Record<string, unknown> = { id };
     if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;
@@ -101,11 +92,7 @@ class NoteService {
     });
   }
 
-  public async create(
-    companyMemberId: string | null,
-    userId: string,
-    input: PickCreateNote,
-  ) {
+  public async create(companyMemberId: string | null, userId: string, input: PickCreateNote) {
     const data: Record<string, unknown> = {
       title: input.title,
       content: input.content,
@@ -142,11 +129,7 @@ class NoteService {
     return prisma.note.update({ where: { id }, data: input });
   }
 
-  public async remove(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async remove(id: string, companyMemberId: string | null, userId: string) {
     const whereFilter: Record<string, unknown> = { id };
     if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;

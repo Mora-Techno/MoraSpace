@@ -1,8 +1,4 @@
-export type CompanyMemberStatus =
-  | "active"
-  | "inactive"
-  | "pending"
-  | "resigned";
+export type CompanyMemberStatus = 'active' | 'inactive' | 'pending' | 'resigned';
 
 export interface ICompanyMember {
   id: string;
@@ -43,7 +39,7 @@ export type MemberQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   status?: string;
   positionId?: string;
   departmentId?: string;

@@ -1,10 +1,11 @@
-import { formatDateTime } from "@repo/utils/time-format";
-import type { NotificationInAppQuery, NotificationInApp } from "@repo/types";
-import { ChevronLeft, ChevronRight, MailOpen, Search } from "lucide-react";
-import { Button } from "@/components/atoms";
-import { Input } from "@/components/atoms/Input";
-import { GhibliCard } from "@/components/molecules";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
+import type { NotificationInApp, NotificationInAppQuery } from '@repo/types';
+import { formatDateTime } from '@repo/utils/time-format';
+import { ChevronLeft, ChevronRight, MailOpen, Search } from 'lucide-react';
+
+import { Button } from '@/components/atoms';
+import { Input } from '@/components/atoms/Input';
+import { GhibliCard } from '@/components/molecules';
+import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
 
 interface NotificationListSectionProps {
   service: {
@@ -22,10 +23,7 @@ interface NotificationListSectionProps {
   };
 }
 
-export function NotificationListSection({
-  service,
-  state,
-}: NotificationListSectionProps) {
+export function NotificationListSection({ service, state }: NotificationListSectionProps) {
   const { notifications, isLoading, isPending, query } = state;
   const disableNext = notifications.length < (query.limit || 10);
   const currentPage = query.page || 1;
@@ -38,7 +36,7 @@ export function NotificationListSection({
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Cari notifikasi..."
-              value={query.search || ""}
+              value={query.search || ''}
               onChange={(e) => service.onSearch(e.target.value)}
               className="pl-9"
             />
@@ -57,10 +55,7 @@ export function NotificationListSection({
         {isLoading ? (
           <div className="mt-8 space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-24 w-full animate-pulse rounded-2xl bg-muted/50"
-              />
+              <div key={i} className="h-24 w-full animate-pulse rounded-2xl bg-muted/50" />
             ))}
           </div>
         ) : notifications.length === 0 ? (
@@ -83,13 +78,11 @@ export function NotificationListSection({
                   <div className="flex flex-col flex-1 pl-2 pb-2">
                     <div className="flex items-center gap-2 mb-1">
                       <h4
-                        className={`text-base font-semibold ${!notification.readAt ? "text-primary" : "text-foreground"}`}
+                        className={`text-base font-semibold ${!notification.readAt ? 'text-primary' : 'text-foreground'}`}
                       >
                         {notification.title}
                       </h4>
-                      {!notification.readAt && (
-                        <span className="h-2 w-2 rounded-full bg-primary" />
-                      )}
+                      {!notification.readAt && <span className="h-2 w-2 rounded-full bg-primary" />}
                     </div>
                     <p className="line-clamp-2 text-sm text-muted-foreground mt-1">
                       {notification.body}
@@ -106,9 +99,7 @@ export function NotificationListSection({
                         size="icon"
                         className="opacity-0 transition-opacity group-hover:opacity-100 h-8 w-8 text-primary hover:text-primary hover:bg-primary/10"
                         title="Tandai dibaca"
-                        onClick={(e) =>
-                          service.handleMarkRead(e, notification.id)
-                        }
+                        onClick={(e) => service.handleMarkRead(e, notification.id)}
                         type="button"
                       >
                         <MailOpen className="h-4 w-4" />

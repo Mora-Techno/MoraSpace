@@ -19,10 +19,10 @@ export type DepartmentQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   managerId?: string;
   startDate?: string;
   endDate?: string;
 };
 
-export type DepartmentRespone = Omit<IDepartment, "">;
+export type DepartmentRespone = Omit<IDepartment, ''>;

@@ -1,20 +1,11 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateTodo,
-  PickUpdateTodo,
-  TodoQuery,
-} from "@repo/types/todo.types";
+import prisma from 'prisma/client';
+import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
 
-function mapTodo(todo: {
-  id: string;
-  title: string;
-  completed: boolean;
-  dueDate: Date | null;
-}) {
+function mapTodo(todo: { id: string; title: string; completed: boolean; dueDate: Date | null }) {
   return {
     id: todo.id,
     text: todo.title,
-    status: todo.completed ? ("completed" as const) : ("pending" as const),
+    status: todo.completed ? ('completed' as const) : ('pending' as const),
     dueDate: todo.dueDate?.toISOString() ?? null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -32,7 +23,7 @@ class TodoService {
       startDate?: string;
       endDate?: string;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     },
   ) {
     const page = query.page ?? 1;
@@ -47,14 +38,14 @@ class TodoService {
     }
 
     if (query.search) {
-      where.title = { contains: query.search, mode: "insensitive" };
+      where.title = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.status) {
-      where.completed = query.status === "completed";
+      where.completed = query.status === 'completed';
     }
 
-    if (query.date === "today") {
+    if (query.date === 'today') {
       const start = new Date();
       start.setHours(0, 0, 0, 0);
       const end = new Date(start);
@@ -72,10 +63,10 @@ class TodoService {
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ completed: "asc" });
-      orderBy.push({ dueDate: "asc" });
+      orderBy.push({ completed: 'asc' });
+      orderBy.push({ dueDate: 'asc' });
     }
 
     const [totalData, todos] = await prisma.$transaction([
@@ -101,11 +92,7 @@ class TodoService {
     };
   }
 
-  public async getById(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async getById(id: string, companyMemberId: string | null, userId: string) {
     const whereFilter: Record<string, unknown> = { id };
     if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;
@@ -121,11 +108,7 @@ class TodoService {
     return mapTodo(todo);
   }
 
-  public async create(
-    companyMemberId: string | null,
-    userId: string,
-    input: PickCreateTodo,
-  ) {
+  public async create(companyMemberId: string | null, userId: string, input: PickCreateTodo) {
     const data: Record<string, unknown> = {
       title: input.text,
       dueDate: input.dueDate ? new Date(input.dueDate) : null,
@@ -166,7 +149,7 @@ class TodoService {
       data: {
         ...(input.text !== undefined && { title: input.text }),
         ...(input.status !== undefined && {
-          completed: input.status === "completed",
+          completed: input.status === 'completed',
         }),
         ...(input.dueDate !== undefined && {
           dueDate: input.dueDate ? new Date(input.dueDate) : null,
@@ -177,11 +160,7 @@ class TodoService {
     return mapTodo(todo);
   }
 
-  public async remove(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async remove(id: string, companyMemberId: string | null, userId: string) {
     const whereFilter: Record<string, unknown> = { id };
     if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;

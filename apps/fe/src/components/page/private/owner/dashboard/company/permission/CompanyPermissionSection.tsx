@@ -1,4 +1,8 @@
-import { Plus, Shield, Trash2 } from "lucide-react";
+// Adjust import as per your backend schema representation of Role structure.
+// Defaulting to any since schema might vary in exact field name for UI usage
+import { type IRole } from '@repo/types';
+import { Plus, Shield, Trash2 } from 'lucide-react';
+
 import {
   Button,
   Card,
@@ -16,13 +20,10 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
-// Adjust import as per your backend schema representation of Role structure.
-// Defaulting to any since schema might vary in exact field name for UI usage
-import { type IRole } from "@repo/types";
+} from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface FormCreate {
   name: string;
@@ -48,19 +49,8 @@ interface CompanyPermissionSectionProps {
   };
 }
 
-const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
-  state,
-  service,
-}) => {
-  const {
-    open,
-    setOpen,
-    formCreate,
-    setFormCreate,
-    searchTerm,
-    setSearchTerm,
-    alert,
-  } = state;
+const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({ state, service }) => {
+  const { open, setOpen, formCreate, setFormCreate, searchTerm, setSearchTerm, alert } = state;
   const { handleSubmit, isPending, roles, isLoading, handleDelete } = service;
 
   return (
@@ -115,7 +105,7 @@ const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={isPending}>
-                    {isPending ? "Menyimpan…" : "Simpan Role"}
+                    {isPending ? 'Menyimpan…' : 'Simpan Role'}
                   </Button>
                 </DialogFooter>
               </form>
@@ -130,9 +120,7 @@ const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
             <Shield className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Role / Permission</CardTitle>
-          <CardDescription>
-            Total {roles?.length || 0} role tersedia.
-          </CardDescription>
+          <CardDescription>Total {roles?.length || 0} role tersedia.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -141,19 +129,11 @@ const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <div className="h-16 w-full rounded-xl border bg-card" />
             </phantom-ui>
           ) : roles?.length === 0 ? (
-            <div className="py-10 text-center text-sm text-muted-foreground">
-              Belum ada role.
-            </div>
+            <div className="py-10 text-center text-sm text-muted-foreground">Belum ada role.</div>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               {roles?.map((role) => (
@@ -163,12 +143,10 @@ const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold">
-                      {role.name} {role.isSystem ? "(Sistem)" : ""}
+                      {role.name} {role.isSystem ? '(Sistem)' : ''}
                     </p>
                     {role.description && (
-                      <p className="truncate text-xs text-muted-foreground">
-                        {role.description}
-                      </p>
+                      <p className="truncate text-xs text-muted-foreground">{role.description}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -179,9 +157,9 @@ const CompanyPermissionSection: React.FC<CompanyPermissionSectionProps> = ({
                         disabled={isPending}
                         onClick={() =>
                           alert?.modal({
-                            title: "Hapus Role?",
-                            deskripsi: "Apakah Anda yakin menghapus role ini?",
-                            icon: "warning",
+                            title: 'Hapus Role?',
+                            deskripsi: 'Apakah Anda yakin menghapus role ini?',
+                            icon: 'warning',
                             onConfirm: () => {
                               handleDelete(role.id);
                             },

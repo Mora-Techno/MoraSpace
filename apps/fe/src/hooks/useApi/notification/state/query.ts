@@ -1,14 +1,10 @@
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import type { NotificationInAppQuery, NotificationLogQuery } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import type { NotificationInAppQuery, NotificationLogQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
 
-import Api from "@/services/api";
+import Api from '@/services/api';
 
-import {
-  notificationDetailKey,
-  notificationLogsKey,
-  notificationsListKey,
-} from "./utils";
+import { notificationDetailKey, notificationLogsKey, notificationsListKey } from './utils';
 
 export function useNotificationLogs(query?: NotificationLogQuery) {
   return useQuery({

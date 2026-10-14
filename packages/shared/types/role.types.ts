@@ -26,7 +26,7 @@ export type RoleQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   isSystem?: boolean;
 };
 

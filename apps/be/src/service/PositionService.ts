@@ -1,8 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreatePosition,
-  PickUpdatePosition,
-} from "@repo/types/position.types";
+import prisma from 'prisma/client';
+import type { PickCreatePosition, PickUpdatePosition } from '@repo/types/position.types';
 
 class PositionService {
   public async list(
@@ -13,7 +10,7 @@ class PositionService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -23,16 +20,16 @@ class PositionService {
     const where: Record<string, unknown> = { companyId };
 
     if (query.search) {
-      where.name = { contains: query.search, mode: "insensitive" };
+      where.name = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.level !== undefined) {
       where.level = query.level;
     }
 
-    let orderBy: any = [{ level: "desc" }, { name: "asc" }];
+    let orderBy: any = [{ level: 'desc' }, { name: 'asc' }];
     if (query.sortBy) {
-      orderBy = { [query.sortBy]: query.sortOrder ?? "asc" };
+      orderBy = { [query.sortBy]: query.sortOrder ?? 'asc' };
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -75,11 +72,7 @@ class PositionService {
     return position;
   }
 
-  public async update(
-    id: string,
-    companyId: string,
-    input: PickUpdatePosition,
-  ) {
+  public async update(id: string, companyId: string, input: PickUpdatePosition) {
     const existing = await prisma.position.findFirst({
       where: { id, companyId },
     });

@@ -49,6 +49,9 @@ model User {
   trackCatalogs          TrackCatalog[]
   sessions               UserSession[]
   setting                UserSetting?
+  createdConversations   Conversation[]       @relation("ConversationCreator")
+  conversationMemberships ConversationMember[]
+  sentChatMessages       Message[]            @relation("MessageSender")
 
   @@map("users")
 }
@@ -103,7 +106,6 @@ model Company {
   id                  String           @id @default(uuid())
   name                String
   country             String?
-  counrys             String?          @map("counrys")
   createdAt           DateTime         @default(now()) @map("created_at")
   currency            String?
   logo                String?
@@ -123,6 +125,7 @@ model Company {
   currentSubscription Subscription?    @relation("CompanyCurrentSubscription", fields: [subscriptionId], references: [id])
   holidays            CompanyHoliday[]
   members             CompanyMember[]
+  conversations       Conversation[]
   policies            CompanyPolicy?
   settings            CompanySetting?
   departments         Department[]
@@ -289,6 +292,7 @@ model CompanyMember {
   todoLists         TodoList[]
   todos             Todo[]
   trackCatalogs     TrackCatalog[]
+  chatMemberships   ConversationMember[]
   settings          UserSetting?
 
   @@unique([companyId, userId])
@@ -1032,4 +1036,80 @@ model countries {
   name       String
   updated_at DateTime
   createdAt  DateTime @default(now())
+}
+
+// v1.x Chat — histori: anggota aktif boleh baca; keluar/dikeluarkan → 403 + stop event.
+// Role conversation (OWNER/ADMIN/MEMBER) terpisah dari company Owner/Member.
+model Conversation {
+  id              String             @id @default(uuid())
+  companyId       String             @map("company_id")
+  type            ConversationType
+  directKey       String?            @map("direct_key")
+  name            String?
+  description     String?
+  createdById     String             @map("created_by_id")
+  seqCounter      Int                @default(0) @map("seq_counter")
+  archivedAt      DateTime?          @map("archived_at")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+  company         Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy       User               @relation("ConversationCreator", fields: [createdById], references: [id])
+  members         ConversationMember[]
+  messages        Message[]
+
+  @@unique([directKey])
+  @@index([companyId, updatedAt])
+  @@map("conversations")
+}
+
+model ConversationMember {
+  id              String           @id @default(uuid())
+  conversationId  String           @map("conversation_id")
+  userId          String           @map("user_id")
+  companyMemberId String           @map("company_member_id")
+  role            ConversationRole @default(MEMBER)
+  joinedAt        DateTime         @default(now()) @map("joined_at")
+  leftAt          DateTime?        @map("left_at")
+  lastReadSeq     Int              @default(0) @map("last_read_seq")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember    @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+  sentMessages    Message[]        @relation("MessageSenderMember")
+
+  @@unique([conversationId, userId])
+  @@index([userId, leftAt])
+  @@index([conversationId, leftAt])
+  @@map("conversation_members")
+}
+
+model Message {
+  id              String             @id @default(uuid())
+  conversationId  String             @map("conversation_id")
+  senderId        String             @map("sender_id")
+  senderMemberId  String             @map("sender_member_id")
+  clientMessageId String             @map("client_message_id")
+  seq             Int
+  body            String             @db.VarChar(2000)
+  createdAt       DateTime           @default(now()) @map("created_at")
+  conversation    Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender          User               @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderMember    ConversationMember @relation("MessageSenderMember", fields: [senderMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, seq])
+  @@unique([senderId, clientMessageId])
+  @@index([conversationId, seq])
+  @@map("messages")
+}
+
+enum ConversationType {
+  DIRECT
+  GROUP
+}
+
+enum ConversationRole {
+  OWNER
+  ADMIN
+  MEMBER
 }

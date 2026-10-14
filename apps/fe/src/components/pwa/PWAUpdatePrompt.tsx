@@ -38,9 +38,9 @@ export function PWAUpdatePrompt() {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        <div className="space-y-2 rounded-lg bg-blue-50 p-3 dark:bg-blue-950/30">
-          <p className="text-sm font-medium text-blue-900 dark:text-blue-100">Apa yang berubah:</p>
-          <ul className="list-inside space-y-1 text-xs text-blue-800 dark:text-blue-200">
+        <div className="space-y-2 rounded-xl border border-info/30 bg-info/10 p-3.5">
+          <p className="text-sm font-medium text-foreground">Apa yang berubah:</p>
+          <ul className="list-inside space-y-1 text-xs text-muted-foreground">
             <li>• Peningkatan performa aplikasi</li>
             <li>• Perbaikan bug dan keamanan</li>
             <li>• Fitur dan UI improvements</li>

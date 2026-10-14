@@ -1,10 +1,10 @@
-import type { TResponse } from "../types/response.types";
+import type { TResponse } from '../types/response.types';
 import {
   type QueryKey,
   type UseMutationOptions,
   type UseMutationResult,
   useMutation,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 export type BaseAppNameSpace = {
   queryClient: {
@@ -17,7 +17,7 @@ export type BaseAppNameSpace = {
     toast?: (params: {
       title: string;
       message: string;
-      icon?: "success" | "error" | "info" | "warning";
+      icon?: 'success' | 'error' | 'info' | 'warning';
       onVoid?: () => void;
     }) => void;
   };
@@ -41,10 +41,7 @@ export interface AppMutationConfig<
         variables: TVariables,
         context: TContext | undefined,
       ) => QueryKey[]);
-  optimistic?: (
-    ns: TNamespace,
-    variables: TVariables,
-  ) => Promise<TContext> | TContext;
+  optimistic?: (ns: TNamespace, variables: TVariables) => Promise<TContext> | TContext;
   onSuccess?: (
     data: TResponse<TData>,
     variables: TVariables,
@@ -68,7 +65,7 @@ export interface AppMutationConfig<
   errorTitle?: string;
   options?: Omit<
     UseMutationOptions<TResponse<TData>, Error, TVariables, TContext>,
-    "mutationFn" | "onMutate" | "onSuccess" | "onError" | "onSettled"
+    'mutationFn' | 'onMutate' | 'onSuccess' | 'onError' | 'onSettled'
   >;
 }
 
@@ -91,10 +88,7 @@ export function createAppMutationHook<TNamespace extends BaseAppNameSpace>(
       mutationFn: config.mutationFn,
       onMutate: async (variables) => {
         if (config.invalidateKeys) {
-          const keys =
-            typeof config.invalidateKeys === "function"
-              ? []
-              : config.invalidateKeys;
+          const keys = typeof config.invalidateKeys === 'function' ? [] : config.invalidateKeys;
           for (const key of keys) {
             await ns.queryClient.cancelQueries({ queryKey: key });
           }
@@ -109,7 +103,7 @@ export function createAppMutationHook<TNamespace extends BaseAppNameSpace>(
           ns.alert.toast({
             title: (data as { title?: string }).title ?? data.message,
             message: data.message,
-            icon: "success",
+            icon: 'success',
           });
         }
         if (config.onSuccess) {
@@ -121,16 +115,16 @@ export function createAppMutationHook<TNamespace extends BaseAppNameSpace>(
           await config.onError(error, variables, context, ns);
         } else if (ns.alert?.toast) {
           ns.alert.toast({
-            title: config.errorTitle ?? "Error",
+            title: config.errorTitle ?? 'Error',
             message: error.message,
-            icon: "error",
+            icon: 'error',
           });
         }
       },
       onSettled: async (data, error, variables, context) => {
         if (config.invalidateKeys) {
           const keys =
-            typeof config.invalidateKeys === "function"
+            typeof config.invalidateKeys === 'function'
               ? data
                 ? config.invalidateKeys(data, variables, context)
                 : []

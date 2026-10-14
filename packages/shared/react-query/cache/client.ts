@@ -1,7 +1,7 @@
-import type { QueryClient } from "@tanstack/react-query";
+import type { QueryClient } from '@tanstack/react-query';
 
 export type QueryClientLike = {
-  getQueryData: QueryClient["getQueryData"];
+  getQueryData: QueryClient['getQueryData'];
 };
 
 export type AppNameSpaceLike = {
@@ -11,7 +11,7 @@ export type AppNameSpaceLike = {
 export function extractQueryClient(
   target: AppNameSpaceLike | QueryClientLike | QueryClient,
 ): QueryClientLike {
-  if ("queryClient" in target && target.queryClient) {
+  if ('queryClient' in target && target.queryClient) {
     return target.queryClient as QueryClientLike;
   }
   return target as QueryClientLike;

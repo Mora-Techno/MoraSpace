@@ -3,37 +3,27 @@ import type {
   MusicPlaylist,
   PickAddMusicItem,
   PickCreatePlaylist,
-} from "@repo/types";
+} from '@repo/types';
 
-import { queryKey } from "@/configs";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type MusicCacheContext,
-  readPlaylistSnapshot,
-} from "./utils";
+import { type MusicCacheContext, readPlaylistSnapshot } from './utils';
 
 export function useCreatePlaylist() {
-  return useAppMutation<
-    MusicPlaylist,
-    PickCreatePlaylist,
-    MusicCacheContext
-  >({
+  return useAppMutation<MusicPlaylist, PickCreatePlaylist, MusicCacheContext>({
     mutationFn: (payload) => Api.Music.CreatePlaylist(payload),
     invalidateKeys: [queryKey.musicRoot()],
     optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
     onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.music.list(),
-          context.previousData,
-        );
+        ns.queryClient.setQueryData(queryKey.music.list(), context.previousData);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -57,8 +47,7 @@ export function useDeletePlaylistItem() {
     { playlistId: string; itemId: string },
     MusicCacheContext
   >({
-    mutationFn: ({ playlistId, itemId }) =>
-      Api.Music.DeletePlaylistItem(playlistId, itemId),
+    mutationFn: ({ playlistId, itemId }) => Api.Music.DeletePlaylistItem(playlistId, itemId),
     invalidateKeys: [queryKey.musicRoot()],
   });
 }
@@ -70,15 +59,12 @@ export function useDeletePlaylist() {
     optimistic: (ns) => ({ previousData: readPlaylistSnapshot(ns) }),
     onError: (err, _vars, context, ns) => {
       if (context?.previousData !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.music.list(),
-          context.previousData,
-        );
+        ns.queryClient.setQueryData(queryKey.music.list(), context.previousData);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

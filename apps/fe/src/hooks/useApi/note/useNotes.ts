@@ -1,5 +1,5 @@
-import { useCreateNote, useDeleteNote, useUpdateNote } from "./state/mutate";
-import { useNote, useNotes } from "./state/query";
+import { useCreateNote, useDeleteNote, useUpdateNote } from './state/mutate';
+import { useNote, useNotes } from './state/query';
 
 export const useNotess = () => {
   return {

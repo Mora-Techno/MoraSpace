@@ -1,0 +1,15 @@
+{
+  "addDoc": {
+    "brand": "Mora",
+    "title": "Lengkapi Profil Perusahaan",
+    "subtitle": "Tambahkan logo dan negara perusahaanmu untuk memulai.",
+    "logo_label": "Logo Perusahaan (URL)",
+    "logo_placeholder": "https://example.com/logo.png",
+    "country_label": "Negara Operasional",
+    "country_placeholder": "Pilih atau masukkan negara",
+    "submit_btn": "Simpan & Lanjutkan",
+    "submitting": "Menyimpan profil...",
+    "hint": "Kamu bisa mengubahnya nanti di pengaturan perusahaan",
+    "skip": "Lewati untuk sekarang"
+  }
+}

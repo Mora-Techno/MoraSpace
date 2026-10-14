@@ -1,15 +1,11 @@
-"use client";
+'use client';
 
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/atoms";
-import { AppSidebar } from "@/core/components/app-sidebar";
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/atoms';
+import { AppSidebar } from '@/core/components/app-sidebar';
 
-import LanguageDropdown from "../components/language.dropdown";
-import NotificationDropdown from "../components/notification.dropdown";
-import ThemeToggle from "../components/theme-toggle";
+import LanguageDropdown from '../components/language.dropdown';
+import NotificationDropdown from '../components/notification.dropdown';
+import ThemeToggle from '../components/theme-toggle';
 // import UserDropdown from '../components/user.dropdown';
 
 // import AppBar from "../components/app-bar";
@@ -54,9 +50,7 @@ export function SidebarLayout({ children }: AppLayoutProps) {
 
             {/* Content */}
             <div className="flex-1 overflow-auto w-full">
-              <div className="container h-full max-w-7xl w-full mx-auto p-4">
-                {children}
-              </div>
+              <div className="container h-full max-w-7xl w-full mx-auto p-4">{children}</div>
             </div>
           </div>
         </SidebarInset>

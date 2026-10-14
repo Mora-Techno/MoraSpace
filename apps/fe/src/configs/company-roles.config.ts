@@ -1,12 +1,5 @@
-import {
-  Crown,
-  ShieldCheck,
-  User,
-  Wrench,
-  type LucideIcon,
-} from "lucide-react";
-
-import type { CompanyRole } from "@repo/types/company.types";
+import type { CompanyRole } from '@repo/types/company.types';
+import { Crown, type LucideIcon, ShieldCheck, User, Wrench } from 'lucide-react';
 
 export type CompanyRoleOption = {
   /** Nilai asli dari shared types (CompanyRole). */
@@ -30,47 +23,44 @@ export type CompanyRoleOption = {
  */
 export const COMPANY_ROLE_REGISTRY: CompanyRoleOption[] = [
   {
-    value: "Owner",
-    slug: "owner",
-    label: "Owner",
-    description:
-      "Pemilik & penanggung jawab perusahaan. Tidak dapat dikelola dari sini.",
+    value: 'Owner',
+    slug: 'owner',
+    label: 'Owner',
+    description: 'Pemilik & penanggung jawab perusahaan. Tidak dapat dikelola dari sini.',
     icon: Crown,
     manageable: false,
   },
   {
-    value: "Admin",
-    slug: "admin",
-    label: "Admin",
-    description:
-      "Membantu mengelola pengaturan, anggota, dan konten perusahaan.",
+    value: 'Admin',
+    slug: 'admin',
+    label: 'Admin',
+    description: 'Membantu mengelola pengaturan, anggota, dan konten perusahaan.',
     icon: ShieldCheck,
     manageable: true,
   },
   {
-    value: "Member",
-    slug: "member",
-    label: "Member",
-    description: "Anggota tim/workstation perusahaan.",
+    value: 'Member',
+    slug: 'member',
+    label: 'Member',
+    description: 'Anggota tim/workstation perusahaan.',
     icon: User,
     manageable: true,
   },
   {
-    value: "Chief",
-    slug: "chief",
-    label: "Chief",
-    description: "C-Level Perusahaan",
+    value: 'Chief',
+    slug: 'chief',
+    label: 'Chief',
+    description: 'C-Level Perusahaan',
     icon: User,
     manageable: false,
   },
 ];
 
 /** Role yang tersedia di dropdown kelola (endpoint sudah tersedia). */
-export const MANAGED_COMPANY_ROLES: CompanyRoleOption[] =
-  COMPANY_ROLE_REGISTRY.filter((role) => role.manageable);
+export const MANAGED_COMPANY_ROLES: CompanyRoleOption[] = COMPANY_ROLE_REGISTRY.filter(
+  (role) => role.manageable,
+);
 
-export function getCompanyRoleBySlug(
-  slug: string,
-): CompanyRoleOption | undefined {
+export function getCompanyRoleBySlug(slug: string): CompanyRoleOption | undefined {
   return COMPANY_ROLE_REGISTRY.find((role) => role.slug === slug);
 }

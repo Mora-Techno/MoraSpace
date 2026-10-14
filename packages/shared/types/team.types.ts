@@ -13,14 +13,14 @@ export type PickCreateTeam = {
   leaderId?: string;
 };
 
-export type PickUpdateTeam = Partial<Omit<PickCreateTeam, "departmentId">>;
+export type PickUpdateTeam = Partial<Omit<PickCreateTeam, 'departmentId'>>;
 
 export type TeamQuery = {
   search?: string;
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   departmentId?: string;
   leaderId?: string;
   startDate?: string;

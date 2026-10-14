@@ -1,9 +1,9 @@
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import type { TrackCatalogQuery } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import type { TrackCatalogQuery } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
 
-import { queryKey } from "@/configs";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import Api from '@/services/api';
 
 export function useTrackCatalogList(filters?: TrackCatalogQuery) {
   return useQuery({
@@ -18,7 +18,7 @@ export function useTrackCatalogList(filters?: TrackCatalogQuery) {
 
 export function usePendingTracks(filters?: TrackCatalogQuery) {
   return useQuery({
-    queryKey: ["music", "tracks", "pending", filters ?? {}],
+    queryKey: ['music', 'tracks', 'pending', filters ?? {}],
     queryFn: async () => {
       const res = await Api.TrackCatalog.ListPendingTracks(filters);
       return res.data;

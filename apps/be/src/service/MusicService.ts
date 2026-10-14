@@ -1,5 +1,5 @@
-import prisma from "prisma/client";
-import type { PickCreatePlaylist } from "@repo/types/music.types";
+import prisma from 'prisma/client';
+import type { PickCreatePlaylist } from '@repo/types/music.types';
 
 function mapPlaylistItem(item: {
   id: string;
@@ -17,8 +17,8 @@ function mapPlaylistItem(item: {
     id: item.id,
     playlistId: item.playlistId,
     trackCatalogId: item.trackCatalogId,
-    title: item.trackCatalog?.title ?? "",
-    youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+    title: item.trackCatalog?.title ?? '',
+    youtubeUrl: item.trackCatalog?.youtubeUrl ?? '',
     createdAt: item.createdAt.toISOString(),
     updatedAt: item.updatedAt.toISOString(),
   };
@@ -62,7 +62,7 @@ class MusicService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -70,19 +70,17 @@ class MusicService {
     const skip = (page - 1) * limit;
 
     // condision
-    const where: Record<string, unknown> = companyMemberId
-      ? { companyMemberId }
-      : { userId };
+    const where: Record<string, unknown> = companyMemberId ? { companyMemberId } : { userId };
 
     if (query.search) {
-      where.name = { contains: query.search, mode: "insensitive" };
+      where.name = { contains: query.search, mode: 'insensitive' };
     }
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ createdAt: "asc" });
+      orderBy.push({ createdAt: 'asc' });
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -117,11 +115,7 @@ class MusicService {
     };
   }
 
-  public async create(
-    companyMemberId: string | null,
-    userId: string,
-    input: PickCreatePlaylist,
-  ) {
+  public async create(companyMemberId: string | null, userId: string, input: PickCreatePlaylist) {
     const data: Record<string, unknown> = {
       name: input.name,
       description: input.description,
@@ -184,8 +178,8 @@ class MusicService {
       id: item.id,
       playlistId: item.playlistId,
       trackCatalogId: item.trackCatalogId,
-      title: item.trackCatalog?.title ?? "",
-      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+      title: item.trackCatalog?.title ?? '',
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? '',
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
     };
@@ -221,18 +215,14 @@ class MusicService {
       id: item.id,
       playlistId: item.playlistId,
       trackCatalogId: item.trackCatalogId,
-      title: item.trackCatalog?.title ?? "",
-      youtubeUrl: item.trackCatalog?.youtubeUrl ?? "",
+      title: item.trackCatalog?.title ?? '',
+      youtubeUrl: item.trackCatalog?.youtubeUrl ?? '',
       createdAt: item.createdAt.toISOString(),
       updatedAt: item.updatedAt.toISOString(),
     };
   }
 
-  public async remove(
-    id: string,
-    companyMemberId: string | null,
-    userId: string,
-  ) {
+  public async remove(id: string, companyMemberId: string | null, userId: string) {
     const where: Record<string, unknown> = companyMemberId
       ? { id, companyMemberId }
       : { id, userId };

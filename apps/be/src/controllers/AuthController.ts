@@ -1,7 +1,7 @@
-import bcryptjs from "bcryptjs";
-import jwt from "jsonwebtoken";
-import type { CompanyRole } from "@repo/types/company.types";
-import { HttpResponse } from "@/http";
+import bcryptjs from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import type { CompanyRole } from '@repo/types/company.types';
+import { HttpResponse } from '@/http';
 import type {
   PickLogin,
   PickRegister,
@@ -14,18 +14,18 @@ import type {
   PickLogout,
   PickForgotPassword,
   PickResetPassword,
-} from "@repo/types/auth.types";
-import AuthService from "@/service/AuthService";
-import prisma from "prisma/client";
+} from '@repo/types/auth.types';
+import AuthService from '@/service/AuthService';
+import prisma from 'prisma/client';
 import {
   AUTH_EXPIRY,
   generateSecureToken,
   getMagicLinkExpiry,
   getUser,
   sanitizeUser,
-} from "@/utils/authTokens";
-import type { AppContext } from "@/contex";
-import NotificationService from "@/service/NotificationService";
+} from '@/utils/authTokens';
+import type { AppContext } from '@/contex';
+import NotificationService from '@/service/NotificationService';
 
 class AuthController {
   public async register(c: AppContext) {
@@ -33,7 +33,7 @@ class AuthController {
       const auth = c.body as PickRegister;
 
       if (!auth.email || !auth.fullName || !auth.password) {
-        return HttpResponse(c).badRequest("Semua field wajib diisi");
+        return HttpResponse(c).badRequest('Semua field wajib diisi');
       }
 
       const isAlreadyRegistered = await prisma.user.findUnique({
@@ -41,7 +41,7 @@ class AuthController {
       });
 
       if (isAlreadyRegistered) {
-        return HttpResponse(c).badRequest("Email sudah terdaftar");
+        return HttpResponse(c).badRequest('Email sudah terdaftar');
       }
 
       if (auth.phone) {
@@ -49,7 +49,7 @@ class AuthController {
           where: { phone: auth.phone },
         });
         if (phoneTaken) {
-          return HttpResponse(c).badRequest("Nomor telepon sudah terdaftar");
+          return HttpResponse(c).badRequest('Nomor telepon sudah terdaftar');
         }
       }
 
@@ -63,7 +63,7 @@ class AuthController {
           fullName: auth.fullName,
           passwordHash: hashedPassword,
           phone: auth.phone ?? null,
-          status: "pending",
+          status: 'pending',
         },
       });
 
@@ -72,8 +72,8 @@ class AuthController {
         email: newUser.email,
         phone: newUser.phone,
         fullName: newUser.fullName,
-        platformRole: "USER" as const,
-        companyRole: (auth.companyRole ?? "Member") as CompanyRole,
+        platformRole: 'USER' as const,
+        companyRole: (auth.companyRole ?? 'Member') as CompanyRole,
         companyId: null,
         companyMemberId: null,
         isVerify: false,
@@ -81,7 +81,7 @@ class AuthController {
         updatedAt: newUser.updatedAt,
       };
 
-      const frontendUrl = process.env.FRONTEND_URL ?? "http://localhost:3000";
+      const frontendUrl = process.env.FRONTEND_URL ?? 'http://localhost:3000';
       const magicLink = `${frontendUrl}/magic-link?token=${magicLinkToken}`;
       await prisma.emailVerification.create({
         data: {
@@ -94,13 +94,10 @@ class AuthController {
       await NotificationService.send({
         body: `Klik link berikut untuk aktivasi Akun (berlaku ${AUTH_EXPIRY.magicLinkMinutes} menit):\n\n${magicLink}`,
         recipient: newUser.email,
-        subject: "Aktivasi Email Akun Space",
+        subject: 'Aktivasi Email Akun Space',
       });
 
-      return HttpResponse(c).created(
-        sanitizeUser(safeUser),
-        "Akun berhasil didaftarkan",
-      );
+      return HttpResponse(c).created(sanitizeUser(safeUser), 'Akun berhasil didaftarkan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -111,25 +108,22 @@ class AuthController {
       const auth = c.body as PickLogin;
 
       if (!auth.email || !auth.password) {
-        return HttpResponse(c).badRequest("Semua field wajib diisi");
+        return HttpResponse(c).badRequest('Semua field wajib diisi');
       }
 
       const user = await prisma.user.findUnique({
         where: { email: auth.email },
       });
-      if (!user) return HttpResponse(c).notFound("Akun tidak ditemukan");
+      if (!user) return HttpResponse(c).notFound('Akun tidak ditemukan');
 
-      const validatePassword = await bcryptjs.compare(
-        auth.password,
-        user.passwordHash,
-      );
+      const validatePassword = await bcryptjs.compare(auth.password, user.passwordHash);
       if (!validatePassword) {
-        return HttpResponse(c).badRequest("Email atau password salah");
+        return HttpResponse(c).badRequest('Email atau password salah');
       }
 
       const session = await AuthService.createSession(user.id);
 
-      return HttpResponse(c).ok(session, undefined, "Login berhasil");
+      return HttpResponse(c).ok(session, undefined, 'Login berhasil');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -140,15 +134,11 @@ class AuthController {
       const { refreshToken } = c.body as PickRefreshToken;
 
       if (!refreshToken) {
-        return HttpResponse(c).badRequest("Refresh token wajib diisi");
+        return HttpResponse(c).badRequest('Refresh token wajib diisi');
       }
 
       const session = await AuthService.refreshAccessToken(refreshToken);
-      return HttpResponse(c).ok(
-        session,
-        undefined,
-        "Token berhasil diperbarui",
-      );
+      return HttpResponse(c).ok(session, undefined, 'Token berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -159,14 +149,14 @@ class AuthController {
       const body = c.body as PickSendMagicLink;
 
       if (!body.email) {
-        return HttpResponse(c).badRequest("Email wajib diisi");
+        return HttpResponse(c).badRequest('Email wajib diisi');
       }
 
       await AuthService.sendMagicLink(body);
       return HttpResponse(c).ok(
         { email: body.email },
         undefined,
-        "Magic link berhasil dikirim ke email",
+        'Magic link berhasil dikirim ke email',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -178,15 +168,11 @@ class AuthController {
       const body = c.body as PickVerifyMagicLink;
 
       if (!body.token) {
-        return HttpResponse(c).badRequest("Token wajib diisi");
+        return HttpResponse(c).badRequest('Token wajib diisi');
       }
 
       const session = await AuthService.verifyMagicLink(body);
-      return HttpResponse(c).ok(
-        session,
-        undefined,
-        "Magic link berhasil diverifikasi",
-      );
+      return HttpResponse(c).ok(session, undefined, 'Magic link berhasil diverifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -197,19 +183,17 @@ class AuthController {
       const body = c.body as PickSendOtp;
 
       if (!body.email && !body.phone) {
-        return HttpResponse(c).badRequest(
-          "Email atau nomor telepon wajib diisi",
-        );
+        return HttpResponse(c).badRequest('Email atau nomor telepon wajib diisi');
       }
 
       const result = await AuthService.sendOtp(body);
       return HttpResponse(c).ok(
         {
           ...result,
-          sentTo: body.phone ? "phone" : "email",
+          sentTo: body.phone ? 'phone' : 'email',
         },
         undefined,
-        "OTP berhasil dikirim",
+        'OTP berhasil dikirim',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -221,21 +205,15 @@ class AuthController {
       const body = c.body as PickVerifyOtp;
 
       if (!body.email && !body.phone) {
-        return HttpResponse(c).badRequest(
-          "Email atau nomor telepon wajib diisi",
-        );
+        return HttpResponse(c).badRequest('Email atau nomor telepon wajib diisi');
       }
 
       if (!body.otp) {
-        return HttpResponse(c).badRequest("OTP wajib diisi");
+        return HttpResponse(c).badRequest('OTP wajib diisi');
       }
 
       const session = await AuthService.verifyOtp(body);
-      return HttpResponse(c).ok(
-        session,
-        undefined,
-        "OTP berhasil diverifikasi",
-      );
+      return HttpResponse(c).ok(session, undefined, 'OTP berhasil diverifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -243,25 +221,25 @@ class AuthController {
 
   public async logout(c: AppContext) {
     try {
-      const authHeader = c.request.headers.get("authorization");
-      const token = authHeader?.split(" ")[1];
+      const authHeader = c.request.headers.get('authorization');
+      const token = authHeader?.split(' ')[1];
 
       if (!token) {
-        return HttpResponse(c).unauthorized("Token tidak ditemukan");
+        return HttpResponse(c).unauthorized('Token tidak ditemukan');
       }
 
-      if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET not set");
+      if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET not set');
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
       const { id }: PickLogout = decoded;
 
       const user = await prisma.user.findUnique({ where: { id } });
-      if (!user) return HttpResponse(c).notFound("Akun tidak ditemukan");
+      if (!user) return HttpResponse(c).notFound('Akun tidak ditemukan');
 
       await AuthService.revokeTokens(id);
-      return HttpResponse(c).ok(null, undefined, "Logout berhasil");
+      return HttpResponse(c).ok(null, undefined, 'Logout berhasil');
     } catch (error) {
-      return HttpResponse(c).unauthorized("Token tidak valid");
+      return HttpResponse(c).unauthorized('Token tidak valid');
     }
   }
   public async forgotPassword(c: AppContext) {
@@ -269,14 +247,14 @@ class AuthController {
       const body = c.body as PickForgotPassword;
 
       if (!body.email) {
-        return HttpResponse(c).badRequest("Email wajib diisi");
+        return HttpResponse(c).badRequest('Email wajib diisi');
       }
 
       await AuthService.forgotPassword(body);
       return HttpResponse(c).ok(
         { email: body.email },
         undefined,
-        "Link reset password berhasil dikirim ke email",
+        'Link reset password berhasil dikirim ke email',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -288,13 +266,11 @@ class AuthController {
       const body = c.body as PickResetPassword;
 
       if (!body.token || !body.password) {
-        return HttpResponse(c).badRequest(
-          "Token dan password baru wajib diisi",
-        );
+        return HttpResponse(c).badRequest('Token dan password baru wajib diisi');
       }
 
       await AuthService.resetPassword(body);
-      return HttpResponse(c).ok(null, undefined, "Password berhasil direset");
+      return HttpResponse(c).ok(null, undefined, 'Password berhasil direset');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -313,16 +289,12 @@ class AuthController {
             totalData: 0,
             totalPage: 0,
           },
-          "Tidak terhubung dengan company",
+          'Tidak terhubung dengan company',
         );
       }
 
       const result = await AuthService.list(user.companyId, c.query as any);
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar pengguna",
-      );
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar pengguna');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -335,11 +307,11 @@ class AuthController {
       return HttpResponse(c).ok(
         {
           ...workspaces,
-          activeWorkspaceId: user.companyId ?? "personal",
-          activeType: user.companyId ? "company" : "personal",
+          activeWorkspaceId: user.companyId ?? 'personal',
+          activeType: user.companyId ? 'company' : 'personal',
         },
         undefined,
-        "Daftar workspace",
+        'Daftar workspace',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -350,18 +322,10 @@ class AuthController {
     try {
       const user = getUser(c);
       const body = c.body as { workspaceId: string };
-      const session = await AuthService.switchWorkspace(
-        user.id,
-        body.workspaceId,
-      );
-      return HttpResponse(c).ok(
-        session,
-        undefined,
-        "Berhasil berpindah workspace",
-      );
+      const session = await AuthService.switchWorkspace(user.id, body.workspaceId);
+      return HttpResponse(c).ok(session, undefined, 'Berhasil berpindah workspace');
     } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : "Gagal berpindah workspace";
+      const msg = error instanceof Error ? error.message : 'Gagal berpindah workspace';
       return HttpResponse(c).badRequest(msg);
     }
   }

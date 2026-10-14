@@ -1,6 +1,6 @@
-import type { CompanyRole } from "./company.types";
+import type { CompanyRole } from './company.types';
 
-export type PlatformRole = "USER" | "DEVELOPER" | "SUPER_ADMIN";
+export type PlatformRole = 'USER' | 'DEVELOPER' | 'SUPER_ADMIN';
 
 export interface IAuth {
   id: string;
@@ -24,22 +24,22 @@ export interface IAuth {
 
 export type SafeAuthUser = Pick<
   IAuth,
-  | "id"
-  | "email"
-  | "phone"
-  | "fullName"
-  | "companyRole"
-  | "companyId"
-  | "isVerify"
-  | "createdAt"
-  | "updatedAt"
+  | 'id'
+  | 'email'
+  | 'phone'
+  | 'fullName'
+  | 'companyRole'
+  | 'companyId'
+  | 'isVerify'
+  | 'createdAt'
+  | 'updatedAt'
 > & {
   companyMemberId?: string | null;
   platformRole: PlatformRole;
-  workspaceType?: "personal" | "company";
+  workspaceType?: 'personal' | 'company';
 };
 
-export type WorkspaceType = "personal" | "company";
+export type WorkspaceType = 'personal' | 'company';
 
 export interface WorkspaceItem {
   id: string;
@@ -70,12 +70,12 @@ export interface AuthTokensResponse {
 
 export type AccessTokenPayload = Pick<
   IAuth,
-  "id" | "email" | "companyRole" | "fullName" | "companyId"
+  'id' | 'email' | 'companyRole' | 'fullName' | 'companyId'
 > & {
-  tokenType?: "access";
+  tokenType?: 'access';
   companyMemberId?: string | null;
   platformRole: PlatformRole;
-  workspaceType?: "personal" | "company";
+  workspaceType?: 'personal' | 'company';
 };
 
 export interface AuthSessionResponse extends AuthTokensResponse {
@@ -89,24 +89,20 @@ export type UserQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
-  status?: "active" | "inactive";
+  sortOrder?: 'asc' | 'desc';
+  status?: 'active' | 'inactive';
   startDate?: string;
   endDate?: string;
 };
 
-export type PickLogin = Pick<IAuth, "email" | "password">;
-export type PickRegister = Pick<
-  IAuth,
-  "email" | "fullName" | "password" | "companyRole" | "phone"
->;
-export type PickRefreshToken = Pick<IAuth, "refreshToken">;
-export type PickSendMagicLink = Pick<IAuth, "email">;
+export type PickLogin = Pick<IAuth, 'email' | 'password'>;
+export type PickRegister = Pick<IAuth, 'email' | 'fullName' | 'password' | 'companyRole' | 'phone'>;
+export type PickRefreshToken = Pick<IAuth, 'refreshToken'>;
+export type PickSendMagicLink = Pick<IAuth, 'email'>;
 export type PickVerifyMagicLink = { token: string };
-export type PickSendOtp = Partial<Pick<IAuth, "email" | "phone">>;
-export type PickVerifyOtp = Partial<Pick<IAuth, "email" | "phone">> &
-  Pick<IAuth, "otp">;
-export type PickCreateAdmin = Pick<IAuth, "email" | "fullName" | "password">;
-export type PickLogout = Pick<IAuth, "id">;
-export type PickForgotPassword = Pick<IAuth, "email">;
-export type PickResetPassword = Pick<IAuth, "password" | "token">;
+export type PickSendOtp = Partial<Pick<IAuth, 'email' | 'phone'>>;
+export type PickVerifyOtp = Partial<Pick<IAuth, 'email' | 'phone'>> & Pick<IAuth, 'otp'>;
+export type PickCreateAdmin = Pick<IAuth, 'email' | 'fullName' | 'password'>;
+export type PickLogout = Pick<IAuth, 'id'>;
+export type PickForgotPassword = Pick<IAuth, 'email'>;
+export type PickResetPassword = Pick<IAuth, 'password' | 'token'>;

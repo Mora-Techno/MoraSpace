@@ -1,36 +1,30 @@
-"use client";
+'use client';
 
-import type { LucideIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import type { LucideIcon } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useMemo, useState } from 'react';
 
-import { getMobileNavGroups, type NavItem } from "@/configs/nav.config";
-import { loadAuthSession } from "@/utils/storage";
-import { cn } from "@/utils/classname";
+import { getMobileNavGroups, type NavItem } from '@/configs/nav.config';
+import { useWorkspaceNavRole } from '@/hooks/useWorkspaceNav';
+import { cn } from '@/utils/classname';
 
 type MobileLeaf = NavItem & { url: string; icon: LucideIcon };
 
 function isRouteActive(pathname: string, url: string): boolean {
-  return pathname === url || (url !== "/" && pathname.startsWith(url));
+  return pathname === url || (url !== '/' && pathname.startsWith(url));
 }
 
 function isGroupActive(pathname: string, item: NavItem): boolean {
-  return Boolean(
-    item.children?.some(
-      (child) => child.url && isRouteActive(pathname, child.url),
-    ),
-  );
+  return Boolean(item.children?.some((child) => child.url && isRouteActive(pathname, child.url)));
 }
 
 export function BottomNav() {
   const pathname = usePathname();
   const [openTitle, setOpenTitle] = useState<string | null>(null);
 
-  const mobileNavItems = useMemo(() => {
-    const role = loadAuthSession()?.role;
-    return getMobileNavGroups(role?.toLocaleLowerCase());
-  }, [pathname]);
+  const navRole = useWorkspaceNavRole();
+  const mobileNavItems = useMemo(() => getMobileNavGroups(navRole), [navRole]);
 
   const openItem = mobileNavItems.find((item) => item.title === openTitle);
   const subItems = openItem?.children?.filter((child): child is MobileLeaf =>
@@ -55,10 +49,10 @@ export function BottomNav() {
                     href={child.url}
                     onClick={() => setOpenTitle(null)}
                     className={cn(
-                      "flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-colors",
+                      'flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-xs font-medium transition-colors',
                       isActive
-                        ? "bg-primary/10 text-primary"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                        ? 'bg-primary/10 text-primary'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground',
                     )}
                   >
                     <Icon className="size-4 shrink-0" />
@@ -85,16 +79,12 @@ export function BottomNav() {
                 type="button"
                 aria-expanded={isOpen}
                 aria-label={`${item.title} menu`}
-                onClick={() =>
-                  setOpenTitle((prev) =>
-                    prev === item.title ? null : item.title,
-                  )
-                }
+                onClick={() => setOpenTitle((prev) => (prev === item.title ? null : item.title))}
                 className={cn(
-                  "flex cursor-pointer flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[10px] transition-all duration-300",
+                  'flex cursor-pointer flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[10px] transition-all duration-300',
                   isOpen || groupActive
-                    ? "text-primary scale-105"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? 'text-primary scale-105'
+                    : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 {GroupIcon ? <GroupIcon className="size-5" /> : null}
@@ -112,13 +102,11 @@ export function BottomNav() {
               key={item.url}
               href={item.url}
               className={cn(
-                "flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[10px] transition-all duration-300",
-                isActive
-                  ? "text-primary scale-105"
-                  : "text-muted-foreground hover:text-foreground",
+                'flex flex-col items-center gap-0.5 rounded-xl px-2 py-1 text-[10px] transition-all duration-300',
+                isActive ? 'text-primary scale-105' : 'text-muted-foreground hover:text-foreground',
               )}
             >
-              <Icon className={cn("size-5", isActive && "drop-shadow-sm")} />
+              <Icon className={cn('size-5', isActive && 'drop-shadow-sm')} />
               <span className="font-medium">{item.title}</span>
             </Link>
           );

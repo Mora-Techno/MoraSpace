@@ -1,10 +1,11 @@
-import * as React from "react";
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { TimerDisplay } from "@/components/atoms/TimerDisplay";
-import { FocusToggle } from "@/components/atoms/FocusToggle";
-import { Button } from "@/components/atoms";
-import { Clock, Play, Pause, Square } from "lucide-react";
+import { Clock, Pause, Play, Square } from 'lucide-react';
+import * as React from 'react';
+
+import { Button } from '@/components/atoms';
+import { FocusToggle } from '@/components/atoms/FocusToggle';
+import { TimerDisplay } from '@/components/atoms/TimerDisplay';
+import { WidgetHeader } from '@/components/atoms/WidgetHeader';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 interface PomodoroSectionProps {
   service: {
@@ -49,9 +50,7 @@ export function PomodoroSection({ service, state }: PomodoroSectionProps) {
         <TimerDisplay
           minutes={minutes}
           seconds={seconds}
-          className={
-            isActive ? "text-primary dark:text-primary" : "text-foreground"
-          }
+          className={isActive ? 'text-primary dark:text-primary' : 'text-foreground'}
         />
 
         <div className="mt-8 flex items-center gap-4">

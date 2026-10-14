@@ -1,7 +1,7 @@
-import { format } from "date-fns";
+import { format } from 'date-fns';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
 
 interface EventFormSectionProps {
   service: {
@@ -37,7 +37,7 @@ export function EventFormSection({ service, state }: EventFormSectionProps) {
       <h2 className="font-serif text-lg font-semibold">Tambah Jadwal</h2>
       {selectedDate && (
         <p className="text-sm text-muted-foreground">
-          Tanggal: {format(selectedDate, "d MMMM yyyy")}
+          Tanggal: {format(selectedDate, 'd MMMM yyyy')}
         </p>
       )}
       <form onSubmit={handleSubmit} className="space-y-3">
@@ -60,12 +60,8 @@ export function EventFormSection({ service, state }: EventFormSectionProps) {
           onChange={(e) => setStartDate(e.target.value)}
           className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
         />
-        <Button
-          type="submit"
-          className="ghibli-btn w-full"
-          disabled={isPending}
-        >
-          {isPending ? "Menyimpan..." : "Simpan Jadwal"}
+        <Button type="submit" className="ghibli-btn w-full" disabled={isPending}>
+          {isPending ? 'Menyimpan...' : 'Simpan Jadwal'}
         </Button>
       </form>
     </GhibliCard>

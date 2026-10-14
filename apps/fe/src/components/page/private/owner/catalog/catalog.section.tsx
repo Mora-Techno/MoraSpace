@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { Check, X, Music, ExternalLink } from "lucide-react";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { Button, Card, Input } from "@/components/atoms";
-import type { TrackCatalog } from "@repo/types";
+import type { TrackCatalog } from '@repo/types';
+import { Check, ExternalLink, Music, X } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Button, Card, Input } from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
 
 export interface CatalogReviewSectionProps {
   service: {
@@ -26,13 +27,13 @@ export const CatalogReviewSection: React.FC<CatalogReviewSectionProps> = ({
   },
 }) => {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
+  const [rejectReason, setRejectReason] = useState('');
 
   const onConfirmReject = (id: string) => {
     if (!rejectReason.trim()) return;
     handleReject(id, rejectReason.trim());
     setRejectingId(null);
-    setRejectReason("");
+    setRejectReason('');
   };
 
   return (
@@ -48,9 +49,7 @@ export const CatalogReviewSection: React.FC<CatalogReviewSectionProps> = ({
       </div>
 
       {isLoading ? (
-        <div className="py-16 text-center text-sm text-neutral-400">
-          Memuat pengajuan track...
-        </div>
+        <div className="py-16 text-center text-sm text-neutral-400">Memuat pengajuan track...</div>
       ) : pendingTracks.length === 0 ? (
         <Card className="flex flex-col items-center justify-center py-16 border-dashed text-center">
           <Music className="w-10 h-10 text-neutral-400 mb-3 opacity-60" />
@@ -67,14 +66,16 @@ export const CatalogReviewSection: React.FC<CatalogReviewSectionProps> = ({
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h4 className="font-semibold text-sm">{track.title}</h4>
-                    <p className="text-xs text-neutral-500 mt-0.5">Video ID: {track.youtubeVideoId}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Video ID: {track.youtubeVideoId}
+                    </p>
                   </div>
                   {track.youtubeUrl && (
                     <a
                       href={track.youtubeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-1.5 text-neutral-400 hover:text-red-500 transition"
+                      className="p-1.5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-md transition"
                       title="Buka YouTube"
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -84,18 +85,14 @@ export const CatalogReviewSection: React.FC<CatalogReviewSectionProps> = ({
               </div>
 
               {rejectingId === track.id ? (
-                <div className="mt-4 pt-3 border-t border-neutral-100 dark:border-neutral-800 flex flex-col gap-2">
+                <div className="mt-4 pt-3 border-t border-border/50 flex flex-col gap-2">
                   <Input
                     placeholder="Alasan penolakan..."
                     value={rejectReason}
                     onChange={(e) => setRejectReason(e.target.value)}
                   />
                   <div className="flex items-center justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => setRejectingId(null)}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => setRejectingId(null)}>
                       Batal
                     </Button>
                     <Button

@@ -1,20 +1,18 @@
-"use client";
+'use client';
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-import { Button } from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { NotificationDetailSection } from "@/components/page/private/member/notifications/notification-detail.section";
-import { useApi } from "@/hooks/useApi/useApi";
+import { Button } from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { NotificationDetailSection } from '@/components/page/private/member/notifications/notification-detail.section';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function NotificationDetailContainer({ id }: { id: string }) {
   const api = useApi();
   const pathname = usePathname();
-  const listRoute = pathname.includes("/owner/")
-    ? "/owner/notifications"
-    : "/member/notifications";
+  const listRoute = pathname.includes('/owner/') ? '/owner/notifications' : '/member/notifications';
 
   const { data: notification, isLoading } = api.notification.query.getByID(id);
   const markRead = api.notification.mutate.markRead();

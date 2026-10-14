@@ -5,8 +5,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/atoms";
-import { GlassCard } from "@/components/molecules/GlassCard";
+} from '@/components/atoms';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 interface ActivityLog {
   id: string;
@@ -18,53 +18,53 @@ interface ActivityLog {
 
 const activityLogs: ActivityLog[] = [
   {
-    id: "1",
-    user: "Budi Santoso",
-    initials: "BS",
-    action: "menyelesaikan milestone Fluxo App v2.0",
-    timeAgo: "12 menit lalu",
+    id: '1',
+    user: 'Budi Santoso',
+    initials: 'BS',
+    action: 'menyelesaikan milestone Fluxo App v2.0',
+    timeAgo: '12 menit lalu',
   },
   {
-    id: "2",
-    user: "Siti Rahayu",
-    initials: "SR",
-    action: "mengundang 2 engineer baru ke Tim Backend",
-    timeAgo: "28 menit lalu",
+    id: '2',
+    user: 'Siti Rahayu',
+    initials: 'SR',
+    action: 'mengundang 2 engineer baru ke Tim Backend',
+    timeAgo: '28 menit lalu',
   },
   {
-    id: "3",
-    user: "Dimas Prayoga",
-    initials: "DP",
-    action: "membuat campaign marketing Q3",
-    timeAgo: "45 menit lalu",
+    id: '3',
+    user: 'Dimas Prayoga',
+    initials: 'DP',
+    action: 'membuat campaign marketing Q3',
+    timeAgo: '45 menit lalu',
   },
   {
-    id: "4",
-    user: "Ayu Lestari",
-    initials: "AL",
-    action: "menyetujui budget pembelian server senilai Rp 12.000.000",
-    timeAgo: "1 jam lalu",
+    id: '4',
+    user: 'Ayu Lestari',
+    initials: 'AL',
+    action: 'menyetujui budget pembelian server senilai Rp 12.000.000',
+    timeAgo: '1 jam lalu',
   },
   {
-    id: "5",
-    user: "Rina Wijaya",
-    initials: "RW",
-    action: "menyelesaikan sesi deep work — 2.5 jam",
-    timeAgo: "2 jam lalu",
+    id: '5',
+    user: 'Rina Wijaya',
+    initials: 'RW',
+    action: 'menyelesaikan sesi deep work — 2.5 jam',
+    timeAgo: '2 jam lalu',
   },
   {
-    id: "6",
-    user: "System",
-    initials: "SY",
-    action: "Rencana pengisian ulang otomatis — Storage 72% terpakai",
-    timeAgo: "3 jam lalu",
+    id: '6',
+    user: 'System',
+    initials: 'SY',
+    action: 'Rencana pengisian ulang otomatis — Storage 72% terpakai',
+    timeAgo: '3 jam lalu',
   },
   {
-    id: "7",
-    user: "Fajar Hidayat",
-    initials: "FH",
-    action: "bergabung ke Tim Product sebagai Product Designer",
-    timeAgo: "5 jam lalu",
+    id: '7',
+    user: 'Fajar Hidayat',
+    initials: 'FH',
+    action: 'bergabung ke Tim Product sebagai Product Designer',
+    timeAgo: '5 jam lalu',
   },
 ];
 
@@ -74,12 +74,8 @@ export function ActivityFeedWidget() {
       <CardHeader className="px-5 pt-5 pb-3">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-sm font-semibold">
-              Aktivitas Perusahaan
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Feed real-time aktivitas tim
-            </CardDescription>
+            <CardTitle className="text-sm font-semibold">Aktivitas Perusahaan</CardTitle>
+            <CardDescription className="text-xs">Feed real-time aktivitas tim</CardDescription>
           </div>
           <div className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1">
             <span className="size-1.5 animate-pulse rounded-full bg-success" />
@@ -101,14 +97,9 @@ export function ActivityFeedWidget() {
               </Avatar>
               <div className="min-w-0 flex-1">
                 <p className="text-sm leading-snug text-foreground/85">
-                  <span className="font-medium text-foreground">
-                    {log.user}
-                  </span>{" "}
-                  {log.action}
+                  <span className="font-medium text-foreground">{log.user}</span> {log.action}
                 </p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                  {log.timeAgo}
-                </p>
+                <p className="mt-0.5 text-[10px] text-muted-foreground/60">{log.timeAgo}</p>
               </div>
             </div>
           </div>

@@ -126,4 +126,12 @@ export const queryKey = {
     list: () => ['session', 'list'] as const,
     detail: (id: string) => ['session', 'detail', id] as const,
   },
+
+  chatRoot: () => ['chat'] as const,
+  chat: {
+    conversations: () => ['chat', 'conversations'] as const,
+    messages: (id: string) => ['chat', 'messages', id] as const,
+    members: (id: string) => ['chat', 'members', id] as const,
+    users: () => ['chat', 'users'] as const,
+  },
 } as const;

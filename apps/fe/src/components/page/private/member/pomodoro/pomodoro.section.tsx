@@ -1,7 +1,8 @@
-import React from "react";
-import { Play, Pause, Square, Flame, BarChart3 } from "lucide-react";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { Button, Card, CardContent } from "@/components/atoms";
+import { BarChart3, Flame, Pause, Play, Square } from 'lucide-react';
+import React from 'react';
+
+import { Button, Card, CardContent } from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
 
 export interface PomodoroSectionProps {
   service: {
@@ -35,7 +36,7 @@ export const PomodoroSection: React.FC<PomodoroSectionProps> = ({
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -61,17 +62,31 @@ export const PomodoroSection: React.FC<PomodoroSectionProps> = ({
           ) : (
             <>
               {isPaused ? (
-                <Button onClick={handleResume} disabled={isPending} className="gap-2 bg-emerald-600 hover:bg-emerald-700">
+                <Button
+                  onClick={handleResume}
+                  disabled={isPending}
+                  className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
                   <Play className="w-4 h-4 fill-current" />
                   Lanjut
                 </Button>
               ) : (
-                <Button onClick={handlePause} disabled={isPending} variant="outline" className="gap-2">
+                <Button
+                  onClick={handlePause}
+                  disabled={isPending}
+                  variant="outline"
+                  className="gap-2"
+                >
                   <Pause className="w-4 h-4 fill-current" />
                   Jeda
                 </Button>
               )}
-              <Button onClick={handleStop} disabled={isPending} variant="destructive" className="gap-2">
+              <Button
+                onClick={handleStop}
+                disabled={isPending}
+                variant="destructive"
+                className="gap-2"
+              >
                 <Square className="w-4 h-4 fill-current" />
                 Hentikan
               </Button>
@@ -81,25 +96,25 @@ export const PomodoroSection: React.FC<PomodoroSectionProps> = ({
       </Card>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card className="p-4 flex items-center gap-4">
-          <div className="p-3 bg-amber-500/10 text-amber-500 rounded-lg">
+        <Card variant="stat" padding="none" className="p-4.5 flex items-center gap-4">
+          <div className="p-3 bg-warning/15 text-warning rounded-xl">
             <Flame className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs text-neutral-500">Fokus Hari Ini</div>
-            <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+            <div className="text-xs text-muted-foreground">Fokus Hari Ini</div>
+            <div className="text-xl font-bold text-foreground tracking-tight">
               {todayMinutes} Menit
             </div>
           </div>
         </Card>
 
-        <Card className="p-4 flex items-center gap-4">
-          <div className="p-3 bg-blue-500/10 text-blue-500 rounded-lg">
+        <Card variant="stat" padding="none" className="p-4.5 flex items-center gap-4">
+          <div className="p-3 bg-primary/10 text-primary rounded-xl">
             <BarChart3 className="w-6 h-6" />
           </div>
           <div>
-            <div className="text-xs text-neutral-500">Sesi Selesai</div>
-            <div className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
+            <div className="text-xs text-muted-foreground">Sesi Selesai</div>
+            <div className="text-xl font-bold text-foreground tracking-tight">
               {completedSessions} Sesi
             </div>
           </div>

@@ -1,27 +1,21 @@
-import { Button } from "@/components/atoms";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/atoms";
+import { Settings, TestEmail } from '@repo/types';
 
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliSwitch } from "@/components/molecules/GhibliSwitch";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { Language } from "@/configs";
-import { Theme } from "@/core/providers/theme.provider";
-import { AlertContexType } from "@/types/ui";
-import { Settings, TestEmail } from "@repo/types";
+import { Button } from '@/components/atoms';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { GhibliSwitch } from '@/components/molecules/GhibliSwitch';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { Language } from '@/configs';
+import { Theme } from '@/core/providers/theme.provider';
+import { AlertContexType } from '@/types/ui';
 
 const TIMEZONE_OPTIONS: { value: string; label: string }[] = [
-  { value: "Asia/Jakarta", label: "WIB (Jakarta)" },
-  { value: "Asia/Makassar", label: "WITA (Makassar)" },
-  { value: "Asia/Jayapura", label: "WIT (Jayapura)" },
-  { value: "Asia/Singapore", label: "Singapore" },
-  { value: "Asia/Tokyo", label: "Tokyo" },
-  { value: "UTC", label: "UTC" },
+  { value: 'Asia/Jakarta', label: 'WIB (Jakarta)' },
+  { value: 'Asia/Makassar', label: 'WITA (Makassar)' },
+  { value: 'Asia/Jayapura', label: 'WIT (Jayapura)' },
+  { value: 'Asia/Singapore', label: 'Singapore' },
+  { value: 'Asia/Tokyo', label: 'Tokyo' },
+  { value: 'UTC', label: 'UTC' },
 ];
 
 interface SettingsSectionProps {
@@ -50,10 +44,7 @@ interface SettingsSectionProps {
   };
 }
 
-const SettingsSection: React.FC<SettingsSectionProps> = ({
-  state,
-  service,
-}) => {
+const SettingsSection: React.FC<SettingsSectionProps> = ({ state, service }) => {
   const {
     theme,
     toggleTheme,
@@ -93,12 +84,11 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
               <div>
                 <p className="text-sm font-medium">Dark / Light Mode</p>
                 <p className="text-xs text-muted-foreground">
-                  Tema{" "}
-                  {theme === "dark" ? "malam berbintang" : "siang pedesaan"}
+                  Tema {theme === 'dark' ? 'malam berbintang' : 'siang pedesaan'}
                 </p>
               </div>
               <GhibliSwitch
-                checked={theme === "dark"}
+                checked={theme === 'dark'}
                 onCheckedChange={() => {
                   toggleTheme();
                   handleChangeTheme();
@@ -114,9 +104,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">Musik</p>
-                <p className="text-xs text-muted-foreground">
-                  Aktifkan musik di dalam aplikasi
-                </p>
+                <p className="text-xs text-muted-foreground">Aktifkan musik di dalam aplikasi</p>
               </div>
               <GhibliSwitch
                 checked={settings?.enableMusic ?? false}
@@ -140,12 +128,10 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="text-sm font-medium">Zona Waktu</p>
-                <p className="text-xs text-muted-foreground">
-                  Pilih zona waktu yang digunakan
-                </p>
+                <p className="text-xs text-muted-foreground">Pilih zona waktu yang digunakan</p>
               </div>
               <Select
-                value={settings?.timezone ?? "Asia/Jakarta"}
+                value={settings?.timezone ?? 'Asia/Jakarta'}
                 onValueChange={(value) => handleChangeTimezone(value)}
               >
                 <SelectTrigger className="w-44 rounded-xl">
@@ -195,11 +181,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
               placeholder="email@contoh.com"
               className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
-            <Button
-              className="ghibli-btn"
-              disabled={!formTestEmail || isPending}
-              type="submit"
-            >
+            <Button className="ghibli-btn" disabled={!formTestEmail || isPending} type="submit">
               Kirim Test Email
             </Button>
           </form>
@@ -211,7 +193,7 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
             {languages.map((lang) => (
               <Button
                 key={lang}
-                variant={currentLanguage === lang ? "default" : "outline"}
+                variant={currentLanguage === lang ? 'default' : 'outline'}
                 size="sm"
                 className="ghibli-btn"
                 onClick={() => {
@@ -227,20 +209,20 @@ const SettingsSection: React.FC<SettingsSectionProps> = ({
         <GhibliCard>
           <h2 className="font-bold">Keluar Dari Applikasi:</h2>
           <Button
-            variant={"destructive"}
+            variant={'destructive'}
             disabled={isPending}
             onClick={() =>
               alert.modal({
-                title: "Keluar",
-                deskripsi: "Apakah Anda Yakin Ingin Keluar ?",
-                icon: "info",
+                title: 'Keluar',
+                deskripsi: 'Apakah Anda Yakin Ingin Keluar ?',
+                icon: 'info',
                 onConfirm: () => {
                   handleLogout();
                 },
               })
             }
           >
-            {isPending ? "Loading..." : "Keluar"}
+            {isPending ? 'Loading...' : 'Keluar'}
           </Button>
         </GhibliCard>
       </div>

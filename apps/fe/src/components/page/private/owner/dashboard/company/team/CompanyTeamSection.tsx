@@ -1,4 +1,7 @@
-import { Plus, Users, Trash2 } from "lucide-react";
+import { type ITeam } from '@repo/types';
+import { PickCreateTeam } from '@repo/types';
+import { Plus, Trash2, Users } from 'lucide-react';
+
 import {
   Button,
   Card,
@@ -16,12 +19,10 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
-import { type ITeam } from "@repo/types";
-import { PickCreateTeam } from "@repo/types";
+} from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface CompanyTeamSectionProps {
   state: {
@@ -42,19 +43,8 @@ interface CompanyTeamSectionProps {
   };
 }
 
-const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
-  state,
-  service,
-}) => {
-  const {
-    open,
-    setOpen,
-    formCreate,
-    setFormCreate,
-    searchTerm,
-    setSearchTerm,
-    alert,
-  } = state;
+const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({ state, service }) => {
+  const { open, setOpen, formCreate, setFormCreate, searchTerm, setSearchTerm, alert } = state;
   const { handleSubmit, isPending, teams, isLoading, handleDelete } = service;
 
   return (
@@ -109,7 +99,7 @@ const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={isPending}>
-                    {isPending ? "Menyimpan…" : "Simpan Tim"}
+                    {isPending ? 'Menyimpan…' : 'Simpan Tim'}
                   </Button>
                 </DialogFooter>
               </form>
@@ -124,9 +114,7 @@ const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
             <Users className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Tim</CardTitle>
-          <CardDescription>
-            Total {teams?.length || 0} tim tersedia.
-          </CardDescription>
+          <CardDescription>Total {teams?.length || 0} tim tersedia.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -135,13 +123,7 @@ const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <div className="h-16 w-full rounded-xl border bg-card" />
             </phantom-ui>
           ) : teams?.length === 0 ? (
@@ -156,13 +138,9 @@ const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
                   className="flex items-center justify-between gap-3 rounded-xl border bg-card p-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {team.name}
-                    </p>
+                    <p className="truncate text-sm font-semibold">{team.name}</p>
                     {team.description && (
-                      <p className="truncate text-xs text-muted-foreground">
-                        {team.description}
-                      </p>
+                      <p className="truncate text-xs text-muted-foreground">{team.description}</p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
@@ -172,9 +150,9 @@ const CompanyTeamSection: React.FC<CompanyTeamSectionProps> = ({
                       disabled={isPending}
                       onClick={() =>
                         alert?.modal({
-                          title: "Hapus Tim?",
-                          deskripsi: "Apakah Anda yakin menghapus tim ini?",
-                          icon: "warning",
+                          title: 'Hapus Tim?',
+                          deskripsi: 'Apakah Anda yakin menghapus tim ini?',
+                          icon: 'warning',
                           onConfirm: () => {
                             handleDelete(team.id);
                           },

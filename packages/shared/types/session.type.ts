@@ -14,7 +14,7 @@ export type SessionQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   device?: string;
   startDate?: string;
   endDate?: string;
@@ -23,11 +23,5 @@ export type SessionQuery = {
 // type
 export type Session = Pick<
   ISession,
-  | "ipAddress"
-  | "browser"
-  | "accessToken"
-  | "createdAt"
-  | "deviceName"
-  | "expiredAt"
-  | "id"
+  'ipAddress' | 'browser' | 'accessToken' | 'createdAt' | 'deviceName' | 'expiredAt' | 'id'
 >;

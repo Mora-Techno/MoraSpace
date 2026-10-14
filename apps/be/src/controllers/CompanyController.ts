@@ -143,7 +143,9 @@ class CompanyController {
       if (authRespone) return authRespone;
 
       if (!user.companyId) {
-        return HttpResponse(c).badRequest('Tidak dapat memperbarui profil company pada mode individual');
+        return HttpResponse(c).badRequest(
+          'Tidak dapat memperbarui profil company pada mode individual',
+        );
       }
 
       const data = await CompanyService.updateProfile(user.companyId, body);

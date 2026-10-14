@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import type { PickUpdateTodo } from '@repo/types';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { Button } from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { TodoDetailSection } from "@/components/page/private/member/todos/todo-detail.section";
-import { useApi } from "@/hooks/useApi/useApi";
-import type { PickUpdateTodo } from "@repo/types";
+import { Button } from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { TodoDetailSection } from '@/components/page/private/member/todos/todo-detail.section';
+import { useApi } from '@/hooks/useApi/useApi';
 
 function toLocalInput(iso: string | null): string {
-  if (!iso) return "";
+  if (!iso) return '';
   const date = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
+  const pad = (n: number) => String(n).padStart(2, '0');
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
     date.getDate(),
   )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -24,15 +24,13 @@ export default function TodoDetailContainer({ id }: { id: string }) {
   const api = useApi();
   const router = useRouter();
   const pathname = usePathname();
-  const listRoute = pathname.includes("/owner/")
-    ? "/owner/member/todos"
-    : "/member/todos";
+  const listRoute = pathname.includes('/owner/') ? '/owner/member/todos' : '/member/todos';
   const { data: todo, isLoading } = api.todo.query.getByID(id);
   const updateTodo = api.todo.mutate.update();
   const deleteTodo = api.todo.mutate.delete();
 
   const [form, setForm] = useState<PickUpdateTodo>({
-    text: "",
+    text: '',
     dueDate: null,
   });
 
@@ -50,7 +48,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
     updateTodo.mutate({
       id: todo.id,
       payload: {
-        status: todo.status === "completed" ? "pending" : "completed",
+        status: todo.status === 'completed' ? 'pending' : 'completed',
       },
     });
   };
@@ -62,9 +60,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
       id: todo.id,
       payload: {
         text: form.text?.trim() || todo.text,
-        ...(form.dueDate
-          ? { dueDate: new Date(form.dueDate).toISOString() }
-          : { dueDate: null }),
+        ...(form.dueDate ? { dueDate: new Date(form.dueDate).toISOString() } : { dueDate: null }),
       },
     });
   };

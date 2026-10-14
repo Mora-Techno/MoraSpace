@@ -1,28 +1,33 @@
 'use client';
 
-import { CalendarDays, CheckCircle2, Headphones, Bot, Zap } from 'lucide-react';
+import { Bot, CalendarDays, CheckCircle2, Headphones, Zap } from 'lucide-react';
+
 import { useGsapStagger } from '@/hooks/useGsapStagger';
 
 const FEATURES = [
   {
     icon: CheckCircle2,
     title: 'Manajemen Tugas Terpusat',
-    description: 'Kelola Todo, prioritaskan pekerjaan, dan lacak progres dengan antarmuka yang bersih dan bebas gangguan.',
+    description:
+      'Kelola Todo, prioritaskan pekerjaan, dan lacak progres dengan antarmuka yang bersih dan bebas gangguan.',
   },
   {
     icon: Bot,
     title: 'Asisten AI Cerdas',
-    description: 'Rangkum hasil meeting, buat tugas otomatis, dan temukan informasi penting dalam hitungan detik.',
+    description:
+      'Rangkum hasil meeting, buat tugas otomatis, dan temukan informasi penting dalam hitungan detik.',
   },
   {
     icon: CalendarDays,
     title: 'Kalender & Jadwal Terintegrasi',
-    description: 'Sinkronkan semua event, atur waktu luang, dan jadwalkan pertemuan tanpa harus pindah aplikasi.',
+    description:
+      'Sinkronkan semua event, atur waktu luang, dan jadwalkan pertemuan tanpa harus pindah aplikasi.',
   },
   {
     icon: Headphones,
     title: 'Sesi Fokus & Musik',
-    description: 'Tingkatkan konsentrasi dengan Pomodoro timer dan playlist khusus untuk deep work.',
+    description:
+      'Tingkatkan konsentrasi dengan Pomodoro timer dan playlist khusus untuk deep work.',
   },
 ];
 
@@ -41,7 +46,8 @@ export function FeaturesSection() {
             Semua yang Tim Anda Butuhkan
           </h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            Satu platform OS kerja terintegrasi — dirancang khusus untuk mengurangi context-switching dan menghargai jam kerja Anda.
+            Satu platform OS kerja terintegrasi — dirancang khusus untuk mengurangi
+            context-switching dan menghargai jam kerja Anda.
           </p>
         </div>
 
@@ -49,7 +55,7 @@ export function FeaturesSection() {
           {FEATURES.map((feature) => {
             const Icon = feature.icon;
             return (
-               <div
+              <div
                 key={feature.title}
                 data-stagger-item
                 className="group relative overflow-hidden rounded-3xl border border-border/50 bg-card/40 p-8 transition-all duration-500 hover:-translate-y-2 hover:border-primary/50 hover:bg-card/80 hover:shadow-2xl hover:shadow-primary/10 backdrop-blur-sm"

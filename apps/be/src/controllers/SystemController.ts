@@ -1,6 +1,6 @@
-import { HttpResponse } from "@/http";
-import prisma from "prisma/client";
-import type { AppContext } from "@/contex";
+import { HttpResponse } from '@/http';
+import prisma from 'prisma/client';
+import type { AppContext } from '@/contex';
 
 let lastPingTime: number = 0;
 
@@ -19,19 +19,11 @@ class SystemController {
         // Ping database to keep it warm
         await prisma.$queryRaw`SELECT 1`;
 
-        return HttpResponse(c).ok(
-          { pinged: true },
-          undefined,
-          "Database pinged successfully",
-        );
+        return HttpResponse(c).ok({ pinged: true }, undefined, 'Database pinged successfully');
       }
 
       // Ignored ping (still warm)
-      return HttpResponse(c).ok(
-        { pinged: false },
-        undefined,
-        "Ping skipped (db is warm)",
-      );
+      return HttpResponse(c).ok({ pinged: false }, undefined, 'Ping skipped (db is warm)');
     } catch (error) {
       // Revert timestamp if failed so next request can try again
       lastPingTime = 0;

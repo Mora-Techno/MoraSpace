@@ -1,0 +1,15 @@
+{
+  "addDoc": {
+    "brand": "Mora",
+    "title": "Complete Company Profile",
+    "subtitle": "Add your company logo and operating country to get started.",
+    "logo_label": "Company Logo (URL)",
+    "logo_placeholder": "https://example.com/logo.png",
+    "country_label": "Operating Country",
+    "country_placeholder": "Select or enter country",
+    "submit_btn": "Save & Continue",
+    "submitting": "Saving profile...",
+    "hint": "You can change this later in company settings",
+    "skip": "Skip for now"
+  }
+}

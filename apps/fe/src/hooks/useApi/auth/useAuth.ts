@@ -1,14 +1,14 @@
 import {
+  useForgotPassword,
   useLogin,
   useLogout,
   useRegister,
-  useSendMagicLink,
-  useVerifyMagicLink,
-  useForgotPassword,
   useResetPassword,
+  useSendMagicLink,
   useSwitchWorkspace,
-} from "./state/mutate";
-import { useWorkspaces } from "./state/query";
+  useVerifyMagicLink,
+} from './state/mutate';
+import { useWorkspaces } from './state/query';
 
 export const useAuth = () => {
   return {

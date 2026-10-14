@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 interface OwnerDashboardTemplateProps {
   gridRef: React.RefObject<HTMLDivElement | null>;

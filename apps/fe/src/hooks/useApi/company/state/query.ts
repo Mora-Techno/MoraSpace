@@ -1,9 +1,9 @@
+import { CompanyQuery } from '@repo';
 import { MODULE_QUERY } from '@repo/config/query-stale';
 import { useQuery } from '@tanstack/react-query';
 
 import { queryKey } from '@/configs';
 import Api from '@/services/api';
-import { CompanyQuery } from '@repo';
 
 export function useGetMyCompany() {
   return useQuery({

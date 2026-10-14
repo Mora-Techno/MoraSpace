@@ -1,12 +1,9 @@
-import TrackCatalogService from "@/service/TrackCatalogService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type { PickSubmitTrack } from "@repo/types/trackCatalog.types";
-import { getUser } from "@/utils/authTokens";
-import {
-  personalContextValidate,
-  paramsValidate,
-} from "@/validation/auth.validate";
+import TrackCatalogService from '@/service/TrackCatalogService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickSubmitTrack } from '@repo/types/trackCatalog.types';
+import { getUser } from '@/utils/authTokens';
+import { personalContextValidate, paramsValidate } from '@/validation/auth.validate';
 
 interface ReviewBody {
   rejectionReason?: string;
@@ -26,11 +23,7 @@ class TrackCatalogController {
         c.query as any,
       );
 
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar track",
-      );
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar track');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -42,16 +35,9 @@ class TrackCatalogController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await TrackCatalogService.listPending(
-        user.companyId ?? null,
-        c.query as any,
-      );
+      const result = await TrackCatalogService.listPending(user.companyId ?? null, c.query as any);
 
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar track",
-      );
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar track');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -68,9 +54,9 @@ class TrackCatalogController {
       if (validateParams) return validateParams;
 
       const track = await TrackCatalogService.getById(params.id);
-      if (!track) return HttpResponse(c).notFound("Track tidak ditemukan");
+      if (!track) return HttpResponse(c).notFound('Track tidak ditemukan');
 
-      return HttpResponse(c).ok(track, undefined, "Berhasil mengambil track");
+      return HttpResponse(c).ok(track, undefined, 'Berhasil mengambil track');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -85,7 +71,7 @@ class TrackCatalogController {
       if (authResponse) return authResponse;
 
       if (!input?.title || !input?.youtubeUrl) {
-        return HttpResponse(c).badRequest("title dan youtubeUrl wajib diisi");
+        return HttpResponse(c).badRequest('title dan youtubeUrl wajib diisi');
       }
 
       const track = await TrackCatalogService.submit(
@@ -95,12 +81,9 @@ class TrackCatalogController {
         input,
       );
 
-      return HttpResponse(c).created(
-        track,
-        "Track berhasil dikirim untuk review",
-      );
+      return HttpResponse(c).created(track, 'Track berhasil dikirim untuk review');
     } catch (error: any) {
-      if (error?.message?.includes("duplicate")) {
+      if (error?.message?.includes('duplicate')) {
         return HttpResponse(c).conflict(error.message);
       }
       return HttpResponse(c).internalError(error);
@@ -124,10 +107,10 @@ class TrackCatalogController {
         user.id,
       );
 
-      if (!track) return HttpResponse(c).notFound("Track tidak ditemukan");
-      return HttpResponse(c).ok(track, undefined, "Track berhasil disetujui");
+      if (!track) return HttpResponse(c).notFound('Track tidak ditemukan');
+      return HttpResponse(c).ok(track, undefined, 'Track berhasil disetujui');
     } catch (error: any) {
-      if (error?.message?.includes("sudah berstatus")) {
+      if (error?.message?.includes('sudah berstatus')) {
         return HttpResponse(c).badRequest(error.message);
       }
       return HttpResponse(c).internalError(error);
@@ -153,10 +136,10 @@ class TrackCatalogController {
         { rejectionReason: input?.rejectionReason },
       );
 
-      if (!track) return HttpResponse(c).notFound("Track tidak ditemukan");
-      return HttpResponse(c).ok(track, undefined, "Track berhasil ditolak");
+      if (!track) return HttpResponse(c).notFound('Track tidak ditemukan');
+      return HttpResponse(c).ok(track, undefined, 'Track berhasil ditolak');
     } catch (error: any) {
-      if (error?.message?.includes("sudah berstatus")) {
+      if (error?.message?.includes('sudah berstatus')) {
         return HttpResponse(c).badRequest(error.message);
       }
       return HttpResponse(c).internalError(error);
@@ -180,8 +163,8 @@ class TrackCatalogController {
         user.companyId ?? null,
       );
 
-      if (!result) return HttpResponse(c).notFound("Track tidak ditemukan");
-      return HttpResponse(c).ok(result, undefined, "Track berhasil dihapus");
+      if (!result) return HttpResponse(c).notFound('Track tidak ditemukan');
+      return HttpResponse(c).ok(result, undefined, 'Track berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

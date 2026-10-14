@@ -1,15 +1,16 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useDebounce } from "@/hooks/useDebounce";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import CompanyPositionSection from "@/components/page/private/owner/dashboard/company/position/CompanyPositionSection";
+import { useState } from 'react';
+
+import CompanyPositionSection from '@/components/page/private/owner/dashboard/company/position/CompanyPositionSection';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function CompanyPositionContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debounceSearch = useDebounce(searchTerm, 500);
 
@@ -21,8 +22,8 @@ export default function CompanyPositionContainer() {
 
   const [open, setOpen] = useState<boolean>(false);
   const [formCreate, setFormCreate] = useState({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -30,7 +31,7 @@ export default function CompanyPositionContainer() {
     createPosition.mutate(formCreate, {
       onSuccess: () => {
         setOpen(false);
-        setFormCreate({ name: "", description: "" });
+        setFormCreate({ name: '', description: '' });
       },
     });
   };

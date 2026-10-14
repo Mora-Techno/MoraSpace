@@ -1,21 +1,21 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/auth";
+const mount = '/auth';
 
 export const AUTH_ENDPOINTS = {
-  LOGIN: buildEndpoint(mount, "/login"),
-  REGISTER: buildEndpoint(mount, "/register"),
-  LOGOUT: buildEndpoint(mount, "/logout"),
-  REFRESH: buildEndpoint(mount, "/refresh"),
-  SEND_MAGIC_LINK: buildEndpoint(mount, "/magic-link/send"),
-  VERIFY_MAGIC_LINK: buildEndpoint(mount, "/magic-link/verify"),
-  SEND_OTP: buildEndpoint(mount, "/otp/send"),
-  FORGOT_PASSWORD: buildEndpoint(mount, "/forgot-password"),
-  RESET_PASSWORD: buildEndpoint(mount, "/reset-password"),
-  VERIFY_OTP: buildEndpoint(mount, "/otp/verify"),
-  USERS: buildEndpoint(mount, "/users"),
-  WORKSPACES: buildEndpoint(mount, "/workspaces"),
-  SWITCH_WORKSPACE: buildEndpoint(mount, "/switch-workspace"),
+  LOGIN: buildEndpoint(mount, '/login'),
+  REGISTER: buildEndpoint(mount, '/register'),
+  LOGOUT: buildEndpoint(mount, '/logout'),
+  REFRESH: buildEndpoint(mount, '/refresh'),
+  SEND_MAGIC_LINK: buildEndpoint(mount, '/magic-link/send'),
+  VERIFY_MAGIC_LINK: buildEndpoint(mount, '/magic-link/verify'),
+  SEND_OTP: buildEndpoint(mount, '/otp/send'),
+  FORGOT_PASSWORD: buildEndpoint(mount, '/forgot-password'),
+  RESET_PASSWORD: buildEndpoint(mount, '/reset-password'),
+  VERIFY_OTP: buildEndpoint(mount, '/otp/verify'),
+  USERS: buildEndpoint(mount, '/users'),
+  WORKSPACES: buildEndpoint(mount, '/workspaces'),
+  SWITCH_WORKSPACE: buildEndpoint(mount, '/switch-workspace'),
 } as const;
 
 export function listAuthEndpoints() {

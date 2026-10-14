@@ -1,13 +1,9 @@
-import { Button, Skeleton } from "@/components/atoms";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/atoms/Dialog";
-import { Input } from "@/components/atoms";
-import { PickCreateNote } from "@repo";
-import { SendHorizontal } from "lucide-react";
+import { PickCreateNote } from '@repo';
+import { SendHorizontal } from 'lucide-react';
+
+import { Button, Skeleton } from '@/components/atoms';
+import { Input } from '@/components/atoms';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/Dialog';
 
 interface QuickNoteModalProps {
   open: boolean;
@@ -41,9 +37,7 @@ const QuickNoteModal: React.FC<QuickNoteModalProps> = ({
           <Input
             placeholder="Judul catatan..."
             value={formCreateNote.title}
-            onChange={(e) =>
-              setFormCreateNote((prev) => ({ ...prev, title: e.target.value }))
-            }
+            onChange={(e) => setFormCreateNote((prev) => ({ ...prev, title: e.target.value }))}
             className="bg-transparent h-8 border-none focus-visible:ring-0 px-1 font-medium placeholder:text-muted-foreground/60 text-sm"
             disabled={isPending}
           />
@@ -65,11 +59,7 @@ const QuickNoteModal: React.FC<QuickNoteModalProps> = ({
               size="sm"
               variant="ghost"
               className="h-8 w-8 p-0 text-primary hover:text-primary hover:bg-primary/20 shrink-0"
-              disabled={
-                isPending ||
-                !formCreateNote.title.trim() ||
-                !formCreateNote.content.trim()
-              }
+              disabled={isPending || !formCreateNote.title.trim() || !formCreateNote.content.trim()}
             >
               <SendHorizontal className="size-4" />
             </Button>

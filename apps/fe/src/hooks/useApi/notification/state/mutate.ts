@@ -1,11 +1,7 @@
-import type {
-  NotificationInApp,
-  NotificationLog,
-  PickSendNotification,
-} from "@repo/types";
+import type { NotificationInApp, NotificationLog, PickSendNotification } from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
 import {
   type NotificationCacheContext,
@@ -13,14 +9,10 @@ import {
   notificationsRootKey,
   readNotificationLogsSnapshot,
   readNotificationsSnapshot,
-} from "./utils";
+} from './utils';
 
 export function useSendNotification() {
-  return useAppMutation<
-    NotificationLog,
-    PickSendNotification,
-    NotificationCacheContext
-  >({
+  return useAppMutation<NotificationLog, PickSendNotification, NotificationCacheContext>({
     mutationFn: (payload) => Api.Notification.SendNotification(payload),
     invalidateKeys: [notificationsRootKey],
     optimistic: (ns) => ({ previousData: readNotificationLogsSnapshot(ns) }),
@@ -31,18 +23,14 @@ export function useSendNotification() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
 }
 
 export function useMarkRead() {
-  return useAppMutation<
-    NotificationInApp,
-    string,
-    NotificationListCacheContext
-  >({
+  return useAppMutation<NotificationInApp, string, NotificationListCacheContext>({
     mutationFn: (id) => Api.Notification.MarkRead(id),
     invalidateKeys: [notificationsRootKey],
     optimistic: (ns) => ({ previousData: readNotificationsSnapshot(ns) }),
@@ -53,18 +41,14 @@ export function useMarkRead() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
 }
 
 export function useMarkAllRead() {
-  return useAppMutation<
-    unknown,
-    void,
-    NotificationListCacheContext
-  >({
+  return useAppMutation<unknown, void, NotificationListCacheContext>({
     mutationFn: () => Api.Notification.MarkAllRead(),
     invalidateKeys: [notificationsRootKey],
     optimistic: (ns) => ({ previousData: readNotificationsSnapshot(ns) }),
@@ -75,7 +59,7 @@ export function useMarkAllRead() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

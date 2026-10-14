@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { ChevronRight, Leaf } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useMemo } from "react";
+import { ChevronRight, Leaf } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
 import {
   Sidebar,
@@ -19,10 +19,10 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
-} from "@/components/atoms";
-import { getNavItems, type NavItem } from "@/configs/nav.config";
-import { loadAuthSession } from "@/utils/storage";
-import { cn } from "@/utils/classname";
+} from '@/components/atoms';
+import { getNavItems, type NavItem } from '@/configs/nav.config';
+import { useWorkspaceNavRole } from '@/hooks/useWorkspaceNav';
+import { cn } from '@/utils/classname';
 
 function isItemActive(item: NavItem, pathname: string): boolean {
   if (item.url && (pathname === item.url || pathname.startsWith(item.url))) {
@@ -33,9 +33,7 @@ function isItemActive(item: NavItem, pathname: string): boolean {
 
 function SubMenuItem({ item, pathname }: { item: NavItem; pathname: string }) {
   if (!item.url) return null;
-  const isActive =
-    pathname === item.url ||
-    (item.url !== "/" && pathname.startsWith(item.url));
+  const isActive = pathname === item.url || (item.url !== '/' && pathname.startsWith(item.url));
   const Icon = item.icon;
 
   return (
@@ -43,8 +41,8 @@ function SubMenuItem({ item, pathname }: { item: NavItem; pathname: string }) {
       <SidebarMenuSubButton
         asChild
         className={cn(
-          "transition-all duration-300",
-          isActive && "bg-primary/15 text-primary font-medium",
+          'transition-all duration-300',
+          isActive && 'bg-primary/15 text-primary font-medium',
         )}
       >
         <Link href={item.url}>
@@ -76,17 +74,10 @@ function MenuItem({
           <SidebarMenuButton
             asChild
             tooltip={item.title}
-            className={cn(
-              "transition-all duration-300",
-              isActive && "bg-primary/15 text-primary",
-            )}
+            className={cn('transition-all duration-300', isActive && 'bg-primary/15 text-primary')}
           >
             <div className="flex h-10 items-center gap-3 rounded-xl px-3 py-2">
-              {Icon ? (
-                <Icon className="size-5" />
-              ) : (
-                <ChevronRight className="size-5" />
-              )}
+              {Icon ? <Icon className="size-5" /> : <ChevronRight className="size-5" />}
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -96,20 +87,12 @@ function MenuItem({
     return (
       <SidebarMenuItem>
         <div className="flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-muted-foreground">
-          {Icon ? (
-            <Icon className="size-5" />
-          ) : (
-            <ChevronRight className="size-5" />
-          )}
+          {Icon ? <Icon className="size-5" /> : <ChevronRight className="size-5" />}
           <span className="font-medium text-sm">{item.title}</span>
         </div>
         <SidebarMenuSub className="mt-1 space-y-0.5">
           {item.children.map((child) => (
-            <SubMenuItem
-              key={child.url ?? child.title}
-              item={child}
-              pathname={pathname}
-            />
+            <SubMenuItem key={child.url ?? child.title} item={child} pathname={pathname} />
           ))}
         </SidebarMenuSub>
       </SidebarMenuItem>
@@ -125,10 +108,10 @@ function MenuItem({
         <Link
           href={item.url}
           className={cn(
-            "flex h-10 items-center gap-3 rounded-xl px-3 py-2 transition-all duration-300",
+            'flex h-10 items-center gap-3 rounded-xl px-3 py-2 transition-all duration-300',
             isActive
-              ? "bg-primary/15 text-primary font-medium shadow-sm"
-              : "text-muted-foreground hover:bg-accent hover:text-foreground",
+              ? 'bg-primary/15 text-primary font-medium shadow-sm'
+              : 'text-muted-foreground hover:bg-accent hover:text-foreground',
           )}
         >
           {Icon ? <Icon className="size-5" /> : null}
@@ -142,12 +125,10 @@ function MenuItem({
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  const isCollapsed = state === 'collapsed';
 
-  const navItems = useMemo(() => {
-    const role = loadAuthSession()?.role;
-    return getNavItems(role?.toLowerCase());
-  }, []);
+  const navRole = useWorkspaceNavRole();
+  const navItems = useMemo(() => getNavItems(navRole), [navRole]);
 
   return (
     <Sidebar
