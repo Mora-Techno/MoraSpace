@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/atoms';
 import { useApi } from '@/hooks/useApi/useApi';
+import { useChatSocket } from '@/hooks/useChatSocket';
 import { cn } from '@/utils/classname';
 import { loadAuthSession } from '@/utils/storage';
 
@@ -44,6 +45,7 @@ interface WorkspaceSwitcherProps {
 
 export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwitcherProps) {
   const api = useApi();
+  const { reconnect } = useChatSocket();
   const claims = readTokenClaims();
   const { data: workspacesData, isLoading } = api.auth.query.workspaces();
   const switchWorkspace = api.auth.mutate.switchWorkspace();
@@ -67,6 +69,7 @@ export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwi
 
     try {
       await switchWorkspace.mutateAsync({ workspaceId });
+      reconnect();
     } catch (err) {
       console.error('Failed to switch workspace:', err);
     }

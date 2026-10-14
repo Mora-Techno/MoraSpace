@@ -1,0 +1,52 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "next-shadcn-base-dev",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-02-14",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "next-shadcn-base-dev"
+    }
+  ],
+  "vars": {
+    "NODE_ENV": "development",
+    "NEXT_PUBLIC_BASEPATH": "/home",
+    "NEXT_PRIVATE_MINIMAL_MODE": "1"
+  },
+  "env": {
+    "staging": {
+      "name": "next-shadcn-base-staging",
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "next-shadcn-base-staging"
+        }
+      ],
+      "vars": {
+        "NODE_ENV": "production",
+        "NEXT_PUBLIC_BASEPATH": "/home",
+        "NEXT_PRIVATE_MINIMAL_MODE": "1"
+      }
+    },
+    "production": {
+      "name": "next-shadcn-base-prod",
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "next-shadcn-base-prod"
+        }
+      ],
+      "vars": {
+        "NODE_ENV": "production",
+        "NEXT_PUBLIC_BASEPATH": "/home",
+        "NEXT_PRIVATE_MINIMAL_MODE": "1"
+      }
+    }
+  }
+}

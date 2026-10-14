@@ -78,6 +78,64 @@ class ChatService {
     };
   }
 
+  public async assertActiveMember(conversationId: string, actor: ChatActor) {
+    return this.activeMember(conversationId, actor);
+  }
+
+  public async sendMessage(
+    conversationId: string,
+    actor: ChatActor,
+    clientMessageId: string,
+    rawBody: string,
+  ) {
+    const body = rawBody.trim();
+    if (!body || body.length > 2000) {
+      throw new Error('Pesan 1–2000 karakter');
+    }
+    if (!clientMessageId || clientMessageId.length > 64) {
+      throw new Error('clientMessageId tidak valid');
+    }
+    const me = await this.activeMember(conversationId, actor);
+    const idem = await prisma.message.findUnique({
+      where: { senderId_clientMessageId: { senderId: actor.userId, clientMessageId } },
+      include: { sender: { select: { fullName: true } } },
+    });
+    if (idem) {
+      return { message: { ...idem, senderName: idem.sender.fullName }, duplicate: true };
+    }
+    const message = await prisma.$transaction(async (tx) => {
+      const convo = await tx.conversation.update({
+        where: { id: conversationId },
+        data: { seqCounter: { increment: 1 }, updatedAt: new Date() },
+        select: { seqCounter: true },
+      });
+      return tx.message.create({
+        data: {
+          conversationId,
+          senderId: actor.userId,
+          senderMemberId: me.id,
+          clientMessageId,
+          seq: convo.seqCounter,
+          body,
+        },
+        include: { sender: { select: { fullName: true } } },
+      });
+    });
+    return { message: { ...message, senderName: message.sender.fullName }, duplicate: false };
+  }
+
+  public async markRead(conversationId: string, actor: ChatActor, seq: number) {
+    const me = await this.activeMember(conversationId, actor);
+    const next = Math.max(me.lastReadSeq, Math.floor(seq) || 0);
+    if (next !== me.lastReadSeq) {
+      await prisma.conversationMember.update({
+        where: { id: me.id },
+        data: { lastReadSeq: next },
+      });
+    }
+    return { seq: next };
+  }
+
   public async listConversations(
     actor: ChatActor,
     query: { search?: string; page?: number; limit?: number } = {},
@@ -248,21 +306,28 @@ class ChatService {
   public async listMessages(
     conversationId: string,
     actor: ChatActor,
-    query: { cursor?: number; limit?: number } = {},
+    query: { cursor?: number; limit?: number; direction?: 'before' | 'after' } = {},
   ) {
     await this.activeMember(conversationId, actor);
     const limit = Math.min(query.limit ?? 30, 100);
+    const direction = query.direction ?? 'before';
+    const where: Prisma.MessageWhereInput =
+      direction === 'after'
+        ? { conversationId, seq: { gt: query.cursor ?? 0 } }
+        : { conversationId, ...(query.cursor ? { seq: { lt: query.cursor } } : {}) };
     const messages = await prisma.message.findMany({
-      where: { conversationId, seq: { gt: query.cursor ?? 0 } },
+      where,
       include: { sender: { select: { fullName: true } } },
-      orderBy: { seq: 'asc' },
+      orderBy: { seq: direction === 'after' ? 'asc' : 'desc' },
       take: limit,
     });
-    const data = messages.map((m) => ({ ...m, senderName: m.sender.fullName }));
-    return {
-      data,
-      nextCursor: messages.length === limit ? messages[messages.length - 1].seq : null,
-    };
+    const ordered = direction === 'after' ? messages : [...messages].reverse();
+    const data = ordered.map((m) => ({ ...m, senderName: m.sender.fullName }));
+    const nextCursor =
+      direction === 'before' && messages.length === limit
+        ? messages[messages.length - 1].seq
+        : null;
+    return { data, nextCursor };
   }
 
   public async searchUsers(actor: ChatActor, query: { search?: string; limit?: number } = {}) {

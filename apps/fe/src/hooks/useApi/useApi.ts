@@ -1,5 +1,6 @@
 import { useAuth } from './auth/useAuth';
 import { useCalender } from './calendar/useCalender';
+import { useChat } from './chat/useChat';
 import { useCompany } from './company/useCompany';
 import { useDepartment } from './department/useDepartment';
 import { useInvitation } from './invitation/useInvitation';
@@ -39,5 +40,6 @@ export function useApi() {
     session: useSession(),
     settings: useSettings(),
     trackCatalog: useTrackCatalog(),
+    chat: useChat(),
   };
 }

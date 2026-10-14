@@ -47,8 +47,16 @@ export const ChatConversationQueryDto = t.Object({
 });
 
 export const ChatMessagesQueryDto = t.Object({
-  cursor: t.Optional(t.Numeric({ minimum: 0, description: 'seq terakhir yang sudah diterima' })),
+  cursor: t.Optional(
+    t.Numeric({ minimum: 0, description: 'seq acuan (before: lebih lama, after: lebih baru)' }),
+  ),
   limit: t.Optional(t.Numeric({ minimum: 1, maximum: 100, default: 30, description: 'Maks: 100' })),
+  direction: t.Optional(
+    t.Union([t.Literal('before'), t.Literal('after')], {
+      default: 'before',
+      description: 'before: riwayat lama (default), after: sinkronisasi terlewat',
+    }),
+  ),
 });
 
 export const ChatUserSearchQueryDto = t.Object({

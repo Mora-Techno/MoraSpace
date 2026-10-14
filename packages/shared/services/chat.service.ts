@@ -3,7 +3,7 @@ import type { TResponse } from '../types/response.types';
 import type {
   ChatConversationPreview,
   ChatMemberInfo,
-  ChatMessagesPage,
+  ChatMessageInfo,
   ChatMessagesQuery,
   ChatConversationQuery,
   ChatUserSearchQuery,
@@ -42,8 +42,8 @@ class ChatService {
   public async ListMessages(
     id: string,
     query?: ChatMessagesQuery,
-  ): Promise<TResponse<ChatMessagesPage>> {
-    const res = await GetResponse<ChatMessagesPage>(withQuery(CHAT_ENDPOINTS.MESSAGES(id), query));
+  ): Promise<TResponse<ChatMessageInfo[]>> {
+    const res = await GetResponse<ChatMessageInfo[]>(withQuery(CHAT_ENDPOINTS.MESSAGES(id), query));
     return toServiceResponse(res, { message: 'Riwayat pesan berhasil diambil' });
   }
 

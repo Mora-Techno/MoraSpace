@@ -125,3 +125,27 @@ export async function createTokenPair(user: SafeAuthUser): Promise<AuthTokensRes
 export function getUser(c: AppContext): JwtPayload {
   return c.user as JwtPayload;
 }
+
+// Verifikasi token untuk transport non-HTTP (WebSocket): cek sama seperti
+// verifyToken (JWT + sesi + kill-switch suspend), kembalikan null bila tak valid.
+export async function verifySocketToken(token: string): Promise<JwtPayload | null> {
+  try {
+    const decoded = jwt.verify(token, getJwtSecret()) as JwtPayload;
+    if (decoded.tokenType && decoded.tokenType !== 'access') return null;
+    const session = await prisma.userSession.findFirst({
+      where: { userId: decoded.id, accessToken: token, expiredAt: { gt: new Date() } },
+      select: { id: true },
+    });
+    if (!session) return null;
+    if (decoded.companyId && decoded.platformRole !== 'SUPER_ADMIN') {
+      const company = await prisma.company.findUnique({
+        where: { id: decoded.companyId },
+        select: { status: true },
+      });
+      if (company?.status === 'suspended') return null;
+    }
+    return decoded;
+  } catch {
+    return null;
+  }
+}
