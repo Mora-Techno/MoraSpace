@@ -38,6 +38,7 @@ const Api = {
   TrackCatalog: ApiServicePackage.TrackCatalog,
   Chat: ApiServicePackage.Chat,
   Blog: ApiServicePackage.Blog,
+  Dashboard: ApiServicePackage.Dashboard,
 } as const;
 
 export default Api;

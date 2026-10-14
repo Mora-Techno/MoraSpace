@@ -5,7 +5,7 @@ import { GlassCard } from '@/components/molecules/GlassCard';
 import { StatMiniCard } from '@/components/molecules/StatMiniCard';
 
 interface DailyStats {
-  completedTodos: number;
+  pendingTodos: number;
   pomodoroMinutes: number;
   totalMeetings: number;
 }
@@ -40,7 +40,7 @@ export function DailyGreetingSection({ state }: DailyGreetingSectionProps) {
       <div className="flex flex-wrap gap-4">
         <StatMiniCard
           title="Tugas Belum Selesai"
-          value={stats.completedTodos}
+          value={stats.pendingTodos}
           icon={<CheckCircle2 className="size-4" />}
           className="min-w-[140px] flex-1"
         />

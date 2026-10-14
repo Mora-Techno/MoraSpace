@@ -20,6 +20,7 @@ import todoService from './todo.service';
 import trackCatalogService from './trackCatalog.service';
 import chatService from './chat.service';
 import blogService from './blog.service';
+import dashboardService from './dashboard.service';
 export {
   setAuthErrorHandler,
   setBaseURLProvider,
@@ -51,6 +52,7 @@ class ApiServicePackage {
   static TrackCatalog = WrapApi(trackCatalogService);
   static Chat = WrapApi(chatService);
   static Blog = WrapApi(blogService);
+  static Dashboard = WrapApi(dashboardService);
 }
 
 export { default as AuthService } from './auth.service';
@@ -75,6 +77,7 @@ export { default as SystemService } from './system.service';
 export { default as TrackCatalogService } from './trackCatalog.service';
 export { default as ChatService } from './chat.service';
 export { default as BlogService } from './blog.service';
+export { default as DashboardService } from './dashboard.service';
 export { toServiceResponse } from './service-response';
 export { ApiServicePackage as Api };
 export default ApiServicePackage;

@@ -2,6 +2,7 @@ import { useAuth } from './auth/useAuth';
 import { useCalender } from './calendar/useCalender';
 import { useChat } from './chat/useChat';
 import { useCompany } from './company/useCompany';
+import { useDashboard } from './dashboard/useDashboard';
 import { useDepartment } from './department/useDepartment';
 import { useInvitation } from './invitation/useInvitation';
 import { useMember } from './member/useMember';
@@ -41,5 +42,6 @@ export function useApi() {
     settings: useSettings(),
     trackCatalog: useTrackCatalog(),
     chat: useChat(),
+    dashboard: useDashboard(),
   };
 }

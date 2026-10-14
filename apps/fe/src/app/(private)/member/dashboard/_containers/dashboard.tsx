@@ -136,21 +136,26 @@ export default function DashboardContainer() {
     .slice(0, 4);
 
   const today = now.getDate();
+  const { data: todayFocus } = api.pomodoro.query.today();
+  const focusMinutes =
+    (todayFocus as { totalDurationMinutes?: number } | undefined)?.totalDurationMinutes ?? 0;
   const stats = useMemo(
     () => ({
-      completedTodos: uncompletedTodosCount,
-      pomodoroMinutes: 0,
+      pendingTodos: uncompletedTodosCount,
+      pomodoroMinutes: focusMinutes,
       totalMeetings: events.filter((e) => new Date(e.startDate).getDate() === today).length,
     }),
-    [uncompletedTodosCount, events, today],
+    [uncompletedTodosCount, focusMinutes, events, today],
   );
 
   const usePodomoroEntry = api.pomodoro;
 
   const useStartSession = usePodomoroEntry.mutate.start();
   const useStopSession = usePodomoroEntry.mutate.stop();
+  const usePauseSession = usePodomoroEntry.mutate.pause();
   const startSession = useStartSession;
   const stopSession = useStopSession;
+  const pauseSession = usePauseSession;
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [timeLeft, setTimeLeft] = useState<number>(25 * 60);
@@ -182,6 +187,7 @@ export default function DashboardContainer() {
 
   const handlePausePomodoro = () => {
     setIsActive(false);
+    pauseSession.mutate();
   };
 
   const handleStopPomodoro = () => {
