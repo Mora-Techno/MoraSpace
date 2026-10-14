@@ -3,7 +3,7 @@
  * Setiap user (company member) memiliki pengaturan yang berbeda-beda,
  * sehingga endpoint settings selalu di-scope berdasarkan companyMemberId.
  */
-export type ThemePreference = "light" | "dark" | "system";
+export type ThemePreference = 'light' | 'dark' | 'system';
 
 export interface ISettings {
   id: string;
@@ -17,24 +17,13 @@ export interface ISettings {
 
 export type Settings = Pick<
   ISettings,
-  | "id"
-  | "theme"
-  | "language"
-  | "timezone"
-  | "enableMusic"
-  | "focusMode"
-  | "notificationEnabled"
+  'id' | 'theme' | 'language' | 'timezone' | 'enableMusic' | 'focusMode' | 'notificationEnabled'
 >;
 
 export type PickUpdateSettings = Partial<
   Pick<
     ISettings,
-    | "theme"
-    | "language"
-    | "timezone"
-    | "enableMusic"
-    | "focusMode"
-    | "notificationEnabled"
+    'theme' | 'language' | 'timezone' | 'enableMusic' | 'focusMode' | 'notificationEnabled'
   >
 >;
 

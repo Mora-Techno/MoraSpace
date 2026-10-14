@@ -86,11 +86,17 @@ export default function BlogSection({ template }: BlogSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = ['Semua', 'Produktivitas Kalem', 'Asisten AI', 'Pembaruan Produk', 'Filosofi Kerja', 'Manajemen Tim'];
+  const categories = [
+    'Semua',
+    'Produktivitas Kalem',
+    'Asisten AI',
+    'Pembaruan Produk',
+    'Filosofi Kerja',
+    'Manajemen Tim',
+  ];
 
   const filteredArticles = ARTICLES.filter((article) => {
-    const matchesCategory =
-      selectedCategory === 'Semua' || article.category === selectedCategory;
+    const matchesCategory = selectedCategory === 'Semua' || article.category === selectedCategory;
     const matchesSearch =
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -174,7 +180,8 @@ export default function BlogSection({ template }: BlogSectionProps) {
               <div className="my-auto py-8 text-center relative">
                 <ScribbleSparkle className="size-8 text-primary mx-auto mb-2 opacity-80" />
                 <p className="font-serif italic text-lg text-foreground/85">
-                  &ldquo;Kerja tenang bukan berarti lambat; ketenangan adalah landasan kecepatan yang berkelanjutan.&rdquo;
+                  &ldquo;Kerja tenang bukan berarti lambat; ketenangan adalah landasan kecepatan
+                  yang berkelanjutan.&rdquo;
                 </p>
                 <ScribbleCircle className="absolute -inset-4 size-[120%] text-primary/30 pointer-events-none" />
               </div>
@@ -200,9 +207,9 @@ export default function BlogSection({ template }: BlogSectionProps) {
               </h2>
 
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-6">
-                Mitos bahwa tim hebat harus begadang setiap hari perlahan dipatahkan oleh riset modern.
-                Pelajari kerangka kerja 3 batas yang diterapkan di Spaces untuk menghormati jam istirahat
-                anggota tanpa pernah mengorbankan kualitas rilis.
+                Mitos bahwa tim hebat harus begadang setiap hari perlahan dipatahkan oleh riset
+                modern. Pelajari kerangka kerja 3 batas yang diterapkan di Spaces untuk menghormati
+                jam istirahat anggota tanpa pernah mengorbankan kualitas rilis.
               </p>
 
               <div className="flex items-center justify-between pt-4 border-t border-border/50">
@@ -220,7 +227,8 @@ export default function BlogSection({ template }: BlogSectionProps) {
                   href="#"
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
                 >
-                  Baca Ulasan <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
+                  Baca Ulasan{' '}
+                  <ArrowRight className="size-3.5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </div>
             </div>

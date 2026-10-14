@@ -1,37 +1,34 @@
-import type { EmploymentTypeOption } from "../types/member.types";
-import { MEMBER_ENDPOINTS } from "../endpoints/member.endpoints";
+import type { EmploymentTypeOption } from '../types/member.types';
+import { MEMBER_ENDPOINTS } from '../endpoints/member.endpoints';
 import type {
   ICompanyMember,
   MemberQuery,
   PickUpdateCompanyMember,
   PickUpdateMemberContacts,
   PickUpdateMemberProfile,
-} from "../types/member.types";
-import type { TResponse } from "../types/response.types";
-import { DeleteResponse, GetResponse, PatchResponse, withQuery } from "./http";
-import { toServiceResponse } from "./service-response";
+} from '../types/member.types';
+import type { TResponse } from '../types/response.types';
+import { DeleteResponse, GetResponse, PatchResponse, withQuery } from './http';
+import { toServiceResponse } from './service-response';
 
 class MemberService {
   public async ListEmploymentTypes(): Promise<TResponse<EmploymentTypeOption[]>> {
-    return toServiceResponse(await GetResponse<EmploymentTypeOption[]>(MEMBER_ENDPOINTS.EMPLOYMENT_TYPES));
+    return toServiceResponse(
+      await GetResponse<EmploymentTypeOption[]>(MEMBER_ENDPOINTS.EMPLOYMENT_TYPES),
+    );
   }
 
-
-  public async ListMembers(
-    query?: MemberQuery,
-  ): Promise<TResponse<ICompanyMember[]>> {
-    const res = await GetResponse<ICompanyMember[]>(
-      withQuery(MEMBER_ENDPOINTS.LIST, query),
-    );
+  public async ListMembers(query?: MemberQuery): Promise<TResponse<ICompanyMember[]>> {
+    const res = await GetResponse<ICompanyMember[]>(withQuery(MEMBER_ENDPOINTS.LIST, query));
     return toServiceResponse(res, {
-      message: "Daftar anggota berhasil diambil",
+      message: 'Daftar anggota berhasil diambil',
     });
   }
 
   public async GetMember(id: string): Promise<TResponse<ICompanyMember>> {
     const res = await GetResponse<ICompanyMember>(MEMBER_ENDPOINTS.BYID(id));
     return toServiceResponse(res, {
-      message: "Detail anggota berhasil diambil",
+      message: 'Detail anggota berhasil diambil',
     });
   }
 
@@ -39,26 +36,21 @@ class MemberService {
     id: string,
     payload: PickUpdateCompanyMember,
   ): Promise<TResponse<ICompanyMember>> {
-    const res = await PatchResponse<ICompanyMember>(
-      MEMBER_ENDPOINTS.UPDATE(id),
-      payload,
-    );
+    const res = await PatchResponse<ICompanyMember>(MEMBER_ENDPOINTS.UPDATE(id), payload);
     return toServiceResponse(res, {
-      message: "Data anggota berhasil diperbarui",
+      message: 'Data anggota berhasil diperbarui',
     });
   }
 
   public async DeleteMember(id: string): Promise<TResponse<ICompanyMember>> {
-    const res = await DeleteResponse<ICompanyMember>(
-      MEMBER_ENDPOINTS.DELETE(id),
-    );
-    return toServiceResponse(res, { message: "Anggota berhasil dihapus" });
+    const res = await DeleteResponse<ICompanyMember>(MEMBER_ENDPOINTS.DELETE(id));
+    return toServiceResponse(res, { message: 'Anggota berhasil dihapus' });
   }
 
   public async GetProfile(id: string): Promise<TResponse<any>> {
     const res = await GetResponse<any>(MEMBER_ENDPOINTS.PROFILE(id));
     return toServiceResponse(res, {
-      message: "Profil anggota berhasil diambil",
+      message: 'Profil anggota berhasil diambil',
     });
   }
 
@@ -66,19 +58,16 @@ class MemberService {
     id: string,
     payload: PickUpdateMemberProfile,
   ): Promise<TResponse<any>> {
-    const res = await PatchResponse<any>(
-      MEMBER_ENDPOINTS.UPDATE_PROFILE(id),
-      payload,
-    );
+    const res = await PatchResponse<any>(MEMBER_ENDPOINTS.UPDATE_PROFILE(id), payload);
     return toServiceResponse(res, {
-      message: "Profil anggota berhasil diperbarui",
+      message: 'Profil anggota berhasil diperbarui',
     });
   }
 
   public async GetContacts(id: string): Promise<TResponse<any>> {
     const res = await GetResponse<any>(MEMBER_ENDPOINTS.CONTACTS(id));
     return toServiceResponse(res, {
-      message: "Kontak anggota berhasil diambil",
+      message: 'Kontak anggota berhasil diambil',
     });
   }
 
@@ -86,12 +75,9 @@ class MemberService {
     id: string,
     payload: PickUpdateMemberContacts,
   ): Promise<TResponse<any>> {
-    const res = await PatchResponse<any>(
-      MEMBER_ENDPOINTS.UPDATE_CONTACTS(id),
-      payload,
-    );
+    const res = await PatchResponse<any>(MEMBER_ENDPOINTS.UPDATE_CONTACTS(id), payload);
     return toServiceResponse(res, {
-      message: "Kontak anggota berhasil diperbarui",
+      message: 'Kontak anggota berhasil diperbarui',
     });
   }
 }

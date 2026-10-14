@@ -1,12 +1,8 @@
-import {
-  PickCreateNote,
-  PickCreateTodo,
-  PickRegisterCompany,
-} from "@repo/types";
-import { Building2, CheckSquare, Eye, EyeOff, FileText } from "lucide-react";
+import { PickCreateNote, PickCreateTodo, PickRegisterCompany } from '@repo/types';
+import { Building2, CheckSquare, Eye, EyeOff, FileText } from 'lucide-react';
 
-import { Button, Input, Label, Textarea } from "@/components/atoms";
-import { modeQuick } from "@/components/molecules/QuickAddFab";
+import { Button, Input, Label, Textarea } from '@/components/atoms';
+import { modeQuick } from '@/components/molecules/QuickAddFab';
 
 interface QuickAddFormProps {
   formCreateTodo: PickCreateTodo;
@@ -35,25 +31,25 @@ const QuickAddForm: React.FC<QuickAddFormProps> = ({
       <div className="flex gap-2">
         <Button
           type="button"
-          variant={mode === "todo" ? "default" : "outline"}
+          variant={mode === 'todo' ? 'default' : 'outline'}
           size="sm"
           className="ghibli-btn flex-1"
-          onClick={() => setMode("todo")}
+          onClick={() => setMode('todo')}
         >
           <CheckSquare className="size-4" /> Todo
         </Button>
         <Button
           type="button"
-          variant={mode === "note" ? "default" : "outline"}
+          variant={mode === 'note' ? 'default' : 'outline'}
           size="sm"
           className="ghibli-btn flex-1"
-          onClick={() => setMode("note")}
+          onClick={() => setMode('note')}
         >
           <FileText className="size-4" /> Note
         </Button>
       </div>
 
-      {mode === "todo" ? (
+      {mode === 'todo' ? (
         <Input
           value={formCreateTodo.text}
           onChange={(e) =>
@@ -67,7 +63,7 @@ const QuickAddForm: React.FC<QuickAddFormProps> = ({
         />
       ) : null}
 
-      {mode === "note" ? (
+      {mode === 'note' ? (
         <div className="space-y-3">
           <Input
             value={formCreateNote.title}

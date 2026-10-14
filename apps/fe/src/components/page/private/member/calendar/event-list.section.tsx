@@ -1,18 +1,12 @@
-import { formatDateTime } from "@repo";
-import type { CalendarEvent, EventQuery } from "@repo/types";
-import type { PickApiID } from "@repo/types/api.types";
-import {
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  Trash2,
-} from "lucide-react";
+import { formatDateTime } from '@repo';
+import type { CalendarEvent, EventQuery } from '@repo/types';
+import type { PickApiID } from '@repo/types/api.types';
+import { CalendarDays, ChevronLeft, ChevronRight, Search, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
-import { Input } from "@/components/atoms/Input";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
+import { Button } from '@/components/atoms';
+import { Input } from '@/components/atoms/Input';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
 
 interface EventListSectionProps {
   service: {
@@ -38,15 +32,13 @@ export function EventListSection({ service, state }: EventListSectionProps) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="font-serif text-lg font-semibold">Jadwal Kalender</h2>
-          <p className="text-sm text-muted-foreground">
-            Kelola agenda dan acara harianmu.
-          </p>
+          <p className="text-sm text-muted-foreground">Kelola agenda dan acara harianmu.</p>
         </div>
         <div className="relative w-full sm:w-64">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Cari jadwal..."
-            value={query.search || ""}
+            value={query.search || ''}
             onChange={(e) => onSearch(e.target.value)}
             className="pl-9"
           />
@@ -119,9 +111,7 @@ export function EventListSection({ service, state }: EventListSectionProps) {
           >
             <ChevronLeft />
           </Button>
-          <div className="flex items-center px-4 text-sm font-medium">
-            {query.page || 1}
-          </div>
+          <div className="flex items-center px-4 text-sm font-medium">{query.page || 1}</div>
           <Button
             variant="outline"
             size="sm"

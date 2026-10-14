@@ -1,9 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateEvent,
-  EventQuery,
-  PickUpdateEvent,
-} from "@repo/types/calendar.types";
+import prisma from 'prisma/client';
+import type { PickCreateEvent, EventQuery, PickUpdateEvent } from '@repo/types/calendar.types';
 
 function mapEvent(event: {
   id: string;
@@ -32,7 +28,7 @@ class CalendarService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
       startDate?: string;
       endDate?: string;
       createdBy?: string;
@@ -42,12 +38,10 @@ class CalendarService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = companyId
-      ? { companyId }
-      : { userId };
+    const where: Record<string, unknown> = companyId ? { companyId } : { userId };
 
     if (query.search) {
-      where.title = { contains: query.search, mode: "insensitive" };
+      where.title = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.month && query.year) {
@@ -72,9 +66,9 @@ class CalendarService {
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
-      orderBy.push({ [query.sortBy]: query.sortOrder ?? "asc" });
+      orderBy.push({ [query.sortBy]: query.sortOrder ?? 'asc' });
     } else {
-      orderBy.push({ startTime: "asc" });
+      orderBy.push({ startTime: 'asc' });
     }
 
     const [totalData, events] = await prisma.$transaction([
@@ -101,9 +95,7 @@ class CalendarService {
   }
 
   public async getById(id: string, companyId: string | null, userId: string) {
-    const where: Record<string, unknown> = companyId
-      ? { id, companyId }
-      : { id, userId };
+    const where: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
     const event = await prisma.calendarEvent.findFirst({
       where: where as any,
@@ -123,9 +115,7 @@ class CalendarService {
       title: input.title,
       description: input.description,
       startTime: new Date(input.startDate),
-      endTime: input.endDate
-        ? new Date(input.endDate)
-        : new Date(input.startDate),
+      endTime: input.endDate ? new Date(input.endDate) : new Date(input.startDate),
     };
     if (companyId) {
       data.companyId = companyId;
@@ -149,9 +139,7 @@ class CalendarService {
     userId: string,
     input: PickUpdateEvent,
   ) {
-    const where: Record<string, unknown> = companyId
-      ? { id, companyId }
-      : { id, userId };
+    const where: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
     const existing = await prisma.calendarEvent.findFirst({
       where: where as any,
@@ -178,9 +166,7 @@ class CalendarService {
   }
 
   public async remove(id: string, companyId: string | null, userId: string) {
-    const where: Record<string, unknown> = companyId
-      ? { id, companyId }
-      : { id, userId };
+    const where: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
     const existing = await prisma.calendarEvent.findFirst({
       where: where as any,

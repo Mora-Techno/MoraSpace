@@ -1,19 +1,19 @@
-"use client";
+'use client';
 
-import "@aejkatappaja/phantom-ui";
+import '@aejkatappaja/phantom-ui';
 
-import type { PickCreateAdmin } from "@repo/types/company.types";
-import { useState } from "react";
+import type { PickCreateAdmin } from '@repo/types/company.types';
+import { useState } from 'react';
 
-import CompanyAdminSection from "@/components/page/private/owner/dashboard/company/admin/CompanyAdminSection";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { useDebounce } from "@/hooks/useDebounce";
+import CompanyAdminSection from '@/components/page/private/owner/dashboard/company/admin/CompanyAdminSection';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { useDebounce } from '@/hooks/useDebounce';
 
 export default function CompanyAdminContainer() {
   const api = useApi();
   const ns = useAppNameSpace();
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debounceSearch = useDebounce(searchTerm, 500);
 
@@ -26,9 +26,9 @@ export default function CompanyAdminContainer() {
 
   const [open, setOpen] = useState<boolean>(false);
   const [formCreateAdmin, setFormCreateAdmin] = useState<PickCreateAdmin>({
-    email: "",
-    fullName: "",
-    password: "",
+    email: '',
+    fullName: '',
+    password: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,9 +38,9 @@ export default function CompanyAdminContainer() {
         setOpen(false);
         setFormCreateAdmin((prev) => ({
           ...prev,
-          email: "",
-          fullName: "",
-          password: "",
+          email: '',
+          fullName: '',
+          password: '',
         }));
       },
     });
@@ -60,10 +60,7 @@ export default function CompanyAdminContainer() {
     <CompanyAdminSection
       service={{
         handleSubmit,
-        isPending:
-          useCreateAdmin.isPending ||
-          userDeleteAdmin.isPending ||
-          updateMember.isPending,
+        isPending: useCreateAdmin.isPending || userDeleteAdmin.isPending || updateMember.isPending,
         handleDelete: handleDeleteAdmin,
         handleUpdateStatus,
         admins,

@@ -19,6 +19,6 @@ export type PositionQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   level?: number;
 };

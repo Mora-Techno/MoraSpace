@@ -1,8 +1,8 @@
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import { useQuery } from "@tanstack/react-query";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import { useQuery } from '@tanstack/react-query';
 
-import { queryKey } from "@/configs";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import Api from '@/services/api';
 
 export function useNote(id: string) {
   return useQuery({
@@ -16,7 +16,7 @@ export function useNote(id: string) {
   });
 }
 
-export function useNotes(query?: import("@repo/types").NoteQuery) {
+export function useNotes(query?: import('@repo/types').NoteQuery) {
   return useQuery({
     queryKey: queryKey.notes.list(query),
     queryFn: async () => {

@@ -9,10 +9,7 @@ export interface ICalendarEvent {
   updatedAt: Date;
 }
 
-export type CalendarEvent = Pick<
-  ICalendarEvent,
-  "id" | "title" | "description"
-> & {
+export type CalendarEvent = Pick<ICalendarEvent, 'id' | 'title' | 'description'> & {
   startDate: string;
   endDate: string | null;
   createdAt: string;
@@ -24,7 +21,7 @@ export type EventQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   month?: string;
   year?: string;
   startDate?: string;
@@ -32,18 +29,16 @@ export type EventQuery = {
   createdBy?: string;
 };
 
-export type PickCreateEvent = Pick<ICalendarEvent, "title" | "description"> & {
+export type PickCreateEvent = Pick<ICalendarEvent, 'title' | 'description'> & {
   startDate: string;
   endDate?: string;
 };
 
-export type PickUpdateEvent = Partial<
-  Pick<ICalendarEvent, "title" | "description">
-> & {
+export type PickUpdateEvent = Partial<Pick<ICalendarEvent, 'title' | 'description'>> & {
   startDate?: string;
   endDate?: string | null;
 };
 
-export type EventParams = Pick<ICalendarEvent, "id">;
+export type EventParams = Pick<ICalendarEvent, 'id'>;
 
 // =============== Respone ===================

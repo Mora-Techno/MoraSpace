@@ -7,8 +7,8 @@ import {
   useSendMagicLink,
   useSwitchWorkspace,
   useVerifyMagicLink,
-} from "./state/mutate";
-import { useWorkspaces } from "./state/query";
+} from './state/mutate';
+import { useWorkspaces } from './state/query';
 
 export const useAuth = () => {
   return {

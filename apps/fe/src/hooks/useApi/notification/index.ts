@@ -2,9 +2,9 @@ export {
   useMarkAllRead,
   useMarkRead,
   useSendNotification,
-} from "./state/mutate";
+} from './state/mutate';
 export {
   useNotificationLogs,
   useNotification as useNotificationQuery,
   useNotifications,
-} from "./state/query";
+} from './state/query';

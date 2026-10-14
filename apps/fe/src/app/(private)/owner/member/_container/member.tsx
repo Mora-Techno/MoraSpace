@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-import OwnerCompanyMemberSection from "@/components/page/private/owner/dashboard/company/member/CompanyMemberSection";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { useDebounce } from "@/hooks/useDebounce";
+import OwnerCompanyMemberSection from '@/components/page/private/owner/dashboard/company/member/CompanyMemberSection';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { useDebounce } from '@/hooks/useDebounce';
 
 const OwnerCompanyMemberContainer = () => {
   const api = useApi();
   const ns = useAppNameSpace();
-  const title = "Kelola Anggota";
-  const desc = "Kelola anggota dari perusahaan Anda";
+  const title = 'Kelola Anggota';
+  const desc = 'Kelola anggota dari perusahaan Anda';
 
   const [open, setOpen] = useState<boolean>(false);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debounceSearch = useDebounce(searchTerm, 500);
 

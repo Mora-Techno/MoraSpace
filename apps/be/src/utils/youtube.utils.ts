@@ -13,7 +13,7 @@
  * Returns `null` when the input cannot be parsed.
  */
 export function extractYouTubeVideoId(input: string): string | null {
-  if (!input || typeof input !== "string") return null;
+  if (!input || typeof input !== 'string') return null;
 
   const trimmed = input.trim();
 
@@ -31,30 +31,28 @@ export function extractYouTubeVideoId(input: string): string | null {
 
   // youtu.be short-link
   if (
-    url.hostname === "youtu.be" ||
-    url.hostname === "www.youtu.be" ||
-    url.hostname === "m.youtu.be"
+    url.hostname === 'youtu.be' ||
+    url.hostname === 'www.youtu.be' ||
+    url.hostname === 'm.youtu.be'
   ) {
-    const id = url.pathname.slice(1).split("/")[0];
+    const id = url.pathname.slice(1).split('/')[0];
     return id && /^[A-Za-z0-9_-]{11}$/.test(id) ? id : null;
   }
 
   // youtube.com variants
-  const host = url.hostname.replace("m.", "");
-  if (host !== "youtube.com" && host !== "www.youtube.com") {
+  const host = url.hostname.replace('m.', '');
+  if (host !== 'youtube.com' && host !== 'www.youtube.com') {
     return null;
   }
 
   // /watch?v=...
-  const v = url.searchParams.get("v");
+  const v = url.searchParams.get('v');
   if (v && /^[A-Za-z0-9_-]{11}$/.test(v)) {
     return v;
   }
 
   // /embed/, /v/, /shorts/
-  const pathMatch = url.pathname.match(
-    /^\/(embed|v|shorts)\/([A-Za-z0-9_-]{11})/,
-  );
+  const pathMatch = url.pathname.match(/^\/(embed|v|shorts)\/([A-Za-z0-9_-]{11})/);
   if (pathMatch) {
     return pathMatch[2];
   }

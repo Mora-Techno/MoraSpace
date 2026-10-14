@@ -1,5 +1,5 @@
-import prisma from "prisma/client";
-import { logger } from "@/utils/logger.utils";
+import prisma from 'prisma/client';
+import { logger } from '@/utils/logger.utils';
 
 /**
  * Worker background untuk memproses antrean notifikasi (working-hours queue).
@@ -11,7 +11,7 @@ export async function processNotificationQueue() {
   try {
     const pendingItems = await prisma.notificationQueue.findMany({
       where: {
-        status: "pending",
+        status: 'pending',
         scheduledAt: { lte: now },
       },
       include: {
@@ -38,7 +38,7 @@ export async function processNotificationQueue() {
         await prisma.notificationQueue.update({
           where: { id: item.id },
           data: {
-            status: "processed",
+            status: 'processed',
             processedAt: new Date(),
           },
         });
@@ -48,7 +48,7 @@ export async function processNotificationQueue() {
           where: { id: item.id },
           data: {
             retryCount: { increment: 1 },
-            status: item.retryCount >= 3 ? "failed" : "pending",
+            status: item.retryCount >= 3 ? 'failed' : 'pending',
           },
         });
       }
@@ -56,7 +56,7 @@ export async function processNotificationQueue() {
 
     return pendingItems.length;
   } catch (error) {
-    logger.error({ err: error }, "[Queue Worker] Error saat membaca antrean notifikasi");
+    logger.error({ err: error }, '[Queue Worker] Error saat membaca antrean notifikasi');
     return 0;
   }
 }
@@ -66,7 +66,7 @@ let queueInterval: NodeJS.Timeout | null = null;
 export function startNotificationQueueRunner(intervalMs = 60000) {
   if (queueInterval) return;
 
-  logger.info("[Queue Worker] Notification Queue Runner aktif (interval: 60s).");
+  logger.info('[Queue Worker] Notification Queue Runner aktif (interval: 60s).');
   queueInterval = setInterval(() => {
     void processNotificationQueue();
   }, intervalMs);
@@ -76,6 +76,6 @@ export function stopNotificationQueueRunner() {
   if (queueInterval) {
     clearInterval(queueInterval);
     queueInterval = null;
-    logger.info("[Queue Worker] Notification Queue Runner dihentikan.");
+    logger.info('[Queue Worker] Notification Queue Runner dihentikan.');
   }
 }

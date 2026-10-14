@@ -1,17 +1,10 @@
-import TodoService from "@/service/TodoService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type {
-  PickCreateTodo,
-  PickUpdateTodo,
-  TodoQuery,
-} from "@repo/types/todo.types";
-import {
-  paramsValidate,
-  personalContextValidate,
-} from "@/validation/auth.validate";
-import { CreateTodoValidate } from "@/validation/todo.validate";
-import { getUser } from "@/utils/authTokens";
+import TodoService from '@/service/TodoService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
+import { paramsValidate, personalContextValidate } from '@/validation/auth.validate';
+import { CreateTodoValidate } from '@/validation/todo.validate';
+import { getUser } from '@/utils/authTokens';
 
 class TodoController {
   public async list(c: AppContext) {
@@ -28,7 +21,7 @@ class TodoController {
       );
 
       if (!queryService) {
-        return HttpResponse(c).badRequest("");
+        return HttpResponse(c).badRequest('');
       }
 
       return HttpResponse(c).ok(queryService.data, queryService.meta);
@@ -54,13 +47,9 @@ class TodoController {
         user.companyMemberId ?? null,
         user.id,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined, "Berhasil mengambil detail tugas",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil mengambil detail tugas');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -78,16 +67,12 @@ class TodoController {
       const validateRespone = await CreateTodoValidate(c, body);
       if (validateRespone) return validateRespone;
 
-      const queryService = await TodoService.create(
-        user.companyMemberId ?? null,
-        user.id,
-        body,
-      );
+      const queryService = await TodoService.create(user.companyMemberId ?? null, user.id, body);
 
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(queryService, "Tugas berhasil dibuat");
+      return HttpResponse(c).created(queryService, 'Tugas berhasil dibuat');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -113,10 +98,9 @@ class TodoController {
         user.id,
         body,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Tugas tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
-      return HttpResponse(c).ok(queryService, undefined, "Tugas berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, undefined, 'Tugas berhasil diperbarui');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);
@@ -139,9 +123,8 @@ class TodoController {
         user.companyMemberId ?? null,
         user.id,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Tugas tidak ditemukan");
-      return HttpResponse(c).ok(queryService, undefined, "Tugas berhasil dihapus");
+      if (!queryService) return HttpResponse(c).notFound('Tugas tidak ditemukan');
+      return HttpResponse(c).ok(queryService, undefined, 'Tugas berhasil dihapus');
     } catch (error) {
       console.error(error);
       return HttpResponse(c).internalError(error);

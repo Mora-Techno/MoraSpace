@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type { NotificationInAppQuery } from "@repo/types";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import type { NotificationInAppQuery } from '@repo/types';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { NotificationListSection } from "@/components/page/private/member/notifications/notification-list.section";
-import { useApi } from "@/hooks/useApi/useApi";
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { NotificationListSection } from '@/components/page/private/member/notifications/notification-list.section';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function NotificationsContainer() {
   const api = useApi();
@@ -15,13 +15,12 @@ export default function NotificationsContainer() {
   const [listQuery, setListQuery] = useState<NotificationInAppQuery>({
     page: 1,
     limit: 10,
-    search: "",
+    search: '',
   });
 
   const query: NotificationInAppQuery = listQuery;
 
-  const { data: notifications = [], isLoading } =
-    api.notification.query.get(query);
+  const { data: notifications = [], isLoading } = api.notification.query.get(query);
   const markRead = api.notification.mutate.markRead();
   const markAllRead = api.notification.mutate.markAllRead();
 
@@ -50,10 +49,7 @@ export default function NotificationsContainer() {
 
   return (
     <div className="animate-in fade-in duration-700">
-      <PageHeader
-        title="Notifikasi"
-        description="Pantau pemberitahuan dan aktivitas terbaru."
-      />
+      <PageHeader title="Notifikasi" description="Pantau pemberitahuan dan aktivitas terbaru." />
       <div className="w-full">
         <NotificationListSection
           service={{

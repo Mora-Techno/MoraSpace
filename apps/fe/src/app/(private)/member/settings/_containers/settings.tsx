@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { TestEmail } from "@repo";
-import { useState } from "react";
+import { TestEmail } from '@repo';
+import { useState } from 'react';
 
-import { Skeleton } from "@/components/atoms/Skeleton";
-import SettingsSection from "@/components/page/private/member/settings/settingsMemberSection";
-import type { Language } from "@/configs";
-import { useTheme } from "@/core/providers/theme.provider";
-import { useSendNotification } from "@/hooks/useApi/notification";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
-import { useLanguage } from "@/hooks/useLanguage";
+import { Skeleton } from '@/components/atoms/Skeleton';
+import SettingsSection from '@/components/page/private/member/settings/settingsMemberSection';
+import type { Language } from '@/configs';
+import { useTheme } from '@/core/providers/theme.provider';
+import { useSendNotification } from '@/hooks/useApi/notification';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
+import { useLanguage } from '@/hooks/useLanguage';
 
 export default function SettingsContainer() {
   const api = useApi();
@@ -28,7 +28,7 @@ export default function SettingsContainer() {
   const useLogout = api.auth.mutate.logout();
 
   const [formTestEmail, setFormTestEmail] = useState<TestEmail>({
-    email: "",
+    email: '',
   });
 
   const handleTestingEmail = (e: React.FormEvent) => {
@@ -39,7 +39,7 @@ export default function SettingsContainer() {
 
   const handleChangeTheme = () => {
     updateSettings.mutate({
-      theme: theme === "light" ? "dark" : "light",
+      theme: theme === 'light' ? 'dark' : 'light',
     });
   };
 

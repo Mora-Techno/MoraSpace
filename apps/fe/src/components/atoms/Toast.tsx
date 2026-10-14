@@ -234,6 +234,7 @@ const useToastManager = ToastPrimitive.useToastManager;
 export {
   createToastManager,
   Toast,
+  toast,
   ToastAction,
   ToastClose,
   ToastContent,
@@ -243,6 +244,5 @@ export {
   ToastProvider,
   ToastTitle,
   ToastViewport,
-  toast,
   useToastManager,
 };

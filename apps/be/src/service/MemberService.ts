@@ -1,9 +1,9 @@
-import prisma from "prisma/client";
+import prisma from 'prisma/client';
 import type {
   PickUpdateCompanyMember,
   PickUpdateMemberProfile,
   PickUpdateMemberContacts,
-} from "@repo/types/member.types";
+} from '@repo/types/member.types';
 
 class MemberService {
   public listEmploymentTypes(companyId: string) {
@@ -14,7 +14,7 @@ class MemberService {
     companyId: string,
     query: {
       search?: string;
-      status?: "active" | "inactive" | "pending" | "resigned";
+      status?: 'active' | 'inactive' | 'pending' | 'resigned';
       positionId?: string;
       departmentId?: string;
       employmentTypeId?: string;
@@ -23,7 +23,7 @@ class MemberService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -35,8 +35,8 @@ class MemberService {
     if (query.search) {
       where.user = {
         OR: [
-          { fullName: { contains: query.search, mode: "insensitive" } },
-          { email: { contains: query.search, mode: "insensitive" } },
+          { fullName: { contains: query.search, mode: 'insensitive' } },
+          { email: { contains: query.search, mode: 'insensitive' } },
         ],
       };
     }
@@ -62,20 +62,15 @@ class MemberService {
     if (query.startDate || query.endDate) {
       where.joinedAt = {};
       if (query.startDate)
-        (where.joinedAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.joinedAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.joinedAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.joinedAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const orderBy: Record<string, unknown> = {};
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "desc";
+      orderBy[query.sortBy] = query.sortOrder ?? 'desc';
     } else {
-      orderBy.createdAt = "desc";
+      orderBy.createdAt = 'desc';
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -149,11 +144,7 @@ class MemberService {
     return member;
   }
 
-  public async update(
-    id: string,
-    companyId: string,
-    input: PickUpdateCompanyMember,
-  ) {
+  public async update(id: string, companyId: string, input: PickUpdateCompanyMember) {
     const existing = await prisma.companyMember.findFirst({
       where: { id, companyId },
     });
@@ -210,11 +201,7 @@ class MemberService {
     return profile ?? {};
   }
 
-  public async updateProfile(
-    id: string,
-    companyId: string,
-    input: PickUpdateMemberProfile,
-  ) {
+  public async updateProfile(id: string, companyId: string, input: PickUpdateMemberProfile) {
     const member = await prisma.companyMember.findFirst({
       where: { id, companyId },
     });
@@ -257,11 +244,7 @@ class MemberService {
     return contacts;
   }
 
-  public async updateContacts(
-    id: string,
-    companyId: string,
-    input: PickUpdateMemberContacts,
-  ) {
+  public async updateContacts(id: string, companyId: string, input: PickUpdateMemberContacts) {
     const member = await prisma.companyMember.findFirst({
       where: { id, companyId },
     });

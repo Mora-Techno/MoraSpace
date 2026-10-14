@@ -1,5 +1,5 @@
-import { AdminUser, PickCreateAdmin } from "@repo";
-import { Plus, Users } from "lucide-react";
+import { AdminUser, PickCreateAdmin } from '@repo';
+import { Plus, Users } from 'lucide-react';
 
 import {
   Button,
@@ -18,12 +18,12 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { AdminRow } from "@/components/molecules/AdminRow";
-import { MemberRow } from "@/components/molecules/MemberRow";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
+} from '@/components/atoms';
+import { AdminRow } from '@/components/molecules/AdminRow';
+import { MemberRow } from '@/components/molecules/MemberRow';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface OwnerCompanyMemberSectionProps {
   template: {
@@ -51,13 +51,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
   state,
 }) => {
   const { description, title } = template;
-  const {
-    isLoading,
-    isPending,
-    member,
-    handleDeleteMember,
-    handleUpdateStatus,
-  } = service;
+  const { isLoading, isPending, member, handleDeleteMember, handleUpdateStatus } = service;
   const { open, setOpen, alert, searchTerm, setSearchTerm } = state;
   return (
     <div className="w-full space-y-6">
@@ -75,9 +69,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Tambah Anggota Baru</DialogTitle>
-                <DialogDescription>
-                  Undang anggota baru ke perusahaan Anda.
-                </DialogDescription>
+                <DialogDescription>Undang anggota baru ke perusahaan Anda.</DialogDescription>
               </DialogHeader>
             </DialogContent>
           </Dialog>
@@ -90,9 +82,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             <Users className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Anggota</CardTitle>
-          <CardDescription>
-            Total {member.length} anggota terdaftar.
-          </CardDescription>
+          <CardDescription>Total {member.length} anggota terdaftar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -101,13 +91,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <AdminRow />
             </phantom-ui>
           ) : member.length === 0 ? (
@@ -121,9 +105,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
                   key={user.id}
                   user={user as any}
                   alert={alert}
-                  onUpdateStatus={(status: string) =>
-                    handleUpdateStatus?.(user.id, status)
-                  }
+                  onUpdateStatus={(status: string) => handleUpdateStatus?.(user.id, status)}
                   onDelete={() => handleDeleteMember?.(user.id)}
                   isPending={isPending}
                 />

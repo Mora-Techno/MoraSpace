@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, CheckCircle2, HelpCircle, Sparkles, X, Zap } from 'lucide-react';
+import { Check, CheckCircle2, CreditCard, HelpCircle, Sparkles, X, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -12,14 +12,29 @@ import {
   ScribbleUnderline,
 } from '@/components/atoms/Scribbles';
 
-interface PricingSectionProps {
+export interface PricingSectionProps {
   template?: {
-    title: string;
-    desc: string;
+    title?: string;
+    desc?: string;
   };
+  currentTier?: string;
+  mySub?: {
+    tier?: string;
+    status?: string;
+    currentPeriodEnd?: string | Date | null;
+    [key: string]: any;
+  } | null;
+  onSelectPlan?: (tier: string) => void;
+  isPrivate?: boolean;
 }
 
-export default function PricingSection({ template }: PricingSectionProps) {
+export function PricingSection({
+  template,
+  currentTier,
+  mySub,
+  onSelectPlan,
+  isPrivate = false,
+}: PricingSectionProps) {
   const [isAnnual, setIsAnnual] = useState(true);
 
   const PLANS = [
@@ -71,7 +86,8 @@ export default function PricingSection({ template }: PricingSectionProps) {
     {
       name: 'Enterprise',
       badge: 'Skala Besar',
-      description: 'Sistem operasi lengkap untuk organisasi besar dengan privasi dan kontrol total.',
+      description:
+        'Sistem operasi lengkap untuk organisasi besar dengan privasi dan kontrol total.',
       monthlyPrice: 'Kustom',
       annualPrice: 'Kustom',
       period: 'hubungi perwakilan kami',
@@ -91,18 +107,47 @@ export default function PricingSection({ template }: PricingSectionProps) {
   ];
 
   const COMPARISON_ROWS = [
-    { feature: 'Manajemen Tugas & Sprint', starter: 'Dasar', pro: 'Lengkap', ent: 'Kustom & Unlimited' },
-    { feature: 'Kalender & Jadwal Ritme', starter: '1 Kalender', pro: 'Tak Terbatas', ent: 'Tak Terbatas' },
-    { feature: 'Mode Fokus & Ambient Sound', starter: '3 Sound', pro: 'Koleksi Penuh', ent: 'Koleksi Penuh' },
+    {
+      feature: 'Manajemen Tugas & Sprint',
+      starter: 'Dasar',
+      pro: 'Lengkap',
+      ent: 'Kustom & Unlimited',
+    },
+    {
+      feature: 'Kalender & Jadwal Ritme',
+      starter: '1 Kalender',
+      pro: 'Tak Terbatas',
+      ent: 'Tak Terbatas',
+    },
+    {
+      feature: 'Mode Fokus & Ambient Sound',
+      starter: '3 Sound',
+      pro: 'Koleksi Penuh',
+      ent: 'Koleksi Penuh',
+    },
     { feature: 'Asisten AI Mora', starter: false, pro: '1.000 prompt / bln', ent: 'Tak Terbatas' },
-    { feature: 'Kolaborasi Anggota', starter: '1 Orang', pro: 'Hingga 15 Orang', ent: 'Tanpa Batas' },
-    { feature: 'Sinkronisasi Multi-Device', starter: '1 Perangkat', pro: 'Semua Perangkat', ent: 'Semua Perangkat' },
+    {
+      feature: 'Kolaborasi Anggota',
+      starter: '1 Orang',
+      pro: 'Hingga 15 Orang',
+      ent: 'Tanpa Batas',
+    },
+    {
+      feature: 'Sinkronisasi Multi-Device',
+      starter: '1 Perangkat',
+      pro: 'Semua Perangkat',
+      ent: 'Semua Perangkat',
+    },
     { feature: 'Audit Log & Kontrol Akses', starter: false, pro: false, ent: true },
     { feature: 'SLA Uptime 99.9%', starter: false, pro: true, ent: true },
   ];
 
   return (
-    <section className="relative px-4 pb-32 pt-24 md:px-8 md:pt-32 min-h-screen">
+    <section
+      className={`relative px-4 pb-28 md:px-8 ${
+        isPrivate ? 'pt-4 md:pt-6' : 'pt-24 md:pt-32 min-h-screen'
+      }`}
+    >
       {/* Background radial glow */}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden">
         <div className="absolute left-1/2 top-10 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-primary/10 blur-[140px]" />
@@ -110,22 +155,59 @@ export default function PricingSection({ template }: PricingSectionProps) {
 
       <div className="relative z-10 mx-auto max-w-6xl">
         {/* Header Title Section */}
-        <div className="mb-14 text-center">
-          <h1 className="font-serif text-4xl font-extrabold text-foreground md:text-6xl tracking-tight relative inline-block">
-            Investasi untuk{' '}
-            <span className="relative inline-block text-primary">
-              Produktivitas Sehat
-              <ScribbleUnderline className="absolute -bottom-4 left-0 w-full text-primary/70" />
-            </span>
+        <div className="mb-12 text-center">
+          <h1 className="font-serif text-3xl font-extrabold text-foreground md:text-5xl tracking-tight relative inline-block">
+            {template?.title ? (
+              template.title
+            ) : (
+              <>
+                Investasi untuk{' '}
+                <span className="relative inline-block text-primary">
+                  Produktivitas Sehat
+                  <ScribbleUnderline className="absolute -bottom-4 left-0 w-full text-primary/70" />
+                </span>
+              </>
+            )}
           </h1>
 
-          <p className="mx-auto mt-7 max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed">
-            Satu ruang kerja kalem untuk menggantikan puluhan aplikasi yang bising. Tanpa biaya
-            tersembunyi, batalkan kapan saja dengan satu klik.
+          <p className="mx-auto mt-6 max-w-2xl text-base md:text-lg text-muted-foreground leading-relaxed">
+            {template?.desc ??
+              'Satu ruang kerja kalem untuk menggantikan puluhan aplikasi yang bising. Tanpa biaya tersembunyi, batalkan kapan saja dengan satu klik.'}
           </p>
 
+          {/* Active Workspace Subscription Status (Private / Billing View) */}
+          {isPrivate && mySub && (
+            <div className="mt-8 mx-auto max-w-2xl rounded-2xl border border-border/70 bg-card/70 p-4 sm:p-5 backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left shadow-xs">
+              <div className="flex items-center gap-3.5">
+                <div className="p-2.5 bg-primary/10 text-primary rounded-xl shrink-0">
+                  <CreditCard className="size-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-foreground">
+                      Paket Aktif: {mySub?.tier ? String(mySub.tier).toUpperCase() : 'FREE'}
+                    </span>
+                    <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-success/15 text-success border border-success/25">
+                      {mySub?.status ? String(mySub.status).toUpperCase() : 'ACTIVE'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    {mySub?.currentPeriodEnd
+                      ? `Berlaku hingga ${new Date(mySub.currentPeriodEnd).toLocaleDateString()}`
+                      : 'Nikmati fitur dasar produktivitas Spaces.'}
+                  </p>
+                </div>
+              </div>
+              <div className="text-xs text-muted-foreground sm:text-right">
+                <span className="inline-block px-2.5 py-1 rounded-lg bg-muted text-muted-foreground font-medium text-[11px]">
+                  v0.0.1 Beta Workspace
+                </span>
+              </div>
+            </div>
+          )}
+
           {/* Billing Switcher (Monthly vs Annual) */}
-          <div className="mt-10 inline-flex items-center gap-4 relative">
+          <div className="mt-8 inline-flex items-center gap-4 relative">
             <div className="flex items-center rounded-full border border-border/70 bg-card/80 p-1 shadow-xs backdrop-blur-md">
               <button
                 type="button"
@@ -165,29 +247,41 @@ export default function PricingSection({ template }: PricingSectionProps) {
         <div className="grid gap-8 lg:grid-cols-3 items-stretch">
           {PLANS.map((plan) => {
             const displayPrice = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const planTier = plan.name.toLowerCase();
+            const isCurrent =
+              Boolean(currentTier) &&
+              (planTier === currentTier?.toLowerCase() ||
+                (planTier === 'starter' && currentTier?.toLowerCase() === 'free'));
 
             return (
               <div
                 key={plan.name}
                 className={`relative rounded-3xl border p-8 sm:p-9 flex flex-col justify-between transition-all duration-300 backdrop-blur-xl ${
-                  plan.popular
-                    ? 'border-primary/60 bg-card/90 shadow-2xl shadow-primary/15 scale-[1.02] z-10'
-                    : 'border-border/70 bg-card/60 hover:border-border'
+                  isCurrent
+                    ? 'border-primary bg-card/90 shadow-2xl shadow-primary/20 scale-[1.02] z-10 ring-2 ring-primary/30'
+                    : plan.popular
+                      ? 'border-primary/60 bg-card/90 shadow-2xl shadow-primary/15 scale-[1.02] z-10'
+                      : 'border-border/70 bg-card/60 hover:border-border'
                 }`}
               >
-                {/* Popular Doodle Tag */}
-                {plan.popular && (
+                {/* Popular or Current Tag */}
+                {isCurrent ? (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
+                    <Check className="size-3.5" />
+                    <span>Paket Aktif Saat Ini</span>
+                  </div>
+                ) : plan.popular ? (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-primary px-4 py-1 text-xs font-bold text-primary-foreground shadow-md">
                     <Sparkles className="size-3.5" />
                     <span>{plan.badge}</span>
                     <ScribbleCircle className="absolute -inset-2 size-[120%] text-primary/40 -z-10" />
                   </div>
-                )}
+                ) : null}
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <h2 className="text-2xl font-bold font-serif text-foreground">{plan.name}</h2>
-                    {!plan.popular && (
+                    {!plan.popular && !isCurrent && (
                       <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider bg-muted/60 px-2.5 py-0.5 rounded-full">
                         {plan.badge}
                       </span>
@@ -205,22 +299,46 @@ export default function PricingSection({ template }: PricingSectionProps) {
                         {displayPrice}
                       </span>
                     </div>
-                    <span className="text-xs text-muted-foreground mt-1 block">
-                      {plan.period}
-                    </span>
+                    <span className="text-xs text-muted-foreground mt-1 block">{plan.period}</span>
                   </div>
 
                   {/* CTA Button */}
-                  <Button
-                    asChild
-                    className={`w-full rounded-2xl py-6 font-semibold shadow-sm transition-all duration-200 text-sm ${
-                      plan.popular
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20'
-                        : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border/70'
-                    }`}
-                  >
-                    <Link href={plan.href}>{plan.cta}</Link>
-                  </Button>
+                  {isCurrent ? (
+                    <Button
+                      disabled
+                      className="w-full rounded-2xl py-6 font-semibold shadow-sm text-sm bg-muted text-muted-foreground border border-border/50 cursor-default"
+                    >
+                      Paket Aktif Saat Ini
+                    </Button>
+                  ) : isPrivate ? (
+                    <Button
+                      type="button"
+                      onClick={() => onSelectPlan?.(planTier === 'starter' ? 'free' : planTier)}
+                      disabled={!onSelectPlan}
+                      className={`w-full rounded-2xl py-6 font-semibold shadow-sm transition-all duration-200 text-sm ${
+                        plan.popular
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20'
+                          : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border/70'
+                      }`}
+                    >
+                      {onSelectPlan
+                        ? planTier === 'enterprise'
+                          ? 'Hubungi Tim Penjualan'
+                          : 'Pilih Paket Ini'
+                        : 'Hubungi Super Admin'}
+                    </Button>
+                  ) : (
+                    <Button
+                      asChild
+                      className={`w-full rounded-2xl py-6 font-semibold shadow-sm transition-all duration-200 text-sm ${
+                        plan.popular
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/20'
+                          : 'bg-secondary text-foreground hover:bg-secondary/80 border border-border/70'
+                      }`}
+                    >
+                      <Link href={plan.href}>{plan.cta}</Link>
+                    </Button>
+                  )}
 
                   {/* Features List */}
                   <div className="mt-8 space-y-3.5">
@@ -229,7 +347,10 @@ export default function PricingSection({ template }: PricingSectionProps) {
                     </p>
                     <ul className="space-y-2.5">
                       {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-3 text-xs text-muted-foreground">
+                        <li
+                          key={feature}
+                          className="flex items-start gap-3 text-xs text-muted-foreground"
+                        >
                           <CheckCircle2 className="size-4 text-primary shrink-0 mt-0.5" />
                           <span className="leading-relaxed">{feature}</span>
                         </li>
@@ -248,7 +369,11 @@ export default function PricingSection({ template }: PricingSectionProps) {
                 </div>
 
                 <div className="mt-8 pt-4 border-t border-border/40 text-[11px] text-muted-foreground text-center">
-                  {plan.popular ? 'Uji coba 14 hari tanpa perlu kartu kredit.' : 'Dapat di-upgrade sewaktu-waktu.'}
+                  {isCurrent
+                    ? 'Paket ruang kerja aktif Anda saat ini.'
+                    : plan.popular
+                      ? 'Uji coba 14 hari tanpa perlu kartu kredit.'
+                      : 'Dapat di-upgrade sewaktu-waktu.'}
                 </div>
               </div>
             );
@@ -360,8 +485,8 @@ export default function PricingSection({ template }: PricingSectionProps) {
                 Bisakah saya membatalkan langganan kapan saja?
               </h3>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Tentu. Anda dapat membatalkan langganan dengan 1 klik dari menu pengaturan. Data Anda
-                tetap tersimpan aman.
+                Tentu. Anda dapat membatalkan langganan dengan 1 klik dari menu pengaturan. Data
+                Anda tetap tersimpan aman.
               </p>
             </div>
             <div className="rounded-2xl border border-border/60 bg-card/50 p-5 backdrop-blur-sm">
@@ -379,3 +504,5 @@ export default function PricingSection({ template }: PricingSectionProps) {
     </section>
   );
 }
+
+export default PricingSection;

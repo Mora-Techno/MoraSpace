@@ -1,11 +1,11 @@
-import { ArrowRight,Calendar as CalendarIcon } from "lucide-react";
-import Link from "next/link";
-import * as React from "react";
+import { ArrowRight, Calendar as CalendarIcon } from 'lucide-react';
+import Link from 'next/link';
+import * as React from 'react';
 
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { WidgetHeader } from "@/components/atoms/WidgetHeader";
-import { AgendaTimelineItem } from "@/components/molecules/AgendaTimelineItem";
-import { GlassCard } from "@/components/molecules/GlassCard";
+import { Skeleton } from '@/components/atoms/Skeleton';
+import { WidgetHeader } from '@/components/atoms/WidgetHeader';
+import { AgendaTimelineItem } from '@/components/molecules/AgendaTimelineItem';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 interface AgendaSectionProps {
   state: {
@@ -40,14 +40,10 @@ export function AgendaSection({ state }: AgendaSectionProps) {
         ) : upcomingEvents.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground opacity-70">
             <span className="text-4xl mb-2">🌙</span>
-            <p className="text-sm">
-              Kamu free! Tidak ada jadwal mendatang hari ini.
-            </p>
+            <p className="text-sm">Kamu free! Tidak ada jadwal mendatang hari ini.</p>
           </div>
         ) : (
-          upcomingEvents.map((event: any) => (
-            <AgendaTimelineItem key={event.id} event={event} />
-          ))
+          upcomingEvents.map((event: any) => <AgendaTimelineItem key={event.id} event={event} />)
         )}
       </div>
     </GlassCard>

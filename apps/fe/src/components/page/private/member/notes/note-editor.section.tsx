@@ -1,9 +1,9 @@
-import type { Note, PickCreateNote } from "@repo/types";
+import type { Note, PickCreateNote } from '@repo/types';
 
-import { Button, Textarea } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { DecoratedInput } from "@/components/wrapper";
+import { Button, Textarea } from '@/components/atoms';
+import { Skeleton } from '@/components/atoms/Skeleton';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { DecoratedInput } from '@/components/wrapper';
 
 interface NoteEditorSectionProps {
   service: {
@@ -20,8 +20,7 @@ interface NoteEditorSectionProps {
 
 export function NoteEditorSection({ service, state }: NoteEditorSectionProps) {
   const { handleSave } = service;
-  const { note, isLoading, formCreateNote, setFormCreateNote, isPending } =
-    state;
+  const { note, isLoading, formCreateNote, setFormCreateNote, isPending } = state;
 
   if (isLoading) {
     return (
@@ -66,12 +65,8 @@ export function NoteEditorSection({ service, state }: NoteEditorSectionProps) {
         placeholder="Tulis catatanmu di sini..."
       />
       <div className="flex justify-end">
-        <Button
-          onClick={handleSave}
-          disabled={isPending}
-          className="ghibli-btn"
-        >
-          {isPending ? "Menyimpan..." : "Simpan Perubahan"}
+        <Button onClick={handleSave} disabled={isPending} className="ghibli-btn">
+          {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
         </Button>
       </div>
     </GhibliCard>

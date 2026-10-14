@@ -1,13 +1,9 @@
-import {
-  useMarkAllRead,
-  useMarkRead,
-  useSendNotification,
-} from "./state/mutate";
+import { useMarkAllRead, useMarkRead, useSendNotification } from './state/mutate';
 import {
   useNotification as useNotificationQuery,
   useNotificationLogs,
   useNotifications,
-} from "./state/query";
+} from './state/query';
 
 export const useNotification = () => {
   return {

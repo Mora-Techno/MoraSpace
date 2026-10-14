@@ -1,18 +1,13 @@
-import type {
-  PickUpdateSettings,
-  Settings,
-  TestEmail,
-} from "@repo/types";
+import type { PickUpdateSettings, Settings, TestEmail } from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import { SettingsRoot } from "./utils";
+import { SettingsRoot } from './utils';
 
 export function useUpdateSettings() {
   return useAppMutation<Settings, PickUpdateSettings>({
-    mutationFn: (payload: PickUpdateSettings) =>
-      Api.Settings.UpdateSettings(payload),
+    mutationFn: (payload: PickUpdateSettings) => Api.Settings.UpdateSettings(payload),
     invalidateKeys: [SettingsRoot],
   });
 }

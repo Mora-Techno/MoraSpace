@@ -1,16 +1,16 @@
-import prisma from "prisma/client";
-import type { PickCreateRole, PickUpdateRole } from "@repo/types/role.types";
+import prisma from 'prisma/client';
+import type { PickCreateRole, PickUpdateRole } from '@repo/types/role.types';
 
 class RoleService {
   public async listRoles(
     companyId: string,
     query: {
       search?: string;
-      isSystem?: "true" | "false";
+      isSystem?: 'true' | 'false';
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -20,16 +20,16 @@ class RoleService {
     const where: Record<string, unknown> = { companyId };
 
     if (query.search) {
-      where.name = { contains: query.search, mode: "insensitive" };
+      where.name = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.isSystem !== undefined) {
-      where.isSystem = query.isSystem === "true";
+      where.isSystem = query.isSystem === 'true';
     }
 
-    let orderBy: any = [{ isSystem: "desc" }, { name: "asc" }];
+    let orderBy: any = [{ isSystem: 'desc' }, { name: 'asc' }];
     if (query.sortBy) {
-      orderBy = { [query.sortBy]: query.sortOrder ?? "asc" };
+      orderBy = { [query.sortBy]: query.sortOrder ?? 'asc' };
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -64,12 +64,7 @@ class RoleService {
   }
 
   public async listMasterPermissions(
-    query: {
-      search?: string;
-      module?: string;
-      page?: number;
-      limit?: number;
-    } = {},
+    query: { search?: string; module?: string; page?: number; limit?: number } = {},
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
@@ -79,8 +74,8 @@ class RoleService {
 
     if (query.search) {
       where.OR = [
-        { module: { contains: query.search, mode: "insensitive" } },
-        { action: { contains: query.search, mode: "insensitive" } },
+        { module: { contains: query.search, mode: 'insensitive' } },
+        { action: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
@@ -92,7 +87,7 @@ class RoleService {
       prisma.permission.count({ where: where as any }),
       prisma.permission.findMany({
         where: where as any,
-        orderBy: [{ module: "asc" }, { action: "asc" }],
+        orderBy: [{ module: 'asc' }, { action: 'asc' }],
         take: limit,
         skip: skip,
       }),
@@ -123,11 +118,7 @@ class RoleService {
     return role;
   }
 
-  public async updateRole(
-    id: string,
-    companyId: string,
-    input: PickUpdateRole,
-  ) {
+  public async updateRole(id: string, companyId: string, input: PickUpdateRole) {
     const existing = await prisma.role.findFirst({ where: { id, companyId } });
     if (!existing) return null;
 
@@ -148,7 +139,7 @@ class RoleService {
     if (!existing) return null;
 
     if (existing.isSystem) {
-      throw new Error("Peran sistem bawaan tidak dapat dihapus");
+      throw new Error('Peran sistem bawaan tidak dapat dihapus');
     }
 
     await prisma.role.delete({ where: { id } });
@@ -168,11 +159,7 @@ class RoleService {
     return permissions.map((rp) => rp.permission);
   }
 
-  public async updateRolePermissions(
-    roleId: string,
-    companyId: string,
-    permissionIds: string[],
-  ) {
+  public async updateRolePermissions(roleId: string, companyId: string, permissionIds: string[]) {
     const role = await prisma.role.findFirst({
       where: { id: roleId, companyId },
     });

@@ -123,8 +123,11 @@ export function ScribbleArrow({
     gsap.set(headRef.current, { strokeDasharray: hLen, strokeDashoffset: hLen });
 
     const tl = gsap.timeline({ delay });
-    tl.to(pathRef.current, { strokeDashoffset: 0, duration: duration * 0.7, ease: 'power2.out' })
-      .to(headRef.current, { strokeDashoffset: 0, duration: duration * 0.3, ease: 'power2.out' });
+    tl.to(pathRef.current, {
+      strokeDashoffset: 0,
+      duration: duration * 0.7,
+      ease: 'power2.out',
+    }).to(headRef.current, { strokeDashoffset: 0, duration: duration * 0.3, ease: 'power2.out' });
   }, [delay, duration]);
 
   return (

@@ -1,24 +1,19 @@
-import type {
-  PickLogin,
-  PickRegister,
-  PickVerifyMagicLink,
-  TResponse,
-} from "@repo/types";
+import type { PickLogin, PickRegister, PickVerifyMagicLink, TResponse } from '@repo/types';
 import type {
   AuthSessionResponse,
   PickForgotPassword,
   PickResetPassword,
   PickSendMagicLink,
   SafeAuthUser,
-} from "@repo/types/auth.types";
+} from '@repo/types/auth.types';
 
-import { queryKey } from "@/configs";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import { saveTokens } from "@/server/auth-cookie";
-import Api from "@/services/api";
-import { persistAuthSessionFromResponse } from "@/utils/storage";
+import { queryKey } from '@/configs';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import { saveTokens } from '@/server/auth-cookie';
+import Api from '@/services/api';
+import { persistAuthSessionFromResponse } from '@/utils/storage';
 
-import type { AuthCacheContext } from "./utils";
+import type { AuthCacheContext } from './utils';
 
 export function useLogin() {
   return useAppMutation<AuthSessionResponse, PickLogin, AuthCacheContext>({
@@ -27,7 +22,7 @@ export function useLogin() {
       const data = res.data;
       const accessToken = res?.data.accessToken;
       const refreshToken = res?.data.refreshToken;
-      const role = res?.data.user?.companyRole ?? "";
+      const role = res?.data.user?.companyRole ?? '';
 
       if (accessToken && refreshToken) {
         persistAuthSessionFromResponse(data);
@@ -53,16 +48,16 @@ export function useLogin() {
 
       const normalizedRole = role?.toLowerCase();
       switch (normalizedRole) {
-        case "admin":
-          ns.router.replace("/admin/dashboard");
+        case 'admin':
+          ns.router.replace('/admin/dashboard');
           break;
-        case "owner":
-          ns.router.replace("/owner/dashboard");
+        case 'owner':
+          ns.router.replace('/owner/dashboard');
           break;
-        case "member":
-        case "developer":
+        case 'member':
+        case 'developer':
         default:
-          ns.router.replace("/member/dashboard");
+          ns.router.replace('/member/dashboard');
           break;
       }
     },
@@ -75,20 +70,20 @@ export function useLogout() {
       try {
         await Api.Auth.Logout();
       } catch {}
-      await fetch("/api/session/delete", { method: "POST" });
+      await fetch('/api/session/delete', { method: 'POST' });
       return {
         data: undefined as unknown as void,
-        message: "Logout berhasil",
+        message: 'Logout berhasil',
         statusCode: 200,
         status: 200,
-        title: "Logout berhasil",
+        title: 'Logout berhasil',
       } as unknown as TResponse<void>;
     },
     onSuccess: (_data, _vars, _ctx, ns) => {
-      ns.router.replace("/login");
+      ns.router.replace('/login');
     },
     onError: (_err, _vars, _ctx, ns) => {
-      ns.router.replace("/login");
+      ns.router.replace('/login');
     },
   });
 }
@@ -97,15 +92,14 @@ export function useRegister() {
   return useAppMutation<SafeAuthUser, PickRegister, AuthCacheContext>({
     mutationFn: (payload: PickRegister) => Api.Auth.Register(payload),
     onSuccess: (_res, _vars, _ctx, ns) => {
-      ns.router.replace("/");
+      ns.router.replace('/');
     },
   });
 }
 
 export function useVerifyMagicLink() {
   return useAppMutation<AuthSessionResponse, PickVerifyMagicLink>({
-    mutationFn: (payload: PickVerifyMagicLink) =>
-      Api.Auth.VerifyMagicLink(payload),
+    mutationFn: (payload: PickVerifyMagicLink) => Api.Auth.VerifyMagicLink(payload),
   });
 }
 
@@ -128,17 +122,13 @@ export function useResetPassword() {
 }
 
 export function useSwitchWorkspace() {
-  return useAppMutation<
-    AuthSessionResponse,
-    { workspaceId: string },
-    AuthCacheContext
-  >({
+  return useAppMutation<AuthSessionResponse, { workspaceId: string }, AuthCacheContext>({
     mutationFn: (payload) => Api.Auth.SwitchWorkspace(payload),
     onSuccess: async (res, _vars, _ctx, ns) => {
       const data = res.data;
       const accessToken = res?.data.accessToken;
       const refreshToken = res?.data.refreshToken;
-      const role = res?.data.user?.companyRole ?? "";
+      const role = res?.data.user?.companyRole ?? '';
 
       if (accessToken && refreshToken) {
         persistAuthSessionFromResponse(data);
@@ -154,12 +144,11 @@ export function useSwitchWorkspace() {
       await ns.queryClient.resetQueries();
 
       const normalizedRole = role?.toLowerCase();
-      if (normalizedRole === "owner") {
-        ns.router.replace("/owner/dashboard");
+      if (normalizedRole === 'owner') {
+        ns.router.replace('/owner/dashboard');
       } else {
-        ns.router.replace("/member/dashboard");
+        ns.router.replace('/member/dashboard');
       }
     },
   });
 }
-

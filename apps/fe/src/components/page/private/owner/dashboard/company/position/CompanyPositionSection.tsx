@@ -1,5 +1,5 @@
-import { type IPosition } from "@repo/types";
-import { Briefcase, Plus, Trash2 } from "lucide-react";
+import { type IPosition } from '@repo/types';
+import { Briefcase, Plus, Trash2 } from 'lucide-react';
 
 import {
   Button,
@@ -18,10 +18,10 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
+} from '@/components/atoms';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface FormCreate {
   name: string;
@@ -47,21 +47,9 @@ interface CompanyPositionSectionProps {
   };
 }
 
-const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
-  state,
-  service,
-}) => {
-  const {
-    open,
-    setOpen,
-    formCreate,
-    setFormCreate,
-    searchTerm,
-    setSearchTerm,
-    alert,
-  } = state;
-  const { handleSubmit, isPending, positions, isLoading, handleDelete } =
-    service;
+const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({ state, service }) => {
+  const { open, setOpen, formCreate, setFormCreate, searchTerm, setSearchTerm, alert } = state;
+  const { handleSubmit, isPending, positions, isLoading, handleDelete } = service;
 
   return (
     <div className="w-full space-y-6">
@@ -115,7 +103,7 @@ const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={isPending}>
-                    {isPending ? "Menyimpan…" : "Simpan Posisi"}
+                    {isPending ? 'Menyimpan…' : 'Simpan Posisi'}
                   </Button>
                 </DialogFooter>
               </form>
@@ -130,9 +118,7 @@ const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
             <Briefcase className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Posisi</CardTitle>
-          <CardDescription>
-            Total {positions?.length || 0} posisi tersedia.
-          </CardDescription>
+          <CardDescription>Total {positions?.length || 0} posisi tersedia.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -141,13 +127,7 @@ const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <div className="h-16 w-full rounded-xl border bg-card" />
             </phantom-ui>
           ) : positions?.length === 0 ? (
@@ -162,9 +142,7 @@ const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
                   className="flex items-center justify-between gap-3 rounded-xl border bg-card p-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold">
-                      {position.name}
-                    </p>
+                    <p className="truncate text-sm font-semibold">{position.name}</p>
                     {position.description && (
                       <p className="truncate text-xs text-muted-foreground">
                         {position.description}
@@ -178,9 +156,9 @@ const CompanyPositionSection: React.FC<CompanyPositionSectionProps> = ({
                       disabled={isPending}
                       onClick={() =>
                         alert?.modal({
-                          title: "Hapus Posisi?",
-                          deskripsi: "Apakah Anda Yakin Menghapus posisi ini?",
-                          icon: "warning",
+                          title: 'Hapus Posisi?',
+                          deskripsi: 'Apakah Anda Yakin Menghapus posisi ini?',
+                          icon: 'warning',
                           onConfirm: () => {
                             handleDelete(position.id);
                           },

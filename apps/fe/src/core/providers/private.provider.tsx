@@ -1,15 +1,11 @@
-"use client";
+'use client';
 
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { clearTokens, saveTokens } from "@/server/auth-cookie";
-import Api from "@/services/api";
-import {
-  clearAuthSession,
-  loadAuthSession,
-  syncAuthFromRefreshResponse,
-} from "@/utils/storage";
+import { clearTokens, saveTokens } from '@/server/auth-cookie';
+import Api from '@/services/api';
+import { clearAuthSession, loadAuthSession, syncAuthFromRefreshResponse } from '@/utils/storage';
 
 async function restoreAuthSession(refreshToken: string) {
   try {
@@ -55,20 +51,16 @@ async function restoreAuthSession(refreshToken: string) {
 
 function checkRoleAccess(pathname: string, role: string | null | undefined) {
   const normalizedRole = role?.toLowerCase() ?? null;
-  if (pathname.startsWith("/owner")) {
-    return normalizedRole === "owner";
+  if (pathname.startsWith('/owner')) {
+    return normalizedRole === 'owner';
   }
-  if (pathname.startsWith("/member")) {
-    return normalizedRole !== "owner";
+  if (pathname.startsWith('/member')) {
+    return normalizedRole !== 'owner';
   }
   return true;
 }
 
-export default function PrivateProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivateProviders({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const [isReady, setIsReady] = useState(false);
@@ -87,17 +79,15 @@ export default function PrivateProviders({
             setIsAuthenticated(false);
             setIsReady(true);
 
-            if (window.location.pathname !== "/login") {
-              router.replace("/login");
+            if (window.location.pathname !== '/login') {
+              router.replace('/login');
             }
           }
           return;
         }
 
         const isRecentlyUpdated =
-          stored.accessToken &&
-          stored.updatedAt &&
-          Date.now() - stored.updatedAt < 5 * 60 * 1000;
+          stored.accessToken && stored.updatedAt && Date.now() - stored.updatedAt < 5 * 60 * 1000;
 
         if (isRecentlyUpdated) {
           if (!cancelled) {
@@ -117,15 +107,15 @@ export default function PrivateProviders({
         setIsAuthenticated(ok);
         setIsReady(true);
 
-        if (!ok && window.location.pathname !== "/login") {
-          router.replace("/login");
+        if (!ok && window.location.pathname !== '/login') {
+          router.replace('/login');
         }
       } catch {
         if (!cancelled) {
           setIsAuthenticated(false);
           setIsReady(true);
-          if (window.location.pathname !== "/login") {
-            router.replace("/login");
+          if (window.location.pathname !== '/login') {
+            router.replace('/login');
           }
         }
       }
@@ -140,10 +130,14 @@ export default function PrivateProviders({
   useEffect(() => {
     if (!isReady || !isAuthenticated) return;
 
-    if (!checkRoleAccess(pathname, role)) {
-      const normalizedRole = role?.toLowerCase();
-      const redirectTo =
-        normalizedRole === "owner" ? "/owner/dashboard" : "/member/dashboard";
+    // Baca fresh dari storage: switch workspace persist session baru (sinkron)
+    // sebelum router.replace, sedangkan state role hanya di-set saat bootstrap.
+    const freshRole = loadAuthSession()?.role ?? role;
+    if (freshRole !== role) setRole(freshRole);
+
+    if (!checkRoleAccess(pathname, freshRole)) {
+      const normalizedRole = freshRole?.toLowerCase();
+      const redirectTo = normalizedRole === 'owner' ? '/owner/dashboard' : '/member/dashboard';
       router.replace(redirectTo);
     }
   }, [isReady, isAuthenticated, pathname, role, router]);

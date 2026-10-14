@@ -1,7 +1,7 @@
-import type { Settings } from "@repo/types";
+import type { Settings } from '@repo/types';
 
-import { queryKey } from "@/configs";
-import type { AppNameSpace } from "@/hooks/useAppNameSpace";
+import { queryKey } from '@/configs';
+import type { AppNameSpace } from '@/hooks/useAppNameSpace';
 
 export type SettingsCacheContext = {
   previousData?: Settings;

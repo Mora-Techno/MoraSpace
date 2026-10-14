@@ -24,7 +24,13 @@ export const AuthShell: React.FC<AuthShellProps> = ({ children }) => {
           <div className="flex items-center justify-between pb-6">
             <Link href="/" className="group flex items-center gap-2.5">
               <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-sm transition-transform group-hover:scale-105">
-                <Image alt='logo' width={40} height={40} src="/images/logo.png"  className='aspect-square rounded-full'/>
+                <Image
+                  alt="logo"
+                  width={40}
+                  height={40}
+                  src="/images/logo.png"
+                  className="aspect-square rounded-full"
+                />
               </div>
               <span className="text-xl font-bold tracking-tight text-foreground">Spaces</span>
             </Link>

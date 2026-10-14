@@ -1,9 +1,9 @@
-import { MODULE_QUERY } from "@repo/config/query-stale";
-import type { Settings } from "@repo/types";
-import { useQuery } from "@tanstack/react-query";
+import { MODULE_QUERY } from '@repo/config/query-stale';
+import type { Settings } from '@repo/types';
+import { useQuery } from '@tanstack/react-query';
 
-import { queryKey } from "@/configs";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import Api from '@/services/api';
 
 export function useGetSettings() {
   return useQuery<Settings>({

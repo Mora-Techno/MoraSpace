@@ -1,13 +1,7 @@
-"use client";
+'use client';
 
-import type { IMusicPlayListItem } from "@repo/types";
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from "react";
+import type { IMusicPlayListItem } from '@repo/types';
+import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
 
 export interface MusicPlayerState {
   /** The track currently playing (null = nothing playing) */
@@ -49,11 +43,7 @@ export interface MusicPlayerContextValue extends MusicPlayerState {
    * Start playing a playlist from a specific index.
    * Populates the queue and starts playback immediately.
    */
-  playPlaylist: (
-    tracks: IMusicPlayListItem[],
-    startIndex?: number,
-    playlistName?: string,
-  ) => void;
+  playPlaylist: (tracks: IMusicPlayListItem[], startIndex?: number, playlistName?: string) => void;
   /** Append a track to the end of the queue */
   addToQueue: (track: IMusicPlayListItem) => void;
   /** Insert a track immediately after the currently playing track */
@@ -92,10 +82,7 @@ function fisherYatesShuffle<T>(arr: T[]): T[] {
  * Build a shuffled queue that guarantees every track is played at least once
  * before any repeats.  The current track is always placed at index 0.
  */
-function buildShuffledQueue(
-  tracks: IMusicPlayListItem[],
-  currentId: string,
-): IMusicPlayListItem[] {
+function buildShuffledQueue(tracks: IMusicPlayListItem[], currentId: string): IMusicPlayListItem[] {
   const others = tracks.filter((t) => t.id !== currentId);
   const current = tracks.find((t) => t.id === currentId)!;
   return [current, ...fisherYatesShuffle(others)];
@@ -110,7 +97,7 @@ const MusicPlayerContext = createContext<MusicPlayerContextValue | null>(null);
 const initialState: MusicPlayerState = {
   currentTrack: null,
   isPlaying: false,
-  playlistName: "",
+  playlistName: '',
 
   queue: [],
   originalQueue: [],
@@ -120,11 +107,7 @@ const initialState: MusicPlayerState = {
   currentIndex: -1,
 };
 
-export function MusicPlayerProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function MusicPlayerProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<MusicPlayerState>(initialState);
 
   // Ref to avoid stale closures in callbacks
@@ -133,7 +116,7 @@ export function MusicPlayerProvider({
 
   // ── Core actions ────────────────────────────────────────────────────────
 
-  const play = useCallback((track: IMusicPlayListItem, playlistName = "") => {
+  const play = useCallback((track: IMusicPlayListItem, playlistName = '') => {
     setState((prev) => {
       // If this track is already in the queue, just jump to it
       const idx = prev.queue.findIndex((t) => t.id === track.id);
@@ -168,55 +151,50 @@ export function MusicPlayerProvider({
     setState(initialState);
   }, []);
 
-  const toggle = useCallback(
-    (track?: IMusicPlayListItem, playlistName = "") => {
-      const s = stateRef.current;
-      if (track && s.currentTrack?.id === track.id) {
-        // Same track — toggle play/pause
-        setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
-      } else if (track) {
-        // Different track — start playing
-        setState((prev) => {
-          const idx = prev.queue.findIndex((t) => t.id === track.id);
-          if (idx !== -1) {
-            return {
-              ...prev,
-              currentTrack: track,
-              isPlaying: true,
-              playlistName: playlistName || prev.playlistName,
-              currentIndex: idx,
-            };
-          }
+  const toggle = useCallback((track?: IMusicPlayListItem, playlistName = '') => {
+    const s = stateRef.current;
+    if (track && s.currentTrack?.id === track.id) {
+      // Same track — toggle play/pause
+      setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
+    } else if (track) {
+      // Different track — start playing
+      setState((prev) => {
+        const idx = prev.queue.findIndex((t) => t.id === track.id);
+        if (idx !== -1) {
           return {
             ...prev,
             currentTrack: track,
             isPlaying: true,
-            playlistName,
-            queue: [track],
-            originalQueue: [track],
-            history: [],
-            currentIndex: 0,
+            playlistName: playlistName || prev.playlistName,
+            currentIndex: idx,
           };
-        });
-      } else {
-        // No track passed — toggle current
-        setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
-      }
-    },
-    [],
-  );
+        }
+        return {
+          ...prev,
+          currentTrack: track,
+          isPlaying: true,
+          playlistName,
+          queue: [track],
+          originalQueue: [track],
+          history: [],
+          currentIndex: 0,
+        };
+      });
+    } else {
+      // No track passed — toggle current
+      setState((prev) => ({ ...prev, isPlaying: !prev.isPlaying }));
+    }
+  }, []);
 
   // ── Queue actions ───────────────────────────────────────────────────────
 
   const playPlaylist = useCallback(
-    (tracks: IMusicPlayListItem[], startIndex = 0, playlistName = "") => {
+    (tracks: IMusicPlayListItem[], startIndex = 0, playlistName = '') => {
       if (tracks.length === 0) return;
       const s = stateRef.current;
       const startTrack = tracks[startIndex];
 
-      const newQueue = s.isShuffle
-        ? buildShuffledQueue(tracks, startTrack.id)
-        : [...tracks];
+      const newQueue = s.isShuffle ? buildShuffledQueue(tracks, startTrack.id) : [...tracks];
 
       setState((prev) => ({
         ...prev,
@@ -243,11 +221,7 @@ export function MusicPlayerProvider({
   const playNext = useCallback((track: IMusicPlayListItem) => {
     setState((prev) => {
       const insertAt = prev.currentIndex + 1;
-      const newQueue = [
-        ...prev.queue.slice(0, insertAt),
-        track,
-        ...prev.queue.slice(insertAt),
-      ];
+      const newQueue = [...prev.queue.slice(0, insertAt), track, ...prev.queue.slice(insertAt)];
       const newOriginal = [
         ...prev.originalQueue.slice(0, prev.currentIndex + 1),
         track,
@@ -269,8 +243,7 @@ export function MusicPlayerProvider({
       const newOriginal = prev.originalQueue.filter((t) => t.id !== trackId);
 
       // Adjust currentIndex if the removed item was before the current index
-      const newCurrentIndex =
-        idx < prev.currentIndex ? prev.currentIndex - 1 : prev.currentIndex;
+      const newCurrentIndex = idx < prev.currentIndex ? prev.currentIndex - 1 : prev.currentIndex;
 
       return {
         ...prev,
@@ -401,17 +374,13 @@ export function MusicPlayerProvider({
     toggleShuffle,
   };
 
-  return (
-    <MusicPlayerContext.Provider value={value}>
-      {children}
-    </MusicPlayerContext.Provider>
-  );
+  return <MusicPlayerContext.Provider value={value}>{children}</MusicPlayerContext.Provider>;
 }
 
 export function useMusicPlayer() {
   const ctx = useContext(MusicPlayerContext);
   if (!ctx) {
-    throw new Error("useMusicPlayer must be used within a MusicPlayerProvider");
+    throw new Error('useMusicPlayer must be used within a MusicPlayerProvider');
   }
   return ctx;
 }

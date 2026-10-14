@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { cn } from "@/utils/classname";
+import { cn } from '@/utils/classname';
 
 export type GhibliTab<T extends string> = {
   value: T;
@@ -23,7 +23,7 @@ export function GhibliTabs<T extends string>({
   return (
     <div
       className={cn(
-        "inline-flex flex-wrap gap-2 rounded-2xl bg-muted/60 p-1.5 justify-center",
+        'inline-flex flex-wrap gap-2 rounded-2xl bg-muted/60 p-1.5 justify-center',
         className,
       )}
     >
@@ -33,10 +33,10 @@ export function GhibliTabs<T extends string>({
           type="button"
           onClick={() => onChange(tab.value)}
           className={cn(
-            "rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300",
+            'rounded-xl px-4 py-2 text-sm font-medium transition-all duration-300',
             value === tab.value
-              ? "bg-primary text-primary-foreground shadow-sm"
-              : "text-muted-foreground hover:bg-background/80 hover:text-foreground",
+              ? 'bg-primary text-primary-foreground shadow-sm'
+              : 'text-muted-foreground hover:bg-background/80 hover:text-foreground',
           )}
         >
           {tab.label}

@@ -1,29 +1,25 @@
-import {
-  PickCreateNote,
-  PickCreateTodo,
-  PickRegisterCompany,
-} from "@repo/types";
-import { Plus } from "lucide-react";
+import { PickCreateNote, PickCreateTodo, PickRegisterCompany } from '@repo/types';
+import { Plus } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
+import { Button } from '@/components/atoms';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/atoms/Dialog";
+} from '@/components/atoms/Dialog';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/Sheet";
-import { cn } from "@/utils/classname";
+} from '@/components/atoms/Sheet';
+import { cn } from '@/utils/classname';
 
-import QuickAddForm from "./form/QuickForm";
-export type modeQuick = "todo" | "note";
+import QuickAddForm from './form/QuickForm';
+export type modeQuick = 'todo' | 'note';
 
 interface QuickAddFabProps {
   formCreateTodo: PickCreateTodo;
@@ -46,7 +42,7 @@ export function QuickAddFab({
   handleSubmit,
   isPending,
 }: QuickAddFabProps) {
-  const title = "Tambah Cepat";
+  const title = 'Tambah Cepat';
 
   return (
     <>
@@ -57,7 +53,7 @@ export function QuickAddFab({
             <Button
               size="icon"
               className={cn(
-                "ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg",
+                'ghibli-btn fixed right-4 bottom-20 z-40 size-14 rounded-full shadow-lg',
               )}
             >
               <Plus className="size-6" />

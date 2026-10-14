@@ -1,10 +1,10 @@
-import { formatDateTime } from "@repo";
-import type { CalendarEvent, PickUpdateEvent } from "@repo/types";
-import { CalendarClock, Trash2 } from "lucide-react";
+import { formatDateTime } from '@repo';
+import type { CalendarEvent, PickUpdateEvent } from '@repo/types';
+import { CalendarClock, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
+import { Button } from '@/components/atoms';
+import { Skeleton } from '@/components/atoms/Skeleton';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
 
 interface EventDetailSectionProps {
   service: {
@@ -20,10 +20,7 @@ interface EventDetailSectionProps {
   };
 }
 
-export function EventDetailSection({
-  service,
-  state,
-}: EventDetailSectionProps) {
+export function EventDetailSection({ service, state }: EventDetailSectionProps) {
   const { handleSave, handleDelete } = service;
   const { event, isLoading, isPending, form, setForm } = state;
 
@@ -82,18 +79,14 @@ export function EventDetailSection({
         <h3 className="font-serif text-lg font-semibold">Edit Jadwal</h3>
         <form onSubmit={handleSave} className="mt-3 space-y-3">
           <input
-            value={form.title ?? ""}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, title: e.target.value }))
-            }
+            value={form.title ?? ''}
+            onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
             placeholder="Judul jadwal..."
             className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <textarea
-            value={form.description ?? ""}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, description: e.target.value }))
-            }
+            value={form.description ?? ''}
+            onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
             placeholder="Deskripsi (opsional)"
             rows={3}
             className="w-full resize-none rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
@@ -101,15 +94,13 @@ export function EventDetailSection({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <input
               type="datetime-local"
-              value={form.startDate ?? ""}
-              onChange={(e) =>
-                setForm((prev) => ({ ...prev, startDate: e.target.value }))
-              }
+              value={form.startDate ?? ''}
+              onChange={(e) => setForm((prev) => ({ ...prev, startDate: e.target.value }))}
               className="w-full rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
             />
             <input
               type="datetime-local"
-              value={form.endDate ?? ""}
+              value={form.endDate ?? ''}
               onChange={(e) =>
                 setForm((prev) => ({
                   ...prev,
@@ -121,7 +112,7 @@ export function EventDetailSection({
           </div>
           <div className="flex justify-end">
             <Button type="submit" className="ghibli-btn" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan Perubahan"}
+              {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
           </div>
         </form>

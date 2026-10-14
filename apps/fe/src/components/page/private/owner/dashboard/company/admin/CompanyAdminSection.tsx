@@ -1,5 +1,5 @@
-import { AdminUser, PickCreateAdmin } from "@repo";
-import { Plus, Users } from "lucide-react";
+import { AdminUser, PickCreateAdmin } from '@repo';
+import { Plus, Users } from 'lucide-react';
 
 import {
   Button,
@@ -18,11 +18,11 @@ import {
   DialogTrigger,
   Input,
   Label,
-} from "@/components/atoms";
-import { AdminRow } from "@/components/molecules/AdminRow";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { DecoratedInput } from "@/components/wrapper";
-import { AlertContexType } from "@/types/ui";
+} from '@/components/atoms';
+import { AdminRow } from '@/components/molecules/AdminRow';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { DecoratedInput } from '@/components/wrapper';
+import { AlertContexType } from '@/types/ui';
 
 interface CompanyAdminSectionProps {
   state: {
@@ -43,27 +43,10 @@ interface CompanyAdminSectionProps {
     handleUpdateStatus: (id: string, status: string) => void;
   };
 }
-const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
-  state,
-  service,
-}) => {
-  const {
-    open,
-    setOpen,
-    formCreateAdmin,
-    setFormCreateAdmin,
-    searchTerm,
-    setSearchTerm,
-    alert,
-  } = state;
-  const {
-    handleSubmit,
-    isPending,
-    admins,
-    isLoading,
-    handleDelete,
-    handleUpdateStatus,
-  } = service;
+const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({ state, service }) => {
+  const { open, setOpen, formCreateAdmin, setFormCreateAdmin, searchTerm, setSearchTerm, alert } =
+    state;
+  const { handleSubmit, isPending, admins, isLoading, handleDelete, handleUpdateStatus } = service;
   return (
     <div className="w-full space-y-6">
       <PageHeader
@@ -135,7 +118,7 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={isPending}>
-                    {isPending ? "Menyimpan…" : "Simpan Admin"}
+                    {isPending ? 'Menyimpan…' : 'Simpan Admin'}
                   </Button>
                 </DialogFooter>
               </form>
@@ -150,9 +133,7 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
             <Users className="size-8 text-primary" />
           </CardAction>
           <CardTitle className="text-lg">Daftar Admin</CardTitle>
-          <CardDescription>
-            Total {admins.length} admin terdaftar.
-          </CardDescription>
+          <CardDescription>Total {admins.length} admin terdaftar.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
           <DecoratedInput
@@ -161,13 +142,7 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           {isLoading ? (
-            <phantom-ui
-              loading
-              animation="pulse"
-              count={3}
-              count-gap={12}
-              reveal={0.3}
-            >
+            <phantom-ui loading animation="pulse" count={3} count-gap={12} reveal={0.3}>
               <AdminRow />
             </phantom-ui>
           ) : admins.length === 0 ? (
@@ -182,9 +157,7 @@ const CompanyAdminSection: React.FC<CompanyAdminSectionProps> = ({
                   admin={admin as any}
                   alert={alert}
                   onDelete={handleDelete}
-                  onUpdateStatus={(status) =>
-                    handleUpdateStatus(admin.id, status)
-                  }
+                  onUpdateStatus={(status) => handleUpdateStatus(admin.id, status)}
                   isPending={isPending}
                 />
               ))}

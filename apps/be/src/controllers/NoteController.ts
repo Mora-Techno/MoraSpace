@@ -1,14 +1,11 @@
-import NoteService from "@/service/NoteService";
-import { HttpResponse } from "@/http";
-import type { AppContext } from "@/contex";
-import type { PickCreateNote, PickUpdateNote } from "@repo/types/note.types";
-import { JwtPayload } from "@repo/types/auth.types";
-import {
-  paramsValidate,
-  personalContextValidate,
-} from "@/validation/auth.validate";
-import { CreateNoteValidation } from "@/validation/note.validate";
-import { getUser } from "@/utils/authTokens";
+import NoteService from '@/service/NoteService';
+import { HttpResponse } from '@/http';
+import type { AppContext } from '@/contex';
+import type { PickCreateNote, PickUpdateNote } from '@repo/types/note.types';
+import { JwtPayload } from '@repo/types/auth.types';
+import { paramsValidate, personalContextValidate } from '@/validation/auth.validate';
+import { CreateNoteValidation } from '@/validation/note.validate';
+import { getUser } from '@/utils/authTokens';
 
 class NoteController {
   public async list(c: AppContext) {
@@ -31,7 +28,7 @@ class NoteController {
       return HttpResponse(c).ok(
         queryService.data,
         queryService.meta,
-        "Berhasil mengambil daftar catatan",
+        'Berhasil mengambil daftar catatan',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -54,13 +51,9 @@ class NoteController {
         user.companyMemberId ?? null,
         user.id,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Catatan tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        queryService,
-        undefined, "Berhasil mengambil detail catatan",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Berhasil mengambil detail catatan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -77,15 +70,11 @@ class NoteController {
       const validateRespone = await CreateNoteValidation(c, input);
       if (validateRespone) return validateRespone;
 
-      const queryService = await NoteService.create(
-        user.companyMemberId ?? null,
-        user.id,
-        input,
-      );
+      const queryService = await NoteService.create(user.companyMemberId ?? null, user.id, input);
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).created(queryService, "Catatan berhasil disimpan");
+      return HttpResponse(c).created(queryService, 'Catatan berhasil disimpan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -110,10 +99,9 @@ class NoteController {
         user.id,
         input,
       );
-      if (!queryService)
-        return HttpResponse(c).notFound("Catatan tidak ditemukan");
+      if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');
 
-      return HttpResponse(c).ok(queryService, undefined, "Catatan berhasil diperbarui");
+      return HttpResponse(c).ok(queryService, undefined, 'Catatan berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -136,9 +124,8 @@ class NoteController {
         user.id,
       );
 
-      if (!queryService)
-        return HttpResponse(c).notFound("Catatan tidak ditemukan");
-      return HttpResponse(c).ok(queryService, undefined, "Catatan berhasil dihapus");
+      if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');
+      return HttpResponse(c).ok(queryService, undefined, 'Catatan berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

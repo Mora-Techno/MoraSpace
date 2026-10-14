@@ -1,15 +1,11 @@
-import type { Note, PickCreateNote, PickUpdateNote } from "@repo/types";
-import type { PickApiID } from "@repo/types/api.types";
+import type { Note, PickCreateNote, PickUpdateNote } from '@repo/types';
+import type { PickApiID } from '@repo/types/api.types';
 
-import { queryKey } from "@/configs";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  type NoteCacheContext,
-  readNoteDetailSnapshot,
-  readNoteListSnapshot,
-} from "./utils";
+import { type NoteCacheContext, readNoteDetailSnapshot, readNoteListSnapshot } from './utils';
 
 export function useCreateNote() {
   return useAppMutation<Note, PickCreateNote, NoteCacheContext>({
@@ -23,7 +19,7 @@ export function useCreateNote() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
@@ -41,18 +37,14 @@ export function useDeleteNote() {
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });
 }
 
 export function useUpdateNote() {
-  return useAppMutation<
-    Note,
-    { id: PickApiID; payload: PickUpdateNote },
-    NoteCacheContext
-  >({
+  return useAppMutation<Note, { id: PickApiID; payload: PickUpdateNote }, NoteCacheContext>({
     mutationFn: ({ id, payload }) => Api.Note.UpdateNote(id.id, payload),
     invalidateKeys: [queryKey.notesRoot()],
     optimistic: (ns, { id }) => ({
@@ -64,15 +56,12 @@ export function useUpdateNote() {
         ns.queryClient.setQueryData(queryKey.notes.list(), context.previousList);
       }
       if (context?.previousDetail !== undefined) {
-        ns.queryClient.setQueryData(
-          queryKey.notes.detail(id.id),
-          context.previousDetail,
-        );
+        ns.queryClient.setQueryData(queryKey.notes.detail(id.id), context.previousDetail);
       }
       ns.alert.toast({
         title: err.message,
         message: err.message,
-        icon: "error",
+        icon: 'error',
       });
     },
   });

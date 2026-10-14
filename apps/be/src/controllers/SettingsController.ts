@@ -1,11 +1,11 @@
-import type { AppContext } from "@/contex";
-import { HttpResponse } from "@/http";
-import SettingsService from "@/service/SettingsService";
-import { getUser } from "@/utils/authTokens";
-import { personalContextValidate } from "@/validation/auth.validate";
-import { TestEmailValidation } from "@/validation/settings.validate";
-import type { PickUpdateSettings } from "@repo/types/settings.types";
-import { TestEmail } from "@repo/types/settings.types";
+import type { AppContext } from '@/contex';
+import { HttpResponse } from '@/http';
+import SettingsService from '@/service/SettingsService';
+import { getUser } from '@/utils/authTokens';
+import { personalContextValidate } from '@/validation/auth.validate';
+import { TestEmailValidation } from '@/validation/settings.validate';
+import type { PickUpdateSettings } from '@repo/types/settings.types';
+import { TestEmail } from '@repo/types/settings.types';
 class SettingsController {
   public async get(c: AppContext) {
     try {
@@ -19,11 +19,7 @@ class SettingsController {
         user.id,
       );
 
-      return HttpResponse(c).ok(
-        settings,
-        undefined,
-        "Pengaturan berhasil diambil",
-      );
+      return HttpResponse(c).ok(settings, undefined, 'Pengaturan berhasil diambil');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -42,11 +38,7 @@ class SettingsController {
         return HttpResponse(c).badRequest();
       }
 
-      return HttpResponse(c).ok(
-        settings,
-        undefined,
-        "Pengaturan berhasil diperbarui",
-      );
+      return HttpResponse(c).ok(settings, undefined, 'Pengaturan berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -68,10 +60,7 @@ class SettingsController {
       if (!queryService) {
         return HttpResponse(c).badRequest();
       }
-      return HttpResponse(c).ok(
-        queryService,
-        undefined, "Testing Email Berhasil Dilakukan",
-      );
+      return HttpResponse(c).ok(queryService, undefined, 'Testing Email Berhasil Dilakukan');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import type { TodoQuery } from "@repo/types";
-import type { PickApiID } from "@repo/types/api.types";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import type { TodoQuery } from '@repo/types';
+import type { PickApiID } from '@repo/types/api.types';
+import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { Button } from "@/components/atoms";
+import { Button } from '@/components/atoms';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/Sheet";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { TodoFormSection } from "@/components/page/private/member/todos/todo-form.section";
+} from '@/components/atoms/Sheet';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { TodoFormSection } from '@/components/page/private/member/todos/todo-form.section';
 import {
   type TabValue,
   TodoListSection,
-} from "@/components/page/private/member/todos/todo-list.section";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useAppNameSpace } from "@/hooks/useAppNameSpace";
+} from '@/components/page/private/member/todos/todo-list.section';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useAppNameSpace } from '@/hooks/useAppNameSpace';
 
 export default function TodosContainer() {
   const [open, setOpen] = useState(false);
@@ -30,16 +30,16 @@ export default function TodosContainer() {
   const ns = useAppNameSpace();
 
   // Todo List State
-  const [tab, setTab] = useState<TabValue>("all");
+  const [tab, setTab] = useState<TabValue>('all');
   const [listQuery, setListQuery] = useState<TodoQuery>({
     page: 1,
     limit: 10,
-    search: "",
+    search: '',
   });
 
   const query: TodoQuery = {
     ...listQuery,
-    status: tab === "all" ? undefined : (tab as "pending" | "completed"),
+    status: tab === 'all' ? undefined : (tab as 'pending' | 'completed'),
   };
 
   const useTodos = api.todo.query.get(query);
@@ -51,7 +51,7 @@ export default function TodosContainer() {
   const handleToggleTodo = (id: string, checked: boolean) => {
     updateTodo.mutate({
       id,
-      payload: { status: checked ? "completed" : "pending" },
+      payload: { status: checked ? 'completed' : 'pending' },
     });
   };
 
@@ -74,8 +74,8 @@ export default function TodosContainer() {
   const isListPending = updateTodo.isPending || deleteTodo.isPending;
 
   // Todo Form State
-  const [text, setText] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [text, setText] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   const createTodo = api.todo.mutate.create(query);
 
@@ -89,8 +89,8 @@ export default function TodosContainer() {
       },
       {
         onSuccess: () => {
-          setText("");
-          setDueDate("");
+          setText('');
+          setDueDate('');
           setOpen(false);
         },
       },

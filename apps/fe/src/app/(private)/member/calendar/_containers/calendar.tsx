@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import type { EventQuery } from "@repo/types";
-import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import type { EventQuery } from '@repo/types';
+import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { Button } from "@/components/atoms";
+import { Button } from '@/components/atoms';
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/atoms/Sheet";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { EventFormSection } from "@/components/page/private/member/calendar/event-form.section";
-import { EventListSection } from "@/components/page/private/member/calendar/event-list.section";
-import { useApi } from "@/hooks/useApi/useApi";
+} from '@/components/atoms/Sheet';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { EventFormSection } from '@/components/page/private/member/calendar/event-form.section';
+import { EventListSection } from '@/components/page/private/member/calendar/event-list.section';
+import { useApi } from '@/hooks/useApi/useApi';
 
 export default function CalendarContainer() {
   const [open, setOpen] = useState(false);
@@ -27,13 +27,12 @@ export default function CalendarContainer() {
   const [listQuery, setListQuery] = useState<EventQuery>({
     page: 1,
     limit: 10,
-    search: "",
+    search: '',
   });
 
   const query: EventQuery = listQuery;
 
-  const { data: events = [], isLoading } =
-    api.calender.query.getCalender(query);
+  const { data: events = [], isLoading } = api.calender.query.getCalender(query);
   const deleteEvent = api.calender.mutate.delete();
   const createEvent = api.calender.mutate.create();
 
@@ -56,9 +55,9 @@ export default function CalendarContainer() {
   const isListPending = deleteEvent.isPending;
 
   // Event Form State
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [startDate, setStartDate] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,9 +70,9 @@ export default function CalendarContainer() {
       },
       {
         onSuccess: () => {
-          setTitle("");
-          setDescription("");
-          setStartDate("");
+          setTitle('');
+          setDescription('');
+          setStartDate('');
           setOpen(false);
         },
       },

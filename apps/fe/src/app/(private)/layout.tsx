@@ -1,12 +1,8 @@
-import { MusicPlayerProvider } from "@/context/MusicPlayerContext";
-import { AppShell } from "@/core/layouts/app-shell.layout";
-import PrivateProviders from "@/core/providers/private.provider";
+import { MusicPlayerProvider } from '@/context/MusicPlayerContext';
+import { AppShell } from '@/core/layouts/app-shell.layout';
+import PrivateProviders from '@/core/providers/private.provider';
 
-export default function PrivateLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function PrivateLayout({ children }: { children: React.ReactNode }) {
   return (
     <MusicPlayerProvider>
       <PrivateProviders>

@@ -1,8 +1,5 @@
-import prisma from "prisma/client";
-import type {
-  PickCreateDepartment,
-  PickUpdateDepartment,
-} from "@repo/types/department.types";
+import prisma from 'prisma/client';
+import type { PickCreateDepartment, PickUpdateDepartment } from '@repo/types/department.types';
 
 class DepartmentService {
   public async list(
@@ -15,7 +12,7 @@ class DepartmentService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -25,7 +22,7 @@ class DepartmentService {
     const where: Record<string, unknown> = { companyId };
 
     if (query.search) {
-      where.name = { contains: query.search, mode: "insensitive" };
+      where.name = { contains: query.search, mode: 'insensitive' };
     }
 
     if (query.managerId) {
@@ -35,20 +32,15 @@ class DepartmentService {
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate)
-        (where.createdAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.createdAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.createdAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.createdAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const orderBy: Record<string, unknown> = {};
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy[query.sortBy] = query.sortOrder ?? 'asc';
     } else {
-      orderBy.name = "asc";
+      orderBy.name = 'asc';
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -114,11 +106,7 @@ class DepartmentService {
     return department;
   }
 
-  public async update(
-    id: string,
-    companyId: string,
-    input: PickUpdateDepartment,
-  ) {
+  public async update(id: string, companyId: string, input: PickUpdateDepartment) {
     const existing = await prisma.department.findFirst({
       where: { id, companyId },
     });

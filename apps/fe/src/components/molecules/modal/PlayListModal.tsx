@@ -1,22 +1,15 @@
-import { PickCreatePlaylist } from "@repo";
-import { Plus } from "lucide-react";
+import { PickCreatePlaylist } from '@repo';
+import { Plus } from 'lucide-react';
 
-import { Button,Input } from "@/components/atoms";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/atoms/Dialog";
+import { Button, Input } from '@/components/atoms';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/atoms/Dialog';
 
 interface PlayListModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   handleAdd: (e: React.FormEvent) => void;
   formCreatePlaylistMusic: PickCreatePlaylist;
-  setFormCreatePlaylistMusic: React.Dispatch<
-    React.SetStateAction<PickCreatePlaylist>
-  >;
+  setFormCreatePlaylistMusic: React.Dispatch<React.SetStateAction<PickCreatePlaylist>>;
   isPending: boolean;
 }
 
@@ -32,9 +25,7 @@ const PlaylistModal: React.FC<PlayListModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="ghibli-glass sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-serif text-lg font-semibold">
-            Playlist Baru
-          </DialogTitle>
+          <DialogTitle className="font-serif text-lg font-semibold">Playlist Baru</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleAdd} className="flex w-full flex-col gap-4 pt-2">

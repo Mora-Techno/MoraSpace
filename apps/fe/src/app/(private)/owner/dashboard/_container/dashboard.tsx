@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { useRef } from "react";
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { useRef } from 'react';
 
-import { AiInsightsBanner } from "@/components/molecules/AiInsightsBanner";
-import { ActivityFeedWidget } from "@/components/organisms/ActivityFeedWidget";
-import { BillingWidget } from "@/components/organisms/BillingWidget";
-import { KpiCards } from "@/components/organisms/KpiCards";
-import { PendingApprovalsWidget } from "@/components/organisms/PendingApprovalsWidget";
-import { ProductivityChart } from "@/components/organisms/ProductivityChart";
-import { TaskDistributionChart } from "@/components/organisms/TaskDistributionChart";
-import { OwnerDashboardTemplate } from "@/components/templates/OwnerDashboardTemplate";
+import { AiInsightsBanner } from '@/components/molecules/AiInsightsBanner';
+import { ActivityFeedWidget } from '@/components/organisms/ActivityFeedWidget';
+import { BillingWidget } from '@/components/organisms/BillingWidget';
+import { KpiCards } from '@/components/organisms/KpiCards';
+import { PendingApprovalsWidget } from '@/components/organisms/PendingApprovalsWidget';
+import { ProductivityChart } from '@/components/organisms/ProductivityChart';
+import { TaskDistributionChart } from '@/components/organisms/TaskDistributionChart';
+import { OwnerDashboardTemplate } from '@/components/templates/OwnerDashboardTemplate';
 
 gsap.registerPlugin(useGSAP);
 
@@ -20,11 +20,11 @@ export default function OwnerDashboardContainer() {
 
   useGSAP(
     () => {
-      const widgets = gridRef.current?.querySelectorAll(".gsap-widget");
+      const widgets = gridRef.current?.querySelectorAll('.gsap-widget');
       if (!widgets?.length) return;
 
       const tl = gsap.timeline({
-        defaults: { ease: "power3.out", duration: 0.6 },
+        defaults: { ease: 'power3.out', duration: 0.6 },
       });
 
       tl.fromTo(

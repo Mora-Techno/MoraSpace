@@ -1,10 +1,6 @@
-"use client";
+'use client';
 
-import type {
-  IMusicPlayListItem,
-  PickCreatePlaylist,
-  TrackCatalog,
-} from "@repo/types";
+import type { IMusicPlayListItem, PickCreatePlaylist, TrackCatalog } from '@repo/types';
 import {
   Disc3,
   ExternalLink,
@@ -15,17 +11,17 @@ import {
   Search,
   Shuffle,
   Trash2,
-} from "lucide-react";
-import { useState } from "react";
+} from 'lucide-react';
+import { useState } from 'react';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { PageHeader } from "@/components/molecules/PageHeader";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
-import { useMusicPlayer } from "@/context/MusicPlayerContext";
-import { useApi } from "@/hooks/useApi/useApi";
-import { useGsapStagger } from "@/hooks/useGsapStagger";
-import { cn } from "@/utils/classname";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { PageHeader } from '@/components/molecules/PageHeader';
+import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
+import { useMusicPlayer } from '@/context/MusicPlayerContext';
+import { useApi } from '@/hooks/useApi/useApi';
+import { useGsapStagger } from '@/hooks/useGsapStagger';
+import { cn } from '@/utils/classname';
 
 export default function MusicContainer() {
   const api = useApi();
@@ -37,17 +33,14 @@ export default function MusicContainer() {
   const { data: playlists = [], isLoading } = usePlaylists;
   const createPlaylist = useCreatePlaylist;
   const deletePlaylist = useDeletePlaylist;
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState('');
   const gridRef = useGsapStagger<HTMLDivElement>([playlists.length]);
 
   // Track Catalog
   const useTrackCatalog = api.trackCatalog;
-  const { data: tracks = [], isLoading: tracksLoading } =
-    useTrackCatalog.query.list();
-  const [catalogSearch, setCatalogSearch] = useState("");
-  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(
-    null,
-  );
+  const { data: tracks = [], isLoading: tracksLoading } = useTrackCatalog.query.list();
+  const [catalogSearch, setCatalogSearch] = useState('');
+  const [selectedPlaylistId, setSelectedPlaylistId] = useState<string | null>(null);
 
   const musicPlayer = useMusicPlayer();
 
@@ -60,19 +53,16 @@ export default function MusicContainer() {
   const handlePlayCatalogTrack = (track: TrackCatalog) => {
     const playerItem: IMusicPlayListItem = {
       id: track.id,
-      playlistId: "",
+      playlistId: '',
       title: track.title,
       youtubeUrl: track.youtubeUrl,
       createdAt: track.createdAt,
       updatedAt: track.updatedAt,
     };
-    musicPlayer.play(playerItem, "Katalog Track");
+    musicPlayer.play(playerItem, 'Katalog Track');
   };
 
-  const handleAddTrackToPlaylist = (
-    playlistId: string,
-    track: TrackCatalog,
-  ) => {
+  const handleAddTrackToPlaylist = (playlistId: string, track: TrackCatalog) => {
     useAddItem.mutate({
       playlistId,
       trackCatalogId: track.id,
@@ -86,7 +76,7 @@ export default function MusicContainer() {
       { name: title.trim(), description: title.trim() },
       {
         onSuccess: () => {
-          setTitle("");
+          setTitle('');
         },
       },
     );
@@ -105,9 +95,7 @@ export default function MusicContainer() {
             <Music2 className="size-4 text-primary" /> Sedang diputar
           </div>
           <div className="flex items-center gap-3">
-            <p className="flex-1 truncate text-sm">
-              {musicPlayer.currentTrack.title}
-            </p>
+            <p className="flex-1 truncate text-sm">{musicPlayer.currentTrack.title}</p>
             <Button
               variant="ghost"
               size="sm"
@@ -117,7 +105,7 @@ export default function MusicContainer() {
                   : musicPlayer.toggle(musicPlayer.currentTrack!)
               }
             >
-              {musicPlayer.isPlaying ? "Jeda" : "Putar"}
+              {musicPlayer.isPlaying ? 'Jeda' : 'Putar'}
             </Button>
             <Button variant="ghost" size="sm" onClick={musicPlayer.stop}>
               Stop
@@ -143,9 +131,7 @@ export default function MusicContainer() {
         <div className="mb-3 flex items-center gap-2">
           <Disc3 className="size-4 text-primary" />
           <h3 className="font-serif text-sm font-medium">Katalog Track</h3>
-          {tracksLoading && (
-            <span className="text-xs text-muted-foreground">Memuat...</span>
-          )}
+          {tracksLoading && <span className="text-xs text-muted-foreground">Memuat...</span>}
         </div>
 
         {/* Search */}
@@ -162,23 +148,17 @@ export default function MusicContainer() {
         {/* Playlist selector for adding tracks */}
         {playlists.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-1.5">
-            <span className="text-xs text-muted-foreground self-center mr-1">
-              Tambah ke:
-            </span>
+            <span className="text-xs text-muted-foreground self-center mr-1">Tambah ke:</span>
             {playlists.map((p) => (
               <button
                 key={p.id}
                 type="button"
-                onClick={() =>
-                  setSelectedPlaylistId(
-                    selectedPlaylistId === p.id ? null : p.id,
-                  )
-                }
+                onClick={() => setSelectedPlaylistId(selectedPlaylistId === p.id ? null : p.id)}
                 className={cn(
-                  "rounded-full px-2.5 py-0.5 text-xs transition-colors",
+                  'rounded-full px-2.5 py-0.5 text-xs transition-colors',
                   selectedPlaylistId === p.id
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted",
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted/50 text-muted-foreground hover:bg-muted',
                 )}
               >
                 {p.name}
@@ -196,8 +176,8 @@ export default function MusicContainer() {
           ) : filteredTracks.length === 0 ? (
             <p className="py-4 text-center text-xs text-muted-foreground italic">
               {tracks.length === 0
-                ? "Belum ada track di katalog. Ajukan track baru!"
-                : "Tidak ada track yang cocok."}
+                ? 'Belum ada track di katalog. Ajukan track baru!'
+                : 'Tidak ada track yang cocok.'}
             </p>
           ) : (
             filteredTracks.map((track) => {
@@ -208,8 +188,8 @@ export default function MusicContainer() {
                 <div
                   key={track.id}
                   className={cn(
-                    "flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/30",
-                    isCurrentTrack && "bg-primary/5",
+                    'flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-muted/30',
+                    isCurrentTrack && 'bg-primary/5',
                   )}
                 >
                   <button
@@ -224,10 +204,10 @@ export default function MusicContainer() {
                       }
                     }}
                     className={cn(
-                      "flex size-8 shrink-0 items-center justify-center rounded-full transition-colors",
+                      'flex size-8 shrink-0 items-center justify-center rounded-full transition-colors',
                       isCurrentTrack
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary",
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted/50 text-muted-foreground hover:bg-primary/10 hover:text-primary',
                     )}
                   >
                     {isTrackPlaying ? (
@@ -240,8 +220,8 @@ export default function MusicContainer() {
                   <div className="min-w-0 flex-1">
                     <p
                       className={cn(
-                        "truncate text-xs font-medium",
-                        isCurrentTrack && "text-primary",
+                        'truncate text-xs font-medium',
+                        isCurrentTrack && 'text-primary',
                       )}
                     >
                       {track.title}
@@ -252,9 +232,7 @@ export default function MusicContainer() {
                   {selectedPlaylistId && (
                     <button
                       type="button"
-                      onClick={() =>
-                        handleAddTrackToPlaylist(selectedPlaylistId, track)
-                      }
+                      onClick={() => handleAddTrackToPlaylist(selectedPlaylistId, track)}
                       className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
                       title="Tambah ke playlist"
                     >
@@ -288,11 +266,7 @@ export default function MusicContainer() {
             placeholder="Nama playlist baru"
             className="flex-1 rounded-xl border border-input bg-background/80 px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
-          <Button
-            type="submit"
-            className="ghibli-btn shrink-0"
-            disabled={createPlaylist.isPending}
-          >
+          <Button type="submit" className="ghibli-btn shrink-0" disabled={createPlaylist.isPending}>
             <Plus className="size-4" /> Tambah
           </Button>
         </form>
@@ -312,10 +286,7 @@ export default function MusicContainer() {
           description="Buat playlist baru lalu tambahkan track dari katalog."
         />
       ) : (
-        <div
-          ref={gridRef}
-          className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        >
+        <div ref={gridRef} className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {playlists.map((playlist) => {
             const items = playlist.items ?? [];
             const isPlayingThisPlaylist =
@@ -350,8 +321,7 @@ export default function MusicContainer() {
                         onClick={(e) => {
                           e.stopPropagation();
                           musicPlayer.playPlaylist(items, 0, playlist.name);
-                          if (!musicPlayer.isShuffle)
-                            musicPlayer.toggleShuffle();
+                          if (!musicPlayer.isShuffle) musicPlayer.toggleShuffle();
                         }}
                         title="Putar acak"
                       >
@@ -366,11 +336,7 @@ export default function MusicContainer() {
                         asChild
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <a
-                          href={items[0].youtubeUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
+                        <a href={items[0].youtubeUrl} target="_blank" rel="noreferrer">
                           <ExternalLink className="size-4" />
                         </a>
                       </Button>
@@ -399,8 +365,8 @@ export default function MusicContainer() {
                         <div
                           key={item.id}
                           className={cn(
-                            "flex items-center gap-2 rounded-md px-1.5 py-1 text-xs",
-                            isActive && "bg-primary/5",
+                            'flex items-center gap-2 rounded-md px-1.5 py-1 text-xs',
+                            isActive && 'bg-primary/5',
                           )}
                           onClick={(e) => e.stopPropagation()}
                         >
@@ -412,21 +378,15 @@ export default function MusicContainer() {
                               } else if (isActive) {
                                 musicPlayer.toggle(item);
                               } else {
-                                const idx = items.findIndex(
-                                  (i) => i.id === item.id,
-                                );
-                                musicPlayer.playPlaylist(
-                                  items,
-                                  idx,
-                                  playlist.name,
-                                );
+                                const idx = items.findIndex((i) => i.id === item.id);
+                                musicPlayer.playPlaylist(items, idx, playlist.name);
                               }
                             }}
                             className={cn(
-                              "flex size-6 shrink-0 items-center justify-center rounded-full transition-colors",
+                              'flex size-6 shrink-0 items-center justify-center rounded-full transition-colors',
                               isActive
-                                ? "bg-primary text-primary-foreground"
-                                : "text-muted-foreground hover:bg-muted",
+                                ? 'bg-primary text-primary-foreground'
+                                : 'text-muted-foreground hover:bg-muted',
                             )}
                           >
                             {isActivePlaying ? (
@@ -437,8 +397,8 @@ export default function MusicContainer() {
                           </button>
                           <p
                             className={cn(
-                              "min-w-0 flex-1 truncate",
-                              isActive && "text-primary font-medium",
+                              'min-w-0 flex-1 truncate',
+                              isActive && 'text-primary font-medium',
                             )}
                           >
                             {item.title}

@@ -1,12 +1,8 @@
-import type {
-  PickReviewTrack,
-  PickSubmitTrack,
-  TrackCatalog,
-} from "@repo/types";
+import type { PickReviewTrack, PickSubmitTrack, TrackCatalog } from '@repo/types';
 
-import { queryKey } from "@/configs";
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { queryKey } from '@/configs';
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
 export function useSubmitTrack() {
   return useAppMutation<TrackCatalog, PickSubmitTrack>({

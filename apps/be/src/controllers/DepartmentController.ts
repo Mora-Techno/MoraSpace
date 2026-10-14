@@ -1,15 +1,9 @@
-import DepartmentService from "@/service/DepartmentService";
-import { HttpResponse } from "@/http";
-import { getUser } from "@/utils/authTokens";
-import {
-  memberContextValidate,
-  paramsValidate,
-} from "@/validation/auth.validate";
-import type { AppContext } from "@/contex";
-import type {
-  PickCreateDepartment,
-  PickUpdateDepartment,
-} from "@repo/types/department.types";
+import DepartmentService from '@/service/DepartmentService';
+import { HttpResponse } from '@/http';
+import { getUser } from '@/utils/authTokens';
+import { memberContextValidate, paramsValidate } from '@/validation/auth.validate';
+import type { AppContext } from '@/contex';
+import type { PickCreateDepartment, PickUpdateDepartment } from '@repo/types/department.types';
 
 class DepartmentController {
   public async list(c: AppContext) {
@@ -26,22 +20,15 @@ class DepartmentController {
             totalData: 0,
             totalPage: 0,
           },
-          "Daftar departemen",
+          'Daftar departemen',
         );
       }
 
       const authResponse = await memberContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await DepartmentService.list(
-        user.companyId,
-        c.query as any,
-      );
-      return HttpResponse(c).ok(
-        result.data,
-        result.meta,
-        "Berhasil mengambil daftar departemen",
-      );
+      const result = await DepartmentService.list(user.companyId, c.query as any);
+      return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil daftar departemen');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -58,13 +45,9 @@ class DepartmentController {
       if (validateParams) return validateParams;
 
       const data = await DepartmentService.getById(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Departemen tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Departemen tidak ditemukan');
 
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil detail departemen",
-      );
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil detail departemen');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -78,7 +61,7 @@ class DepartmentController {
       if (authResponse) return authResponse;
 
       const data = await DepartmentService.create(user.companyId!, body);
-      return HttpResponse(c).created(data, "Departemen berhasil dibuat");
+      return HttpResponse(c).created(data, 'Departemen berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -95,14 +78,10 @@ class DepartmentController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await DepartmentService.update(
-        params.id,
-        user.companyId!,
-        body,
-      );
-      if (!data) return HttpResponse(c).notFound("Departemen tidak ditemukan");
+      const data = await DepartmentService.update(params.id, user.companyId!, body);
+      if (!data) return HttpResponse(c).notFound('Departemen tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Departemen berhasil diperbarui");
+      return HttpResponse(c).ok(data, undefined, 'Departemen berhasil diperbarui');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -119,9 +98,9 @@ class DepartmentController {
       if (validateParams) return validateParams;
 
       const data = await DepartmentService.remove(params.id, user.companyId!);
-      if (!data) return HttpResponse(c).notFound("Departemen tidak ditemukan");
+      if (!data) return HttpResponse(c).notFound('Departemen tidak ditemukan');
 
-      return HttpResponse(c).ok(data, undefined, "Departemen berhasil dihapus");
+      return HttpResponse(c).ok(data, undefined, 'Departemen berhasil dihapus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

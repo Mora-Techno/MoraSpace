@@ -1,12 +1,9 @@
-import PomodoroService from "@/service/PomodoroService";
-import { HttpResponse } from "@/http";
-import { getUser } from "@/utils/authTokens";
-import { personalContextValidate } from "@/validation/auth.validate";
-import type { AppContext } from "@/contex";
-import type {
-  PickStartPomodoro,
-  PickStopPomodoro,
-} from "@repo/types/pomodoro.types";
+import PomodoroService from '@/service/PomodoroService';
+import { HttpResponse } from '@/http';
+import { getUser } from '@/utils/authTokens';
+import { personalContextValidate } from '@/validation/auth.validate';
+import type { AppContext } from '@/contex';
+import type { PickStartPomodoro, PickStopPomodoro } from '@repo/types/pomodoro.types';
 
 class PomodoroController {
   public async start(c: AppContext) {
@@ -21,7 +18,7 @@ class PomodoroController {
         user.id,
         body.metadata,
       );
-      return HttpResponse(c).created(data, "Sesi pomodoro dimulai");
+      return HttpResponse(c).created(data, 'Sesi pomodoro dimulai');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -33,16 +30,10 @@ class PomodoroController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.pause(
-        user.companyMemberId ?? null,
-        user.id,
-      );
-      return HttpResponse(c).ok(
-        data,
-        undefined, "Sesi pomodoro diubah menjadi jeda (pause)",
-      );
+      const data = await PomodoroService.pause(user.companyMemberId ?? null, user.id);
+      return HttpResponse(c).ok(data, undefined, 'Sesi pomodoro diubah menjadi jeda (pause)');
     } catch (error) {
-      const msg = error instanceof Error ? error.message : "Gagal menjeda sesi";
+      const msg = error instanceof Error ? error.message : 'Gagal menjeda sesi';
       return HttpResponse(c).badRequest(msg);
     }
   }
@@ -53,11 +44,8 @@ class PomodoroController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.resume(
-        user.companyMemberId ?? null,
-        user.id,
-      );
-      return HttpResponse(c).ok(data, undefined, "Sesi pomodoro dilanjutkan (resume)");
+      const data = await PomodoroService.resume(user.companyMemberId ?? null, user.id);
+      return HttpResponse(c).ok(data, undefined, 'Sesi pomodoro dilanjutkan (resume)');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -76,10 +64,9 @@ class PomodoroController {
         body.sessionId,
         body.duration,
       );
-      return HttpResponse(c).ok(data, undefined, "Sesi pomodoro dihentikan (stop)");
+      return HttpResponse(c).ok(data, undefined, 'Sesi pomodoro dihentikan (stop)');
     } catch (error) {
-      const msg =
-        error instanceof Error ? error.message : "Gagal menghentikan sesi";
+      const msg = error instanceof Error ? error.message : 'Gagal menghentikan sesi';
       return HttpResponse(c).badRequest(msg);
     }
   }
@@ -90,15 +77,8 @@ class PomodoroController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.getToday(
-        user.companyMemberId ?? null,
-        user.id,
-      );
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil data fokus hari ini",
-      );
+      const data = await PomodoroService.getToday(user.companyMemberId ?? null, user.id);
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil data fokus hari ini');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -110,15 +90,8 @@ class PomodoroController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const data = await PomodoroService.getStatistics(
-        user.companyMemberId ?? null,
-        user.id,
-      );
-      return HttpResponse(c).ok(
-        data,
-        undefined,
-        "Berhasil mengambil statistik fokus",
-      );
+      const data = await PomodoroService.getStatistics(user.companyMemberId ?? null, user.id);
+      return HttpResponse(c).ok(data, undefined, 'Berhasil mengambil statistik fokus');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }
@@ -138,7 +111,7 @@ class PomodoroController {
       return HttpResponse(c).ok(
         result.data,
         result.meta,
-        "Berhasil mengambil daftar sesi pomodoro",
+        'Berhasil mengambil daftar sesi pomodoro',
       );
     } catch (error) {
       return HttpResponse(c).internalError(error);

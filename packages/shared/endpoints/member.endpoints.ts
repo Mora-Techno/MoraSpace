@@ -1,6 +1,6 @@
-import { buildEndpoint } from "../config/api.config";
+import { buildEndpoint } from '../config/api.config';
 
-const mount = "/members";
+const mount = '/members';
 
 export const MEMBER_ENDPOINTS = {
   EMPLOYMENT_TYPES: buildEndpoint(mount, '/employment-types'),

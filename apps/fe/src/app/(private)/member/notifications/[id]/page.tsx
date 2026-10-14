@@ -1,4 +1,4 @@
-import NotificationDetailContainer from "./_container/notificationDetail";
+import NotificationDetailContainer from './_container/notificationDetail';
 
 export default async function NotificationDetailPage({
   params,

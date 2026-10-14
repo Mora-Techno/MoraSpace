@@ -1,19 +1,19 @@
-import type { Todo, TodoQuery } from "@repo/types";
-import { ChevronLeft, ChevronRight, Search, Trash2 } from "lucide-react";
+import type { Todo, TodoQuery } from '@repo/types';
+import { ChevronLeft, ChevronRight, Search, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
-import { Input } from "@/components/atoms/Input";
-import { TodoListItem } from "@/components/molecules";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { GhibliTabs } from "@/components/molecules/GhibliTabs";
-import { GhibliEmptyState } from "@/components/templates/GhibliEmptyState";
-import { AlertContexType } from "@/types/ui";
-export type TabValue = "all" | "pending" | "completed";
+import { Button } from '@/components/atoms';
+import { Input } from '@/components/atoms/Input';
+import { TodoListItem } from '@/components/molecules';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { GhibliTabs } from '@/components/molecules/GhibliTabs';
+import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
+import { AlertContexType } from '@/types/ui';
+export type TabValue = 'all' | 'pending' | 'completed';
 
 const TABS: { value: TabValue; label: string }[] = [
-  { value: "all", label: "Semua" },
-  { value: "pending", label: "Belum Selesai" },
-  { value: "completed", label: "Selesai" },
+  { value: 'all', label: 'Semua' },
+  { value: 'pending', label: 'Belum Selesai' },
+  { value: 'completed', label: 'Selesai' },
 ];
 
 interface TodoListSectionProps {
@@ -36,13 +36,7 @@ interface TodoListSectionProps {
 }
 
 export function TodoListSection({ service, state }: TodoListSectionProps) {
-  const {
-    handleToggleTodo,
-    handleDeleteTodo,
-    onSearch,
-    onPageChange,
-    handleSelectTodo,
-  } = service;
+  const { handleToggleTodo, handleDeleteTodo, onSearch, onPageChange, handleSelectTodo } = service;
   const { todos, isLoading, isPending, tab, setTab, query, alert } = state;
 
   return (
@@ -53,7 +47,7 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Cari tugas..."
-            value={query.search || ""}
+            value={query.search || ''}
             onChange={(e) => onSearch(e.target.value)}
             className="pl-9"
           />
@@ -68,11 +62,7 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
         </div>
       ) : todos.length === 0 ? (
         <GhibliEmptyState
-          title={
-            tab === "completed"
-              ? "Belum ada tugas selesai"
-              : "Daftar tugas masih kosong"
-          }
+          title={tab === 'completed' ? 'Belum ada tugas selesai' : 'Daftar tugas masih kosong'}
           description="Susuwatari sedang tidur — tambahkan tugas pertamamu!"
         />
       ) : (
@@ -101,9 +91,7 @@ export function TodoListSection({ service, state }: TodoListSectionProps) {
           >
             <ChevronLeft />
           </Button>
-          <div className="flex items-center px-4 text-sm font-medium">
-            {query.page || 1}
-          </div>
+          <div className="flex items-center px-4 text-sm font-medium">{query.page || 1}</div>
           <Button
             variant="outline"
             size="sm"

@@ -1,8 +1,8 @@
-import { CalendarIcon,CheckCircle2, Clock } from "lucide-react";
-import * as React from "react";
+import { CalendarIcon, CheckCircle2, Clock } from 'lucide-react';
+import * as React from 'react';
 
-import { GlassCard } from "@/components/molecules/GlassCard";
-import { StatMiniCard } from "@/components/molecules/StatMiniCard";
+import { GlassCard } from '@/components/molecules/GlassCard';
+import { StatMiniCard } from '@/components/molecules/StatMiniCard';
 
 interface DailyStats {
   completedTodos: number;

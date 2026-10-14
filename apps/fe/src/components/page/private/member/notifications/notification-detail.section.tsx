@@ -1,9 +1,9 @@
-import type { NotificationInApp } from "@repo/types";
-import { formatDateTime } from "@repo/utils/time-format";
-import { MailOpen } from "lucide-react";
+import type { NotificationInApp } from '@repo/types';
+import { formatDateTime } from '@repo/utils/time-format';
+import { MailOpen } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
-import { GhibliCard } from "@/components/molecules";
+import { Button } from '@/components/atoms';
+import { GhibliCard } from '@/components/molecules';
 
 interface NotificationDetailSectionProps {
   service: {
@@ -15,10 +15,7 @@ interface NotificationDetailSectionProps {
   };
 }
 
-export function NotificationDetailSection({
-  service,
-  state,
-}: NotificationDetailSectionProps) {
+export function NotificationDetailSection({ service, state }: NotificationDetailSectionProps) {
   const { notification, isPending } = state;
 
   return (

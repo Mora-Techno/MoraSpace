@@ -1,4 +1,4 @@
-import { ITrackCatalog } from "./trackCatalog.types";
+import { ITrackCatalog } from './trackCatalog.types';
 
 /** Mirror Prisma model `MusicPlaylist` */
 export interface IMusicPlaylist {
@@ -29,7 +29,7 @@ export interface IMusicPlayListItem {
 
 export type MusicPlaylist = Pick<
   IMusicPlaylist,
-  "id" | "name" | "description" | "createdAt" | "updatedAt"
+  'id' | 'name' | 'description' | 'createdAt' | 'updatedAt'
 > & {
   items: IMusicPlayListItem[];
 };
@@ -39,9 +39,9 @@ export type MusicQuery = {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 };
 
-export type PickCreatePlaylist = Pick<IMusicPlaylist, "name" | "description">;
-export type PickAddMusicItem = Pick<IMusicPlayListItem, "trackCatalogId">;
-export type PlaylistParams = Pick<IMusicPlaylist, "id">;
+export type PickCreatePlaylist = Pick<IMusicPlaylist, 'name' | 'description'>;
+export type PickAddMusicItem = Pick<IMusicPlayListItem, 'trackCatalogId'>;
+export type PlaylistParams = Pick<IMusicPlaylist, 'id'>;

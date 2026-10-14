@@ -1,5 +1,5 @@
-import type { JwtPayload } from "@repo/types/auth.types";
-import prisma from "prisma/client";
+import type { JwtPayload } from '@repo/types/auth.types';
+import prisma from 'prisma/client';
 
 class SessionService {
   public async listService(
@@ -12,7 +12,7 @@ class SessionService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
     } = {},
   ) {
     const page = query.page ?? 1;
@@ -23,32 +23,27 @@ class SessionService {
 
     if (query.search) {
       where.OR = [
-        { device: { contains: query.search, mode: "insensitive" } },
-        { browser: { contains: query.search, mode: "insensitive" } },
+        { device: { contains: query.search, mode: 'insensitive' } },
+        { browser: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
     if (query.device) {
-      where.device = { contains: query.device, mode: "insensitive" };
+      where.device = { contains: query.device, mode: 'insensitive' };
     }
 
     if (query.startDate || query.endDate) {
       where.createdAt = {};
       if (query.startDate)
-        (where.createdAt as Record<string, unknown>).gte = new Date(
-          query.startDate,
-        );
-      if (query.endDate)
-        (where.createdAt as Record<string, unknown>).lte = new Date(
-          query.endDate,
-        );
+        (where.createdAt as Record<string, unknown>).gte = new Date(query.startDate);
+      if (query.endDate) (where.createdAt as Record<string, unknown>).lte = new Date(query.endDate);
     }
 
     const orderBy: Record<string, unknown> = {};
     if (query.sortBy) {
-      orderBy[query.sortBy] = query.sortOrder ?? "asc";
+      orderBy[query.sortBy] = query.sortOrder ?? 'asc';
     } else {
-      orderBy.expiredAt = "asc";
+      orderBy.expiredAt = 'asc';
     }
 
     const [totalData, data] = await prisma.$transaction([
@@ -75,7 +70,7 @@ class SessionService {
   }
   public async getSessionByIdService(id: string, userId: string) {
     if (!id) {
-      throw new Error("id session tidak temukan");
+      throw new Error('id session tidak temukan');
     }
     const sessionQuery = await prisma.userSession.findFirst({
       where: {
@@ -87,7 +82,7 @@ class SessionService {
   }
   public async deleteSessionById(id: string, userId: string) {
     if (!id) {
-      throw new Error("id session tidak temukan");
+      throw new Error('id session tidak temukan');
     }
     const query = await prisma.userSession.deleteMany({
       where: {

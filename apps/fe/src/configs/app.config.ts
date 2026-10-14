@@ -123,7 +123,7 @@ export const SIDEBAR_MENU = [
 ];
 
 export const PUBLIC_ROUTES = ['/', '/home', '/resource', '/blogs', '/pricing'];
-export const AUTH_ROUTES = ['/home','/login', '/register', '/forgot-password', '/magic-link'];
+export const AUTH_ROUTES = ['/home', '/login', '/register', '/forgot-password', '/magic-link'];
 
 export const RegisterConfigRoutes: RegisterProps[] = [
   {

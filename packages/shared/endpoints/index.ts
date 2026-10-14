@@ -1,54 +1,54 @@
-export { AUTH_ENDPOINTS, listAuthEndpoints } from "./auth.endpoints";
+export { AUTH_ENDPOINTS, listAuthEndpoints } from './auth.endpoints';
 export {
   CALENDAR_ENDPOINTS,
   listCalendarEndpoints,
-} from "./calendar.endpoints";
-export { COMPANY_ENDPOINTS, listCompanyEndpoints } from "./company.endpoints";
+} from './calendar.endpoints';
+export { COMPANY_ENDPOINTS, listCompanyEndpoints } from './company.endpoints';
 export {
   MUSIC_ENDPOINTS,
   listMusicEndpoints,
-} from "./music.endpoints";
-export { NOTE_ENDPOINTS, listNoteEndpoints } from "./note.endpoints";
+} from './music.endpoints';
+export { NOTE_ENDPOINTS, listNoteEndpoints } from './note.endpoints';
 export {
   NOTIFICATION_ENDPOINTS,
   listNotificationEndpoints,
-} from "./notification.endpoints";
+} from './notification.endpoints';
 export {
   SETTINGS_ENDPOINTS,
   listSettingsEndpoints,
-} from "./settings.endpoints";
+} from './settings.endpoints';
 export {
   SUBSCRIPTION_ENDPOINTS,
   listSubscriptionEndpoints,
-} from "./subscription.endpoints";
-export { TODO_ENDPOINTS, listTodoEndpoints } from "./todo.endpoints";
+} from './subscription.endpoints';
+export { TODO_ENDPOINTS, listTodoEndpoints } from './todo.endpoints';
 
-export { SESSION_ENDPOINT, listSessionEndpoints } from "./session.endpoint";
+export { SESSION_ENDPOINT, listSessionEndpoints } from './session.endpoint';
 export {
   DEPARTMENT_ENDPOINTS,
   listDepartmentEndpoints,
-} from "./department.endpoints";
-export { TEAM_ENDPOINTS, listTeamEndpoints } from "./team.endpoints";
+} from './department.endpoints';
+export { TEAM_ENDPOINTS, listTeamEndpoints } from './team.endpoints';
 export {
   POSITION_ENDPOINTS,
   listPositionEndpoints,
-} from "./position.endpoints";
-export { MEMBER_ENDPOINTS, listMemberEndpoints } from "./member.endpoints";
+} from './position.endpoints';
+export { MEMBER_ENDPOINTS, listMemberEndpoints } from './member.endpoints';
 export {
   INVITATION_ENDPOINTS,
   listInvitationEndpoints,
-} from "./invitation.endpoints";
-export { ROLE_ENDPOINTS, listRoleEndpoints } from "./role.endpoints";
-export { TASK_ENDPOINTS, listTaskEndpoints } from "./task.endpoints";
+} from './invitation.endpoints';
+export { ROLE_ENDPOINTS, listRoleEndpoints } from './role.endpoints';
+export { TASK_ENDPOINTS, listTaskEndpoints } from './task.endpoints';
 export {
   POMODORO_ENDPOINTS,
   listPomodoroEndpoints,
-} from "./pomodoro.endpoints";
-export { SYSTEM_ENDPOINTS, listSystemEndpoints } from "./system.endpoints";
+} from './pomodoro.endpoints';
+export { SYSTEM_ENDPOINTS, listSystemEndpoints } from './system.endpoints';
 export {
   TRACK_CATALOG_ENDPOINTS,
   listTrackCatalogEndpoints,
   trackCatalogById,
   trackCatalogApprove,
   trackCatalogReject,
-} from "./trackCatalog.endpoints";
+} from './trackCatalog.endpoints';

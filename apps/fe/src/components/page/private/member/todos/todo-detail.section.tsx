@@ -1,11 +1,11 @@
-import { formatDateTime } from "@repo";
-import type { PickUpdateTodo, Todo } from "@repo/types";
-import { CalendarClock, Trash2 } from "lucide-react";
+import { formatDateTime } from '@repo';
+import type { PickUpdateTodo, Todo } from '@repo/types';
+import { CalendarClock, Trash2 } from 'lucide-react';
 
-import { Button } from "@/components/atoms";
-import { Skeleton } from "@/components/atoms/Skeleton";
-import { GhibliCard } from "@/components/molecules/GhibliCard";
-import { TodoCheckbox } from "@/components/molecules/TodoCheckbox";
+import { Button } from '@/components/atoms';
+import { Skeleton } from '@/components/atoms/Skeleton';
+import { GhibliCard } from '@/components/molecules/GhibliCard';
+import { TodoCheckbox } from '@/components/molecules/TodoCheckbox';
 
 interface TodoDetailSectionProps {
   service: {
@@ -52,16 +52,16 @@ export function TodoDetailSection({ service, state }: TodoDetailSectionProps) {
             <div className="flex items-center gap-3">
               <div onClick={(e) => e.stopPropagation()}>
                 <TodoCheckbox
-                  checked={todo.status === "completed"}
+                  checked={todo.status === 'completed'}
                   disabled={isPending}
                   onChange={handleToggle}
                 />
               </div>
               <h2
                 className={
-                  todo.status === "completed"
-                    ? "font-serif text-xl font-semibold line-through text-muted-foreground"
-                    : "font-serif text-xl font-semibold"
+                  todo.status === 'completed'
+                    ? 'font-serif text-xl font-semibold line-through text-muted-foreground'
+                    : 'font-serif text-xl font-semibold'
                 }
               >
                 {todo.text}
@@ -70,7 +70,7 @@ export function TodoDetailSection({ service, state }: TodoDetailSectionProps) {
             <div className="mt-4 space-y-1 text-sm text-muted-foreground">
               <p className="flex items-center gap-2">
                 <CalendarClock className="size-4" />
-                {todo.dueDate ? formatDateTime(todo.dueDate) : "Tanpa tenggat"}
+                {todo.dueDate ? formatDateTime(todo.dueDate) : 'Tanpa tenggat'}
               </p>
               <p>Dibuat: {formatDateTime(todo.createdAt)}</p>
               <p>Diperbarui: {formatDateTime(todo.updatedAt)}</p>
@@ -92,16 +92,14 @@ export function TodoDetailSection({ service, state }: TodoDetailSectionProps) {
         <h3 className="font-serif text-lg font-semibold">Edit Tugas</h3>
         <form onSubmit={handleSave} className="mt-3 space-y-3">
           <input
-            value={form.text ?? ""}
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, text: e.target.value }))
-            }
+            value={form.text ?? ''}
+            onChange={(e) => setForm((prev) => ({ ...prev, text: e.target.value }))}
             placeholder="Teks tugas..."
             className="w-full rounded-xl border border-input bg-background/80 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
           <input
             type="datetime-local"
-            value={form.dueDate ?? ""}
+            value={form.dueDate ?? ''}
             onChange={(e) =>
               setForm((prev) => ({
                 ...prev,
@@ -112,7 +110,7 @@ export function TodoDetailSection({ service, state }: TodoDetailSectionProps) {
           />
           <div className="flex justify-end">
             <Button type="submit" className="ghibli-btn" disabled={isPending}>
-              {isPending ? "Menyimpan..." : "Simpan Perubahan"}
+              {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
           </div>
         </form>

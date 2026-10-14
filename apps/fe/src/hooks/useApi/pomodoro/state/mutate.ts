@@ -1,24 +1,12 @@
-import type {
-  IPomodoroSession,
-  PickStartPomodoro,
-  PickStopPomodoro,
-} from "@repo/types";
+import type { IPomodoroSession, PickStartPomodoro, PickStopPomodoro } from '@repo/types';
 
-import { useAppMutation } from "@/hooks/useAppMutation";
-import Api from "@/services/api";
+import { useAppMutation } from '@/hooks/useAppMutation';
+import Api from '@/services/api';
 
-import {
-  podomoroRoot,
-  type PomodoroCacheContext,
-  readPomodoroSnapshot,
-} from "./utils";
+import { podomoroRoot, type PomodoroCacheContext, readPomodoroSnapshot } from './utils';
 
 export function useStartPomodoroSession() {
-  return useAppMutation<
-    IPomodoroSession,
-    PickStartPomodoro | undefined,
-    PomodoroCacheContext
-  >({
+  return useAppMutation<IPomodoroSession, PickStartPomodoro | undefined, PomodoroCacheContext>({
     mutationFn: (payload?) => Api.Pomodoro.StartSession(payload),
     invalidateKeys: [podomoroRoot],
     optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),
@@ -42,11 +30,7 @@ export function useResumePomodoroSession() {
 }
 
 export function useStopPomodoroSession() {
-  return useAppMutation<
-    IPomodoroSession,
-    PickStopPomodoro | undefined,
-    PomodoroCacheContext
-  >({
+  return useAppMutation<IPomodoroSession, PickStopPomodoro | undefined, PomodoroCacheContext>({
     mutationFn: (payload?) => Api.Pomodoro.StopSession(payload),
     invalidateKeys: [podomoroRoot],
     optimistic: (ns) => ({ previousData: readPomodoroSnapshot(ns) }),

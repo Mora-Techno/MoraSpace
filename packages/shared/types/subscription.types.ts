@@ -1,4 +1,4 @@
-import type { BillingCycle, ICompany, SubscriptionTier } from "./company.types";
+import type { BillingCycle, ICompany, SubscriptionTier } from './company.types';
 
 export type SubscriptionQuery = {
   search?: string;
@@ -10,13 +10,9 @@ export type SubscriptionQuery = {
   endDate?: string;
 };
 
-export type PaymentProvider = "stripe" | "xendit";
-export type PaymentStatus = "pending" | "paid" | "failed" | "canceled";
-export type SubscriptionStatus =
-  | "active"
-  | "canceled"
-  | "past_due"
-  | "incomplete";
+export type PaymentProvider = 'stripe' | 'xendit';
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'canceled';
+export type SubscriptionStatus = 'active' | 'canceled' | 'past_due' | 'incomplete';
 
 export interface ISubscription {
   id: string;
@@ -67,45 +63,36 @@ export interface SubscriptionPlan {
   features: string[];
 }
 
-export type PickCreateCheckout = Pick<
-  ISubscription,
-  "tier" | "billingCycle"
-> & {
+export type PickCreateCheckout = Pick<ISubscription, 'tier' | 'billingCycle'> & {
   provider: PaymentProvider;
 };
 
-export interface CheckoutData extends Pick<
-  IPayment,
-  "provider" | "tier" | "billingCycle" | "amount" | "currency"
-> {
+export interface CheckoutData
+  extends Pick<IPayment, 'provider' | 'tier' | 'billingCycle' | 'amount' | 'currency'> {
   checkoutUrl: string | null;
   sessionId: string;
 }
 
-export interface SubscriptionInfo extends Pick<
-  ISubscription,
-  | "id"
-  | "companyId"
-  | "tier"
-  | "billingCycle"
-  | "status"
-  | "provider"
-  | "cancelAtPeriodEnd"
-> {
+export interface SubscriptionInfo
+  extends Pick<
+    ISubscription,
+    'id' | 'companyId' | 'tier' | 'billingCycle' | 'status' | 'provider' | 'cancelAtPeriodEnd'
+  > {
   currentPeriodStart: string | null;
   currentPeriodEnd: string | null;
   maxWorkstationUsers: number;
 }
 
-export interface PaymentInfo extends Pick<
-  IPayment,
-  "id" | "provider" | "amount" | "currency" | "status" | "tier" | "billingCycle"
-> {
+export interface PaymentInfo
+  extends Pick<
+    IPayment,
+    'id' | 'provider' | 'amount' | 'currency' | 'status' | 'tier' | 'billingCycle'
+  > {
   createdAt: string;
 }
 
 export interface SubscriptionDetail {
-  company: Pick<ICompany, "id" | "name" | "tier" | "billingCycle"> & {
+  company: Pick<ICompany, 'id' | 'name' | 'tier' | 'billingCycle'> & {
     subscriptionStartsAt: string;
     subscriptionEndsAt: string | null;
     maxWorkstationUsers: number;

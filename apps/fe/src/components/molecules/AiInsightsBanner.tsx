@@ -1,4 +1,4 @@
-import { BrainCircuit, ChevronRight } from "lucide-react";
+import { BrainCircuit, ChevronRight } from 'lucide-react';
 
 import {
   Badge,
@@ -7,8 +7,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/atoms";
-import { GlassCard } from "@/components/molecules/GlassCard";
+} from '@/components/atoms';
+import { GlassCard } from '@/components/molecules/GlassCard';
 
 export function AiInsightsBanner() {
   return (
@@ -25,10 +25,7 @@ export function AiInsightsBanner() {
           <div>
             <CardTitle className="flex items-center gap-2 text-base font-semibold">
               AI Briefing
-              <Badge
-                variant="default"
-                className="rounded-full px-2 py-0.5 text-[10px] font-normal"
-              >
+              <Badge variant="default" className="rounded-full px-2 py-0.5 text-[10px] font-normal">
                 Live
               </Badge>
             </CardTitle>
@@ -40,12 +37,10 @@ export function AiInsightsBanner() {
       </CardHeader>
       <CardContent className="relative px-6 pb-6">
         <p className="text-sm leading-relaxed text-foreground/85">
-          <span className="font-medium text-primary">Tim Engineering</span>{" "}
-          mencapai efisiensi 92%, namun{" "}
-          <span className="font-medium text-destructive">Tim Marketing</span>{" "}
-          mengalami bottleneck pada 3 campaign utama. Disarankan meninjau ulang
-          beban meeting mingguan dan mengalokasikan 2 engineer untuk
-          mempercepat.
+          <span className="font-medium text-primary">Tim Engineering</span> mencapai efisiensi 92%,
+          namun <span className="font-medium text-destructive">Tim Marketing</span> mengalami
+          bottleneck pada 3 campaign utama. Disarankan meninjau ulang beban meeting mingguan dan
+          mengalokasikan 2 engineer untuk mempercepat.
         </p>
         <Button
           variant="ghost"

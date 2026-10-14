@@ -1,8 +1,8 @@
-import { Plus } from "lucide-react";
-import React from "react";
+import { Plus } from 'lucide-react';
+import React from 'react';
 
-import { Button } from "@/components/atoms/Button";
-import { Input } from "@/components/atoms/Input";
+import { Button } from '@/components/atoms/Button';
+import { Input } from '@/components/atoms/Input';
 
 interface AddTaskFormProps {
   value: string;
