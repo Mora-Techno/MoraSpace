@@ -181,10 +181,24 @@ async function handleMessage(ws: ChatConn, raw: unknown) {
         return;
       }
       const claims = await verifySocketToken(token);
-      if (!claims?.companyId || !claims?.companyMemberId) {
+      if (!claims) {
         sendError(entry, 'AUTH_FAILED', 'Token tidak valid/kedaluwarsa', reqId);
         try {
           entry.ws.close(1008);
+        } catch {
+          // abaikan
+        }
+        return;
+      }
+      if (!claims.companyId || !claims.companyMemberId || claims.workspaceType === 'personal') {
+        sendError(
+          entry,
+          'COMPANY_CONTEXT_REQUIRED',
+          'Chat hanya tersedia di Company Workspace',
+          reqId,
+        );
+        try {
+          entry.ws.close(1000);
         } catch {
           // abaikan
         }

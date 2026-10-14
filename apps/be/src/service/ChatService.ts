@@ -324,7 +324,9 @@ class ChatService {
     const ordered = direction === 'after' ? messages : [...messages].reverse();
     const data = ordered.map((m) => ({ ...m, senderName: m.sender.fullName }));
     const nextCursor =
-      direction === 'before' && messages.length === limit ? messages[messages.length - 1].seq : null;
+      direction === 'before' && messages.length === limit
+        ? messages[messages.length - 1].seq
+        : null;
     return { data, nextCursor };
   }
 

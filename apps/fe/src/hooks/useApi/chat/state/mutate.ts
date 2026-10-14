@@ -38,14 +38,22 @@ export function useUpdateGroup() {
 }
 
 export function useAddGroupMember() {
-  return useAppMutation<IConversationMember, { id: string; payload: PickManageGroupMember }, ChatCacheContext>({
+  return useAppMutation<
+    IConversationMember,
+    { id: string; payload: PickManageGroupMember },
+    ChatCacheContext
+  >({
     mutationFn: ({ id, payload }) => Api.Chat.AddMember(id, payload),
     invalidateKeys: [chatRootKey],
   });
 }
 
 export function useSetGroupMemberRole() {
-  return useAppMutation<IConversationMember, { id: string; payload: PickManageGroupMember }, ChatCacheContext>({
+  return useAppMutation<
+    IConversationMember,
+    { id: string; payload: PickManageGroupMember },
+    ChatCacheContext
+  >({
     mutationFn: ({ id, payload }) => Api.Chat.SetMemberRole(id, payload),
     invalidateKeys: [chatRootKey],
   });
@@ -66,7 +74,11 @@ export function useLeaveConversation() {
 }
 
 export function useTransferOwnership() {
-  return useAppMutation<ChatMemberInfo[], { id: string; payload: PickTransferOwnership }, ChatCacheContext>({
+  return useAppMutation<
+    ChatMemberInfo[],
+    { id: string; payload: PickTransferOwnership },
+    ChatCacheContext
+  >({
     mutationFn: ({ id, payload }) => Api.Chat.TransferOwnership(id, payload),
     invalidateKeys: [chatRootKey],
   });

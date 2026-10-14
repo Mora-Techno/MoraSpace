@@ -1,7 +1,18 @@
 'use client';
 
 import { format } from 'date-fns';
-import { ArrowDown, ArrowLeft, Check, CheckCheck, Clock, Loader2, RotateCcw, Send, Users, WifiOff } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowLeft,
+  Check,
+  CheckCheck,
+  Clock,
+  Loader2,
+  RotateCcw,
+  Send,
+  Users,
+  WifiOff,
+} from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -21,8 +32,9 @@ import {
   Textarea,
 } from '@/components/atoms';
 import { useApi } from '@/hooks/useApi/useApi';
-import { type LocalChatMessage,useChatSocket } from '@/hooks/useChatSocket';
+import { hasCompanyChatContext, type LocalChatMessage, useChatSocket } from '@/hooks/useChatSocket';
 import { useDebounce } from '@/hooks/useDebounce';
+import { loadAuthSession } from '@/utils/storage';
 
 function initials(name?: string | null) {
   if (!name) return '?';
@@ -51,6 +63,12 @@ export default function ChatRoomContainer({ id }: { id: string }) {
     typing,
     peerReads,
   } = useChatSocket();
+
+  const isPersonal = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const token = loadAuthSession()?.accessToken ?? null;
+    return !hasCompanyChatContext(token);
+  }, []);
 
   const messagesQuery = api.chat.query.messages(id);
   const { data: members = [] } = api.chat.query.members(id);
@@ -214,8 +232,30 @@ export default function ChatRoomContainer({ id }: { id: string }) {
 
   const saveGroup = (e: React.FormEvent) => {
     e.preventDefault();
-    updateGroup.mutate({ id, payload: { name: editName.trim() || undefined, description: editDesc.trim() } });
+    updateGroup.mutate({
+      id,
+      payload: { name: editName.trim() || undefined, description: editDesc.trim() },
+    });
   };
+
+  if (isPersonal) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 max-w-md mx-auto">
+        <p className="text-base font-semibold mb-2">Chat Tidak Tersedia di Personal Workspace</p>
+        <p className="text-sm text-muted-foreground mb-6">
+          Percakapan tim hanya dapat diakses dalam Company Workspace. Silakan beralih ke Company
+          Workspace melalui Workspace Switcher.
+        </p>
+        <Button
+          onClick={() => router.push('/member/dashboard')}
+          variant="outline"
+          className="rounded-xl"
+        >
+          Kembali ke Dashboard
+        </Button>
+      </div>
+    );
+  }
 
   if (messagesQuery.isLoading) {
     return (
@@ -272,7 +312,11 @@ export default function ChatRoomContainer({ id }: { id: string }) {
         )}
       </div>
 
-      <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-auto py-3 space-y-1.5 px-0.5">
+      <div
+        ref={scrollRef}
+        onScroll={onScroll}
+        className="flex-1 overflow-auto py-3 space-y-1.5 px-0.5"
+      >
         {messagesQuery.hasNextPage && (
           <div className="flex justify-center py-1">
             <Button
@@ -298,10 +342,13 @@ export default function ChatRoomContainer({ id }: { id: string }) {
           const mine = m.senderId === userId;
           const failed = m.sendStatus === 'failed';
           const sending = m.sendStatus === 'sending';
-          const read = mine && !sending && !failed && peerRead != null && peerRead.seq >= m.seq && m.seq > 0;
+          const read =
+            mine && !sending && !failed && peerRead != null && peerRead.seq >= m.seq && m.seq > 0;
           return (
             <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] ${mine ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}>
+              <div
+                className={`max-w-[80%] ${mine ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}
+              >
                 {!mine && isGroup && (
                   <span className="text-[10px] font-medium text-muted-foreground px-1">
                     {m.senderName || 'Anggota'}
@@ -330,8 +377,12 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                       <RotateCcw className="size-3" /> Gagal, coba lagi
                     </button>
                   )}
-                  {!sending && !failed && mine && read && <CheckCheck className="size-3.5 text-sky-500" />}
-                  {!sending && !failed && mine && !read && m.seq > 0 && <Check className="size-3.5" />}
+                  {!sending && !failed && mine && read && (
+                    <CheckCheck className="size-3.5 text-sky-500" />
+                  )}
+                  {!sending && !failed && mine && !read && m.seq > 0 && (
+                    <Check className="size-3.5" />
+                  )}
                   {!sending && !failed && mine && m.seq === 0 && <Clock className="size-3" />}
                 </span>
               </div>
@@ -362,7 +413,12 @@ export default function ChatRoomContainer({ id }: { id: string }) {
           className="min-h-10 max-h-32 resize-none"
           aria-label="Tulis pesan"
         />
-        <Button size="icon" onClick={handleSend} disabled={!draft.trim() || status !== 'open'} aria-label="Kirim">
+        <Button
+          size="icon"
+          onClick={handleSend}
+          disabled={!draft.trim() || status !== 'open'}
+          aria-label="Kirim"
+        >
           <Send className="size-4" />
         </Button>
       </div>
@@ -382,7 +438,9 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                     <Input
                       id="grpName"
                       value={editName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditName(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        setEditName(e.target.value)
+                      }
                       maxLength={100}
                     />
                   </div>
@@ -391,7 +449,9 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                     <Textarea
                       id="grpDesc"
                       value={editDesc}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditDesc(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setEditDesc(e.target.value)
+                      }
                       rows={2}
                       maxLength={500}
                     />
@@ -467,13 +527,18 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                     id="addMember"
                     placeholder="Cari nama..."
                     value={addQuery}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddQuery(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setAddQuery(e.target.value)
+                    }
                   />
                   <div className="space-y-1 max-h-40 overflow-auto">
                     {addCandidates
                       .filter((u) => !members.some((m) => m.userId === u.id))
                       .map((u) => (
-                        <div key={u.id} className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent">
+                        <div
+                          key={u.id}
+                          className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent"
+                        >
                           <span className="flex-1 truncate text-xs">{u.fullName}</span>
                           <Button
                             size="sm"
@@ -496,7 +561,9 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                     <select
                       id="transferTo"
                       value={transferTo}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTransferTo(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                        setTransferTo(e.target.value)
+                      }
                       className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs"
                     >
                       <option value="">Pilih anggota...</option>
@@ -530,10 +597,7 @@ export default function ChatRoomContainer({ id }: { id: string }) {
                 variant="destructive"
                 disabled={leaveConversation.isPending}
                 onClick={() =>
-                  leaveConversation.mutate(
-                    { id },
-                    { onSuccess: () => router.push(base) },
-                  )
+                  leaveConversation.mutate({ id }, { onSuccess: () => router.push(base) })
                 }
               >
                 Keluar grup

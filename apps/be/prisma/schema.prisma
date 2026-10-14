@@ -1113,3 +1113,28 @@ enum ConversationRole {
   ADMIN
   MEMBER
 }
+
+// v1.x Blog publik — read tanpa auth (hanya status published).
+// CRUD developer platform diparkir (nanti, guard role DEVELOPER).
+model BlogPost {
+  id          String     @id @default(uuid())
+  title       String
+  slug        String     @unique
+  excerpt     String
+  content     String
+  coverImage  String?    @map("cover_image")
+  category    String     @default("Umum")
+  authorName  String     @map("author_name")
+  status      BlogStatus @default(draft)
+  publishedAt DateTime?  @map("published_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@index([status, publishedAt])
+  @@map("blog_posts")
+}
+
+enum BlogStatus {
+  draft
+  published
+}

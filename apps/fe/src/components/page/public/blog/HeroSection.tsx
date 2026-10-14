@@ -1,10 +1,11 @@
 'use client';
 
+import type { BlogListItem } from '@repo/types';
 import { ArrowRight, ArrowUpRight, Calendar, Clock, Mail, Search } from 'lucide-react';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
-import { Badge } from '@/components/atoms';
+import { Badge, Button } from '@/components/atoms';
 import {
   ScribbleArrow,
   ScribbleCircle,
@@ -18,61 +19,67 @@ interface BlogSectionProps {
     title: string;
     desc: string;
   };
+  data?: {
+    posts: BlogListItem[];
+    categories: string[];
+    isLoading: boolean;
+    isError: boolean;
+    refetch: () => void;
+  };
 }
 
-interface ArticleItem {
-  id: number;
-  title: string;
-  excerpt: string;
-  category: string;
-  author: string;
-  date: string;
-  readTime: string;
+function readTimeOf(excerpt: string) {
+  const words = excerpt.split(/\s+/).filter(Boolean).length;
+  return `${Math.max(1, Math.round(words / 200))} mnt baca`;
 }
 
-export default function BlogSection({ template: _template }: BlogSectionProps) {
+function formatBlogDate(iso: string | null) {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+function initialsOf(name?: string | null) {
+  if (!name) return '?';
+  return name
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
+
+export default function BlogSection({ template: _template, data }: BlogSectionProps) {
   const { t } = useTranslation('public');
 
-  const catAll = t('blogs.cat_all');
+  const posts = useMemo(() => data?.posts ?? [], [data?.posts]);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories = useMemo(
     () => [
       { id: 'ALL', label: t('blogs.cat_all') },
-      { id: 'CALM', label: t('blogs.cat_calm') },
-      { id: 'AI', label: t('blogs.cat_ai') },
-      { id: 'PRODUCT', label: t('blogs.cat_product') },
-      { id: 'PHILOSOPHY', label: t('blogs.cat_philosophy') },
-      { id: 'TEAM', label: t('blogs.cat_team') },
+      ...(data?.categories ?? []).map((c) => ({ id: c, label: c })),
     ],
-    [t],
+    [t, data?.categories],
   );
 
-  const rawArticles = (t('blogs.articles', { returnObjects: true }) as ArticleItem[]) || [];
-
-  const articles = useMemo(() => {
-    return Array.isArray(rawArticles) ? rawArticles : [];
-  }, [rawArticles]);
-
   const filteredArticles = useMemo(() => {
-    const activeCatObj = categories.find((c) => c.id === selectedCategory);
-    const activeLabel = activeCatObj ? activeCatObj.label : catAll;
-
-    return articles.filter((article) => {
-      const matchesCategory =
-        selectedCategory === 'ALL' ||
-        article.category === activeLabel ||
-        article.category.toLowerCase() === activeLabel.toLowerCase();
-
+    const q = searchQuery.toLowerCase();
+    return posts.filter((article) => {
+      const matchesCategory = selectedCategory === 'ALL' || article.category === selectedCategory;
       const matchesSearch =
-        !searchQuery ||
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
-
+        !q || article.title.toLowerCase().includes(q) || article.excerpt.toLowerCase().includes(q);
       return matchesCategory && matchesSearch;
     });
-  }, [articles, selectedCategory, searchQuery, categories, catAll]);
+  }, [posts, selectedCategory, searchQuery]);
+
+  const showFeatured = selectedCategory === 'ALL' && !searchQuery && filteredArticles.length > 0;
+  const featured = filteredArticles[0];
+  const gridArticles = showFeatured ? filteredArticles.slice(1) : filteredArticles;
 
   return (
     <section className="relative px-4 pb-32 pt-24 md:px-8 md:pt-32 min-h-screen">
@@ -137,7 +144,7 @@ export default function BlogSection({ template: _template }: BlogSectionProps) {
         </div>
 
         {/* Featured Story Hero Card */}
-        {selectedCategory === 'ALL' && !searchQuery && (
+        {showFeatured && featured && (
           <div className="mb-14 group relative overflow-hidden rounded-3xl border border-border/70 bg-card/70 backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 grid grid-cols-1 md:grid-cols-12 gap-0">
             <div className="md:col-span-5 min-h-[260px] md:min-h-full bg-gradient-to-br from-primary/30 via-accent/20 to-card p-8 flex flex-col justify-between relative overflow-hidden">
               <div className="flex items-center gap-2">
@@ -160,38 +167,38 @@ export default function BlogSection({ template: _template }: BlogSectionProps) {
 
             <div className="md:col-span-7 p-8 sm:p-12 flex flex-col justify-center">
               <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                <span className="font-semibold text-primary">{t('blogs.cat_philosophy')}</span>
+                <span className="font-semibold text-primary">{featured.category}</span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <Calendar className="size-3.5" /> 12 Okt 2026
+                  <Calendar className="size-3.5" />{' '}
+                  {formatBlogDate(featured.publishedAt || featured.createdAt)}
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <Clock className="size-3.5" /> {t('blogs.featured_read_time')}
+                  <Clock className="size-3.5" /> {readTimeOf(featured.excerpt)}
                 </span>
               </div>
 
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors leading-snug">
-                {t('blogs.featured_title')}
+                {featured.title}
               </h2>
 
               <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed mb-6">
-                {t('blogs.featured_excerpt')}
+                {featured.excerpt}
               </p>
 
               <div className="flex items-center justify-between pt-4 border-t border-border/50">
                 <div className="flex items-center gap-2.5">
                   <div className="size-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
-                    MA
+                    {initialsOf(featured.authorName)}
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-foreground">Mulia Andiki</p>
-                    <p className="text-[11px] text-muted-foreground">Founder, Spaces by Mora</p>
+                    <p className="text-xs font-semibold text-foreground">{featured.authorName}</p>
                   </div>
                 </div>
 
                 <Link
-                  href="#"
+                  href={`/blogs/${featured.slug}`}
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline"
                 >
                   {t('blogs.read_review')}{' '}
@@ -203,51 +210,73 @@ export default function BlogSection({ template: _template }: BlogSectionProps) {
         )}
 
         {/* Article Cards Grid */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredArticles.map((article) => (
-            <article
-              key={article.id || article.title}
-              className="group flex flex-col justify-between rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-7 backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-4">
-                  <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
-                    {article.category}
-                  </span>
-                  <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                    <Clock className="size-3" />
-                    <span>{article.readTime}</span>
+        {data?.isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-7 space-y-3 animate-pulse"
+              >
+                <div className="h-4 w-1/3 rounded bg-muted" />
+                <div className="h-5 w-full rounded bg-muted" />
+                <div className="h-12 w-full rounded bg-muted" />
+              </div>
+            ))}
+          </div>
+        ) : data?.isError ? (
+          <div className="text-center py-16 rounded-3xl border border-border/60 bg-card/40 space-y-3">
+            <p className="text-sm font-semibold text-foreground">Gagal memuat artikel.</p>
+            <Button size="sm" variant="outline" onClick={() => data?.refetch()}>
+              Coba lagi
+            </Button>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {gridArticles.map((article) => (
+              <article
+                key={article.id}
+                className="group flex flex-col justify-between rounded-3xl border border-border/70 bg-card/60 p-6 sm:p-7 backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <span className="rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[11px] font-semibold text-primary">
+                      {article.category}
+                    </span>
+                    <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                      <Clock className="size-3" />
+                      <span>{readTimeOf(article.excerpt)}</span>
+                    </div>
                   </div>
+
+                  <h3 className="font-serif text-lg font-bold text-foreground mb-2.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    {article.title}
+                  </h3>
+
+                  <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-6">
+                    {article.excerpt}
+                  </p>
                 </div>
 
-                <h3 className="font-serif text-lg font-bold text-foreground mb-2.5 group-hover:text-primary transition-colors line-clamp-2 leading-snug">
-                  {article.title}
-                </h3>
+                <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2 text-muted-foreground text-[11px]">
+                    <Calendar className="size-3" />
+                    <span>{formatBlogDate(article.publishedAt || article.createdAt)}</span>
+                  </div>
 
-                <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3 mb-6">
-                  {article.excerpt}
-                </p>
-              </div>
-
-              <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-muted-foreground text-[11px]">
-                  <Calendar className="size-3" />
-                  <span>{article.date}</span>
+                  <Link
+                    href={`/blogs/${article.slug}`}
+                    className="inline-flex items-center gap-1 font-semibold text-foreground group-hover:text-primary transition-colors text-xs"
+                  >
+                    <span>{t('blogs.read_article')}</span>
+                    <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Link>
                 </div>
+              </article>
+            ))}
+          </div>
+        )}
 
-                <Link
-                  href="#"
-                  className="inline-flex items-center gap-1 font-semibold text-foreground group-hover:text-primary transition-colors text-xs"
-                >
-                  <span>{t('blogs.read_article')}</span>
-                  <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </Link>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        {filteredArticles.length === 0 && (
+        {filteredArticles.length === 0 && !data?.isLoading && !data?.isError && (
           <div className="text-center py-16 rounded-3xl border border-border/60 bg-card/40">
             <p className="text-sm font-semibold text-foreground">{t('blogs.empty_title')}</p>
             <p className="text-xs text-muted-foreground mt-1">{t('blogs.empty_desc')}</p>

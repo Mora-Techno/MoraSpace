@@ -20,8 +20,9 @@ import {
   Skeleton,
 } from '@/components/atoms';
 import { useApi } from '@/hooks/useApi/useApi';
-import { useChatSocket } from '@/hooks/useChatSocket';
+import { hasCompanyChatContext, useChatSocket } from '@/hooks/useChatSocket';
 import { useDebounce } from '@/hooks/useDebounce';
+import { loadAuthSession } from '@/utils/storage';
 
 function timeLabel(iso?: string | null) {
   if (!iso) return '';
@@ -50,6 +51,12 @@ export default function ChatListContainer() {
   const base = pathname.startsWith('/owner') ? '/owner/member/chat' : '/member/chat';
   const api = useApi();
   const { status, subscribe, unsubscribe } = useChatSocket();
+
+  const isPersonal = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const token = loadAuthSession()?.accessToken ?? null;
+    return !hasCompanyChatContext(token);
+  }, []);
 
   const [filter, setFilter] = useState('');
   const [showNew, setShowNew] = useState(false);
@@ -120,6 +127,28 @@ export default function ChatListContainer() {
       },
     );
   };
+
+  if (isPersonal) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 max-w-md mx-auto">
+        <div className="size-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 text-primary shadow-xs">
+          <MessageCircle className="size-8" />
+        </div>
+        <h2 className="text-xl font-semibold mb-2">Chat Hanya Tersedia di Company Workspace</h2>
+        <p className="text-sm text-muted-foreground mb-6">
+          Fitur obrolan dan kolaborasi tim dirancang untuk komunikasi dalam perusahaan. Silakan
+          beralih ke Company Workspace melalui Workspace Switcher di header atas.
+        </p>
+        <Button
+          onClick={() => router.push('/member/dashboard')}
+          variant="outline"
+          className="rounded-xl"
+        >
+          Kembali ke Dashboard
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full max-w-3xl mx-auto space-y-4">
@@ -301,7 +330,10 @@ export default function ChatListContainer() {
               ))}
             </div>
             <DialogFooter>
-              <Button type="submit" disabled={!groupName.trim() || picked.length === 0 || createGroup.isPending}>
+              <Button
+                type="submit"
+                disabled={!groupName.trim() || picked.length === 0 || createGroup.isPending}
+              >
                 {createGroup.isPending ? 'Membuat...' : `Buat grup (${picked.length})`}
               </Button>
             </DialogFooter>

@@ -137,9 +137,9 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
     },
     { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
-  // Personal & individual langsung pakai nav member (tanpa embed duplikat).
-  personal: MEMBER_NAV_ITEMS,
-  individual: MEMBER_NAV_ITEMS,
+  // Personal & individual: fitur obrolan disembunyikan karena chat bersifat company-scoped.
+  personal: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
+  individual: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
 };
 
 export function getNavItems(role?: Role | string | null): NavItem[] {

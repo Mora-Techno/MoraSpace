@@ -22,7 +22,7 @@ import {
 } from 'react';
 
 import { env, queryKey } from '@/configs';
-import { clearAuthSession, loadAuthSession } from '@/utils/storage';
+import { loadAuthSession } from '@/utils/storage';
 
 export type ChatConnStatus = 'idle' | 'connecting' | 'open' | 'closed' | 'error';
 export type LocalSendStatus = 'sending' | 'failed';
@@ -60,6 +60,34 @@ function readToken() {
   return loadAuthSession()?.accessToken ?? null;
 }
 
+interface ChatTokenClaims {
+  id?: string;
+  fullName?: string;
+  companyId?: string | null;
+  companyMemberId?: string | null;
+  workspaceType?: 'personal' | 'company';
+  role?: string;
+  companyRole?: string;
+}
+
+export function parseTokenClaims(token: string | null): ChatTokenClaims | null {
+  if (!token) return null;
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return null;
+    return JSON.parse(atob(payload)) as ChatTokenClaims;
+  } catch {
+    return null;
+  }
+}
+
+export function hasCompanyChatContext(token: string | null): boolean {
+  const claims = parseTokenClaims(token);
+  if (!claims) return false;
+  if (claims.workspaceType === 'personal') return false;
+  return Boolean(claims.companyId && claims.companyMemberId);
+}
+
 export function ChatSocketProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
   const router = useRouter();
@@ -91,7 +119,10 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
         const pages = old.pages.map((page) => ({
           ...page,
           data: page.data.map((m) => {
-            if (m.id === msg.id || (msg.clientMessageId && m.clientMessageId === msg.clientMessageId)) {
+            if (
+              m.id === msg.id ||
+              (msg.clientMessageId && m.clientMessageId === msg.clientMessageId)
+            ) {
               replaced = true;
               return msg;
             }
@@ -176,9 +207,15 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
           if (!p.conversationId || !p.userId) return;
           if (p.userId === userIdRef.current) return;
           setTyping((prev) => {
-            const list = (prev[p.conversationId as string] ?? []).filter((t) => t.userId !== p.userId);
+            const list = (prev[p.conversationId as string] ?? []).filter(
+              (t) => t.userId !== p.userId,
+            );
             if (p.isTyping) {
-              list.push({ userId: p.userId as string, fullName: p.fullName, expiresAt: Date.now() + TYPING_LOCAL_TTL_MS });
+              list.push({
+                userId: p.userId as string,
+                fullName: p.fullName,
+                expiresAt: Date.now() + TYPING_LOCAL_TTL_MS,
+              });
             }
             return { ...prev, [p.conversationId as string]: list };
           });
@@ -191,23 +228,29 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
           setPeerReads((prev) => {
             const cur = prev[p.conversationId as string];
             if (cur && cur.seq >= (p.seq as number)) return prev;
-            return { ...prev, [p.conversationId as string]: { userId: p.userId as string, seq: p.seq as number } };
+            return {
+              ...prev,
+              [p.conversationId as string]: { userId: p.userId as string, seq: p.seq as number },
+            };
           });
           return;
         }
         case CHAT_WS_EVENTS.ERROR: {
           if (payload?.code === 'AUTH_FAILED') {
             const fresh = readToken();
-            if (fresh && fresh !== tokenRef.current) {
+            if (fresh && fresh !== tokenRef.current && hasCompanyChatContext(fresh)) {
               tokenRef.current = fresh;
               wsRef.current?.send(
                 JSON.stringify({ event: CHAT_WS_EVENTS.AUTH, payload: { token: fresh } }),
               );
               return;
             }
-            clearAuthSession();
+            // Secondary websocket auth failure must NEVER wipe app session
             setAuthed(false);
             setStatus('error');
+          } else if (payload?.code === 'COMPANY_CONTEXT_REQUIRED') {
+            setAuthed(false);
+            setStatus('idle');
           }
           return;
         }
@@ -224,13 +267,23 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
 
   const connect = useCallback(() => {
     if (typeof window === 'undefined') return;
-    const socket = wsRef.current;
-    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+    const token = readToken();
+    if (!token || !hasCompanyChatContext(token)) {
+      if (wsRef.current) {
+        try {
+          wsRef.current.close();
+        } catch {}
+        wsRef.current = null;
+      }
+      setAuthed(false);
+      setStatus('idle');
       return;
     }
-    const token = readToken();
-    if (!token) {
-      setStatus('idle');
+    const socket = wsRef.current;
+    if (
+      socket &&
+      (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)
+    ) {
       return;
     }
     tokenRef.current = token;
@@ -260,10 +313,15 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
         return;
       }
       setStatus('closed');
-      if (!readToken()) return;
+      const curToken = readToken();
+      if (!curToken || !hasCompanyChatContext(curToken)) {
+        setStatus('idle');
+        return;
+      }
       const attempt = attemptsRef.current + 1;
       attemptsRef.current = attempt;
-      const delay = Math.min(MAX_BACKOFF_MS, 1000 * 2 ** Math.min(attempt, 5)) + Math.random() * 1000;
+      const delay =
+        Math.min(MAX_BACKOFF_MS, 1000 * 2 ** Math.min(attempt, 5)) + Math.random() * 1000;
       clearRetry();
       retryTimerRef.current = setTimeout(() => {
         if (mountedRef.current) connect();
@@ -273,6 +331,7 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
 
   const reconnect = useCallback(() => {
     attemptsRef.current = 0;
+    clearRetry();
     try {
       wsRef.current?.close();
     } catch {
@@ -314,26 +373,19 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
     };
   }, [connect]);
 
-  const subscribe = useCallback(
-    (conversationId: string) => {
-      subsRef.current.add(conversationId);
-      const ws = wsRef.current;
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(
-          JSON.stringify({ event: CHAT_WS_EVENTS.SUBSCRIBE, payload: { conversationId } }),
-        );
-      }
-    },
-    [],
-  );
+  const subscribe = useCallback((conversationId: string) => {
+    subsRef.current.add(conversationId);
+    const ws = wsRef.current;
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ event: CHAT_WS_EVENTS.SUBSCRIBE, payload: { conversationId } }));
+    }
+  }, []);
 
   const unsubscribe = useCallback((conversationId: string) => {
     subsRef.current.delete(conversationId);
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(
-        JSON.stringify({ event: CHAT_WS_EVENTS.UNSUBSCRIBE, payload: { conversationId } }),
-      );
+      ws.send(JSON.stringify({ event: CHAT_WS_EVENTS.UNSUBSCRIBE, payload: { conversationId } }));
     }
     setTyping((prev) => {
       if (!prev[conversationId]) return prev;
@@ -363,9 +415,7 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
   const sendRead = useCallback((conversationId: string, seq: number) => {
     const ws = wsRef.current;
     if (!ws || ws.readyState !== WebSocket.OPEN || !seq) return;
-    ws.send(
-      JSON.stringify({ event: CHAT_WS_EVENTS.READ, payload: { conversationId, seq } }),
-    );
+    ws.send(JSON.stringify({ event: CHAT_WS_EVENTS.READ, payload: { conversationId, seq } }));
   }, []);
 
   const sendMessage = useCallback(
@@ -393,7 +443,10 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
           payload: { conversationId, clientMessageId, body: text },
         }),
       );
-      const timer = setTimeout(() => markFailedRef.current(conversationId, clientMessageId), ACK_TIMEOUT_MS);
+      const timer = setTimeout(
+        () => markFailedRef.current(conversationId, clientMessageId),
+        ACK_TIMEOUT_MS,
+      );
       ackTimersRef.current.set(clientMessageId, timer);
       void queryClient.invalidateQueries({ queryKey: queryKey.chat.conversations() });
       return clientMessageId;
@@ -454,7 +507,10 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
       );
       const oldTimer = ackTimersRef.current.get(clientMessageId);
       if (oldTimer) clearTimeout(oldTimer);
-      const timer = setTimeout(() => markFailedRef.current(conversationId, clientMessageId), ACK_TIMEOUT_MS);
+      const timer = setTimeout(
+        () => markFailedRef.current(conversationId, clientMessageId),
+        ACK_TIMEOUT_MS,
+      );
       ackTimersRef.current.set(clientMessageId, timer);
     },
     [queryClient],
@@ -475,7 +531,20 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
       typing,
       peerReads,
     }),
-    [status, authed, userId, subscribe, unsubscribe, sendMessage, retryMessage, sendTyping, sendRead, reconnect, typing, peerReads],
+    [
+      status,
+      authed,
+      userId,
+      subscribe,
+      unsubscribe,
+      sendMessage,
+      retryMessage,
+      sendTyping,
+      sendRead,
+      reconnect,
+      typing,
+      peerReads,
+    ],
   );
 
   return <ChatSocketContext.Provider value={value}>{children}</ChatSocketContext.Provider>;
