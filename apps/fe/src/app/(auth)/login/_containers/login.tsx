@@ -90,6 +90,12 @@ export default function LoginContainer() {
           </Link>
         </p>
         <p className="text-xs text-muted-foreground">
+          {t('login.register_personal', { defaultValue: 'Mau coba sendiri dulu?' })}{' '}
+          <Link href="/register/individual" className="font-medium text-foreground hover:underline">
+            {t('login.register_personal_link', { defaultValue: 'Daftar sebagai personal' })}
+          </Link>
+        </p>
+        <p className="text-xs text-muted-foreground">
           Bergabung sebagai tim?{' '}
           <Link href="/register/employ" className="font-medium text-foreground hover:underline">
             Daftar sebagai karyawan

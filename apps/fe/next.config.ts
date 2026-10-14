@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     '*': ['sharp', '@img/**'],
   },
   transpilePackages: ['@repo'],
+  experimental: {
+    optimizePackageImports: ['lucide-react', 'date-fns', 'recharts'],
+  },
   images: {
     unoptimized: true,
   },
