@@ -127,6 +127,11 @@ export const queryKey = {
     detail: (id: string) => ['session', 'detail', id] as const,
   },
 
+  dashboardRoot: () => ['dashboard'] as const,
+  dashboard: {
+    owner: () => ['dashboard', 'owner'] as const,
+  },
+
   chatRoot: () => ['chat'] as const,
   chat: {
     conversations: () => ['chat', 'conversations'] as const,

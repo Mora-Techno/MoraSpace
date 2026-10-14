@@ -5,22 +5,16 @@ import type { ReactNode } from 'react';
 interface OwnerDashboardTemplateProps {
   gridRef: React.RefObject<HTMLDivElement | null>;
   kpiCards: ReactNode;
-  aiInsightsBanner: ReactNode;
-  productivityChart: ReactNode;
   taskDistributionChart: ReactNode;
   billingWidget: ReactNode;
-  pendingApprovalsWidget: ReactNode;
   activityFeedWidget: ReactNode;
 }
 
 export function OwnerDashboardTemplate({
   gridRef,
   kpiCards,
-  aiInsightsBanner,
-  productivityChart,
   taskDistributionChart,
   billingWidget,
-  pendingApprovalsWidget,
   activityFeedWidget,
 }: OwnerDashboardTemplateProps) {
   return (
@@ -42,28 +36,15 @@ export function OwnerDashboardTemplate({
           {kpiCards}
         </div>
 
-        {/* Row 2 — AI Insights Banner (full width) */}
-        <div className="lg:col-span-4" data-stagger-item>
-          {aiInsightsBanner}
-        </div>
-
-        {/* Row 3 — Charts (3:1 split) */}
+        {/* Row 2 — Charts + Billing */}
         <div className="lg:col-span-3 lg:row-span-1" data-stagger-item>
-          {productivityChart}
-        </div>
-        <div className="lg:col-span-1" data-stagger-item>
           {taskDistributionChart}
         </div>
-
-        {/* Row 4 — Billing + Approvals (1.5:2.5 split visually) */}
         <div className="lg:col-span-1" data-stagger-item>
           {billingWidget}
         </div>
-        <div className="lg:col-span-3" data-stagger-item>
-          {pendingApprovalsWidget}
-        </div>
 
-        {/* Row 5 — Activity Feed (full width) */}
+        {/* Row 3 — Activity Feed (full width) */}
         <div className="lg:col-span-4" data-stagger-item>
           {activityFeedWidget}
         </div>

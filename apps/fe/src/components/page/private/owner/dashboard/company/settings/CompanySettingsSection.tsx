@@ -11,7 +11,7 @@ import {
   Input,
   Label,
 } from '@/components/atoms';
-import { PageHeader } from '@/components/molecules/PageHeader';
+import { ImageUpload, PageHeader } from '@/components/molecules';
 
 interface CompanySettingsSectionProps {
   service: {
@@ -91,17 +91,19 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="logo">Logo URL</Label>
-              <Input
-                id="logo"
+              <ImageUpload
+                label="Logo Perusahaan"
+                description="Format: PNG, JPG, WebP, atau SVG. Ukuran maksimal 2MB."
                 value={formUpdate.logo}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onChange={(url) =>
                   setFormUpdate((prev) => ({
                     ...prev,
-                    logo: e.target.value,
+                    logo: url,
                   }))
                 }
-                placeholder="https://example.com/logo.png"
+                folder="company-logos"
+                shape="rounded"
+                previewSize="lg"
                 disabled={isPending || isLoading}
               />
             </div>

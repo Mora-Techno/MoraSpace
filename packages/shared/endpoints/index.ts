@@ -54,3 +54,4 @@ export {
 } from './trackCatalog.endpoints';
 export { CHAT_ENDPOINTS, listChatEndpoints } from './chat.endpoints';
 export { BLOG_ENDPOINTS, listBlogEndpoints } from './blog.endpoints';
+export { DASHBOARD_ENDPOINTS, listDashboardEndpoints } from './dashboard.endpoints';
