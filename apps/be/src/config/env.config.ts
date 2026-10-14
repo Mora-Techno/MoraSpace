@@ -6,6 +6,7 @@ const envSchema = z.object({
   PORT: z.string(),
   JWT_SECRET: z.string(),
   FRONTEND_URL: z.string().url(),
+  CORS_ORIGINS: z.string().optional(),
   INTERNAL_API_SECRET: z.string(),
   RESEND_API_KEY: z.string(),
   RESEND_FROM_EMAIL: z.string(),
