@@ -210,6 +210,11 @@ export type {
   IBlogPost,
 } from './blog.types';
 export type {
+  DashboardActivityItem,
+  DashboardTaskStatusSlice,
+  OwnerDashboardOverview,
+} from './dashboard.types';
+export type {
   ChatConversationPreview,
   ChatMemberInfo,
   ChatMessageInfo,

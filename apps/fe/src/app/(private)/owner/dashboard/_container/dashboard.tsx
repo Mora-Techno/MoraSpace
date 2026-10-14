@@ -4,19 +4,20 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { useRef } from 'react';
 
-import { AiInsightsBanner } from '@/components/molecules/AiInsightsBanner';
+import { Button } from '@/components/atoms';
 import { ActivityFeedWidget } from '@/components/organisms/ActivityFeedWidget';
 import { BillingWidget } from '@/components/organisms/BillingWidget';
 import { KpiCards } from '@/components/organisms/KpiCards';
-import { PendingApprovalsWidget } from '@/components/organisms/PendingApprovalsWidget';
-import { ProductivityChart } from '@/components/organisms/ProductivityChart';
 import { TaskDistributionChart } from '@/components/organisms/TaskDistributionChart';
 import { OwnerDashboardTemplate } from '@/components/templates/OwnerDashboardTemplate';
+import { useApi } from '@/hooks/useApi/useApi';
 
 gsap.registerPlugin(useGSAP);
 
 export default function OwnerDashboardContainer() {
   const gridRef = useRef<HTMLDivElement>(null);
+  const api = useApi();
+  const { data: overview, isLoading, isError, refetch } = api.dashboard.query.ownerOverview();
 
   useGSAP(
     () => {
@@ -36,16 +37,39 @@ export default function OwnerDashboardContainer() {
     { scope: gridRef },
   );
 
+  if (isLoading) {
+    return (
+      <section className="w-full min-h-screen pb-12">
+        <div className="mb-6 h-8 w-56 animate-pulse rounded-lg bg-muted" />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-32 animate-pulse rounded-2xl bg-muted/60" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (isError || !overview) {
+    return (
+      <section className="w-full min-h-screen pb-12">
+        <div className="rounded-2xl border border-border/60 p-10 text-center space-y-3">
+          <p className="text-sm font-medium">Gagal memuat ringkasan.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()}>
+            Coba lagi
+          </Button>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <OwnerDashboardTemplate
       gridRef={gridRef}
-      kpiCards={<KpiCards />}
-      aiInsightsBanner={<AiInsightsBanner />}
-      productivityChart={<ProductivityChart />}
-      taskDistributionChart={<TaskDistributionChart />}
-      billingWidget={<BillingWidget />}
-      pendingApprovalsWidget={<PendingApprovalsWidget />}
-      activityFeedWidget={<ActivityFeedWidget />}
+      kpiCards={<KpiCards overview={overview} />}
+      taskDistributionChart={<TaskDistributionChart slices={overview.tasks.byStatus} />}
+      billingWidget={<BillingWidget plan={overview.plan} />}
+      activityFeedWidget={<ActivityFeedWidget items={overview.recentActivity} />}
     />
   );
 }
