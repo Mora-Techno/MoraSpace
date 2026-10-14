@@ -18,6 +18,17 @@ const app = new Elysia()
         return getCorsOrigin(origin);
       },
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'],
+      allowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'x-internal-api-key',
+        'Origin',
+        'Accept',
+        'x-requested-with',
+      ],
+      exposeHeaders: ['Content-Range', 'X-Content-Range'],
+      maxAge: 86400,
     }),
   )
   .use(
@@ -34,6 +45,8 @@ const app = new Elysia()
   .use(
     helmet({
       contentSecurityPolicy: false,
+      originAgentCluster: false,
+      crossOriginResourcePolicy: { policy: 'cross-origin' },
     }),
   )
 
