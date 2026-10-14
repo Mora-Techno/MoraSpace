@@ -1,55 +1,48 @@
+
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "moraspace",
   "main": ".open-next/worker.js",
+
   "compatibility_date": "2025-02-14",
   "compatibility_flags": [
     "nodejs_compat",
     "nodejs_compat_populate_process_env"
   ],
+
+  "workers_dev": true,
+  "preview_urls": true,
+  "keep_vars": true,
+
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "moraspace"
     }
   ],
+
   "vars": {
-    "NODE_ENV": "development",
+    "NODE_ENV": "production",
+    "APP_ENV": "production",
     "NEXT_PUBLIC_BASEPATH": "/home",
     "NEXT_PRIVATE_MINIMAL_MODE": "1"
   },
-  "env": {
-    "staging": {
-      "name": "moraspace-staging",
-      "services": [
-        {
-          "binding": "WORKER_SELF_REFERENCE",
-          "service": "moraspace-staging"
-        }
-      ],
-      "vars": {
-        "NODE_ENV": "production",
-        "NEXT_PUBLIC_BASEPATH": "/home",
-        "NEXT_PRIVATE_MINIMAL_MODE": "1"
-      }
+
+  "previews": {
+    "vars": {
+      "NODE_ENV": "production",
+      "APP_ENV": "preview",
+      "NEXT_PUBLIC_BASEPATH": "/home",
+      "NEXT_PRIVATE_MINIMAL_MODE": "1"
     },
-    "production": {
-      "name": "moraspace-prod",
-      "services": [
-        {
-          "binding": "WORKER_SELF_REFERENCE",
-          "service": "moraspace-prod"
-        }
-      ],
-      "vars": {
-        "NODE_ENV": "production",
-        "NEXT_PUBLIC_BASEPATH": "/home",
-        "NEXT_PRIVATE_MINIMAL_MODE": "1"
-      }
+
+    "observability": {
+      "enabled": true
     }
   }
 }
