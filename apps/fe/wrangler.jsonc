@@ -11,7 +11,7 @@
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "next-shadcn-base-dev"
+      "service": "moraspace"
     }
   ],
   "vars": {
@@ -21,11 +21,11 @@
   },
   "env": {
     "staging": {
-      "name": "next-shadcn-base-staging",
+      "name": "moraspace-staging",
       "services": [
         {
           "binding": "WORKER_SELF_REFERENCE",
-          "service": "next-shadcn-base-staging"
+          "service": "moraspace-staging"
         }
       ],
       "vars": {
@@ -35,11 +35,11 @@
       }
     },
     "production": {
-      "name": "next-shadcn-base-prod",
+      "name": "moraspace-prod",
       "services": [
         {
           "binding": "WORKER_SELF_REFERENCE",
-          "service": "next-shadcn-base-prod"
+          "service": "moraspace-prod"
         }
       ],
       "vars": {
