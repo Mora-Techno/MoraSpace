@@ -1,7 +1,6 @@
 'use client';
 import { PickLogin } from '@repo/types';
 import { useState } from 'react';
-import { View } from 'react-native';
 
 import LoginSection from '@/components/section/auth/login/page-section';
 import { useApi } from '@/hooks/service/useApi';
@@ -32,21 +31,20 @@ const LoginContainer = () => {
   };
 
   return (
-    <View className="w-full min-h-screen flex flex-col">
-      <LoginSection
-        state={{
-          formLogin,
-          setFormLogin,
-          setShowPassword,
-          showPassword,
-          alert: ns.alert,
-        }}
-        service={{
-          isPending: useLogin.isPending,
-          onLogin: handleLogin,
-        }}
-      />
-    </View>
+    <LoginSection
+      state={{
+        formLogin,
+        setFormLogin,
+        setShowPassword,
+        showPassword,
+        alert: ns.alert,
+      }}
+      service={{
+        isPending: useLogin.isPending,
+        onLogin: handleLogin,
+        onRegister: () => ns.router.push('/(auth)/register/page'),
+      }}
+    />
   );
 };
 

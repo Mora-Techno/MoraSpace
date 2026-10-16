@@ -12,6 +12,7 @@ export default function CompanySettingsContainer() {
 
   const { data: company, isLoading: isCompanyLoading } = api.company.query.getMe();
   const { data: settings, isLoading: isSettingsLoading } = api.company.query.getSettings();
+  const { data: metrics } = api.workingHours.query.ownerMetrics('7d');
 
   const updateProfile = api.company.mutate.updateProfile();
   const updateSettings = api.company.mutate.updateSettings();
@@ -24,6 +25,7 @@ export default function CompanySettingsContainer() {
     workDays: string;
     respectWorkingHours?: boolean;
     queueNotification?: boolean;
+    urgentMessageLimitPerDay?: number;
   }>({
     logo: '',
     country: '',
@@ -32,6 +34,7 @@ export default function CompanySettingsContainer() {
     workDays: 'mon,tue,wed,thu,fri',
     respectWorkingHours: true,
     queueNotification: true,
+    urgentMessageLimitPerDay: 3,
   });
 
   useEffect(() => {
@@ -55,6 +58,7 @@ export default function CompanySettingsContainer() {
         workDays: s.workDays || prev.workDays,
         respectWorkingHours: s.respectWorkingHours ?? prev.respectWorkingHours,
         queueNotification: s.queueNotification ?? prev.queueNotification,
+        urgentMessageLimitPerDay: s.urgentMessageLimitPerDay ?? prev.urgentMessageLimitPerDay ?? 3,
       }));
     }
   }, [settings]);
@@ -68,6 +72,7 @@ export default function CompanySettingsContainer() {
       workDays: formUpdate.workDays,
       respectWorkingHours: formUpdate.respectWorkingHours,
       queueNotification: formUpdate.queueNotification,
+      urgentMessageLimitPerDay: formUpdate.urgentMessageLimitPerDay,
     });
   };
 
@@ -77,6 +82,7 @@ export default function CompanySettingsContainer() {
         handleSubmit,
         isPending: updateProfile.isPending || updateSettings.isPending,
         isLoading: isCompanyLoading || isSettingsLoading,
+        metrics,
       }}
       state={{
         formUpdate,

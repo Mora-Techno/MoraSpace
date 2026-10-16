@@ -1,7 +1,3 @@
-import type { DashboardActivityItem } from '@repo/types';
-import { formatDistanceToNow } from 'date-fns';
-import { id as idLocale } from 'date-fns/locale';
-
 import {
   Avatar,
   AvatarFallback,
@@ -12,16 +8,16 @@ import {
 } from '@/components/atoms';
 import { GlassCard } from '@/components/molecules/GlassCard';
 
-function initialsOf(name: string) {
-  return name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+interface ActivityItem {
+  id: string;
+  actorName: string;
+  initials: string;
+  action: string;
+  taskTitle: string;
+  timeAgo: string;
 }
 
-export function ActivityFeedWidget({ items = [] }: { items?: DashboardActivityItem[] }) {
+export function ActivityFeedWidget({ items = [] }: { items?: ActivityItem[] }) {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-3">
@@ -44,7 +40,7 @@ export function ActivityFeedWidget({ items = [] }: { items?: DashboardActivityIt
               )}
               <Avatar className="size-8 shrink-0 rounded-lg ring-1 ring-border/30">
                 <AvatarFallback className="rounded-lg bg-muted text-[10px] font-medium text-muted-foreground">
-                  {initialsOf(log.actorName)}
+                  {log.initials}
                 </AvatarFallback>
               </Avatar>
               <div className="min-w-0 flex-1">
@@ -57,12 +53,7 @@ export function ActivityFeedWidget({ items = [] }: { items?: DashboardActivityIt
                     </>
                   ) : null}
                 </p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground/60">
-                  {formatDistanceToNow(new Date(log.createdAt), {
-                    addSuffix: true,
-                    locale: idLocale,
-                  })}
-                </p>
+                <p className="mt-0.5 text-[10px] text-muted-foreground/60">{log.timeAgo}</p>
               </div>
             </div>
           </div>

@@ -21,3 +21,8 @@ Tailwind + Radix (`apps/fe`), Expo (`apps/mobile`), contract-first
    cek `git rev-parse HEAD` vs commit di `GRAPH_REPORT.md`.
 5. Scope: `docs/space.version.0.0.1.md`. Yang WON'T → tolak.
 6. Selesai: `bun run lint`, `bun run format:check`.
+7. React-Atomic: container (`_container*/`, `*Container`) hanya hooks +
+   handler + komposisi SATU section via props (`template/service/state`);
+   dilarang markup lain, dilarang fetch/navigasi di `components/`
+   (fetch + navigasi milik container/hook). ESLint menegakkannya (warn →
+   error).

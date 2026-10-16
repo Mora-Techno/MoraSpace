@@ -1,175 +1,161 @@
-Kamu adalah senior full-stack engineer. Implementasikan fitur chat pribadi (1-to-1) dan grup chat pada project ini, menggunakan WebSocket + event untuk komunikasi real-time.
+# Spaces v0.0.2 — Rencana Detail: Status Jam Kerja yang Terlihat
+*Tingkat konsep dan produk, tanpa kode. Label: **[Keputusan]** sudah disepakati, **[Asumsi]** belum terbukti, **[Terbuka]** perlu kamu putuskan.*
 
-Baca arsitektur dan konvensi project terlebih dahulu, lalu kerjakan backend dan frontend sampai terintegrasi. Ikuti stack, pola komponen, autentikasi, ORM, dan design system yang sudah digunakan. Jangan membaca atau menampilkan isi `.env`, credential, atau secret.
+---
 
-### 1. Audit dan rencana implementasi
+## 1. Tujuan dan Hipotesis
 
-Periksa:
-- Struktur backend dan frontend.
-- Sistem autentikasi serta identitas pengguna.
-- Model database dan mekanisme migrasi.
-- Dukungan WebSocket yang sudah tersedia.
-- Pola state management, fetching, dan komponen UI.
-- Topologi deployment: satu atau beberapa instance backend.
+**Tujuan:** membuat "Respect Working Hours" terlihat dan terasa oleh orang yang baru memakai Spaces, bukan hanya berjalan diam-diam di balik layar.
 
-Sampaikan temuan dan rencana singkat, kemudian lanjutkan implementasi. Jangan berhenti hanya pada audit atau rencana. Jangan mengganti stack atau melakukan refactor besar di luar kebutuhan fitur.
+**Hipotesis yang diuji:**
+1. Pengirim yang tahu pesannya akan tertahan merasa lebih tenang, bukan terhalang.
+2. Penerima merasa terlindungi dan lebih jarang membuka app di luar jam kerja.
+3. Tim akan menghormati status ini tanpa kembali ke WhatsApp untuk urusan biasa.
 
-### 2. Chat pribadi
+**Ukuran berhasil (dicatat sejak hari pertama):**
+- Berapa kali orang mengirim pesan atau meng-assign task ke rekan yang sedang di luar jam kerja.
+- Berapa kali tombol "mendesak" dipakai, oleh siapa, dan berapa yang ditandai berlebihan.
+- Apakah jumlah pembukaan app di luar jam kerja turun dibanding sebelum fitur ini.
+- Umpan balik tim di catatan harian: "melegakan" atau "menghalangi".
 
-Implementasikan:
-- Mencari dan memilih pengguna yang boleh dihubungi sesuai aturan aplikasi.
-- Membuka atau membuat percakapan pribadi.
-- Satu percakapan pribadi untuk pasangan pengguna yang sama. Pastikan request bersamaan tidak membuat duplikasi.
-- Mengirim dan menerima pesan teks secara real-time.
-- Riwayat pesan dengan cursor pagination.
-- Preview pesan terakhir, waktu pesan, dan jumlah pesan belum dibaca.
-- Indikator sedang mengetik.
-- Status pesan: mengirim, tersimpan di server, gagal, dan dibaca.
-- Retry pesan gagal tanpa membuat pesan ganda.
+---
 
-Jangan menampilkan status “terkirim ke perangkat penerima” jika belum ada acknowledgement dari perangkat penerima. Bedakan pesan tersimpan di server dengan pesan sudah dibaca.
+## 2. Lingkup
 
-### 3. Grup chat
+### Masuk v0.0.2
+1. **Label status** per anggota: "Sedang kerja" atau "Kembali [hari] [jam]".
+2. **Penempatan label** di daftar anggota, header percakapan chat, dan saat memilih assignee task.
+3. **Info saat mengirim**: di chat atau assign task ke orang yang sedang di luar jam kerja, muncul satu baris "Akan sampai [hari] [jam]".
+4. **Tombol "Mendesak"** dengan batas pemakaian (lihat bagian 3).
+5. **Pencatatan kejadian** untuk ukuran berhasil di atas.
+6. **Ringkasan untuk Owner**: seberapa sering "mendesak" dipakai (satu angka sederhana di pengaturan atau notifikasi).
 
-Implementasikan:
-- Membuat grup dengan nama dan anggota awal.
-- Menampilkan informasi serta daftar anggota.
-- Mengubah nama dan deskripsi grup.
-- Menambah dan mengeluarkan anggota.
-- Keluar dari grup.
-- Role `OWNER`, `ADMIN`, dan `MEMBER`.
-- Owner dapat mengangkat atau menurunkan admin dan memindahkan kepemilikan.
-- Admin dapat mengelola informasi grup dan anggota biasa, tetapi tidak dapat mengeluarkan owner atau mengubah kepemilikan.
-- Member dapat membaca dan mengirim pesan serta keluar dari grup.
-- Owner harus memindahkan kepemilikan sebelum keluar; jika menjadi anggota terakhir, grup boleh diarsipkan.
+### Sengaja ditunda
+Jam kerja per orang, zona waktu berbeda, status manual (cuti, fokus), integrasi dengan pomodoro, ringkasan "yang tertahan semalam" (nomor 1, antre berikutnya), chat esensial (nomor 3), impor data (nomor 4, parkir).
 
-Default kebijakan riwayat: anggota baru dapat membaca riwayat grup selama menjadi anggota aktif. Setelah keluar atau dikeluarkan, pengguna tidak boleh mengambil riwayat lagi atau menerima event baru. Dokumentasikan kebijakan ini.
+---
 
-### 4. Model data
+## 3. Aturan Perilaku
 
-Sesuaikan dengan ORM project. Minimal mencakup:
-- Conversation: tipe `DIRECT` atau `GROUP`, nama, deskripsi, dan timestamp.
-- ConversationMember: user, role, waktu bergabung, dan posisi pesan terakhir yang sudah dibaca.
-- Message: conversation, pengirim, isi, `clientMessageId`, dan urutan pesan yang ditentukan server.
+**Status diturunkan otomatis** dari kebijakan jam kerja perusahaan yang sudah ada. Tidak ada pengaturan baru untuk Member.
 
-Tambahkan:
-- Constraint percakapan pribadi untuk pasangan pengguna yang sama.
-- Constraint keanggotaan agar tidak duplikat.
-- Constraint idempotensi berdasarkan pengirim dan `clientMessageId`.
-- Index untuk daftar percakapan, pagination pesan, dan unread count.
+| Situasi | Perilaku |
+|---|---|
+| Penerima dalam jam kerja | Status "Sedang kerja", pesan terkirim seperti biasa |
+| Penerima di luar jam kerja | Status "Kembali [hari] [jam]", pesan tersimpan dan sampai saat jam kerja mulai |
+| Akhir pekan atau hari libur | Mengikuti kebijakan perusahaan. **[Terbuka]** apakah hari libur nasional ikut dihitung, saya sarankan tidak di v0.0.2 |
+| Pengirim menekan "Mendesak" | Pesan menembus, ditandai khusus, tercatat untuk Owner |
 
-Gunakan urutan pesan yang stabil dari server untuk pagination, sinkronisasi, dan read receipt. Jangan mengandalkan jam perangkat pengguna.
+**[Keputusan sementara, kamu bisa ubah]** Pesan mendesak boleh, dengan batas. Alasannya: tanpa jalur darurat orang kembali ke WhatsApp, dan tanpa batas semua orang menandai urgent.
 
-### 5. HTTP API dan event WebSocket
+**[Asumsi]** batas awal tiga pesan mendesak per orang per hari, bisa diubah Owner. Angkanya tebakan, jangan dianggap benar sebelum dilihat dari data pemakaian.
 
-Gunakan HTTP API untuk daftar percakapan, riwayat, pencarian pengguna, dan pengelolaan grup. Gunakan WebSocket untuk pengiriman pesan dan pembaruan real-time.
+**[Keputusan]** Privasi: yang ditampilkan hanya status dan jam kembali. Tidak ada alasan, tidak ada aktivitas terakhir, tidak ada isi pesan di data pengukuran.
 
-Definisikan kontrak payload, validasi, acknowledgement, dan error secara konsisten.
+**[Asumsi]** satu zona waktu per perusahaan di v0.0.2.
 
-Event client → server minimal:
-- `conversation:subscribe`
-- `conversation:unsubscribe`
-- `message:send`
-- `typing:start`
-- `typing:stop`
-- `message:read`
+---
 
-Event server → client minimal:
-- `message:new`
-- `message:read`
-- `typing:update`
-- `conversation:updated`
-- `conversation:membership_changed`
+## 4. Pengalaman Pengguna per Peran
 
-Alur mengirim pesan:
-1. Autentikasi dan validasi payload.
-2. Periksa keanggotaan aktif serta izin mengirim.
-3. Simpan pesan ke database.
-4. Setelah transaksi berhasil, kirim acknowledgement berisi pesan canonical dari server.
-5. Broadcast pesan ke anggota yang berhak.
+**Member**
+- Melihat status semua rekan, dan statusnya sendiri.
+- Mengirim pesan dan assign task dengan informasi kapan sampai.
+- Memakai "Mendesak" sampai batas harian.
 
-Jika `clientMessageId` yang sama dikirim ulang, kembalikan pesan yang sudah tersimpan tanpa membuat pesan baru.
+**Owner**
+- Semua hal Member.
+- Mengatur batas "Mendesak" dan melihat angka pemakaian.
+- Tidak mendapat hak istimewa menembus jam kerja anggota **[Terbuka]**: apakah Owner perlu jalur khusus. Saran saya tidak, supaya aturannya konsisten.
 
-### 6. Keamanan dan privasi
+**Penempatan visual** (untuk dibahas dengan designer): label kecil, tenang, tidak merah. Di luar jam kerja bukan "error" tapi keadaan normal yang nyaman.
 
-Wajib:
-- HTTPS dan WSS pada production.
-- Gunakan autentikasi project yang sudah ada.
-- Jangan menaruh token sensitif dalam URL WebSocket.
-- Validasi origin sesuai mekanisme autentikasi dan deployment.
-- Periksa akses pada setiap endpoint dan event, bukan hanya saat koneksi dibuka.
-- Jangan percaya `senderId`, role, atau daftar penerima dari client.
-- Batasi panjang pesan, ukuran payload, frekuensi kirim, dan event typing.
-- Render pesan sebagai teks aman untuk mencegah XSS.
-- Jangan mencatat isi pesan atau token dalam log.
-- Keluarkan anggota yang dicabut aksesnya dari subscription real-time.
-- Tangani logout dan sesi kedaluwarsa dengan mencabut akses koneksi.
+---
 
-Pastikan perlindungan database dan backup didokumentasikan sesuai deployment.
+## 5. Pengukuran dan Privasi
 
-Scope awal menggunakan enkripsi transport HTTPS/WSS. Jangan mengklaim fitur ini E2EE: server masih dapat membaca pesan. Jangan membuat algoritma kriptografi sendiri. Jika project sudah menggunakan E2EE, pertahankan mekanismenya dan sesuaikan implementasi.
+Kejadian yang dicatat: pesan terkirim ke penerima di luar jam kerja, tombol mendesak dipakai, status dilihat, app dibuka di luar jam kerja. Dicatat tanpa isi pesan dan tanpa isi task. Beri tahu tim dan beta tester dengan jelas apa yang dicatat, karena brand Mora menjanjikan privasi.
 
-### 7. Reconnect dan konsistensi
+---
 
-Implementasikan:
-- Reconnect dengan exponential backoff dan jitter.
-- Sinkronisasi pesan terlewat setelah reconnect melalui cursor dari server.
-- Deduplikasi berdasarkan ID pesan dan `clientMessageId`.
-- Optimistic UI yang direkonsiliasi dengan pesan canonical server.
-- Pesan gagal tetap terlihat dan dapat dicoba kembali.
-- Sinkronisasi unread count dan status dibaca pada beberapa tab atau perangkat.
-- Typing bersifat sementara, memiliki expiry, dan tidak disimpan ke database.
-- Status dibaca hanya diperbarui ketika percakapan terbuka, halaman aktif, dan pesan sudah terlihat.
-- Read cursor tidak boleh bergerak mundur.
+## 6. Pembagian Kerja
 
-Database menjadi sumber kebenaran. Jangan menganggap broadcast WebSocket pasti diterima semua perangkat.
+| Bidang | Tugas |
+|---|---|
+| **Kamu (develop)** | Penurunan status dari kebijakan jam kerja, penahanan dan pengiriman pesan, jalur mendesak berikut batasnya, pencatatan kejadian |
+| **Designer** | Tampilan label status, pesan "akan sampai ...", tampilan pesan mendesak, keadaan kosong dan keadaan di luar jam kerja, pastikan sesuai arah visual yang dipilih |
+| **PM / Ops** | Menyusun skenario uji dari sudut pemakai nyata, menyiapkan pertanyaan untuk dogfooding dan wawancara eksternal |
+| **Admin** | Merapikan catatan temuan harian tim di Spaces |
 
-Jika backend berjalan di beberapa instance, gunakan pub/sub yang sesuai agar event dapat diterima lintas instance. Jika hanya satu instance, jangan menambah infrastruktur yang belum dibutuhkan. Dokumentasikan batasannya.
+---
 
-### 8. Frontend dan pengalaman pengguna
+## 7. Jadwal Kasar (10 hari kerja)
 
-Bangun UI responsif mengikuti design system project:
-- Daftar percakapan dengan pencarian, preview pesan, dan unread badge.
-- Halaman chat dengan header, riwayat, composer, indikator typing, dan status koneksi.
-- Pesan sendiri dan orang lain mudah dibedakan.
-- Dalam grup, tampilkan identitas pengirim.
-- Panel informasi grup dan pengelolaan anggota sesuai role.
-- Loading state, empty state, error state, dan retry.
-- Enter untuk mengirim, Shift+Enter untuk baris baru; jangan mengirim saat pengguna masih melakukan komposisi teks melalui IME.
-- Auto-scroll ketika pengguna berada dekat pesan terbaru atau mengirim pesan sendiri.
-- Jika pengguna sedang membaca pesan lama, tampilkan indikator pesan baru tanpa memaksa scroll.
-- Saat memuat riwayat lama, pertahankan posisi scroll.
-- Pastikan navigasi keyboard, label input, dan kontras dapat digunakan dengan nyaman.
+| Hari | Fokus |
+|---|---|
+| 1 | Keputusan terbuka diputuskan, desain label dan alur "mendesak" disepakati dengan designer |
+| 2-4 | Penurunan status dan penahanan pesan, diuji di dev |
+| 5 | Jalur "mendesak" dan batasnya |
+| 6 | Penempatan label di daftar anggota, chat, dan assign task |
+| 7 | Pencatatan kejadian dan ringkasan untuk Owner |
+| 8 | Staging: pengujian skenario bersama tim |
+| 9 | Perbaikan temuan P0 dan P1 saja |
+| 10 | Rilis ke prod, tim mulai memakai dan mencatat |
 
-Jangan menambahkan attachment, voice call, video call, atau fitur lain di luar scope awal pesan teks.
+Rilis dengan **bendera fitur** supaya bisa dimatikan cepat bila ternyata mengganggu.
 
-### 9. Pengujian
+---
 
-Jalankan lint, typecheck, build, dan pengujian relevan sesuai project.
+## 8. Skenario Uji Wajib
 
-Verifikasi minimal:
-- Chat pribadi tidak duplikat saat dibuat bersamaan.
-- Pesan tersimpan dan diterima pengguna yang tepat.
-- Retry tidak membuat pesan ganda.
-- Non-anggota gagal mengambil riwayat, subscribe, atau mengirim pesan.
-- Anggota yang dikeluarkan kehilangan akses pada koneksi yang masih aktif.
-- Role grup bekerja sesuai aturan.
-- Reconnect mengambil pesan terlewat tanpa duplikasi.
-- Pagination tidak melewatkan pesan.
-- Read receipt dan unread count konsisten.
-- Pesan berisi HTML/script ditampilkan sebagai teks aman.
+1. Penerima tepat di batas awal dan akhir jam kerja.
+2. Pesan dikirim Jumat sore, sampai Senin pagi.
+3. Perubahan kebijakan jam kerja saat ada pesan tertahan.
+4. Batas "Mendesak" tercapai: apa yang dilihat pengirim.
+5. Owner mengubah batas, berlaku mulai kapan.
+6. Penerima dihapus dari workspace saat pesannya tertahan.
+7. Dua orang saling kirim saat sama-sama di luar jam kerja.
+8. Member baru bergabung di luar jam kerja.
+9. Pengguna membuka app di luar jam kerja: apakah pesan lama tetap terbaca.
 
-Jangan mengklaim pengujian berhasil jika belum dijalankan.
+---
 
-### 10. Hasil akhir
+## 9. Risiko
 
-Selesaikan implementasi, lalu laporkan:
-- Fitur yang selesai.
-- Perubahan utama dan migrasi database.
-- Kontrak HTTP API dan event.
-- Cara menjalankan serta mencoba dengan dua pengguna.
-- Hasil pengujian yang benar-benar dijalankan.
-- Konfigurasi deployment yang diperlukan.
-- Keterbatasan yang masih ada.
+| Risiko | Penanganan |
+|---|---|
+| Tim menganggap fitur ini menghalangi | Catatan harian + bendera fitur untuk mematikan |
+| "Mendesak" disalahgunakan | Batas harian dan angka terlihat oleh Owner |
+| Pesan tertahan hilang atau terlambat | Skenario uji 2, 3, 6 sebelum rilis |
+| Perhatian pecah dengan mobile dan perbaikan bug | Mobile dibatasi versi tipis, bug hanya P0 dan P1 |
+| Fitur selesai tapi tidak ada yang divalidasi | Wawancara eksternal dijadwalkan paralel (lihat bagian 10) |
 
-Jika menemukan blocker, jelaskan secara konkret dan lanjutkan bagian lain yang tidak bergantung pada blocker tersebut.
+---
+
+## 10. Jalur Paralel (jangan dilewatkan)
+
+Fitur ini hanya bernilai kalau hipotesisnya benar, dan itu hanya bisa dijawab orang di luar tim. Selama 10 hari ini:
+
+- Jadwalkan 3-5 obrolan 20 menit dengan orang di luar tim (software house, agency, startup).
+- Pertanyaan kunci: kapan terakhir notifikasi kerja mengganggu di luar jam kerja, bagaimana tim mereka menangani pesan darurat, dan apakah mereka mau ada batas seperti ini.
+- Jangan sebut produkmu sampai akhir obrolan.
+
+---
+
+## 11. Definisi Selesai
+
+- [ ] Status benar di semua skenario uji bagian 8.
+- [ ] Tidak ada bug P0, bug P1 di jalur pesan sudah diperbaiki.
+- [ ] Pencatatan kejadian berjalan di staging dan prod.
+- [ ] Tim memakai selama minimal 5 hari kerja dengan catatan harian.
+- [ ] Minimal 3 obrolan eksternal sudah terjadi dan dirangkum.
+- [ ] Angka pemakaian "mendesak" dan pengiriman ke penerima di luar jam kerja sudah ada untuk dibahas.
+
+---
+
+## 12. Keputusan Terbuka (isi sebelum hari 1)
+
+1. Batas awal "Mendesak" per hari: [ ]
+2. Hari libur nasional ikut dihitung atau tidak: [ ]
+3. Owner punya jalur khusus atau tidak: [ ]
+4. Siapa yang menghubungi 3-5 orang eksternal dan kapan: [ ]

@@ -26,13 +26,14 @@ interface LoginPageProps {
   service: {
     isPending: boolean;
     onLogin: () => void;
+    onRegister: () => void;
   };
 }
 
 export default function LoginPage({ state, service }: LoginPageProps) {
   const { colors, isDark } = useTheme();
   const { formLogin, setFormLogin, setShowPassword, showPassword, alert } = state;
-  const { isPending, onLogin } = service;
+  const { isPending, onLogin, onRegister } = service;
 
   return (
     <KeyboardAvoidingView
@@ -239,6 +240,14 @@ export default function LoginPage({ state, service }: LoginPageProps) {
 
           {/* Footer Info */}
           <View className="mt-8 items-center space-y-2">
+            <TouchableOpacity onPress={onRegister}>
+              <Text className="text-xs text-center" style={{ color: colors.textSecondary }}>
+                Belum punya akun?{' '}
+                <Text className="font-semibold" style={{ color: colors.primary }}>
+                  Daftar
+                </Text>
+              </Text>
+            </TouchableOpacity>
             <Text className="text-xs text-center" style={{ color: colors.textSecondary }}>
               Spaces © 2025. Dirancang untuk keheningan dan produktivitas mendalam.
             </Text>

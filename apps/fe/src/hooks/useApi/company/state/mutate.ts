@@ -1,8 +1,10 @@
 import type {
   AdminUser,
+  CompanyLogoPresign,
   CompanyProfile,
   PickCreateAdmin,
   PickCreateCompanyAdmin,
+  PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
   PickUpdateCompanySettings,
@@ -78,6 +80,12 @@ export function useUpdateCompanySubscription() {
 export function useUpdateCompanyProfile() {
   return useAppMutation<CompanyProfile, PickUpdateCompanyProfile, CompanyCacheContext>({
     mutationFn: (payload) => Api.Company.UpdateCompanyProfile(payload),
+  });
+}
+
+export function usePresignCompanyLogo() {
+  return useAppMutation<CompanyLogoPresign, PickPresignCompanyLogo, CompanyCacheContext>({
+    mutationFn: (payload) => Api.Company.PresignCompanyLogo(payload),
   });
 }
 

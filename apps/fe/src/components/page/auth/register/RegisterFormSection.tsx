@@ -7,6 +7,7 @@ import type React from 'react';
 import { useMemo } from 'react';
 
 import { useTranslation } from '@/pkg/i18n';
+import { scorePassword } from '@/utils/password';
 
 interface RegisterFormSectionProps {
   service: {
@@ -29,23 +30,18 @@ const RegisterFormSection: React.FC<RegisterFormSectionProps> = ({ service, stat
 
   const password = formRegister.password || '';
 
-  // Password criteria verification
+  // Password criteria verification (checklist tampilan)
   const hasMinLength = password.length >= 8;
   const hasUpperLower = /[a-z]/.test(password) && /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
 
   const passwordStrength = useMemo(() => {
+    const score = scorePassword(password);
     if (!password) return { label: t('register.strength_empty'), color: 'text-muted-foreground' };
-    let score = 0;
-    if (hasMinLength) score++;
-    if (hasUpperLower) score++;
-    if (hasNumber) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-
     if (score <= 1) return { label: t('register.strength_weak'), color: 'text-destructive' };
     if (score === 2) return { label: t('register.strength_medium'), color: 'text-amber-500' };
     return { label: t('register.strength_strong'), color: 'text-primary' };
-  }, [password, hasMinLength, hasUpperLower, hasNumber, t]);
+  }, [password, t]);
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">

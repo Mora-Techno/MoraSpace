@@ -3,7 +3,6 @@
 import { TestEmail } from '@repo';
 import { useState } from 'react';
 
-import { Skeleton } from '@/components/atoms/Skeleton';
 import SettingsSection from '@/components/page/private/member/settings/settingsMemberSection';
 import type { Language } from '@/configs';
 import { useTheme } from '@/core/providers/theme.provider';
@@ -77,15 +76,6 @@ export default function SettingsContainer() {
   const handleLogout = () => {
     useLogout.mutate();
   };
-
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-40 w-full" />
-      </div>
-    );
-  }
 
   return (
     <SettingsSection

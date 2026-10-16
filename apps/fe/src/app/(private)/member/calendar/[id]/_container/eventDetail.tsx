@@ -1,13 +1,10 @@
 'use client';
 
 import type { PickUpdateEvent } from '@repo/types';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/atoms';
-import { PageHeader } from '@/components/molecules/PageHeader';
+import { DetailShell } from '@/components/molecules/DetailShell';
 import { EventDetailSection } from '@/components/page/private/member/calendar/event-detail.section';
 import { useApi } from '@/hooks/useApi/useApi';
 
@@ -72,17 +69,7 @@ export default function EventDetailContainer({ id }: { id: string }) {
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
-      <PageHeader
-        title="Detail Jadwal"
-        action={
-          <Button variant="outline" size="sm" asChild className="ghibli-btn">
-            <Link href={listRoute}>
-              <ArrowLeft className="size-4" /> Kembali
-            </Link>
-          </Button>
-        }
-      />
+    <DetailShell title="Detail Jadwal" backHref={listRoute} isLoading={isLoading}>
       <EventDetailSection
         service={{ handleSave, handleDelete }}
         state={{
@@ -93,6 +80,6 @@ export default function EventDetailContainer({ id }: { id: string }) {
           setForm,
         }}
       />
-    </div>
+    </DetailShell>
   );
 }

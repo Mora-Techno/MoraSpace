@@ -1,13 +1,10 @@
 'use client';
 
 import { PickCreateNote } from '@repo';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/atoms';
-import { PageHeader } from '@/components/molecules/PageHeader';
+import { DetailShell } from '@/components/molecules/DetailShell';
 import { NoteEditorSection } from '@/components/page/private/member/notes/note-editor.section';
 import { useApi } from '@/hooks/useApi/useApi';
 
@@ -45,17 +42,7 @@ export default function NoteDetailContainer({ id }: { id: string }) {
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
-      <PageHeader
-        title="Editor Catatan"
-        action={
-          <Button variant="outline" size="sm" asChild className="ghibli-btn">
-            <Link href={listRoute}>
-              <ArrowLeft className="size-4" /> Kembali
-            </Link>
-          </Button>
-        }
-      />
+    <DetailShell title="Editor Catatan" backHref={listRoute} isLoading={isLoading}>
       <NoteEditorSection
         service={{ handleSave }}
         state={{
@@ -66,6 +53,6 @@ export default function NoteDetailContainer({ id }: { id: string }) {
           isPending: updateNote.isPending,
         }}
       />
-    </div>
+    </DetailShell>
   );
 }

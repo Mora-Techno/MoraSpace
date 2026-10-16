@@ -1,4 +1,5 @@
 import type {
+  ICompanyMember,
   ITask,
   PickCreateTask,
   PickCreateTaskStatus,
@@ -21,7 +22,7 @@ import {
   Sparkles,
   Trash2,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   Badge,
@@ -36,6 +37,7 @@ import {
   DialogTitle,
   Input,
   Label,
+  WorkingStatusBadge,
 } from '@/components/atoms';
 import { RichTextEditor } from '@/components/molecules/editor/RichTextEditor';
 import { PageHeader } from '@/components/molecules/PageHeader';
@@ -46,6 +48,11 @@ export interface TaskSectionProps {
   service: {
     tasks: ITask[];
     statuses: TaskStatusOption[];
+    members: ICompanyMember[];
+    statusMap: Map<string, any>;
+    sortedStatuses: TaskStatusOption[];
+    tasksByStatusId: Map<string, ITask[]>;
+    countByStatusId: (statusId: string) => number;
     isLoading: boolean;
     handleCreate: (payload: PickCreateTask) => void;
     handleUpdate: (id: string, payload: PickUpdateTask) => void;
@@ -74,6 +81,11 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
   service: {
     tasks,
     statuses,
+    members = [],
+    statusMap,
+    sortedStatuses,
+    tasksByStatusId,
+    countByStatusId,
     isLoading,
     handleCreate,
     handleUpdate,
@@ -90,7 +102,13 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
   const [taskTitle, setTaskTitle] = useState('');
   const [taskDescription, setTaskDescription] = useState('');
   const [taskStatusId, setTaskStatusId] = useState('');
+  const [taskAssigneeId, setTaskAssigneeId] = useState('');
   const [detailTask, setDetailTask] = useState<ITask | null>(null);
+
+  const selectedAssignee = members.find((m) => m.id === taskAssigneeId);
+  const selectedAssigneeStatus = selectedAssignee
+    ? statusMap.get(selectedAssignee.id) || statusMap.get(selectedAssignee.userId)
+    : null;
   const [editingTask, setEditingTask] = useState<ITask | null>(null);
   const [editTaskTitle, setEditTaskTitle] = useState('');
   const [editTaskDescription, setEditTaskDescription] = useState('');
@@ -110,9 +128,6 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
   // Drag and drop states
   const [draggedTaskId, setDraggedTaskId] = useState<string | null>(null);
   const [dragOverColId, setDragOverColId] = useState<string | null>(null);
-
-  // Sorted statuses
-  const sortedStatuses = [...statuses].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
 
   // Open Create Task modal with initial valid status
   const handleOpenCreateTask = () => {
@@ -135,10 +150,12 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
       title: taskTitle.trim(),
       description: plain ? taskDescription : undefined,
       statusId: chosenStatusId,
+      assigneeIds: taskAssigneeId ? [taskAssigneeId] : undefined,
     });
 
     setTaskTitle('');
     setTaskDescription('');
+    setTaskAssigneeId('');
     setOpenCreateTaskModal(false);
   };
 
@@ -295,7 +312,7 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
       ) : (
         <div className="flex gap-5 overflow-x-auto pb-4 items-start">
           {sortedStatuses.map((col) => {
-            const colTasks = tasks.filter((t) => t.statusId === col.id);
+            const colTasks = tasksByStatusId.get(col.id) ?? [];
             const isDragOver = dragOverColId === col.id;
 
             return (
@@ -490,6 +507,41 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="assignee">Tugaskan Kepada (Assignee)</Label>
+              <select
+                id="assignee"
+                value={taskAssigneeId}
+                onChange={(e) => setTaskAssigneeId(e.target.value)}
+                className="w-full text-sm px-3 py-2 border border-input rounded-xl bg-muted/40 text-foreground outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">-- Pilih Anggota Tim (Opsional) --</option>
+                {members.map((m) => {
+                  const s = statusMap.get(m.id) || statusMap.get(m.userId);
+                  const suffix = s ? ` [${s.statusLabel}]` : '';
+                  return (
+                    <option key={m.id} value={m.id}>
+                      {m.user?.fullName || m.user?.email || m.id}
+                      {suffix}
+                    </option>
+                  );
+                })}
+              </select>
+
+              {selectedAssigneeStatus?.status === 'out_of_hours' && (
+                <div className="flex items-center gap-2 p-2.5 rounded-xl bg-muted/60 border border-border/40 text-xs text-muted-foreground mt-1.5">
+                  <Clock className="size-3.5 shrink-0" />
+                  <span>
+                    Rekan sedang di luar jam kerja. Tugas akan sampai{' '}
+                    <strong className="text-foreground">
+                      {selectedAssigneeStatus.statusLabel.replace(/^Kembali\s*/i, '')}
+                    </strong>
+                    .
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -786,15 +838,13 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                     minimal harus memiliki 1 status tugas.
                   </span>
                 </div>
-              ) : tasks.some((t) => t.statusId === deletingStatus.id) ? (
+              ) : countByStatusId(deletingStatus.id) > 0 ? (
                 <div className="p-3 rounded-xl border border-warning/30 bg-warning/10 text-foreground text-sm flex items-start gap-2">
                   <AlertCircle className="w-5 h-5 shrink-0 text-warning mt-0.5" />
                   <span>
                     Status ini masih digunakan oleh{' '}
-                    <strong>
-                      {tasks.filter((t) => t.statusId === deletingStatus.id).length} task
-                    </strong>
-                    . Pindahkan task-task tersebut ke status lain sebelum menghapus status ini.
+                    <strong>{countByStatusId(deletingStatus.id)} task</strong>. Pindahkan task-task
+                    tersebut ke status lain sebelum menghapus status ini.
                   </span>
                 </div>
               ) : (
@@ -808,17 +858,16 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
                 <Button type="button" variant="outline" onClick={() => setDeletingStatus(null)}>
                   Batal
                 </Button>
-                {sortedStatuses.length > 1 &&
-                  !tasks.some((t) => t.statusId === deletingStatus.id) && (
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      onClick={handleConfirmDeleteStatus}
-                      disabled={isPending}
-                    >
-                      {isPending ? 'Menghapus...' : 'Hapus Status'}
-                    </Button>
-                  )}
+                {sortedStatuses.length > 1 && countByStatusId(deletingStatus.id) === 0 && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleConfirmDeleteStatus}
+                    disabled={isPending}
+                  >
+                    {isPending ? 'Menghapus...' : 'Hapus Status'}
+                  </Button>
+                )}
               </div>
             </div>
           )}

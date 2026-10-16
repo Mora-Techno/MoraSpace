@@ -141,6 +141,10 @@ class MemberController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
+      if (user.companyRole !== 'Owner' && user.companyMemberId !== params.id) {
+        return HttpResponse(c).forbidden('Anda hanya dapat mengubah profil pribadi');
+      }
+
       const data = await MemberService.updateProfile(params.id, user.companyId!, body);
       if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');
 
@@ -179,6 +183,10 @@ class MemberController {
 
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
+
+      if (user.companyRole !== 'Owner' && user.companyMemberId !== params.id) {
+        return HttpResponse(c).forbidden('Anda hanya dapat mengubah kontak pribadi');
+      }
 
       const data = await MemberService.updateContacts(params.id, user.companyId!, body);
       if (!data) return HttpResponse(c).notFound('Anggota tidak ditemukan');

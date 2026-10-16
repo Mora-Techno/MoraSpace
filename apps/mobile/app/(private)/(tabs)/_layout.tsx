@@ -1,5 +1,13 @@
 import { Tabs } from 'expo-router';
-import { Calendar, CheckSquare, FileText, Home, Kanban, Music } from 'lucide-react-native';
+import {
+  Calendar,
+  CheckSquare,
+  FileText,
+  Home,
+  Kanban,
+  MessageCircle,
+  Music,
+} from 'lucide-react-native';
 import { View } from 'react-native';
 
 import { useTheme } from '@/core/providers/theme.provinder';
@@ -88,6 +96,19 @@ export default function TabsLayout() {
               className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
             >
               <FileText size={size} color={color} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="chat"
+        options={{
+          title: 'Chat',
+          tabBarIcon: ({ color, size, focused }) => (
+            <View
+              className={`items-center justify-center ${focused ? 'opacity-100' : 'opacity-70'}`}
+            >
+              <MessageCircle size={size} color={color} />
             </View>
           ),
         }}

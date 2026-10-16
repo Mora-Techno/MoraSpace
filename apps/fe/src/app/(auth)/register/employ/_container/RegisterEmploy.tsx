@@ -2,11 +2,10 @@
 
 import { useGoogleLogin } from '@react-oauth/google';
 import type { PickRegister } from '@repo/types';
-import Link from 'next/link';
 import { useState } from 'react';
 
-import GoogleSignInButton from '@/components/molecules/GoogleSignButton';
 import { RegisterFormSection } from '@/components/page/auth';
+import { RegisterPageSection } from '@/components/page/auth/register-page.section';
 import { useApi } from '@/hooks/useApi/useApi';
 import { useTranslation } from '@/pkg/i18n';
 
@@ -43,63 +42,31 @@ export default function RegisterEmployContainer() {
   });
 
   return (
-    <div className="w-full space-y-6">
-      {/* Form Header */}
-      <div className="space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-          {t('register.employ_title')}
-        </h1>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {t('register.employ_subtitle')}
-        </p>
-      </div>
-
-      {/* Main Registration Form */}
-      <RegisterFormSection
-        service={{
-          isPending: register.isPending,
-          onSubmit: handleSubmit,
-        }}
-        state={{
-          formRegister: formRegister,
-          setFormRegister: setFormRegister,
-          showPassword: showPassword,
-          setShowPassword: setShowPassword,
-        }}
-      />
-
-      {/* Divider */}
-      <div className="relative flex items-center justify-center my-4">
-        <div className="w-full border-t border-border/60" />
-        <span className="absolute bg-background px-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-          {t('register.or')}
-        </span>
-      </div>
-
-      {/* Social Registration */}
-      <div className="w-full">
-        <GoogleSignInButton
-          onSuccess={googleLogin}
-          disabled={false}
-          className="rounded-xl border-border/70 bg-card/60 hover:bg-muted font-medium text-sm py-2.5"
-        />
-      </div>
-
-      {/* Account Switching Links */}
-      <div className="space-y-2 pt-2 text-center text-sm">
-        <p className="text-muted-foreground">
-          {t('register.have_account')}{' '}
-          <Link href="/login" className="font-semibold text-primary hover:underline">
-            {t('register.login_now')}
-          </Link>
-        </p>
-        <p className="text-xs text-muted-foreground">
-          {t('register.as_company')}{' '}
-          <Link href="/register/company" className="font-medium text-foreground hover:underline">
-            {t('register.as_company_link')}
-          </Link>
-        </p>
-      </div>
-    </div>
+    <RegisterPageSection
+      template={{
+        title: t('register.employ_title'),
+        subtitle: t('register.employ_subtitle'),
+        altPrompt: t('register.as_company'),
+        altHref: '/register/company',
+        altLink: t('register.as_company_link'),
+      }}
+      service={{
+        onGoogleLogin: googleLogin,
+        form: (
+          <RegisterFormSection
+            service={{
+              isPending: register.isPending,
+              onSubmit: handleSubmit,
+            }}
+            state={{
+              formRegister: formRegister,
+              setFormRegister: setFormRegister,
+              showPassword: showPassword,
+              setShowPassword: setShowPassword,
+            }}
+          />
+        ),
+      }}
+    />
   );
 }

@@ -1,4 +1,6 @@
 import bcryptjs from 'bcryptjs';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import {
   DEFAULT_TASK_STATUSES,
   DEFAULT_TASK_PRIORITIES,
@@ -8,7 +10,9 @@ import prisma from 'prisma/client';
 import { getWorkstationUserLimit } from '@/utils/tierLimits';
 import { getPeriodEnd } from '@/config/subscriptionPlans';
 import type {
+  CompanyLogoPresign,
   PickCreateAdmin,
+  PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
   PickUpdateCompanySettings,
@@ -473,6 +477,47 @@ class CompanyService {
     return company;
   }
 
+  // Logo via R2 presigned PUT — browser upload langsung, secret tetap di BE.
+  // Bucket 'Space' mengikuti FE r2-utils. Ukuran dibatasi di klien (2MB).
+  public async presignLogoUpload(
+    companyId: string,
+    input: PickPresignCompanyLogo,
+  ): Promise<CompanyLogoPresign> {
+    const extByType: Record<string, string> = {
+      'image/png': 'png',
+      'image/jpeg': 'jpg',
+      'image/webp': 'webp',
+    };
+    const ext = extByType[input.contentType];
+    if (!ext) throw new Error('Tipe file logo tidak didukung (png/jpeg/webp)');
+
+    const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+    const accessKeyId = process.env.ACCESS_KEY_ID;
+    const secretAccessKey = process.env.SECRET_ACCESS_KEY;
+    const publicBase = process.env.PUBLIC_R2_UR;
+    if (!accountId || !accessKeyId || !secretAccessKey || !publicBase) {
+      throw new Error('Konfigurasi R2 belum lengkap');
+    }
+
+    const key = `logos/${companyId}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`;
+    const client = new S3Client({
+      region: 'auto',
+      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      credentials: { accessKeyId, secretAccessKey },
+    });
+    const uploadUrl = await getSignedUrl(
+      client,
+      new PutObjectCommand({ Bucket: 'Space', Key: key, ContentType: input.contentType }),
+      { expiresIn: 300 },
+    );
+    return {
+      uploadUrl,
+      publicUrl: `${publicBase.replace(/\/$/, '')}/${key}`,
+      key,
+      expiresIn: 300,
+    };
+  }
+
   // v0.0.1 Working Hours — baca: semua member. Tulis: Owner only (guard di route).
   public async getSettings(companyId: string) {
     const [setting, policy] = await prisma.$transaction([
@@ -490,6 +535,7 @@ class CompanyService {
       respectWorkingHours: policy?.respectWorkingHours ?? true,
       queueNotification: policy?.queueNotification ?? true,
       queueEmail: policy?.queueEmail ?? true,
+      urgentMessageLimitPerDay: policy?.urgentMessageLimitPerDay ?? 3,
     };
   }
 
@@ -511,6 +557,8 @@ class CompanyService {
       policyData.respectWorkingHours = input.respectWorkingHours;
     if (input.queueNotification !== undefined)
       policyData.queueNotification = input.queueNotification;
+    if (input.urgentMessageLimitPerDay !== undefined)
+      policyData.urgentMessageLimitPerDay = Number(input.urgentMessageLimitPerDay);
 
     await prisma.$transaction(async (tx) => {
       if (Object.keys(settingData).length > 0) {

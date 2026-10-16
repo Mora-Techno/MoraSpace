@@ -24,6 +24,7 @@ import settingsRoutes from './settingsRoutes';
 import chatRoutes from './chatRoutes';
 import blogRoutes from './blogRoutes';
 import dashboardRoutes from './dashboardRoutes';
+import workingHoursRoutes from './workingHoursRoutes';
 import { InternalApiKey } from '@/middlewares/apiKey';
 import { errorPlugin, loggerPlugin, metricsPlugin } from '@/plugins';
 
@@ -72,7 +73,8 @@ class ApiRouter {
       .use(settingsRoutes)
       .use(chatRoutes)
       .use(blogRoutes)
-      .use(dashboardRoutes);
+      .use(dashboardRoutes)
+      .use(workingHoursRoutes);
   }
 }
 

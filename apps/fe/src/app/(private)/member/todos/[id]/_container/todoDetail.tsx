@@ -1,13 +1,10 @@
 'use client';
 
 import type { PickUpdateTodo } from '@repo/types';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { Button } from '@/components/atoms';
-import { PageHeader } from '@/components/molecules/PageHeader';
+import { DetailShell } from '@/components/molecules/DetailShell';
 import { TodoDetailSection } from '@/components/page/private/member/todos/todo-detail.section';
 import { useApi } from '@/hooks/useApi/useApi';
 
@@ -73,17 +70,7 @@ export default function TodoDetailContainer({ id }: { id: string }) {
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
-      <PageHeader
-        title="Detail Tugas"
-        action={
-          <Button variant="outline" size="sm" asChild className="ghibli-btn">
-            <Link href={listRoute}>
-              <ArrowLeft className="size-4" /> Kembali
-            </Link>
-          </Button>
-        }
-      />
+    <DetailShell title="Detail Tugas" backHref={listRoute} isLoading={isLoading}>
       <TodoDetailSection
         service={{ handleToggle, handleSave, handleDelete }}
         state={{
@@ -94,6 +81,6 @@ export default function TodoDetailContainer({ id }: { id: string }) {
           setForm,
         }}
       />
-    </div>
+    </DetailShell>
   );
 }

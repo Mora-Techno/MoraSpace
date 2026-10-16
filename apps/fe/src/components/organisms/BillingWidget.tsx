@@ -1,10 +1,15 @@
-import type { OwnerDashboardOverview } from '@repo/types';
 import { CreditCard } from 'lucide-react';
 
 import { Badge, CardContent, CardHeader, CardTitle, Separator } from '@/components/atoms';
 import { GlassCard } from '@/components/molecules/GlassCard';
 
-export function BillingWidget({ plan }: { plan?: OwnerDashboardOverview['plan'] }) {
+interface BillingPlan {
+  tier: string;
+  status: string;
+  renewsAtText: string;
+}
+
+export function BillingWidget({ plan }: { plan?: BillingPlan | null }) {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">
@@ -34,15 +39,7 @@ export function BillingWidget({ plan }: { plan?: OwnerDashboardOverview['plan'] 
             <Separator className="opacity-50" />
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">Tanggal Perpanjangan</span>
-              <span className="text-sm font-medium">
-                {plan.renewsAt
-                  ? new Date(plan.renewsAt).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: 'numeric',
-                    })
-                  : '–'}
-              </span>
+              <span className="text-sm font-medium">{plan.renewsAtText}</span>
             </div>
           </div>
         )}

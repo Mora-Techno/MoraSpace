@@ -22,6 +22,10 @@ const Api = {
   Task: ApiServicePackage.Task,
   Pomodoro: ApiServicePackage.Pomodoro,
   System: ApiServicePackage.System,
+  Dashboard: ApiServicePackage.Dashboard,
+  Chat: ApiServicePackage.Chat,
+  Blog: ApiServicePackage.Blog,
+  WorkingHours: ApiServicePackage.WorkingHours,
 } as const;
 
 export { Api };

@@ -40,6 +40,10 @@ export interface IChatMessage {
   clientMessageId: string;
   seq: number;
   body: string;
+  isHeld?: boolean;
+  isUrgent?: boolean;
+  scheduledDeliverAt?: string | null;
+  deliveredAt?: string | null;
   createdAt: string;
 }
 
@@ -120,11 +124,14 @@ export interface ChatWsSendPayload {
   conversationId: string;
   clientMessageId: string;
   body: string;
+  isUrgent?: boolean;
 }
 
 export interface ChatWsAckPayload {
   clientMessageId: string;
   message: ChatMessageInfo;
+  isHeld?: boolean;
+  scheduledDeliverAt?: string | null;
 }
 
 export interface ChatWsTypingPayload {
@@ -159,6 +166,7 @@ export const CHAT_WS_EVENTS = {
   SEND: 'message:send',
   ACK: 'message:ack',
   NEW: 'message:new',
+  DELIVERED: 'message:delivered',
   READ: 'message:read',
   TYPING_START: 'typing:start',
   TYPING_STOP: 'typing:stop',

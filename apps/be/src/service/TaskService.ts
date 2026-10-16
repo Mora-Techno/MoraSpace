@@ -458,11 +458,22 @@ class TaskService {
     userId: string,
     actorMemberId: string | null,
     input: PickUpdateTask,
+    viewer?: TaskViewer,
   ) {
     const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
-    const existing = await prisma.task.findFirst({ where: whereClause as any });
+    const existing = await prisma.task.findFirst({
+      where: whereClause as any,
+      include: { assignees: true },
+    });
     if (!existing) return null;
+
+    if (companyId && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      const allowed =
+        existing.reporterMemberId === viewer.companyMemberId ||
+        existing.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
+      if (!allowed) return null;
+    }
 
     await prisma.$transaction(async (tx) => {
       await tx.task.update({
@@ -510,14 +521,24 @@ class TaskService {
       });
     });
 
-    return this.getById(id, companyId, userId);
+    return this.getById(id, companyId, userId, viewer);
   }
 
-  public async remove(id: string, companyId: string | null, userId: string) {
+  public async remove(id: string, companyId: string | null, userId: string, viewer?: TaskViewer) {
     const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
-    const existing = await prisma.task.findFirst({ where: whereClause as any });
+    const existing = await prisma.task.findFirst({
+      where: whereClause as any,
+      include: { assignees: true },
+    });
     if (!existing) return null;
+
+    if (companyId && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      const allowed =
+        existing.reporterMemberId === viewer.companyMemberId ||
+        existing.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
+      if (!allowed) return null;
+    }
 
     await prisma.task.delete({ where: { id } });
     return existing;
@@ -529,14 +550,25 @@ class TaskService {
     userId: string,
     actorMemberId: string | null,
     assigneeIds: string[],
+    viewer?: TaskViewer,
   ) {
     const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
-    const existing = await prisma.task.findFirst({ where: whereClause as any });
+    const existing = await prisma.task.findFirst({
+      where: whereClause as any,
+      include: { assignees: true },
+    });
     if (!existing) return null;
 
+    if (companyId && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      const allowed =
+        existing.reporterMemberId === viewer.companyMemberId ||
+        existing.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
+      if (!allowed) return null;
+    }
+
     if (!companyId) {
-      return this.getById(id, companyId, userId);
+      return this.getById(id, companyId, userId, viewer);
     }
 
     await prisma.$transaction([
@@ -557,7 +589,7 @@ class TaskService {
       }),
     ]);
 
-    return this.getById(id, companyId, userId);
+    return this.getById(id, companyId, userId, viewer);
   }
 
   public async updateStatus(
@@ -566,11 +598,22 @@ class TaskService {
     userId: string,
     actorMemberId: string | null,
     statusId: string,
+    viewer?: TaskViewer,
   ) {
     const whereClause: Record<string, unknown> = companyId ? { id, companyId } : { id, userId };
 
-    const existing = await prisma.task.findFirst({ where: whereClause as any });
+    const existing = await prisma.task.findFirst({
+      where: whereClause as any,
+      include: { assignees: true },
+    });
     if (!existing) return null;
+
+    if (companyId && viewer?.companyRole !== 'Owner' && viewer?.companyMemberId) {
+      const allowed =
+        existing.reporterMemberId === viewer.companyMemberId ||
+        existing.assignees.some((a) => a.companyMemberId === viewer.companyMemberId);
+      if (!allowed) return null;
+    }
 
     const statusObj = await prisma.taskStatus.findUnique({
       where: { id: statusId },
@@ -594,7 +637,7 @@ class TaskService {
       }),
     ]);
 
-    return this.getById(id, companyId, userId);
+    return this.getById(id, companyId, userId, viewer);
   }
 
   public async addComment(

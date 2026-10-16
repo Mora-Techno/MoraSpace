@@ -14,6 +14,7 @@
     "cf:preview": "opennextjs-cloudflare preview",
     "cf:build:staging": "opennextjs-cloudflare build --env staging",
     "cf:deploy:staging": "opennextjs-cloudflare deploy --env staging",
+    "cf:release:staging": "bun --env-file=.env.staging run cf:build:staging && bun run cf:deploy:staging",
     "cf:build:prod": "opennextjs-cloudflare build --env=\"\"",
     "cf:deploy:prod": "opennextjs-cloudflare deploy --env=\"\"",
     "cf:upload": "opennextjs-cloudflare upload",

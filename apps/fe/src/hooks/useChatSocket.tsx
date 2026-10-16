@@ -37,7 +37,11 @@ type ChatSocketValue = {
   userId: string | null;
   subscribe: (conversationId: string) => void;
   unsubscribe: (conversationId: string) => void;
-  sendMessage: (conversationId: string, body: string) => string | null;
+  sendMessage: (
+    conversationId: string,
+    body: string,
+    options?: { isUrgent?: boolean },
+  ) => string | null;
   retryMessage: (conversationId: string, clientMessageId: string) => void;
   sendTyping: (conversationId: string, isTyping: boolean) => void;
   sendRead: (conversationId: string, seq: number) => void;
@@ -184,6 +188,13 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
             clearTimeout(timer);
             if (cmid) ackTimersRef.current.delete(cmid);
           }
+          appendMessage(message.conversationId, message);
+          void queryClient.invalidateQueries({ queryKey: queryKey.chat.conversations() });
+          return;
+        }
+        case CHAT_WS_EVENTS.DELIVERED: {
+          const message = payload?.message as ChatMessageInfo | undefined;
+          if (!message?.conversationId || !message?.id) return;
           appendMessage(message.conversationId, message);
           void queryClient.invalidateQueries({ queryKey: queryKey.chat.conversations() });
           return;
@@ -419,7 +430,7 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
   }, []);
 
   const sendMessage = useCallback(
-    (conversationId: string, body: string): string | null => {
+    (conversationId: string, body: string, options?: { isUrgent?: boolean }): string | null => {
       const ws = wsRef.current;
       const text = body.trim();
       if (!ws || ws.readyState !== WebSocket.OPEN || !text) return null;
@@ -432,6 +443,7 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
         clientMessageId,
         seq: 0,
         body: text,
+        isUrgent: options?.isUrgent,
         createdAt: new Date().toISOString(),
         senderName: fullNameRef.current,
         sendStatus: 'sending',
@@ -440,7 +452,12 @@ export function ChatSocketProvider({ children }: { children: React.ReactNode }) 
       ws.send(
         JSON.stringify({
           event: CHAT_WS_EVENTS.SEND,
-          payload: { conversationId, clientMessageId, body: text },
+          payload: {
+            conversationId,
+            clientMessageId,
+            body: text,
+            isUrgent: options?.isUrgent,
+          },
         }),
       );
       const timer = setTimeout(

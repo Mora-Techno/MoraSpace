@@ -1,5 +1,3 @@
-import { ITrackCatalog } from './trackCatalog.types';
-
 /** Mirror Prisma model `MusicPlaylist` */
 export interface IMusicPlaylist {
   id: string;

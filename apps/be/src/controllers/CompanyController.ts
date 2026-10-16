@@ -3,6 +3,7 @@ import AuthService from '@/service/AuthService';
 import { HttpResponse } from '@/http';
 import type {
   PickCreateAdmin,
+  PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
   PickUpdateCompanySettings,
@@ -153,6 +154,25 @@ class CompanyController {
       if (!data) return HttpResponse(c).notFound('Company tidak ditemukan');
 
       return HttpResponse(c).ok(data, undefined, 'Profil company berhasil diperbarui');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async presignLogo(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const body = c.body as PickPresignCompanyLogo;
+
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).badRequest('Tidak dapat mengunggah logo pada mode individual');
+      }
+
+      const data = await CompanyService.presignLogoUpload(user.companyId, body);
+      return HttpResponse(c).ok(data, undefined, 'URL upload logo berhasil dibuat');
     } catch (error) {
       return HttpResponse(c).internalError(error);
     }

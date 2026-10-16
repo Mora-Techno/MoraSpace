@@ -4,8 +4,7 @@ import type { NotificationInAppQuery } from '@repo/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { PageHeader } from '@/components/molecules/PageHeader';
-import { NotificationListSection } from '@/components/page/private/member/notifications/notification-list.section';
+import { NotificationsPageSection } from '@/components/page/private/member/notifications/notifications-page.section';
 import { useApi } from '@/hooks/useApi/useApi';
 
 export default function NotificationsContainer() {
@@ -48,25 +47,20 @@ export default function NotificationsContainer() {
   const isPending = markRead.isPending || markAllRead.isPending;
 
   return (
-    <div className="animate-in fade-in duration-700">
-      <PageHeader title="Notifikasi" description="Pantau pemberitahuan dan aktivitas terbaru." />
-      <div className="w-full">
-        <NotificationListSection
-          service={{
-            onSearch: handleSearch,
-            onPageChange: handlePageChange,
-            handleSelect,
-            handleMarkRead,
-            handleMarkAllRead,
-          }}
-          state={{
-            notifications,
-            isLoading,
-            isPending,
-            query: listQuery,
-          }}
-        />
-      </div>
-    </div>
+    <NotificationsPageSection
+      service={{
+        onSearch: handleSearch,
+        onPageChange: handlePageChange,
+        handleSelect,
+        handleMarkRead,
+        handleMarkAllRead,
+      }}
+      state={{
+        notifications,
+        isLoading,
+        isPending,
+        query: listQuery,
+      }}
+    />
   );
 }

@@ -2,11 +2,13 @@ import { ADMIN_COMPANY_ENDPOINTS, COMPANY_ENDPOINTS } from '../endpoints/company
 import type {
   AdminCompanyItem,
   AdminUser,
+  CompanyLogoPresign,
   CompanyProfile,
   CompanyQuery,
   ICompanySetting,
   PickCreateAdmin,
   PickCreateCompanyAdmin,
+  PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
   PickUpdateCompanySettings,
@@ -63,6 +65,15 @@ class CompanyService {
     const res = await PatchResponse<CompanyProfile>(COMPANY_ENDPOINTS.UPDATE_PROFILE, payload);
     return toServiceResponse(res, {
       message: 'Profil company berhasil diperbarui',
+    });
+  }
+
+  public async PresignCompanyLogo(
+    payload: PickPresignCompanyLogo,
+  ): Promise<TResponse<CompanyLogoPresign>> {
+    const res = await PostResponse<CompanyLogoPresign>(COMPANY_ENDPOINTS.LOGO_PRESIGN, payload);
+    return toServiceResponse(res, {
+      message: 'URL upload logo berhasil dibuat',
     });
   }
 

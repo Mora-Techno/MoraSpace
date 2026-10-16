@@ -1,9 +1,7 @@
 import type { Todo } from '@repo/types/todo.types';
-import { router } from 'expo-router';
 import {
   ArrowRight,
   Calendar as CalendarIcon,
-  CheckCircle2,
   Circle,
   Clock,
   Kanban,
@@ -12,7 +10,7 @@ import {
   Sparkles,
   Timer,
 } from 'lucide-react-native';
-import React, { useMemo } from 'react';
+import React from 'react';
 import {
   ActivityIndicator,
   RefreshControl,
@@ -23,80 +21,50 @@ import {
 } from 'react-native';
 
 import { useTheme } from '@/core/providers/theme.provinder';
-import { useCalender } from '@/hooks/service/Calendar/useCalender';
-import { useTask } from '@/hooks/service/Task/useTask';
-import { useTodo } from '@/hooks/service/Todo/useTodo';
-import { useAppSelector } from '@/hooks/toolkit/redux';
 
-export default function HomePageSection() {
-  const { colors, isDark } = useTheme();
-  const currentUser = useAppSelector((state) => state.auth.currentUser?.user);
-  const fullName = currentUser?.fullName || 'Rekan Kerja';
+interface HomeEventItem {
+  id: string;
+  title: string;
+  startDate: string;
+}
 
-  // Greeting & Date
-  const { greeting, formattedDate } = useMemo(() => {
-    const now = new Date();
-    const hour = now.getHours();
-    let greet = 'Selamat Pagi';
-    if (hour >= 11 && hour < 15) greet = 'Selamat Siang';
-    else if (hour >= 15 && hour < 18) greet = 'Selamat Sore';
-    else if (hour >= 18 || hour < 4) greet = 'Selamat Malam';
+interface HomePageSectionProps {
+  service: {
+    pendingTodos: Todo[];
+    todayEventsCount: number;
+    activeTasksCount: number;
+    events: HomeEventItem[];
+    isTodosLoading: boolean;
+    isCalLoading: boolean;
+    handleToggleTodo: (todo: Todo) => void;
+    handleRefreshAll: () => void;
+    goPomodoro: () => void;
+    goTodos: () => void;
+    goCalendar: () => void;
+  };
+  state: {
+    fullName: string;
+    greeting: string;
+    formattedDate: string;
+  };
+}
 
-    const dateStr = new Intl.DateTimeFormat('id-ID', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    }).format(now);
-
-    return { greeting: greet, formattedDate: dateStr };
-  }, []);
-
-  // Data fetching
-  const { query: todoQuery, mutate: todoMutate } = useTodo();
-  const { data: todos = [], isLoading: isTodosLoading, refetch: refetchTodos } = todoQuery.get();
-  const updateTodo = todoMutate.update();
-
-  const { query: calQuery } = useCalender();
+export default function HomePageSection({ service, state }: HomePageSectionProps) {
+  const { colors } = useTheme();
+  const { fullName, greeting, formattedDate } = state;
   const {
-    data: events = [],
-    isLoading: isCalLoading,
-    refetch: refetchCal,
-  } = calQuery.getCalender();
-
-  const { query: taskQuery } = useTask();
-  const { data: tasks = [], isLoading: isTasksLoading, refetch: refetchTasks } = taskQuery.list();
-
-  // Metrics
-  const pendingTodos = useMemo(() => {
-    if (!Array.isArray(todos)) return [];
-    return todos.filter((t) => t.status !== 'completed');
-  }, [todos]);
-
-  const todayEvents = useMemo(() => {
-    if (!Array.isArray(events)) return [];
-    const todayStr = new Date().toDateString();
-    return events.filter((e) => new Date(e.startDate).toDateString() === todayStr);
-  }, [events]);
-
-  const activeTasksCount = useMemo(() => {
-    if (!Array.isArray(tasks)) return 0;
-    return tasks.length;
-  }, [tasks]);
-
-  const handleToggleTodo = (todo: Todo) => {
-    const nextStatus = todo.status === 'completed' ? 'pending' : 'completed';
-    updateTodo.mutate({
-      id: todo.id,
-      payload: { status: nextStatus },
-    });
-  };
-
-  const handleRefreshAll = () => {
-    void refetchTodos();
-    if (refetchCal) void refetchCal();
-    if (refetchTasks) void refetchTasks();
-  };
+    pendingTodos,
+    todayEventsCount,
+    activeTasksCount,
+    events,
+    isTodosLoading,
+    isCalLoading,
+    handleToggleTodo,
+    handleRefreshAll,
+    goPomodoro,
+    goTodos,
+    goCalendar,
+  } = service;
 
   return (
     <ScrollView
@@ -148,7 +116,7 @@ export default function HomePageSection() {
           <View className="flex-row items-center justify-between mb-1">
             <CalendarIcon size={16} color="#3b82f6" />
             <Text className="text-lg font-bold" style={{ color: colors.text }}>
-              {todayEvents.length}
+              {todayEventsCount}
             </Text>
           </View>
           <Text className="text-[11px] text-gray-400">Agenda Hari Ini</Text>
@@ -170,7 +138,7 @@ export default function HomePageSection() {
 
       {/* Quick Pomodoro Banner */}
       <TouchableOpacity
-        onPress={() => router.push('/(private)/pomodoro/page' as any)}
+        onPress={goPomodoro}
         activeOpacity={0.8}
         className="flex-row items-center justify-between p-4 rounded-2xl mb-6"
         style={{ backgroundColor: colors.primary }}
@@ -200,10 +168,7 @@ export default function HomePageSection() {
           <Text className="text-sm font-bold" style={{ color: colors.text }}>
             Daftar Tugas Harian
           </Text>
-          <TouchableOpacity
-            onPress={() => router.push('/(private)/(tabs)/todos/page' as any)}
-            className="flex-row items-center"
-          >
+          <TouchableOpacity onPress={goTodos} className="flex-row items-center">
             <Text className="text-xs font-semibold mr-1" style={{ color: colors.primary }}>
               Semua
             </Text>
@@ -246,10 +211,7 @@ export default function HomePageSection() {
           <Text className="text-sm font-bold" style={{ color: colors.text }}>
             Agenda Mendatang
           </Text>
-          <TouchableOpacity
-            onPress={() => router.push('/(private)/(tabs)/calendar/page' as any)}
-            className="flex-row items-center"
-          >
+          <TouchableOpacity onPress={goCalendar} className="flex-row items-center">
             <Text className="text-xs font-semibold mr-1" style={{ color: colors.primary }}>
               Kalender
             </Text>
@@ -264,7 +226,7 @@ export default function HomePageSection() {
             <Text className="text-xs text-gray-400">Belum ada agenda terdaftar.</Text>
           </View>
         ) : (
-          events.slice(0, 3).map((e: any) => (
+          events.slice(0, 3).map((e) => (
             <View
               key={e.id}
               className="flex-row items-center justify-between py-2.5 border-b border-gray-100 dark:border-gray-800 last:border-b-0"

@@ -34,7 +34,19 @@ export type { PickCreateAdmin } from './auth.types';
 
 export type PickUpdateCompanySubscription = Pick<ICompany, 'tier' | 'billingCycle'>;
 
-export type PickUpdateCompanyProfile = Pick<ICompany, 'logo' | 'country'>;
+export type PickUpdateCompanyProfile = Partial<Pick<ICompany, 'logo' | 'country'>>;
+
+// Logo via R2 presigned PUT (browser langsung ke R2, secret tetap di BE).
+export interface PickPresignCompanyLogo {
+  contentType: string;
+}
+
+export interface CompanyLogoPresign {
+  uploadUrl: string;
+  publicUrl: string;
+  key: string;
+  expiresIn: number;
+}
 
 // v0.0.1 Working Hours (CompanySetting + CompanyPolicy, jam "HH:mm").
 export interface ICompanySetting {
@@ -44,6 +56,7 @@ export interface ICompanySetting {
   respectWorkingHours: boolean;
   queueNotification: boolean;
   queueEmail: boolean;
+  urgentMessageLimitPerDay?: number;
 }
 
 export interface PickUpdateCompanySettings {
@@ -52,6 +65,7 @@ export interface PickUpdateCompanySettings {
   workDays?: string;
   respectWorkingHours?: boolean;
   queueNotification?: boolean;
+  urgentMessageLimitPerDay?: number;
 }
 
 // v0.0.1 Layer 1: Super Admin ops.
@@ -98,7 +112,9 @@ export interface CompanyProfile
     ICompany,
     | 'id'
     | 'name'
+    | 'logo'
     | 'tier'
+    | 'status'
     | 'billingCycle'
     | 'subscriptionStartsAt'
     | 'subscriptionEndsAt'

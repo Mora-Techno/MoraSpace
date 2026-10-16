@@ -29,3 +29,4 @@ export * from './TimerDisplay';
 export * from './Toast';
 export * from './Tooltip';
 export * from './WidgetHeader';
+export * from './WorkingStatusBadge';

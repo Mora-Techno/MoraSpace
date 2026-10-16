@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import type { WorkingStatus } from '@repo/types';
+import { useMemo, useState } from 'react';
 
 import OwnerCompanyMemberSection from '@/components/page/private/owner/dashboard/company/member/CompanyMemberSection';
 import { useApi } from '@/hooks/useApi/useApi';
@@ -22,6 +23,30 @@ const OwnerCompanyMemberContainer = () => {
   const updateMember = api.member.mutate.update();
   const deleteMember = api.member.mutate.delete();
   const createInvitation = api.invitation.mutate.create();
+  const { data: allStatuses } = api.workingHours.query.memberStatus();
+
+  // Bentuk runtime ListMembers = ICompanyMember + nested user; ratakan agar
+  // section menerima fullName/email langsung (tipe AdminUser).
+  const flatMembers = useMemo(
+    () =>
+      members.map((m: any) => ({
+        ...m,
+        fullName: m.fullName ?? m.user?.fullName ?? '',
+        email: m.email ?? m.user?.email ?? '',
+      })),
+    [members],
+  );
+
+  const statusByKey = useMemo(() => {
+    const map: Record<string, { status: WorkingStatus; statusLabel: string }> = {};
+    const list = Array.isArray(allStatuses) ? allStatuses : allStatuses ? [allStatuses] : [];
+    for (const s of list) {
+      if (s?.userId) map[s.userId] = { status: s.status, statusLabel: s.statusLabel };
+      if (s?.companyMemberId)
+        map[s.companyMemberId] = { status: s.status, statusLabel: s.statusLabel };
+    }
+    return map;
+  }, [allStatuses]);
 
   const handleUpdateStatus = (id: string, status: string) => {
     updateMember.mutate({ id, payload: { status } as any });
@@ -43,13 +68,14 @@ const OwnerCompanyMemberContainer = () => {
       }}
       service={
         {
-          member: members,
+          member: flatMembers,
           isLoading,
           isPending: updateMember.isPending || deleteMember.isPending,
           handleUpdateStatus,
           handleDeleteMember,
           handleInvite,
           isInvitePending: createInvitation.isPending,
+          statusByKey,
         } as any
       }
       state={{

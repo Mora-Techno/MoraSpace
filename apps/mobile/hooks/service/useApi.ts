@@ -1,6 +1,9 @@
 import { useAuth } from './Auth/useAuth';
+import { useBlog } from './Blog/useBlog';
 import { useCalender } from './Calendar/useCalender';
+import { useChat } from './Chat/useChat';
 import { useCompany } from './Company/useCompany';
+import { useDashboard } from './Dashboard/useDashboard';
 import { useDepartment } from './Department/useDepartment';
 import { useInvitation } from './Invitation/useInvitation';
 import { useMember } from './Member/useMember';
@@ -16,10 +19,12 @@ import { useSubscriptions } from './Subscription/useSubscription';
 import { useTask } from './Task/useTask';
 import { useTeam } from './Team/useTeam';
 import { useTodo } from './Todo/useTodo';
+import { useWorkingHours } from './WorkingHours/useWorkingHours';
 
 export function useApi() {
   return {
     auth: useAuth(),
+    blog: useBlog(),
     music: useMusic(),
     calender: useCalender(),
     calendar: useCalender(),
@@ -28,6 +33,8 @@ export function useApi() {
     todo: useTodo(),
     subscription: useSubscriptions(),
     company: useCompany(),
+    dashboard: useDashboard(),
+    chat: useChat(),
     department: useDepartment(),
     team: useTeam(),
     position: usePosition(),
@@ -38,5 +45,6 @@ export function useApi() {
     pomodoro: usePomodoro(),
     session: useSession(),
     settings: useSettings(),
+    workingHours: useWorkingHours(),
   };
 }

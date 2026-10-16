@@ -6,6 +6,8 @@ import Link from 'next/link';
 import type React from 'react';
 import { useMemo } from 'react';
 
+import { scorePassword } from '@/utils/password';
+
 interface ResetPasswordSectionProps {
   service: {
     onResetPassword: (e: React.FormEvent) => void;
@@ -46,16 +48,12 @@ const ResetPasswordSection: React.FC<ResetPasswordSectionProps> = ({ service, st
 
   const strength = useMemo(() => {
     if (!password) return { label: 'Kosong', color: 'text-muted-foreground' };
-    let score = 0;
-    if (hasMinLength) score++;
-    if (hasUpperLower) score++;
-    if (hasNumber) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
+    const score = scorePassword(password);
 
     if (score <= 1) return { label: 'Lemah', color: 'text-destructive' };
     if (score === 2) return { label: 'Sedang', color: 'text-amber-500' };
     return { label: 'Kuat', color: 'text-primary' };
-  }, [password, hasMinLength, hasUpperLower, hasNumber]);
+  }, [password]);
 
   return (
     <div className="w-full space-y-6">
