@@ -1,0 +1,29 @@
+# Dependencies & caches
+node_modules
+**/node_modules
+.turbo
+.next
+**/.next
+.expo
+**/.expo
+dist
+**/dist
+
+# Version control & local config
+.git
+.vscode
+.idea
+
+# Secrets & env files
+.env
+.env.*
+*.local
+apps/be/.env
+apps/fe/.env
+
+# Non-backend workspaces & documentation
+apps/fe
+apps/mobile
+docs
+graphify-out
+tests
