@@ -1,50 +1,13 @@
 'use client';
 
-import { format } from 'date-fns';
-import {
-  ArrowDown,
-  ArrowLeft,
-  Check,
-  CheckCheck,
-  Clock,
-  Loader2,
-  RotateCcw,
-  Send,
-  Users,
-  WifiOff,
-} from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import {
-  Avatar,
-  AvatarFallback,
-  Badge,
-  Button,
-  Input,
-  Label,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  Skeleton,
-  Textarea,
-} from '@/components/atoms';
+import { ChatRoomSection } from '@/components/page/private/member/chat/chat-room.section';
 import { useApi } from '@/hooks/useApi/useApi';
 import { hasCompanyChatContext, type LocalChatMessage, useChatSocket } from '@/hooks/useChatSocket';
 import { useDebounce } from '@/hooks/useDebounce';
 import { loadAuthSession } from '@/utils/storage';
-
-function initials(name?: string | null) {
-  if (!name) return '?';
-  return name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
 
 export default function ChatRoomContainer({ id }: { id: string }) {
   const router = useRouter();
@@ -73,7 +36,6 @@ export default function ChatRoomContainer({ id }: { id: string }) {
   const messagesQuery = api.chat.query.messages(id);
   const { data: members = [] } = api.chat.query.members(id);
   const { data: conversations = [] } = api.chat.query.conversations();
-  const { data: users = [] } = api.chat.query.userSearch(undefined);
   const updateGroup = api.chat.mutate.updateGroup();
   const addMember = api.chat.mutate.addMember();
   const setMemberRole = api.chat.mutate.setMemberRole();
@@ -87,6 +49,7 @@ export default function ChatRoomContainer({ id }: { id: string }) {
   const [editDesc, setEditDesc] = useState('');
   const [addQuery, setAddQuery] = useState('');
   const [transferTo, setTransferTo] = useState('');
+  const [isUrgent, setIsUrgent] = useState(false);
   const debouncedAddQuery = useDebounce(addQuery, 400);
   const { data: addCandidates = [] } = api.chat.query.userSearch(
     debouncedAddQuery ? { search: debouncedAddQuery } : undefined,
@@ -107,6 +70,17 @@ export default function ChatRoomContainer({ id }: { id: string }) {
   const canManage = myMember?.role === 'OWNER' || myMember?.role === 'ADMIN';
   const isOwner = myMember?.role === 'OWNER';
 
+  const peer = !isGroup ? members.find((m) => m.userId !== userId) : undefined;
+  const peerMemberId = peer?.companyMemberId || peer?.userId;
+  const { data: peerStatusData } = api.workingHours.query.memberStatus(peerMemberId);
+  const peerStatus = Array.isArray(peerStatusData) ? peerStatusData[0] : peerStatusData;
+  const { data: urgentQuota } = api.workingHours.query.urgentQuota();
+
+  const availableCandidates = useMemo(
+    () => addCandidates.filter((u) => !members.some((m) => m.userId === u.id)),
+    [addCandidates, members],
+  );
+
   const flat = useMemo(() => {
     const pages = messagesQuery.data?.pages ?? [];
     return [...pages].reverse().flatMap((p) => p.data) as LocalChatMessage[];
@@ -120,7 +94,6 @@ export default function ChatRoomContainer({ id }: { id: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  // Tandai dibaca saat halaman terbuka & terlihat.
   useEffect(() => {
     if (!maxSeq || document.visibilityState !== 'visible') return;
     sendRead(id, maxSeq);
@@ -137,7 +110,6 @@ export default function ChatRoomContainer({ id }: { id: string }) {
     };
   }, [id, maxSeq, sendRead]);
 
-  // Auto-scroll + pil pesan baru.
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -198,9 +170,10 @@ export default function ChatRoomContainer({ id }: { id: string }) {
 
   const handleSend = () => {
     if (!draft.trim()) return;
-    const cmid = sendMessage(id, draft);
+    const cmid = sendMessage(id, draft, { isUrgent });
     if (cmid) {
       setDraft('');
+      setIsUrgent(false);
       stopTyping();
       stickRef.current = true;
       requestAnimationFrame(() => {
@@ -224,388 +197,95 @@ export default function ChatRoomContainer({ id }: { id: string }) {
   const typers = (typing[id] ?? []).filter((t) => t.userId !== userId);
   const peerRead = peerReads[id];
 
-  const openInfo = () => {
-    setEditName(conversation?.name || '');
-    setEditDesc(conversation?.description || '');
-    setShowInfo(true);
-  };
-
-  const saveGroup = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateGroup.mutate({
-      id,
-      payload: { name: editName.trim() || undefined, description: editDesc.trim() },
-    });
-  };
-
-  if (isPersonal) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-6 max-w-md mx-auto">
-        <p className="text-base font-semibold mb-2">Chat Tidak Tersedia di Personal Workspace</p>
-        <p className="text-sm text-muted-foreground mb-6">
-          Percakapan tim hanya dapat diakses dalam Company Workspace. Silakan beralih ke Company
-          Workspace melalui Workspace Switcher.
-        </p>
-        <Button
-          onClick={() => router.push('/member/dashboard')}
-          variant="outline"
-          className="rounded-xl"
-        >
-          Kembali ke Dashboard
-        </Button>
-      </div>
-    );
-  }
-
-  if (messagesQuery.isLoading) {
-    return (
-      <div className="w-full max-w-3xl mx-auto space-y-2">
-        {[0, 1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-xl" />
-        ))}
-      </div>
-    );
-  }
-
-  if (messagesQuery.isError) {
-    return (
-      <div className="w-full max-w-3xl mx-auto rounded-xl border border-border/60 p-10 text-center space-y-3">
-        <p className="text-sm font-medium">Tidak dapat membuka percakapan</p>
-        <p className="text-xs text-muted-foreground">Mungkin sudah keluar atau akses dicabut.</p>
-        <Button size="sm" variant="outline" onClick={() => router.push(base)}>
-          Kembali
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full max-w-3xl mx-auto flex flex-col h-[calc(100dvh-10rem)] md:h-[calc(100dvh-12rem)]">
-      <div className="flex items-center gap-2 pb-3 border-b border-border/50">
-        <Button size="icon" variant="ghost" onClick={() => router.push(base)} aria-label="Kembali">
-          <ArrowLeft className="size-4" />
-        </Button>
-        <Avatar className="size-9">
-          <AvatarFallback>{initials(title)}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <p className="truncate text-sm font-semibold">{title}</p>
-          <p className="text-[11px] text-muted-foreground">
-            {typers.length > 0
-              ? `${typers.map((t) => t.fullName || 'Seseorang').join(', ')} mengetik...`
-              : isGroup
-                ? `${members.length} anggota`
-                : status === 'open'
-                  ? 'Terhubung'
-                  : 'Menghubungkan...'}
-          </p>
-        </div>
-        {status !== 'open' && (
-          <span className="flex items-center gap-1 text-[10px] text-muted-foreground">
-            <WifiOff className="size-3" /> offline
-          </span>
-        )}
-        {isGroup && (
-          <Button size="icon" variant="ghost" onClick={openInfo} aria-label="Info grup">
-            <Users className="size-4" />
-          </Button>
-        )}
-      </div>
-
-      <div
-        ref={scrollRef}
-        onScroll={onScroll}
-        className="flex-1 overflow-auto py-3 space-y-1.5 px-0.5"
-      >
-        {messagesQuery.hasNextPage && (
-          <div className="flex justify-center py-1">
-            <Button
-              size="sm"
-              variant="ghost"
-              disabled={messagesQuery.isFetchingNextPage}
-              onClick={() => void messagesQuery.fetchNextPage()}
-            >
-              {messagesQuery.isFetchingNextPage ? (
-                <Loader2 className="size-3.5 animate-spin" />
-              ) : (
-                'Muat lebih lama'
-              )}
-            </Button>
-          </div>
-        )}
-        {flat.length === 0 && (
-          <p className="py-10 text-center text-xs text-muted-foreground">
-            Belum ada pesan. Mulai percakapan di bawah.
-          </p>
-        )}
-        {flat.map((m) => {
-          const mine = m.senderId === userId;
-          const failed = m.sendStatus === 'failed';
-          const sending = m.sendStatus === 'sending';
-          const read =
-            mine && !sending && !failed && peerRead != null && peerRead.seq >= m.seq && m.seq > 0;
-          return (
-            <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
-              <div
-                className={`max-w-[80%] ${mine ? 'items-end' : 'items-start'} flex flex-col gap-0.5`}
-              >
-                {!mine && isGroup && (
-                  <span className="text-[10px] font-medium text-muted-foreground px-1">
-                    {m.senderName || 'Anggota'}
-                  </span>
-                )}
-                <div
-                  className={`rounded-2xl px-3 py-1.5 text-sm whitespace-pre-wrap break-words ${
-                    mine
-                      ? failed
-                        ? 'bg-destructive/15 text-foreground border border-destructive/30'
-                        : 'bg-primary text-primary-foreground'
-                      : 'bg-accent text-foreground'
-                  }`}
-                >
-                  {m.body}
-                </div>
-                <span className="flex items-center gap-1 text-[10px] text-muted-foreground px-1">
-                  {m.seq > 0 ? format(new Date(m.createdAt), 'HH:mm') : ''}
-                  {sending && <Loader2 className="size-3 animate-spin" />}
-                  {failed && (
-                    <button
-                      type="button"
-                      onClick={() => retryMessage(id, m.clientMessageId)}
-                      className="flex items-center gap-0.5 text-destructive hover:underline"
-                    >
-                      <RotateCcw className="size-3" /> Gagal, coba lagi
-                    </button>
-                  )}
-                  {!sending && !failed && mine && read && (
-                    <CheckCheck className="size-3.5 text-sky-500" />
-                  )}
-                  {!sending && !failed && mine && !read && m.seq > 0 && (
-                    <Check className="size-3.5" />
-                  )}
-                  {!sending && !failed && mine && m.seq === 0 && <Clock className="size-3" />}
-                </span>
-              </div>
-            </div>
+    <ChatRoomSection
+      service={{
+        isPersonal,
+        isLoading: messagesQuery.isLoading,
+        isError: messagesQuery.isError,
+        hasNextPage: messagesQuery.hasNextPage ?? false,
+        isFetchingNextPage: messagesQuery.isFetchingNextPage,
+        flat,
+        members,
+        availableCandidates,
+        title,
+        isGroup: !!isGroup,
+        memberCount: members.length,
+        conversationName: conversation?.name,
+        conversationDescription: conversation?.description,
+        status,
+        userId,
+        typers,
+        peerReadSeq: peerRead?.seq ?? null,
+        peerStatus: peerStatus
+          ? { status: peerStatus.status, statusLabel: peerStatus.statusLabel }
+          : null,
+        urgentQuota: urgentQuota
+          ? { remainingToday: urgentQuota.remainingToday, dailyLimit: urgentQuota.dailyLimit }
+          : null,
+        isUrgent,
+        onToggleUrgent: () => setIsUrgent((prev) => !prev),
+        newCount,
+        canManage,
+        isOwner,
+        updateGroupPending: updateGroup.isPending,
+        addMemberPending: addMember.isPending,
+        setMemberRolePending: setMemberRole.isPending,
+        removeMemberPending: removeMember.isPending,
+        transferPending: transferOwnership.isPending,
+        leavePending: leaveConversation.isPending,
+        onRetry: () => messagesQuery.refetch(),
+        onBack: () => router.push(base),
+        onBackToList: () => router.push(base),
+        onBackToDashboard: () => router.push('/member/dashboard'),
+        onOpenInfo: () => {
+          setEditName(conversation?.name || '');
+          setEditDesc(conversation?.description || '');
+          setShowInfo(true);
+        },
+        onScroll,
+        onLoadOlder: () => void messagesQuery.fetchNextPage(),
+        onScrollToBottom: scrollBottom,
+        onInput: handleInput,
+        onSend: handleSend,
+        onKey: handleKey,
+        onBlurStop: stopTyping,
+        onRetryMessage: (clientMessageId) => retryMessage(id, clientMessageId),
+        onSaveGroup: (e) => {
+          e.preventDefault();
+          updateGroup.mutate({
+            id,
+            payload: { name: editName.trim() || undefined, description: editDesc.trim() },
+          });
+        },
+        onAddMember: (userId) => addMember.mutate({ id, payload: { userId } }),
+        onSetRole: (userId, toAdmin) =>
+          setMemberRole.mutate({ id, payload: { userId, role: toAdmin ? 'ADMIN' : 'MEMBER' } }),
+        onRemoveMember: (userId) => removeMember.mutate({ id, userId }),
+        onTransfer: () => {
+          if (!transferTo) return;
+          transferOwnership.mutate(
+            { id, payload: { newOwnerId: transferTo } },
+            { onSuccess: () => setTransferTo('') },
           );
-        })}
-      </div>
-
-      {newCount > 0 && (
-        <button
-          type="button"
-          onClick={scrollBottom}
-          className="mx-auto mb-2 flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs text-primary-foreground shadow"
-        >
-          <ArrowDown className="size-3.5" /> {newCount} pesan baru
-        </button>
-      )}
-
-      <div className="flex items-end gap-2 pt-2 border-t border-border/50">
-        <Textarea
-          value={draft}
-          onChange={handleInput}
-          onKeyDown={handleKey}
-          onBlur={stopTyping}
-          placeholder={status === 'open' ? 'Tulis pesan... (Enter kirim)' : 'Menghubungkan...'}
-          disabled={status !== 'open'}
-          rows={1}
-          className="min-h-10 max-h-32 resize-none"
-          aria-label="Tulis pesan"
-        />
-        <Button
-          size="icon"
-          onClick={handleSend}
-          disabled={!draft.trim() || status !== 'open'}
-          aria-label="Kirim"
-        >
-          <Send className="size-4" />
-        </Button>
-      </div>
-
-      {isGroup && (
-        <Sheet open={showInfo} onOpenChange={setShowInfo}>
-          <SheetContent side="right" className="w-full sm:max-w-sm overflow-auto">
-            <SheetHeader>
-              <SheetTitle>Info grup</SheetTitle>
-              <SheetDescription>Kelola grup dan anggota sesuai role.</SheetDescription>
-            </SheetHeader>
-            <div className="space-y-5 py-4">
-              {canManage ? (
-                <form onSubmit={saveGroup} className="space-y-3">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="grpName">Nama grup</Label>
-                    <Input
-                      id="grpName"
-                      value={editName}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                        setEditName(e.target.value)
-                      }
-                      maxLength={100}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="grpDesc">Deskripsi</Label>
-                    <Textarea
-                      id="grpDesc"
-                      value={editDesc}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        setEditDesc(e.target.value)
-                      }
-                      rows={2}
-                      maxLength={500}
-                    />
-                  </div>
-                  <Button size="sm" type="submit" disabled={updateGroup.isPending}>
-                    {updateGroup.isPending ? 'Menyimpan...' : 'Simpan'}
-                  </Button>
-                </form>
-              ) : (
-                <div>
-                  <p className="text-sm font-medium">{conversation?.name}</p>
-                  {conversation?.description && (
-                    <p className="text-xs text-muted-foreground mt-1">{conversation.description}</p>
-                  )}
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  Anggota ({members.length})
-                </p>
-                {members.map((m) => (
-                  <div key={m.id} className="flex items-center gap-2">
-                    <Avatar className="size-8">
-                      <AvatarFallback>{initials(m.user?.fullName)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="truncate text-xs font-medium">
-                        {m.user?.fullName}
-                        {m.userId === userId ? ' (Saya)' : ''}
-                      </p>
-                      <Badge variant="outline" className="text-[10px] h-5">
-                        {m.role}
-                      </Badge>
-                    </div>
-                    {isOwner && m.userId !== userId && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        disabled={setMemberRole.isPending}
-                        onClick={() =>
-                          setMemberRole.mutate({
-                            id,
-                            payload: {
-                              userId: m.userId,
-                              role: m.role === 'ADMIN' ? 'MEMBER' : 'ADMIN',
-                            },
-                          })
-                        }
-                      >
-                        {m.role === 'ADMIN' ? 'Turunkan' : 'Angkat'}
-                      </Button>
-                    )}
-                    {canManage && m.userId !== userId && (isOwner || m.role === 'MEMBER') && (
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-destructive"
-                        disabled={removeMember.isPending}
-                        onClick={() => removeMember.mutate({ id, userId: m.userId })}
-                      >
-                        Keluarkan
-                      </Button>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {canManage && (
-                <div className="space-y-2">
-                  <Label htmlFor="addMember">Tambah anggota</Label>
-                  <Input
-                    id="addMember"
-                    placeholder="Cari nama..."
-                    value={addQuery}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setAddQuery(e.target.value)
-                    }
-                  />
-                  <div className="space-y-1 max-h-40 overflow-auto">
-                    {addCandidates
-                      .filter((u) => !members.some((m) => m.userId === u.id))
-                      .map((u) => (
-                        <div
-                          key={u.id}
-                          className="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-accent"
-                        >
-                          <span className="flex-1 truncate text-xs">{u.fullName}</span>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={addMember.isPending}
-                            onClick={() => addMember.mutate({ id, payload: { userId: u.id } })}
-                          >
-                            Tambah
-                          </Button>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              )}
-
-              {isOwner && (
-                <div className="space-y-2">
-                  <Label htmlFor="transferTo">Pindahkan kepemilikan</Label>
-                  <div className="flex gap-2">
-                    <select
-                      id="transferTo"
-                      value={transferTo}
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                        setTransferTo(e.target.value)
-                      }
-                      className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs"
-                    >
-                      <option value="">Pilih anggota...</option>
-                      {members
-                        .filter((m) => m.userId !== userId)
-                        .map((m) => (
-                          <option key={m.id} value={m.userId}>
-                            {m.user?.fullName} ({m.role})
-                          </option>
-                        ))}
-                    </select>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={!transferTo || transferOwnership.isPending}
-                      onClick={() =>
-                        transferOwnership.mutate(
-                          { id, payload: { newOwnerId: transferTo } },
-                          { onSuccess: () => setTransferTo('') },
-                        )
-                      }
-                    >
-                      Pindah
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <Button
-                size="sm"
-                variant="destructive"
-                disabled={leaveConversation.isPending}
-                onClick={() =>
-                  leaveConversation.mutate({ id }, { onSuccess: () => router.push(base) })
-                }
-              >
-                Keluar grup
-              </Button>
-            </div>
-          </SheetContent>
-        </Sheet>
-      )}
-    </div>
+        },
+        onLeave: () => leaveConversation.mutate({ id }, { onSuccess: () => router.push(base) }),
+      }}
+      state={{
+        draft,
+        setDraft,
+        showInfo,
+        setShowInfo,
+        editName,
+        setEditName,
+        editDesc,
+        setEditDesc,
+        addQuery,
+        setAddQuery,
+        transferTo,
+        setTransferTo,
+        scrollRef,
+      }}
+    />
   );
 }

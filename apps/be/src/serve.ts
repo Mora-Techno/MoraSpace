@@ -4,6 +4,10 @@ import {
   startNotificationQueueRunner,
   stopNotificationQueueRunner,
 } from './service/NotificationQueueWorker';
+import {
+  startHeldMessageReleaseRunner,
+  stopHeldMessageReleaseRunner,
+} from './service/HeldMessageReleaseWorker';
 import { verifyMailTransport } from './utils/mail.utils';
 
 let isShuttingDown = false;
@@ -14,6 +18,7 @@ async function shutdown(signal: string) {
 
   console.log(` Shutting down (${signal})...`);
   stopNotificationQueueRunner();
+  stopHeldMessageReleaseRunner();
 
   try {
     await disconnectDatabase();
@@ -57,6 +62,7 @@ connectWithRetry()
     app.listen(port);
     console.log(` Elysia running at in port:${port}`);
     startNotificationQueueRunner();
+    startHeldMessageReleaseRunner();
   })
   .catch((err) => {
     console.error(' Could not connect to database after retries:', err);

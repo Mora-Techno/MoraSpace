@@ -1,12 +1,25 @@
 import { DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import { router } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
-import { Bell, Home, LogOut, Music, Settings, Timer, User, Users } from 'lucide-react-native';
+import {
+  Bell,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Music,
+  Settings,
+  Timer,
+  User,
+  Users,
+} from 'lucide-react-native';
 import { Text, TouchableOpacity, View } from 'react-native';
 
+import { WorkspaceSwitcher } from '@/components/section/private/workspace-switcher';
 import ThemeToggle from '@/components/ui/toggleTheme';
 import PrivateProviders from '@/core/providers/private.provinder';
 import { useTheme } from '@/core/providers/theme.provinder';
+import { useSwitchWorkspace } from '@/hooks/service/Auth/state/mutate';
+import { useWorkspaces } from '@/hooks/service/Auth/state/query';
 import { useNotification } from '@/hooks/service/Notification/useNotification';
 import { useAppDispatch, useAppSelector } from '@/hooks/toolkit/redux';
 import { clearAuthTokens } from '@/service/auth-storage';
@@ -52,11 +65,21 @@ function CustomDrawerContent(props: any) {
   const displayEmail = (currentUser as any)?.user?.email ?? (currentUser as any)?.email ?? '';
   const roleName =
     (currentUser as any)?.user?.companyRole ?? (currentUser as any)?.companyRole ?? 'Member';
+  const activeCompanyId =
+    (currentUser as any)?.user?.companyId ?? (currentUser as any)?.companyId ?? null;
+
+  const { data: workspaces, isLoading: isWorkspacesLoading } = useWorkspaces();
+  const switchWorkspace = useSwitchWorkspace();
 
   const handleLogout = async () => {
     dispatch(logout());
     await clearAuthTokens();
     router.replace('/(auth)/login/page');
+  };
+
+  const handleSelectWorkspace = (workspaceId: string) => {
+    if (switchWorkspace.isPending) return;
+    switchWorkspace.mutate({ workspaceId });
   };
 
   return (
@@ -93,6 +116,17 @@ function CustomDrawerContent(props: any) {
           </View>
         </View>
       </View>
+
+      <WorkspaceSwitcher
+        service={{
+          companies: workspaces?.companies ?? [],
+          activeType: workspaces?.activeType,
+          isLoading: isWorkspacesLoading,
+          isPending: switchWorkspace.isPending,
+          onSelect: handleSelectWorkspace,
+        }}
+        state={{ activeCompanyId }}
+      />
 
       <View className="py-2">
         <DrawerItemList {...props} />
@@ -162,6 +196,16 @@ export default function PrivateLayout() {
           options={{
             title: 'Anggota Tim',
             drawerIcon: ({ size, color }) => <Users size={size} color={color} />,
+            drawerItemStyle: {
+              display: isOwner ? 'flex' : 'none',
+            },
+          }}
+        />
+        <Drawer.Screen
+          name="overview/page"
+          options={{
+            title: 'Ringkasan',
+            drawerIcon: ({ size, color }) => <LayoutDashboard size={size} color={color} />,
             drawerItemStyle: {
               display: isOwner ? 'flex' : 'none',
             },

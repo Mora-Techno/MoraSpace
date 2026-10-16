@@ -143,6 +143,8 @@ model Company {
   tasks               Task[]
   trackCatalogs       TrackCatalog[]
   webhooks            Webhook[]
+  urgentQuotaUsages   UrgentQuotaUsage[]
+  metricEvents        MetricEvent[]
 
   @@map("companies")
 }
@@ -170,6 +172,7 @@ model CompanyPolicy {
   queueEmail            Boolean @default(true) @map("queue_email")
   allowAfterHourMessage Boolean @default(false) @map("allow_after_hour_message")
   emergencyNotification Boolean @default(true) @map("emergency_notification")
+  urgentMessageLimitPerDay Int    @default(3) @map("urgent_message_limit_per_day")
   company               Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   @@map("company_policies")
@@ -294,6 +297,8 @@ model CompanyMember {
   trackCatalogs     TrackCatalog[]
   chatMemberships   ConversationMember[]
   settings          UserSetting?
+  urgentQuotaUsages UrgentQuotaUsage[]
+  metricEvents      MetricEvent[]
 
   @@unique([companyId, userId])
   @@map("company_members")
@@ -1092,6 +1097,10 @@ model Message {
   clientMessageId String             @map("client_message_id")
   seq             Int
   body            String             @db.VarChar(2000)
+  isHeld          Boolean            @default(false) @map("is_held")
+  isUrgent        Boolean            @default(false) @map("is_urgent")
+  scheduledDeliverAt DateTime?       @map("scheduled_deliver_at")
+  deliveredAt     DateTime?          @map("delivered_at")
   createdAt       DateTime           @default(now()) @map("created_at")
   conversation    Conversation       @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sender          User               @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
@@ -1100,6 +1109,7 @@ model Message {
   @@unique([conversationId, seq])
   @@unique([senderId, clientMessageId])
   @@index([conversationId, seq])
+  @@index([conversationId, isHeld, scheduledDeliverAt])
   @@map("messages")
 }
 
@@ -1138,3 +1148,40 @@ enum BlogStatus {
   draft
   published
 }
+
+// v0.0.2 Status Jam Kerja: Kuota pemakaian pesan mendesak per member per hari
+model UrgentQuotaUsage {
+  id              String        @id @default(uuid())
+  companyId       String        @map("company_id")
+  companyMemberId String        @map("company_member_id")
+  usageDate       DateTime      @db.Date @map("usage_date")
+  count           Int           @default(1)
+  company         Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
+
+  @@unique([companyMemberId, usageDate])
+  @@index([companyId, usageDate])
+  @@map("urgent_quota_usages")
+}
+
+// v0.0.2 Status Jam Kerja: Pencatatan metrik kepatuhan privasi (tanpa isi pesan/task)
+model MetricEvent {
+  id              String          @id @default(uuid())
+  companyId       String          @map("company_id")
+  companyMemberId String?         @map("company_member_id")
+  eventType       MetricEventType @map("event_type")
+  createdAt       DateTime        @default(now()) @map("created_at")
+  company         Company         @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyMember   CompanyMember?  @relation(fields: [companyMemberId], references: [id], onDelete: SetNull)
+
+  @@index([companyId, eventType, createdAt])
+  @@map("metric_events")
+}
+
+enum MetricEventType {
+  MESSAGE_SENT_OUT_OF_HOURS
+  URGENT_BUTTON_USED
+  WORKING_STATUS_VIEWED
+  APP_OPENED_OUT_OF_HOURS
+}
+

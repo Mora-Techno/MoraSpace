@@ -1,4 +1,5 @@
 export * from './AgendaTimelineItem';
+export * from './DetailShell';
 export * from './GhibliCard';
 export * from './GhibliSwitch';
 export * from './GhibliTabs';

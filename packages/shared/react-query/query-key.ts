@@ -139,4 +139,11 @@ export const queryKey = {
     members: (id: string) => ['chat', 'members', id] as const,
     users: () => ['chat', 'users'] as const,
   },
+
+  workingHoursRoot: () => ['workingHours'] as const,
+  workingHours: {
+    status: (memberId?: string) => ['workingHours', 'status', memberId ?? 'all'] as const,
+    quota: () => ['workingHours', 'quota'] as const,
+    metrics: (range?: string) => ['workingHours', 'metrics', range ?? '7d'] as const,
+  },
 } as const;

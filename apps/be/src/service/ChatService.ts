@@ -1,5 +1,6 @@
 import { Prisma } from '@/generated/client';
 import prisma from 'prisma/client';
+import WorkingHoursService from './WorkingHoursService';
 
 export class ChatForbiddenError extends Error {}
 
@@ -87,6 +88,7 @@ class ChatService {
     actor: ChatActor,
     clientMessageId: string,
     rawBody: string,
+    isUrgent = false,
   ) {
     const body = rawBody.trim();
     if (!body || body.length > 2000) {
@@ -103,8 +105,51 @@ class ChatService {
     if (idem) {
       return { message: { ...idem, senderName: idem.sender.fullName }, duplicate: true };
     }
+
+    let isHeld = false;
+    let scheduledDeliverAt: Date | null = null;
+
+    const convo = await prisma.conversation.findUnique({
+      where: { id: conversationId },
+      select: { type: true },
+    });
+
+    if (convo?.type === 'DIRECT') {
+      const peer = await prisma.conversationMember.findFirst({
+        where: { conversationId, userId: { not: actor.userId }, leftAt: null },
+        select: { companyMemberId: true },
+      });
+
+      if (peer?.companyMemberId) {
+        const peerStatus = await WorkingHoursService.getMemberStatus(
+          actor.companyId,
+          peer.companyMemberId,
+        );
+
+        if (peerStatus && peerStatus.status === 'out_of_hours') {
+          if (!isUrgent) {
+            isHeld = true;
+            scheduledDeliverAt = peerStatus.nextWorkingDate
+              ? new Date(peerStatus.nextWorkingDate)
+              : null;
+            void WorkingHoursService.recordMetricEvent(
+              actor.companyId,
+              actor.companyMemberId,
+              'MESSAGE_SENT_OUT_OF_HOURS',
+            );
+          } else {
+            // Pengirim memakai tombol Mendesak
+            await WorkingHoursService.checkAndConsumeUrgentQuota(
+              actor.companyId,
+              actor.companyMemberId,
+            );
+          }
+        }
+      }
+    }
+
     const message = await prisma.$transaction(async (tx) => {
-      const convo = await tx.conversation.update({
+      const updatedConvo = await tx.conversation.update({
         where: { id: conversationId },
         data: { seqCounter: { increment: 1 }, updatedAt: new Date() },
         select: { seqCounter: true },
@@ -115,8 +160,12 @@ class ChatService {
           senderId: actor.userId,
           senderMemberId: me.id,
           clientMessageId,
-          seq: convo.seqCounter,
+          seq: updatedConvo.seqCounter,
           body,
+          isHeld,
+          isUrgent,
+          scheduledDeliverAt,
+          deliveredAt: isHeld ? null : new Date(),
         },
         include: { sender: { select: { fullName: true } } },
       });
@@ -195,9 +244,13 @@ class ChatService {
     const data = await Promise.all(
       conversations.map(async (conversation) => {
         const lastReadSeq = conversation.members[0]?.lastReadSeq ?? 0;
-        // ponytail: N+1 count per percakapan, ganti agregasi tunggal jika list berat.
         const unreadCount = await prisma.message.count({
-          where: { conversationId: conversation.id, seq: { gt: lastReadSeq } },
+          where: {
+            conversationId: conversation.id,
+            seq: { gt: lastReadSeq },
+            isHeld: false,
+            senderId: { not: actor.userId },
+          },
         });
         let peerName: string | undefined;
         if (conversation.type === 'DIRECT') {
@@ -311,10 +364,17 @@ class ChatService {
     await this.activeMember(conversationId, actor);
     const limit = Math.min(query.limit ?? 30, 100);
     const direction = query.direction ?? 'before';
+    const visibilityFilter = {
+      OR: [{ isHeld: false }, { senderId: actor.userId }],
+    };
     const where: Prisma.MessageWhereInput =
       direction === 'after'
-        ? { conversationId, seq: { gt: query.cursor ?? 0 } }
-        : { conversationId, ...(query.cursor ? { seq: { lt: query.cursor } } : {}) };
+        ? { conversationId, seq: { gt: query.cursor ?? 0 }, ...visibilityFilter }
+        : {
+            conversationId,
+            ...(query.cursor ? { seq: { lt: query.cursor } } : {}),
+            ...visibilityFilter,
+          };
     const messages = await prisma.message.findMany({
       where,
       include: { sender: { select: { fullName: true } } },

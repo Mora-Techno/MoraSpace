@@ -29,6 +29,12 @@ export const UpdateCompanyProfileDto = t.Object({
   country: t.Optional(t.String({ description: 'Negara perusahaan' })),
 });
 
+export const PresignLogoDto = t.Object({
+  contentType: t.Union([t.Literal('image/png'), t.Literal('image/jpeg'), t.Literal('image/webp')], {
+    description: 'Tipe file logo',
+  }),
+});
+
 // v0.0.1: Working Hours — GET semua member, PATCH Owner only.
 export const UpdateCompanySettingsDto = t.Object({
   workingHourStart: t.Optional(t.String({ description: 'Jam mulai (HH:mm)' })),

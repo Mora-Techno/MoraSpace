@@ -1,17 +1,9 @@
-import type { AdminUser } from '@repo';
+import type { AdminUser, WorkingStatus } from '@repo/types';
 import { Trash2, UserCheck, UserX } from 'lucide-react';
 
-import { Button } from '@/components/atoms';
+import { Button, WorkingStatusBadge } from '@/components/atoms';
 import type { AlertContexType } from '@/types/ui';
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
+import { getInitials } from '@/utils/string.format';
 
 interface MemberRowProps {
   user?: AdminUser & { status?: string };
@@ -19,18 +11,33 @@ interface MemberRowProps {
   onDelete?: (id: string) => void;
   onUpdateStatus?: (status: string) => void;
   isPending?: boolean;
+  workingStatus?: { status: WorkingStatus; statusLabel: string } | null;
 }
 
-export function MemberRow({ user, alert, onDelete, onUpdateStatus, isPending }: MemberRowProps) {
+export function MemberRow({
+  user,
+  alert,
+  onDelete,
+  onUpdateStatus,
+  isPending,
+  workingStatus,
+}: MemberRowProps) {
+  const status = workingStatus ?? null;
+
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/80 backdrop-blur-md p-4 transition-all hover:border-border/80">
       <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
         {user ? getInitials(user.fullName) : ''}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">
-          {user?.fullName ?? 'Nama user'}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="truncate text-sm font-semibold text-foreground">
+            {user?.fullName ?? 'Nama user'}
+          </p>
+          {status && (
+            <WorkingStatusBadge status={status.status} statusLabel={status.statusLabel} compact />
+          )}
+        </div>
         <p className="truncate text-xs text-muted-foreground">
           {user?.email ?? 'user@company.com'}
         </p>

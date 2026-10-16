@@ -1,21 +1,17 @@
 'use client';
 
-import type { DashboardTaskStatusSlice } from '@repo/types';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/atoms';
 import { GlassCard } from '@/components/molecules/GlassCard';
 
-const FALLBACK_COLORS = ['#7DAF74', '#AEC6CF', '#F2C94C', '#D97757', '#9B8AFB', '#6FCF97'];
+interface TaskSlice {
+  name: string;
+  value: number;
+  color: string;
+}
 
-export function TaskDistributionChart({ slices = [] }: { slices?: DashboardTaskStatusSlice[] }) {
-  const data = slices.map((s, i) => ({
-    name: s.name,
-    value: s.count,
-    color: s.color || FALLBACK_COLORS[i % FALLBACK_COLORS.length],
-  }));
-  const total = data.reduce((acc, d) => acc + d.value, 0);
-
+export function TaskDistributionChart({ data = [], total }: { data?: TaskSlice[]; total: number }) {
   return (
     <GlassCard>
       <CardHeader className="px-5 pt-5 pb-2">

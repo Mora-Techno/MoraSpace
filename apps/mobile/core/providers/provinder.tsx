@@ -4,6 +4,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { ThemeProvider } from '@/core/providers/theme.provinder';
 import { AlertProvinder } from '@/hooks/useAlert/costum-alert';
+import { ChatSocketProvider } from '@/hooks/useChatSocket';
 import { ReactQueryClientProvider } from '@/pkg/react-query/query-client.pkg';
 import Api from '@/service/props.service';
 import { persistor, store } from '@/stores/store';
@@ -16,6 +17,7 @@ const Providers = composeProviders([
   ReactQueryClientProvider,
   ThemeProvider,
   AlertProvinder,
+  ChatSocketProvider,
 ]);
 
 export function AppProviders({ children }: { children: React.ReactNode }) {

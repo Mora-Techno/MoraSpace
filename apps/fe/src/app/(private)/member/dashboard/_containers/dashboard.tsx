@@ -12,13 +12,7 @@ import { format } from 'date-fns';
 import { id as idLocale } from 'date-fns/locale';
 import { useEffect, useMemo, useState } from 'react';
 
-import { AgendaSection } from '@/components/organisms/AgendaSection';
-import { DailyGreetingSection } from '@/components/organisms/DailyGreetingSection';
-import { MusicSection } from '@/components/organisms/MusicSection';
-import { PomodoroSection } from '@/components/organisms/PomodoroSection';
-import { QuickNotesSection } from '@/components/organisms/QuickNotesSection';
-import { TodoListSection } from '@/components/organisms/TodoListSection';
-import { MemberDashboardTemplate } from '@/components/templates/MemberDashboardTemplate';
+import { DashboardSection } from '@/components/page/private/member/dashboard/dashboard.section';
 import { useMusicPlayer } from '@/context/MusicPlayerContext';
 import { useApi } from '@/hooks/useApi/useApi';
 import { useAppNameSpace } from '@/hooks/useAppNameSpace';
@@ -330,134 +324,83 @@ export default function DashboardContainer() {
   };
 
   return (
-    <div
-      className={`transition-all duration-700 ${isFocused ? 'ring-4 ring-primary/20 bg-background/50' : ''}`}
-    >
-      {isFocused && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 pointer-events-none transition-all duration-700" />
-      )}
-
-      <div className={isFocused ? 'relative z-50' : ''}>
-        <MemberDashboardTemplate
-          dailyGreeting={
-            <DailyGreetingSection
-              state={{
-                name,
-                greeting,
-                currentDate,
-                stats,
-              }}
-            />
-          }
-          pomodoro={
-            <PomodoroSection
-              service={{
-                handleStart: handleStartPomodoro,
-                handlePause: handlePausePomodoro,
-                handleStop: handleStopPomodoro,
-                handleToggleFocus,
-              }}
-              state={{
-                isFocused,
-                isActive,
-                minutes: pomodoroMinutes,
-                seconds: pomodoroSeconds,
-                isStartPending: startSession.isPending,
-                isStopPending: stopSession.isPending,
-              }}
-            />
-          }
-          todoList={
-            <TodoListSection
-              service={{
-                handleToggle: handleToggleTodo,
-                handleAdd: handleAddTodo,
-                handleDeleteTodo,
-                handleSelectTodo,
-                isPending: updateTodo.isPending || deleteTodo.isPending,
-                createTodo,
-              }}
-              state={{
-                Todos,
-                uncompletedTodosCount,
-                isLoading: useTodo.isPending,
-                formUpdateTodo,
-                alert: ns.alert,
-                setShowModalTodo,
-                showModalTodo,
-                setFormUpdateTodo,
-              }}
-            />
-          }
-          agenda={
-            <AgendaSection
-              state={{
-                upcomingEvents,
-                isLoading: calendarLoading,
-              }}
-            />
-          }
-          music={
-            <MusicSection
-              service={{
-                handleAdd: handleAddPlaylist,
-                isPending: createPlaylist.isPending,
-                addItem: handleAddMusicItem,
-                track: trackCatalogTracks,
-                deleteItem: handleDeleteMusicItem,
-              }}
-              state={{
-                playlists: mappedPlaylists,
-                isLoading: musicLoading,
-                formCreatePlaylistMusic,
-                expandedPlaylistId,
-                setFormCreatePlaylistMusic,
-                currentTrack: musicPlayer.currentTrack,
-                isPlaying: musicPlayer.isPlaying,
-                isShuffle: musicPlayer.isShuffle,
-                onPlayPlaylist: musicPlayer.playPlaylist,
-                onTogglePlay: musicPlayer.toggle,
-                onPause: musicPlayer.pause,
-                onToggleShuffle: musicPlayer.toggleShuffle,
-                onAddToQueue: musicPlayer.addToQueue,
-                setShowModalPlayList,
-                showModalPlayList,
-                setShowCatalog,
-                showCatalog,
-                toggleExpand,
-                selectedPlaylistForAdd,
-                setSelectedPlaylistForAdd,
-                isTracksLoading: tracksLoading,
-                onPlayTrack: handlePlayCatalogTrack,
-              }}
-            />
-          }
-          quickNotes={
-            <QuickNotesSection
-              service={{
-                handleAdd: handleAddNote,
-                handleSaveEdit,
-                handleDeleteNote,
-                createNote,
-                updateNote,
-              }}
-              state={{
-                recentNotes,
-                isLoading: notesLoading,
-                formCreateNote,
-                setFormCreateNote,
-                selectedNote,
-                setShowModalNotes,
-                showModalNotes,
-                setSelectedNote,
-                alertType: ns.alert,
-                formEditNote,
-                setFormEditNote,
-              }}
-            />
-          }
-        />
-      </div>
-    </div>
+    <DashboardSection
+      service={{
+        stats,
+        todos: Todos,
+        uncompletedTodosCount,
+        todoLoading: useTodo.isPending,
+        todoPending: updateTodo.isPending || deleteTodo.isPending,
+        createTodo,
+        onToggleTodo: handleToggleTodo,
+        onAddTodo: handleAddTodo,
+        onDeleteTodo: handleDeleteTodo,
+        onSelectTodo: handleSelectTodo,
+        alert: ns.alert,
+        upcomingEvents,
+        calendarLoading,
+        onStartPomodoro: handleStartPomodoro,
+        onPausePomodoro: handlePausePomodoro,
+        onStopPomodoro: handleStopPomodoro,
+        onToggleFocus: handleToggleFocus,
+        isStartPending: startSession.isPending,
+        isStopPending: stopSession.isPending,
+        playlists: mappedPlaylists,
+        musicLoading,
+        createPlaylistPending: createPlaylist.isPending,
+        tracks: trackCatalogTracks,
+        tracksLoading,
+        onAddPlaylist: handleAddPlaylist,
+        onAddMusicItem: handleAddMusicItem,
+        onDeleteMusicItem: handleDeleteMusicItem,
+        onPlayCatalogTrack: handlePlayCatalogTrack,
+        currentTrack: musicPlayer.currentTrack,
+        isPlaying: musicPlayer.isPlaying,
+        isShuffle: musicPlayer.isShuffle,
+        onPlayPlaylist: musicPlayer.playPlaylist,
+        onTogglePlay: musicPlayer.toggle,
+        onPausePlayer: musicPlayer.pause,
+        onToggleShuffle: musicPlayer.toggleShuffle,
+        onAddToQueue: musicPlayer.addToQueue,
+        onToggleExpand: toggleExpand,
+        recentNotes,
+        notesLoading,
+        createNote,
+        updateNote,
+        onAddNote: handleAddNote,
+        onSaveEditNote: handleSaveEdit,
+        onDeleteNote: handleDeleteNote,
+      }}
+      state={{
+        name,
+        greeting,
+        currentDate,
+        isFocused,
+        isActive,
+        pomodoroMinutes,
+        pomodoroSeconds,
+        showModalTodo,
+        setShowModalTodo,
+        formUpdateTodo,
+        setFormUpdateTodo,
+        showModalPlayList,
+        setShowModalPlayList,
+        showModalNotes,
+        setShowModalNotes,
+        showCatalog,
+        setShowCatalog,
+        expandedPlaylistId,
+        selectedPlaylistForAdd,
+        setSelectedPlaylistForAdd,
+        formCreatePlaylistMusic,
+        setFormCreatePlaylistMusic,
+        formCreateNote,
+        setFormCreateNote,
+        selectedNote,
+        setSelectedNote,
+        formEditNote,
+        setFormEditNote,
+      }}
+    />
   );
 }

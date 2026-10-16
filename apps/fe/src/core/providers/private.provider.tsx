@@ -143,6 +143,16 @@ export default function PrivateProviders({ children }: { children: React.ReactNo
     }
   }, [isReady, isAuthenticated, pathname, role, router]);
 
+  useEffect(() => {
+    if (!isReady || !isAuthenticated) return;
+    if (typeof window === 'undefined') return;
+    const sessionKey = 'mora_off_hours_app_opened';
+    if (!sessionStorage.getItem(sessionKey)) {
+      sessionStorage.setItem(sessionKey, '1');
+      void Api.WorkingHours.RecordAppOpened().catch(() => {});
+    }
+  }, [isReady, isAuthenticated]);
+
   return (
     <ChatSocketProvider>
       <>{isReady && isAuthenticated ? children : null}</>

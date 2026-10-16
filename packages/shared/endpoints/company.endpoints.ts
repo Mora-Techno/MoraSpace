@@ -10,6 +10,7 @@ export const COMPANY_ENDPOINTS = {
   ME: buildEndpoint(mount, '/me'),
   UPDATE_SUBSCRIPTION: buildEndpoint(mount, '/subscription'),
   UPDATE_PROFILE: buildEndpoint(mount, '/profile'),
+  LOGO_PRESIGN: buildEndpoint(mount, '/logo/presign'),
   GET_SETTINGS: buildEndpoint(mount, '/settings'),
   UPDATE_SETTINGS: buildEndpoint(mount, '/settings'),
 } as const;

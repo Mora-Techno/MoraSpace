@@ -1,3 +1,4 @@
+import type { OwnerMetricsSummary } from '@repo/types';
 import { BellRing, Clock, Loader2, ShieldAlert } from 'lucide-react';
 import React from 'react';
 
@@ -18,6 +19,7 @@ interface CompanySettingsSectionProps {
     handleSubmit: (e: React.FormEvent) => void;
     isPending: boolean;
     isLoading: boolean;
+    metrics?: OwnerMetricsSummary | null;
   };
   state: {
     formUpdate: {
@@ -28,6 +30,7 @@ interface CompanySettingsSectionProps {
       workDays: string;
       respectWorkingHours?: boolean;
       queueNotification?: boolean;
+      urgentMessageLimitPerDay?: number;
     };
     setFormUpdate: React.Dispatch<
       React.SetStateAction<{
@@ -38,6 +41,7 @@ interface CompanySettingsSectionProps {
         workDays: string;
         respectWorkingHours?: boolean;
         queueNotification?: boolean;
+        urgentMessageLimitPerDay?: number;
       }>
     >;
   };
@@ -56,7 +60,7 @@ const WORK_DAY_LABELS: Record<string, string> = {
 };
 
 const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
-  service: { handleSubmit, isPending, isLoading },
+  service: { handleSubmit, isPending, isLoading, metrics },
   state: { formUpdate, setFormUpdate },
 }) => {
   const activeDays = (formUpdate.workDays || '')
@@ -237,6 +241,71 @@ const CompanySettingsSection: React.FC<CompanySettingsSectionProps> = ({
                   </div>
                 </div>
               </label>
+
+              <div className="pt-3 border-t border-border/50 space-y-2">
+                <Label htmlFor="urgentLimit">Batas Pesan Mendesak per Hari</Label>
+                <div className="max-w-xs">
+                  <Input
+                    id="urgentLimit"
+                    type="number"
+                    min={1}
+                    max={20}
+                    value={formUpdate.urgentMessageLimitPerDay ?? 3}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      setFormUpdate((prev) => ({
+                        ...prev,
+                        urgentMessageLimitPerDay: parseInt(e.target.value, 10) || 3,
+                      }))
+                    }
+                    disabled={isPending || isLoading}
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Kuota pesan mendesak per orang per hari saat rekan di luar jam kerja (default 3).
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Ringkasan Owner: Penggunaan Pesan Mendesak & Luar Jam Kerja */}
+        <Card className="border border-border/60 bg-card/60 backdrop-blur-md">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-amber-500" />
+              <CardTitle>Ringkasan Pemakaian Pesan Mendesak (7 Hari)</CardTitle>
+            </div>
+            <CardDescription>
+              Pantau kepatuhan jam kerja dan seberapa sering jalur darurat digunakan oleh tim tanpa
+              melanggar privasi.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/40">
+                <p className="text-xs text-muted-foreground">Mendesak Hari Ini</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  {metrics?.urgentCountToday ?? 0}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/40">
+                <p className="text-xs text-muted-foreground">Mendesak 7 Hari</p>
+                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
+                  {metrics?.urgentCountThisWeek ?? 0}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/40">
+                <p className="text-xs text-muted-foreground">Pesan Luar Jam</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  {metrics?.outOfHoursMessagesCount ?? 0}
+                </p>
+              </div>
+              <div className="p-3.5 rounded-2xl bg-muted/40 border border-border/40">
+                <p className="text-xs text-muted-foreground">App Dibuka (Luar Jam)</p>
+                <p className="text-2xl font-bold text-foreground mt-1">
+                  {metrics?.appOpenedOutOfHoursCount ?? 0}
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>

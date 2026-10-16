@@ -1,4 +1,3 @@
-import type { OwnerDashboardOverview } from '@repo/types';
 import { CalendarCheck, Clock, Target, Users } from 'lucide-react';
 
 import {
@@ -11,65 +10,50 @@ import {
 } from '@/components/atoms';
 import { GlassCard } from '@/components/molecules/GlassCard';
 
-function formatDeepWork(minutes: number) {
-  if (minutes >= 60) {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return m > 0 ? `${h} jam ${m} mnt` : `${h} Jam`;
-  }
-  return `${minutes} mnt`;
+interface KpiCardsProps {
+  seats: { active: number; max: number | null; pctText: string };
+  done: { rate: number; completed: number };
+  health: { active: number; overdue: number; onTrack: number };
+  deepWork: { text: string };
 }
 
-export function KpiCards({ overview }: { overview?: OwnerDashboardOverview }) {
-  const members = overview?.members;
-  const tasks = overview?.tasks;
-  const minutes = overview?.deepWorkMinutes ?? 0;
-
-  const seatPct =
-    members?.maxMembers && members.maxMembers > 0
-      ? Math.round((members.active / members.maxMembers) * 100)
-      : null;
-  const onTrack =
-    tasks && tasks.total > 0
-      ? Math.round(((tasks.total - tasks.overdue) / tasks.total) * 100)
-      : 100;
-
+export function KpiCards({ seats, done, health, deepWork }: KpiCardsProps) {
   const kpis = [
     {
       icon: Users,
       label: 'Utilisasi Kursi',
-      value: members ? `${members.active} / ${members.maxMembers ?? '–'}` : '–',
+      value: `${seats.active} / ${seats.max ?? '–'}`,
       detail:
-        members?.maxMembers != null ? (
-          <Progress value={members.active} max={members.maxMembers} className="mt-2 h-1.5" />
+        seats.max != null ? (
+          <Progress value={seats.active} max={seats.max} className="mt-2 h-1.5" />
         ) : undefined,
-      badge: seatPct != null ? `${seatPct}% terpakai` : `${members?.total ?? 0} terdaftar`,
+      badge: seats.pctText,
       badgeVariant: 'default' as const,
     },
     {
       icon: Target,
       label: 'Done Rate Tugas',
-      value: tasks ? `${tasks.doneRate}%` : '–',
+      value: `${done.rate}%`,
       detail: undefined,
-      badge: tasks ? `${tasks.completed} selesai` : '–',
+      badge: `${done.completed} selesai`,
       badgeVariant: 'default' as const,
     },
     {
       icon: CalendarCheck,
       label: 'Kesehatan Tugas',
-      value: tasks ? `${tasks.active} Aktif` : '–',
-      detail: tasks ? (
+      value: `${health.active} Aktif`,
+      detail: (
         <p className="mt-1 text-xs text-muted-foreground">
-          <span className="font-medium text-destructive">{tasks.overdue} Overdue</span>
+          <span className="font-medium text-destructive">{health.overdue} Overdue</span>
         </p>
-      ) : undefined,
-      badge: tasks ? `${onTrack}% on-track` : '–',
+      ),
+      badge: `${health.onTrack}% on-track`,
       badgeVariant: 'secondary' as const,
     },
     {
       icon: Clock,
       label: 'Total Deep Work',
-      value: formatDeepWork(minutes),
+      value: deepWork.text,
       detail: undefined,
       badge: '7 hari terakhir',
       badgeVariant: 'outline' as const,

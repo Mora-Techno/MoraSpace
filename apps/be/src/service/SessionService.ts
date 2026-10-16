@@ -23,13 +23,13 @@ class SessionService {
 
     if (query.search) {
       where.OR = [
-        { device: { contains: query.search, mode: 'insensitive' } },
+        { deviceName: { contains: query.search, mode: 'insensitive' } },
         { browser: { contains: query.search, mode: 'insensitive' } },
       ];
     }
 
     if (query.device) {
-      where.device = { contains: query.device, mode: 'insensitive' };
+      where.deviceName = { contains: query.device, mode: 'insensitive' };
     }
 
     if (query.startDate || query.endDate) {
