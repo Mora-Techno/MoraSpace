@@ -17,6 +17,7 @@
     "cf:release:staging": "bun --env-file=.env.staging run cf:build:staging && bun run cf:deploy:staging",
     "cf:build:prod": "opennextjs-cloudflare build --env=\"\"",
     "cf:deploy:prod": "opennextjs-cloudflare deploy --env=\"\"",
+    "cf:release:prod": "bun --env-file=.env.prod run cf:build:prod && bun run cf:deploy:prod",
     "cf:upload": "opennextjs-cloudflare upload",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv env.d.ts"
   },
