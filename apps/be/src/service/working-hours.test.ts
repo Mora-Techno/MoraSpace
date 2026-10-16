@@ -200,7 +200,12 @@ describe('Held Message Release Logic', () => {
   it('should identify and release only expired held messages', () => {
     const now = new Date('2026-10-16T09:00:00Z');
 
-    const messages: { id: string; isHeld: boolean; scheduledDeliverAt: Date; deliveredAt: Date | null }[] = [
+    const messages: {
+      id: string;
+      isHeld: boolean;
+      scheduledDeliverAt: Date;
+      deliveredAt: Date | null;
+    }[] = [
       {
         id: 'msg-1',
         isHeld: true,
