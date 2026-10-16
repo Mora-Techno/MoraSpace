@@ -4,6 +4,7 @@ import {
   CompanyParamsDto,
   CompanyQueryDto,
   CreateAdminDto,
+  PresignLogoDto,
   RegisterCompanyDto,
   UpdateCompanyProfileDto,
   UpdateCompanySettingsDto,
@@ -37,7 +38,7 @@ class CompanyRouter {
 
     this.companyRouter.post('/admins', (c: AppContext) => CompanyController.createAdmin(c), {
       body: CreateAdminDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Buat akun admin',
         description: 'Leader membuat akun admin untuk mengelola workstation.',
@@ -46,7 +47,7 @@ class CompanyRouter {
     });
     this.companyRouter.delete('/admins/:id', (c: AppContext) => CompanyController.deleteAdmin(c), {
       params: CompanyParamsDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Berhasil Delete',
         description: 'Leader menghapus admin',
@@ -55,7 +56,7 @@ class CompanyRouter {
     });
     this.companyRouter.get('/admins', (c: AppContext) => CompanyController.listAdmins(c), {
       query: CompanyQueryDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Daftar admin company',
         tags: ['Companies'],
@@ -74,6 +75,15 @@ class CompanyRouter {
       detail: {
         summary: 'Update logo & country perusahaan',
         description: 'Memperbarui logo URL dan/atau negara perusahaan.',
+        tags: ['Companies'],
+      },
+    });
+    this.companyRouter.post('/logo/presign', (c: AppContext) => CompanyController.presignLogo(c), {
+      body: PresignLogoDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: 'Presign upload logo (R2)',
+        description: 'Terbitkan URL PUT presigned 5 menit; browser upload langsung ke R2.',
         tags: ['Companies'],
       },
     });

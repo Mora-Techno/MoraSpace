@@ -1,4 +1,5 @@
 import { AdminUser, PickCreateAdmin } from '@repo';
+import type { WorkingStatus } from '@repo/types';
 import { Plus, Users } from 'lucide-react';
 import { useState } from 'react';
 
@@ -39,6 +40,7 @@ interface OwnerCompanyMemberSectionProps {
     handleDeleteMember?: (id: string) => void;
     handleInvite?: (email: string) => void;
     isInvitePending?: boolean;
+    statusByKey?: Record<string, { status: WorkingStatus; statusLabel: string }>;
   };
   state: {
     open: boolean;
@@ -62,6 +64,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
     handleUpdateStatus,
     handleInvite,
     isInvitePending,
+    statusByKey,
   } = service;
   const { open, setOpen, alert, searchTerm, setSearchTerm } = state;
   const [inviteEmail, setInviteEmail] = useState('');
@@ -153,6 +156,7 @@ const OwnerCompanyMemberSection: React.FC<OwnerCompanyMemberSectionProps> = ({
                   onUpdateStatus={(status: string) => handleUpdateStatus?.(user.id, status)}
                   onDelete={() => handleDeleteMember?.(user.id)}
                   isPending={isPending}
+                  workingStatus={statusByKey?.[(user as any).id]}
                 />
               ))}
             </div>

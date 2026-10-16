@@ -39,6 +39,7 @@ const Api = {
   Chat: ApiServicePackage.Chat,
   Blog: ApiServicePackage.Blog,
   Dashboard: ApiServicePackage.Dashboard,
+  WorkingHours: ApiServicePackage.WorkingHours,
 } as const;
 
 export default Api;

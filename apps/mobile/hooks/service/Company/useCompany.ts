@@ -1,9 +1,14 @@
-import { useUpdateCompanyProfile, useUpdateCompanySettings } from './state/mutate';
+import {
+  useRegisterCompany,
+  useUpdateCompanyProfile,
+  useUpdateCompanySettings,
+} from './state/mutate';
 import { useGetCompanySettings, useGetMyCompany, useListAdmins } from './state/query';
 
 export const useCompany = () => {
   return {
     mutate: {
+      registerCompany: useRegisterCompany,
       updateProfile: useUpdateCompanyProfile,
       updateSettings: useUpdateCompanySettings,
     },

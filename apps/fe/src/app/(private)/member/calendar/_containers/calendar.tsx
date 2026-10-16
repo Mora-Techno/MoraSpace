@@ -1,21 +1,10 @@
 'use client';
 
 import type { EventQuery } from '@repo/types';
-import { Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { Button } from '@/components/atoms';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/atoms/Sheet';
-import { PageHeader } from '@/components/molecules/PageHeader';
-import { EventFormSection } from '@/components/page/private/member/calendar/event-form.section';
-import { EventListSection } from '@/components/page/private/member/calendar/event-list.section';
+import { CalendarPageSection } from '@/components/page/private/member/calendar/calendar-page.section';
 import { useApi } from '@/hooks/useApi/useApi';
 
 export default function CalendarContainer() {
@@ -80,58 +69,29 @@ export default function CalendarContainer() {
   };
 
   return (
-    <div className="">
-      <PageHeader
-        title="Kalender"
-        description="Jadwalkan agenda dan kelola acara harianmu."
-        action={
-          <div className="lg:hidden">
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger asChild>
-                <Button size="icon" className="ghibli-btn rounded-full">
-                  <Plus className="size-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="bottom" className="rounded-t-3xl">
-                <SheetHeader>
-                  <SheetTitle className="font-serif">Jadwal Baru</SheetTitle>
-                </SheetHeader>
-                <div className="px-4 pb-6">
-                  <EventFormSection
-                    service={{ handleSubmit }}
-                    state={{
-                      title,
-                      setTitle,
-                      description,
-                      setDescription,
-                      startDate,
-                      setStartDate,
-                      isPending: createEvent.isPending,
-                    }}
-                  />
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        }
-      />
-
-      <div className="w-full">
-        <EventListSection
-          service={{
-            handleDelete: handleDeleteEvent,
-            onSearch: handleSearch,
-            onPageChange: handlePageChange,
-            handleSelect: handleSelectEvent,
-          }}
-          state={{
-            events,
-            isLoading,
-            isPending: isListPending,
-            query: listQuery,
-          }}
-        />
-      </div>
-    </div>
+    <CalendarPageSection
+      service={{
+        events,
+        isLoading,
+        isPending: isListPending,
+        query,
+        createPending: createEvent.isPending,
+        handleDeleteEvent,
+        handleSearch,
+        handlePageChange,
+        handleSelectEvent,
+        handleSubmit,
+      }}
+      state={{
+        open,
+        setOpen,
+        title,
+        setTitle,
+        description,
+        setDescription,
+        startDate,
+        setStartDate,
+      }}
+    />
   );
 }

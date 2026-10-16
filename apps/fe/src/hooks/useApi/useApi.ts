@@ -19,6 +19,7 @@ import { useTask } from './task/useTask';
 import { useTeam } from './team/useTeam';
 import { useTodo } from './todo/useTodos';
 import { useTrackCatalog } from './trackCatalog/useTrackCatalog';
+import { useWorkingHours } from './workingHours/useWorkingHours';
 
 export function useApi() {
   return {
@@ -43,5 +44,6 @@ export function useApi() {
     trackCatalog: useTrackCatalog(),
     chat: useChat(),
     dashboard: useDashboard(),
+    workingHours: useWorkingHours(),
   };
 }

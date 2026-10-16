@@ -40,7 +40,11 @@ class NotificationController {
       const authRespone = await unauthorizedValidate(user, c);
       if (authRespone) return authRespone;
 
-      const result = await NotificationService.listLogs(c.query as any);
+      const result = await NotificationService.listLogs(
+        user.companyId ?? null,
+        user.id,
+        c.query as any,
+      );
       return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil riwayat notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);
@@ -108,7 +112,11 @@ class NotificationController {
       const authResponse = await personalContextValidate(user, c);
       if (authResponse) return authResponse;
 
-      const result = await NotificationService.listQueue(c.query as any);
+      const result = await NotificationService.listQueue(
+        user.companyId ?? null,
+        user.id,
+        c.query as any,
+      );
       return HttpResponse(c).ok(result.data, result.meta, 'Berhasil mengambil antrean notifikasi');
     } catch (error) {
       return HttpResponse(c).internalError(error);

@@ -12,31 +12,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/atoms';
-import { useApi } from '@/hooks/useApi/useApi';
-import { useChatSocket } from '@/hooks/useChatSocket';
+import { useWorkspaceSwitcher } from '@/hooks/useWorkspace';
 import { cn } from '@/utils/classname';
-import { loadAuthSession } from '@/utils/storage';
-
-interface TokenClaims {
-  id?: string;
-  fullName?: string;
-  email?: string;
-  companyRole?: string;
-  companyId?: string | null;
-  workspaceType?: 'personal' | 'company';
-}
-
-function readTokenClaims(): TokenClaims | null {
-  try {
-    const token = loadAuthSession()?.accessToken;
-    if (!token) return null;
-    const payload = token.split('.')[1];
-    if (!payload) return null;
-    return JSON.parse(atob(payload)) as TokenClaims;
-  } catch {
-    return null;
-  }
-}
 
 interface WorkspaceSwitcherProps {
   className?: string;
@@ -44,36 +21,16 @@ interface WorkspaceSwitcherProps {
 }
 
 export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwitcherProps) {
-  const api = useApi();
-  const { reconnect } = useChatSocket();
-  const claims = readTokenClaims();
-  const { data: workspacesData, isLoading } = api.auth.query.workspaces();
-  const switchWorkspace = api.auth.mutate.switchWorkspace();
-
-  const isPersonalActive = !claims?.companyId || claims?.workspaceType === 'personal';
-  const activeCompany = workspacesData?.companies?.find(
-    (c: WorkspaceItem) => c.id === claims?.companyId,
-  );
-
-  const currentWorkspaceName = isPersonalActive
-    ? 'Personal Workspace'
-    : activeCompany?.name || 'Company Workspace';
-
-  const currentWorkspaceRole = isPersonalActive
-    ? 'Individual'
-    : activeCompany?.role || claims?.companyRole || 'Member';
-
-  const handleSwitch = async (workspaceId: string) => {
-    if (isPersonalActive && workspaceId === 'personal') return;
-    if (!isPersonalActive && claims?.companyId === workspaceId) return;
-
-    try {
-      await switchWorkspace.mutateAsync({ workspaceId });
-      reconnect();
-    } catch (err) {
-      console.error('Failed to switch workspace:', err);
-    }
-  };
+  const {
+    companies,
+    isPersonalActive,
+    activeCompanyId,
+    currentWorkspaceName,
+    currentWorkspaceRole,
+    isLoading,
+    isPending,
+    handleSwitch,
+  } = useWorkspaceSwitcher();
 
   return (
     <DropdownMenu>
@@ -86,12 +43,12 @@ export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwi
             collapsed
               ? 'size-10 justify-center p-0'
               : 'h-10 px-3 py-1.5 min-w-[160px] max-w-[240px]',
-            switchWorkspace.isPending && 'opacity-70 pointer-events-none',
+            isPending && 'opacity-70 pointer-events-none',
             className,
           )}
           title={currentWorkspaceName}
         >
-          {switchWorkspace.isPending ? (
+          {isPending ? (
             <Loader2 className="size-4 animate-spin text-primary shrink-0" />
           ) : isPersonalActive ? (
             <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0">
@@ -149,15 +106,15 @@ export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwi
         </DropdownMenuItem>
 
         {/* Companies Section */}
-        {workspacesData?.companies && workspacesData.companies.length > 0 && (
+        {companies.length > 0 && (
           <>
             <DropdownMenuSeparator className="my-1.5" />
             <DropdownMenuLabel className="px-2 py-1 text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
               Company
             </DropdownMenuLabel>
 
-            {workspacesData.companies.map((company: WorkspaceItem) => {
-              const isActive = !isPersonalActive && claims?.companyId === company.id;
+            {companies.map((company: WorkspaceItem) => {
+              const isActive = !isPersonalActive && activeCompanyId === company.id;
               return (
                 <DropdownMenuItem
                   key={company.id}

@@ -1,9 +1,7 @@
 'use client';
 
-import type { BlogListItem } from '@repo/types';
 import { ArrowRight, ArrowUpRight, Calendar, Clock, Mail, Search } from 'lucide-react';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
 
 import { Badge, Button } from '@/components/atoms';
 import {
@@ -14,72 +12,52 @@ import {
 } from '@/components/atoms/Scribbles';
 import { useTranslation } from '@/pkg/i18n';
 
+export interface BlogArticleVM {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  authorName: string;
+  initials: string;
+  dateText: string;
+  readTime: string;
+}
+
 interface BlogSectionProps {
-  template?: {
-    title: string;
-    desc: string;
-  };
-  data?: {
-    posts: BlogListItem[];
-    categories: string[];
+  service: {
+    categories: { id: string; label: string }[];
+    showFeatured: boolean;
+    featured: BlogArticleVM | null;
+    gridArticles: BlogArticleVM[];
+    isEmpty: boolean;
     isLoading: boolean;
     isError: boolean;
-    refetch: () => void;
+    onSelectCategory: (id: string) => void;
+    onRetry: () => void;
+  };
+  state: {
+    searchQuery: string;
+    setSearchQuery: (v: string) => void;
+    selectedCategory: string;
+    setSelectedCategory: (v: string) => void;
   };
 }
 
-function readTimeOf(excerpt: string) {
-  const words = excerpt.split(/\s+/).filter(Boolean).length;
-  return `${Math.max(1, Math.round(words / 200))} mnt baca`;
-}
-
-function formatBlogDate(iso: string | null) {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('id-ID', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  });
-}
-
-function initialsOf(name?: string | null) {
-  if (!name) return '?';
-  return name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
-
-export default function BlogSection({ template: _template, data }: BlogSectionProps) {
+export default function BlogSection({ service, state }: BlogSectionProps) {
   const { t } = useTranslation('public');
-
-  const posts = useMemo(() => data?.posts ?? [], [data?.posts]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const categories = useMemo(
-    () => [
-      { id: 'ALL', label: t('blogs.cat_all') },
-      ...(data?.categories ?? []).map((c) => ({ id: c, label: c })),
-    ],
-    [t, data?.categories],
-  );
-
-  const filteredArticles = useMemo(() => {
-    const q = searchQuery.toLowerCase();
-    return posts.filter((article) => {
-      const matchesCategory = selectedCategory === 'ALL' || article.category === selectedCategory;
-      const matchesSearch =
-        !q || article.title.toLowerCase().includes(q) || article.excerpt.toLowerCase().includes(q);
-      return matchesCategory && matchesSearch;
-    });
-  }, [posts, selectedCategory, searchQuery]);
-
-  const showFeatured = selectedCategory === 'ALL' && !searchQuery && filteredArticles.length > 0;
-  const featured = filteredArticles[0];
-  const gridArticles = showFeatured ? filteredArticles.slice(1) : filteredArticles;
+  const {
+    categories,
+    showFeatured,
+    featured,
+    gridArticles,
+    isEmpty,
+    isLoading,
+    isError,
+    onSelectCategory,
+    onRetry,
+  } = service;
+  const { searchQuery, setSearchQuery, selectedCategory, setSelectedCategory } = state;
 
   return (
     <section className="relative px-4 pb-32 pt-24 md:px-8 md:pt-32 min-h-screen">
@@ -130,7 +108,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => onSelectCategory(cat.id)}
                 className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                   selectedCategory === cat.id
                     ? 'bg-foreground text-background shadow-xs'
@@ -170,12 +148,11 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
                 <span className="font-semibold text-primary">{featured.category}</span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <Calendar className="size-3.5" />{' '}
-                  {formatBlogDate(featured.publishedAt || featured.createdAt)}
+                  <Calendar className="size-3.5" /> {featured.dateText}
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1">
-                  <Clock className="size-3.5" /> {readTimeOf(featured.excerpt)}
+                  <Clock className="size-3.5" /> {featured.readTime}
                 </span>
               </div>
 
@@ -190,7 +167,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
               <div className="flex items-center justify-between pt-4 border-t border-border/50">
                 <div className="flex items-center gap-2.5">
                   <div className="size-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs">
-                    {initialsOf(featured.authorName)}
+                    {featured.initials}
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-foreground">{featured.authorName}</p>
@@ -210,7 +187,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
         )}
 
         {/* Article Cards Grid */}
-        {data?.isLoading ? (
+        {isLoading ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2].map((i) => (
               <div
@@ -223,10 +200,10 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
               </div>
             ))}
           </div>
-        ) : data?.isError ? (
+        ) : isError ? (
           <div className="text-center py-16 rounded-3xl border border-border/60 bg-card/40 space-y-3">
             <p className="text-sm font-semibold text-foreground">Gagal memuat artikel.</p>
-            <Button size="sm" variant="outline" onClick={() => data?.refetch()}>
+            <Button size="sm" variant="outline" onClick={onRetry}>
               Coba lagi
             </Button>
           </div>
@@ -244,7 +221,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
                     </span>
                     <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                       <Clock className="size-3" />
-                      <span>{readTimeOf(article.excerpt)}</span>
+                      <span>{article.readTime}</span>
                     </div>
                   </div>
 
@@ -260,7 +237,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
                 <div className="pt-4 border-t border-border/50 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2 text-muted-foreground text-[11px]">
                     <Calendar className="size-3" />
-                    <span>{formatBlogDate(article.publishedAt || article.createdAt)}</span>
+                    <span>{article.dateText}</span>
                   </div>
 
                   <Link
@@ -276,7 +253,7 @@ export default function BlogSection({ template: _template, data }: BlogSectionPr
           </div>
         )}
 
-        {filteredArticles.length === 0 && !data?.isLoading && !data?.isError && (
+        {isEmpty && !isLoading && !isError && (
           <div className="text-center py-16 rounded-3xl border border-border/60 bg-card/40">
             <p className="text-sm font-semibold text-foreground">{t('blogs.empty_title')}</p>
             <p className="text-xs text-muted-foreground mt-1">{t('blogs.empty_desc')}</p>

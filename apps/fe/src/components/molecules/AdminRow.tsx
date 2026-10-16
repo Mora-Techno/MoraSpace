@@ -3,15 +3,7 @@ import { Trash2, UserCheck, UserX } from 'lucide-react';
 
 import { Button } from '@/components/atoms';
 import type { AlertContexType } from '@/types/ui';
-
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? '')
-    .join('');
-}
+import { getInitials } from '@/utils/string.format';
 
 interface AdminRowProps {
   admin?: AdminUser & { status?: string }; // Extends for status

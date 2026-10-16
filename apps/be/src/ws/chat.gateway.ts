@@ -114,6 +114,28 @@ export async function emitMembershipChanged(
   }
 }
 
+export async function broadcastDeliveredMessage(conversationId: string, message: any) {
+  const actives = await activeMemberUserIds(conversationId);
+  for (const target of targetEntries(actives, conversationId)) {
+    send(target, CHAT_WS_EVENTS.DELIVERED, { message });
+    send(target, CHAT_WS_EVENTS.NEW, { message });
+  }
+  const senderName = message.senderName ?? message.sender?.fullName;
+  for (const target of targetEntries(actives, null)) {
+    send(target, CHAT_WS_EVENTS.CONVERSATION_UPDATED, {
+      conversationId,
+      lastMessage: {
+        id: message.id,
+        seq: message.seq,
+        body: message.body,
+        senderName,
+        createdAt: message.createdAt,
+      },
+      lastSeq: message.seq,
+    });
+  }
+}
+
 function actorOf(state: ConnState) {
   const claims = state.claims;
   if (!claims || !state.userId || !claims.companyId || !claims.companyMemberId) return null;
@@ -284,7 +306,7 @@ async function handleMessage(ws: ChatConn, raw: unknown) {
           sendError(entry, 'RATE_LIMITED', 'Terlalu banyak pesan, coba lagi', reqId);
           return;
         }
-        const { conversationId, clientMessageId, body } = payload;
+        const { conversationId, clientMessageId, body, isUrgent } = payload;
         if (
           typeof conversationId !== 'string' ||
           typeof clientMessageId !== 'string' ||
@@ -299,25 +321,40 @@ async function handleMessage(ws: ChatConn, raw: unknown) {
             actor,
             clientMessageId,
             body,
+            Boolean(isUrgent),
           );
-          send(entry, CHAT_WS_EVENTS.ACK, { clientMessageId, message }, reqId);
-          const actives = await activeMemberUserIds(conversationId);
-          for (const target of targetEntries(actives, conversationId, ws.id)) {
-            send(target, CHAT_WS_EVENTS.NEW, { message });
-          }
-          const senderName = (message as { senderName?: string }).senderName;
-          for (const target of targetEntries(actives, null, ws.id)) {
-            send(target, CHAT_WS_EVENTS.CONVERSATION_UPDATED, {
-              conversationId,
-              lastMessage: {
-                id: message.id,
-                seq: message.seq,
-                body: message.body,
-                senderName,
-                createdAt: message.createdAt,
-              },
-              lastSeq: message.seq,
-            });
+          send(
+            entry,
+            CHAT_WS_EVENTS.ACK,
+            {
+              clientMessageId,
+              message,
+              isHeld: (message as any).isHeld,
+              scheduledDeliverAt: (message as any).scheduledDeliverAt,
+            },
+            reqId,
+          );
+
+          // Held messages are held until recipient's working hours start
+          if (!(message as any).isHeld) {
+            const actives = await activeMemberUserIds(conversationId);
+            for (const target of targetEntries(actives, conversationId, ws.id)) {
+              send(target, CHAT_WS_EVENTS.NEW, { message });
+            }
+            const senderName = (message as { senderName?: string }).senderName;
+            for (const target of targetEntries(actives, null, ws.id)) {
+              send(target, CHAT_WS_EVENTS.CONVERSATION_UPDATED, {
+                conversationId,
+                lastMessage: {
+                  id: message.id,
+                  seq: message.seq,
+                  body: message.body,
+                  senderName,
+                  createdAt: message.createdAt,
+                },
+                lastSeq: message.seq,
+              });
+            }
           }
         } catch (error) {
           if (error instanceof ChatForbiddenError) {

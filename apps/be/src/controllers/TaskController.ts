@@ -169,6 +169,11 @@ class TaskController {
         user.id,
         user.companyMemberId ?? null,
         body,
+        {
+          companyRole: user.companyRole,
+          companyMemberId: user.companyMemberId,
+          userId: user.id,
+        },
       );
       if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
@@ -188,7 +193,11 @@ class TaskController {
       const validateParams = await paramsValidate(params.id, c);
       if (validateParams) return validateParams;
 
-      const data = await TaskService.remove(params.id, user.companyId ?? null, user.id);
+      const data = await TaskService.remove(params.id, user.companyId ?? null, user.id, {
+        companyRole: user.companyRole,
+        companyMemberId: user.companyMemberId,
+        userId: user.id,
+      });
       if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
       return HttpResponse(c).ok(data, undefined, 'Tugas berhasil dihapus');
@@ -214,6 +223,11 @@ class TaskController {
         user.id,
         user.companyMemberId ?? null,
         body.assigneeIds,
+        {
+          companyRole: user.companyRole,
+          companyMemberId: user.companyMemberId,
+          userId: user.id,
+        },
       );
       if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
@@ -240,6 +254,11 @@ class TaskController {
         user.id,
         user.companyMemberId ?? null,
         body.statusId,
+        {
+          companyRole: user.companyRole,
+          companyMemberId: user.companyMemberId,
+          userId: user.id,
+        },
       );
       if (!data) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 

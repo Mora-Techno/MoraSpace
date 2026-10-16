@@ -39,8 +39,11 @@ class NotificationService {
   }
 
   public async listLogs(
+    companyId: string | null,
+    userId: string,
     query: NotificationLogQuery & {
       search?: string;
+      channel?: string;
       type?: string;
       startDate?: string;
       endDate?: string;
@@ -52,21 +55,16 @@ class NotificationService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
-
-    if (query.search) {
-      where.OR = [
-        { recipient: { contains: query.search, mode: 'insensitive' } },
-        { subject: { contains: query.search, mode: 'insensitive' } },
-      ];
-    }
+    const where: Record<string, unknown> = {
+      notification: companyId ? { companyId } : { userId },
+    };
 
     if (query.status) {
       where.status = query.status;
     }
 
-    if (query.type) {
-      where.type = query.type;
+    if (query.channel) {
+      where.channel = query.channel;
     }
 
     if (query.startDate || query.endDate) {
@@ -163,13 +161,17 @@ class NotificationService {
   }
 
   public async listQueue(
+    companyId: string | null,
+    userId: string,
     query: { status?: 'pending' | 'processing' | 'failed'; page?: number; limit?: number } = {},
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const where: Record<string, unknown> = {
+      notification: companyId ? { companyId } : { userId },
+    };
 
     if (query.status) {
       where.status = query.status;

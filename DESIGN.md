@@ -15,37 +15,37 @@ golden accent (dark). Fraunces is sparing, display-only. Whitespace over decorat
 
 ## 3. Light theme — Warm Botanical
 
-| Token | Background | Foreground |
-|---|---|---|
-| page | `#FDFBF7` | `#4A4238` |
-| card | `rgba(255,255,255,0.7)` | `#4A4238` |
-| popover | `#FFFFFF` | `#4A4238` |
-| primary | `#7DAF74` | `#243020` |
-| secondary | `#AEC6CF` | `#4A4238` |
-| muted | `#F3EFE8` | `rgba(74,66,56,0.78)` |
-| accent | `#E8F4E6` | `#3F6637` |
-| destructive | `#D97757` | `#2B1710` |
-| warning | `#F2C94C` | `#4A4238` |
-| success | `#7DAF74` | `#243020` |
-| info | `#AEC6CF` | `#4A4238` |
-| border / input / ring | `rgba(94,139,86,0.2)` / `rgba(74,112,66,0.8)` / `rgba(74,112,66,0.8)` | — |
+| Token                 | Background                                                            | Foreground            |
+| --------------------- | --------------------------------------------------------------------- | --------------------- |
+| page                  | `#FDFBF7`                                                             | `#4A4238`             |
+| card                  | `rgba(255,255,255,0.7)`                                               | `#4A4238`             |
+| popover               | `#FFFFFF`                                                             | `#4A4238`             |
+| primary               | `#7DAF74`                                                             | `#243020`             |
+| secondary             | `#AEC6CF`                                                             | `#4A4238`             |
+| muted                 | `#F3EFE8`                                                             | `rgba(74,66,56,0.78)` |
+| accent                | `#E8F4E6`                                                             | `#3F6637`             |
+| destructive           | `#D97757`                                                             | `#2B1710`             |
+| warning               | `#F2C94C`                                                             | `#4A4238`             |
+| success               | `#7DAF74`                                                             | `#243020`             |
+| info                  | `#AEC6CF`                                                             | `#4A4238`             |
+| border / input / ring | `rgba(94,139,86,0.2)` / `rgba(74,112,66,0.8)` / `rgba(74,112,66,0.8)` | —                     |
 
 ## 4. Dark theme — Midnight Calm
 
-| Token | Background | Foreground |
-|---|---|---|
-| page | `#1A2530` | `#E8E6E1` |
-| card | `rgba(0,0,0,0.4)` | `#E8E6E1` |
-| popover | `#243040` | `#E8E6E1` |
-| primary | `#F2C94C` | `#1A2530` |
-| secondary | `#4A4E69` | `#E8E6E1` |
-| muted | `#243040` | `rgba(232,230,225,0.6)` |
-| accent | `#2D3A4A` | `#F2C94C` |
-| destructive | `#D97757` | `#1A2530` |
-| warning | `#E5A93D` | `#1A2530` |
-| success | `#7DAF74` | `#1A2530` |
-| info | `#4A4E69` | `#E8E6E1` |
-| border / input / ring | `rgba(255,255,255,0.1)` / `rgba(255,255,255,0.4)` / `rgba(242,201,76,0.55)` | — |
+| Token                 | Background                                                                  | Foreground              |
+| --------------------- | --------------------------------------------------------------------------- | ----------------------- |
+| page                  | `#1A2530`                                                                   | `#E8E6E1`               |
+| card                  | `rgba(0,0,0,0.4)`                                                           | `#E8E6E1`               |
+| popover               | `#243040`                                                                   | `#E8E6E1`               |
+| primary               | `#F2C94C`                                                                   | `#1A2530`               |
+| secondary             | `#4A4E69`                                                                   | `#E8E6E1`               |
+| muted                 | `#243040`                                                                   | `rgba(232,230,225,0.6)` |
+| accent                | `#2D3A4A`                                                                   | `#F2C94C`               |
+| destructive           | `#D97757`                                                                   | `#1A2530`               |
+| warning               | `#E5A93D`                                                                   | `#1A2530`               |
+| success               | `#7DAF74`                                                                   | `#1A2530`               |
+| info                  | `#4A4E69`                                                                   | `#E8E6E1`               |
+| border / input / ring | `rgba(255,255,255,0.1)` / `rgba(255,255,255,0.4)` / `rgba(242,201,76,0.55)` | —                       |
 
 ## 5. Canonical tokens
 
@@ -59,20 +59,21 @@ Additive: `sidebar.*` and `chart[5]` (web-only consumers), `typeScale`, `spacing
 WCAG AA: 4.5:1 text, 3:1 UI boundaries/focus. Alpha composited over the real surface. Smallest
 change; foreground changed in preference to brand backgrounds.
 
-| Theme | Pair | Original | New | Ratio |
-|---|---|---|---|---|
-| Light | primary fg | `#FDFBF7` | `#243020` | 2.46 → 5.44 |
-| Light | success fg | `#FDFBF7` | `#243020` | 2.46 → 5.44 |
-| Light | accent fg | `#5E8B56` | `#3F6637` | 3.49 → 5.85 |
-| Light | destructive fg | `#FFFFFF` | `#2B1710` | 3.12 → 5.46 |
-| Light | muted fg alpha | 0.65 | 0.78 | ~3.5 → 4.79 |
-| Light | input boundary | `rgba(94,139,86,.15)` | `rgba(74,112,66,.8)` | 1.18 → 3.63 |
-| Light | focus ring | `rgba(125,175,116,.4)` | `rgba(74,112,66,.8)` | 1.39 → 3.63 |
-| Dark | destructive fg | `#E8E6E1` | `#1A2530` | 2.50 → 4.98 |
-| Dark | focus ring | `rgba(242,201,76,.35)` | `rgba(242,201,76,.55)` | 2.40 → 3.94 |
-| Dark | input boundary | `rgba(255,255,255,.12)` | `rgba(255,255,255,.4)` | 1.45 → 3.69 |
+| Theme | Pair           | Original                | New                    | Ratio       |
+| ----- | -------------- | ----------------------- | ---------------------- | ----------- |
+| Light | primary fg     | `#FDFBF7`               | `#243020`              | 2.46 → 5.44 |
+| Light | success fg     | `#FDFBF7`               | `#243020`              | 2.46 → 5.44 |
+| Light | accent fg      | `#5E8B56`               | `#3F6637`              | 3.49 → 5.85 |
+| Light | destructive fg | `#FFFFFF`               | `#2B1710`              | 3.12 → 5.46 |
+| Light | muted fg alpha | 0.65                    | 0.78                   | ~3.5 → 4.79 |
+| Light | input boundary | `rgba(94,139,86,.15)`   | `rgba(74,112,66,.8)`   | 1.18 → 3.63 |
+| Light | focus ring     | `rgba(125,175,116,.4)`  | `rgba(74,112,66,.8)`   | 1.39 → 3.63 |
+| Dark  | destructive fg | `#E8E6E1`               | `#1A2530`              | 2.50 → 4.98 |
+| Dark  | focus ring     | `rgba(242,201,76,.35)`  | `rgba(242,201,76,.55)` | 2.40 → 3.94 |
+| Dark  | input boundary | `rgba(255,255,255,.12)` | `rgba(255,255,255,.4)` | 1.45 → 3.69 |
 
 **Documented exceptions (not changed):**
+
 - `border` (1.25 light / 1.36 dark) is a decorative divider; the control boundary is `input`. The checker reports it as WARN.
 - `primary` background vs page is not required to hit 3:1 because the button label carries the contrast.
 - Also corrected: `card` alpha unified to 0.7 / 0.4 (web CSS previously 0.72 / 0.42). Web `outline-ring/50` removed because it halved the ring alpha and defeated the 3:1 target.
@@ -88,14 +89,15 @@ packages/shared/config/theme.tokens.ts   ← only place palette lives
         ├─► apps/mobile/styles/global.css             (RGB channel vars + *-alpha vars)
         └─► apps/mobile/config/theme.generated.js     (Tailwind v3: colors, fontFamily, fontSize)
 ```
+
 `apps/*/…/theme.config.ts` are thin re-exports of the canonical `themeConfig`. Generated files must not be hand-edited.
 
 ## 8. Typography
 
-| Role | Family | Use |
-|---|---|---|
-| sans | DM Sans 400/500/600/700 | all UI text |
-| display | Fraunces 600/700 | display/marketing headings only, opt-in |
+| Role    | Family                  | Use                                     |
+| ------- | ----------------------- | --------------------------------------- |
+| sans    | DM Sans 400/500/600/700 | all UI text                             |
+| display | Fraunces 600/700        | display/marketing headings only, opt-in |
 
 Scale (px / line-height): display 40/48, heading-xl 32/40, heading-lg 24/32, heading-md 20/28,
 heading-sm 18/26, body-lg 16/24, body-md 14/20, body-sm 13/18, caption 12/16.
@@ -177,6 +179,7 @@ Do not convey state by color alone.
 bun run theme:generate   # regenerate all three outputs
 bun run theme:check      # contrast gate + generated files up to date
 ```
+
 Run `theme:check` in CI. Generated files are excluded from Biome.
 
 ## 23. Verification checklist
@@ -192,6 +195,7 @@ Run `theme:check` in CI. Generated files are excluded from Biome.
 ## 24. Decisions taken & remaining notes
 
 Decided (implemented):
+
 1. **Radius migrated** to the canonical scale on web and mobile (web components using `rounded-sm/md/lg/xl` become slightly tighter: 12/14/16/20 → 6/10/14/20).
 2. **Headings** are DM Sans; Fraunces is opt-in via `font-serif` / `font-display`.
 3. **`border`** stays a decorative divider (documented WARN); controls use `input`.
@@ -199,6 +203,7 @@ Decided (implemented):
 5. **Hardcoded red/amber** action buttons now use `destructive` / `warning` tokens with their foregrounds. `ghibli-bg` / `ghibli-glass` derive from tokens.
 
 Remaining:
+
 - NativeWind `rgb(var(--x) / var(--x-alpha))` and font loading are unverified on device.
 - Dark `chart-3` (`#4A4E69`) is low-contrast on the dark page (chart-only).
 - Pre-existing: `apps/fe` ESLint fails on missing `eslint-plugin-react-hooks`; 14 `components/ui` ref-typing errors on mobile.

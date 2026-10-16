@@ -9,6 +9,7 @@ import {
 } from '@/dto/notification.dto';
 import type { AppContext } from '@/contex';
 import { verifyToken } from '@/middlewares/auth';
+import { requirePlatformRole } from '@/middlewares/platformRole';
 
 class NotificationRouter {
   public notificationRouter;
@@ -22,14 +23,14 @@ class NotificationRouter {
   }
 
   private routes() {
-    // by developer platform
+    // Platform Super Admin only
     this.notificationRouter.post('/send', (c: AppContext) => NotificationController.send(c), {
       body: SendNotificationDto,
-      beforeHandle: [verifyToken().beforeHandle],
+      beforeHandle: [verifyToken().beforeHandle, requirePlatformRole(['SUPER_ADMIN']).beforeHandle],
       detail: {
         summary: 'Kirim notifikasi email',
         description:
-          'Men-trigger pengiriman email secara manual atau digunakan oleh cron job internal backend via SMTP Gmail.',
+          'Men-trigger pengiriman email secara manual oleh Super Admin via SMTP / Resend.',
         tags: ['Notifications'],
       },
     });

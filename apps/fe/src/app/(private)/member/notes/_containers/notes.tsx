@@ -4,8 +4,7 @@ import type { NoteQuery, PickCreateNote } from '@repo/types';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { PageHeader } from '@/components/molecules/PageHeader';
-import { NoteListSection } from '@/components/page/private/member/notes/note-list.section';
+import { NotesPageSection } from '@/components/page/private/member/notes/notes-page.section';
 import { useApi } from '@/hooks/useApi/useApi';
 import { useGsapStagger } from '@/hooks/useGsapStagger';
 
@@ -61,30 +60,25 @@ export default function NotesContainer() {
   };
 
   return (
-    <div className="animate-in fade-in duration-700">
-      <PageHeader title="Notes" description="Simpan ide, jurnal harian, dan snippet kode." />
-      <div className="w-full">
-        <NoteListSection
-          service={{
-            handleDelete,
-            handleSelect,
-            handleSubmit: handleModalSubmit,
-            isPending: createNote.isPending,
-            onSearch: handleSearch,
-            onPageChange: handlePageChange,
-          }}
-          state={{
-            notes,
-            setShowModal,
-            formCreateNote,
-            setFormCreateNote,
-            showModal,
-            isLoading,
-            gridRef,
-            query,
-          }}
-        />
-      </div>
-    </div>
+    <NotesPageSection
+      service={{
+        handleDelete,
+        handleSelect,
+        handleSubmit: handleModalSubmit,
+        isPending: createNote.isPending,
+        onSearch: handleSearch,
+        onPageChange: handlePageChange,
+      }}
+      state={{
+        notes,
+        setShowModal,
+        formCreateNote,
+        setFormCreateNote,
+        showModal,
+        isLoading,
+        gridRef,
+        query,
+      }}
+    />
   );
 }

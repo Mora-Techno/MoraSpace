@@ -10,6 +10,13 @@ export interface ICompanyMember {
   joinedAt: string | null;
   resignedAt: string | null;
   status: CompanyMemberStatus;
+  user?: {
+    id: string;
+    fullName: string;
+    email: string;
+    avatarUrl?: string | null;
+    phone?: string | null;
+  } | null;
 }
 
 export type PickUpdateCompanyMember = {

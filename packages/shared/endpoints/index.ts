@@ -55,3 +55,7 @@ export {
 export { CHAT_ENDPOINTS, listChatEndpoints } from './chat.endpoints';
 export { BLOG_ENDPOINTS, listBlogEndpoints } from './blog.endpoints';
 export { DASHBOARD_ENDPOINTS, listDashboardEndpoints } from './dashboard.endpoints';
+export {
+  WORKING_HOURS_ENDPOINTS,
+  listWorkingHoursEndpoints,
+} from './workingHours.endpoints';

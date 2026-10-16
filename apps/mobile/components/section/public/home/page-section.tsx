@@ -35,6 +35,11 @@ export default function SectionHomePage() {
             </Link>
             <ArrowRight size={20} color={colors.primaryForeground} className="ml-2" />
           </Button>
+          <Link href={'/(public)/blog/page' as any}>
+            <Text className="text-center text-sm mt-4" style={{ color: colors.primary }}>
+              Baca Blog →
+            </Text>
+          </Link>
         </View>
 
         <View className="space-y-4">

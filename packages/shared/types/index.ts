@@ -241,4 +241,11 @@ export type {
   PickUpdateGroup,
 } from './chat.types';
 export { CHAT_WS_EVENTS, CHAT_WS_PATH } from './chat.types';
+export type {
+  WorkingStatus,
+  MemberWorkingStatus,
+  UrgentQuotaStatus,
+  OwnerMetricsSummary,
+  WorkingHoursStatusQuery,
+} from './workingHours.types';
 export type { RequestStore } from '../../../apps/be/src/types/request.types';

@@ -21,6 +21,7 @@ import trackCatalogService from './trackCatalog.service';
 import chatService from './chat.service';
 import blogService from './blog.service';
 import dashboardService from './dashboard.service';
+import workingHoursService from './workingHours.service';
 export {
   setAuthErrorHandler,
   setBaseURLProvider,
@@ -53,11 +54,13 @@ class ApiServicePackage {
   static Chat = WrapApi(chatService);
   static Blog = WrapApi(blogService);
   static Dashboard = WrapApi(dashboardService);
+  static WorkingHours = WrapApi(workingHoursService);
 }
 
 export { default as AuthService } from './auth.service';
 export { default as CalendarService } from './calendar.service';
 export { default as CompanyService } from './company.service';
+export { default as WorkingHoursService } from './workingHours.service';
 export { default as MusicService } from './music.service';
 export { default as NoteService } from './note.service';
 export { default as NotificationService } from './notification.service';
