@@ -3,6 +3,8 @@ FROM oven/bun:1.4.3 AS pruner
 WORKDIR /app
 RUN bun add -g turbo@2.11.4
 COPY . .
+# prune butuh monorepo root — pastikan konteks build = repo root, bukan apps/be.
+RUN test -f turbo.json || (echo "FATAL: turbo.json tidak ada. Set Render 'Docker Build Context Directory' / 'Root Directory' ke repo root." >&2 && exit 1)
 RUN turbo prune api --docker
 
 FROM oven/bun:1.4.3 AS installer
