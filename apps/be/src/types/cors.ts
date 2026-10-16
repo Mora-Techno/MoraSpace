@@ -20,15 +20,25 @@ export const getCorsOrigin = (requestOrigin: string): boolean => {
     return true;
   }
 
-  // 2. Collect allowed origins from both FRONTEND_URL and CORS_ORIGINS
+  // 2. Collect allowed origins from FRONTEND_URL, FRONTEND_URL_STAGING, FRONTEND_URL_PROD, and CORS_ORIGINS
   const rawOrigins: string[] = [];
 
-  if (process.env.FRONTEND_URL) {
-    rawOrigins.push(...process.env.FRONTEND_URL.split(',').map((o) => o.trim().replace(/\/$/, '')));
-  }
+  const candidateOrigins = [
+    process.env.FRONTEND_URL,
+    process.env.FRONTEND_URL_STAGING,
+    process.env.FRONTEND_URL_PROD,
+    process.env.CORS_ORIGINS,
+  ];
 
-  if (process.env.CORS_ORIGINS) {
-    rawOrigins.push(...process.env.CORS_ORIGINS.split(',').map((o) => o.trim().replace(/\/$/, '')));
+  for (const originStr of candidateOrigins) {
+    if (originStr) {
+      rawOrigins.push(
+        ...originStr
+          .split(',')
+          .map((o) => o.trim().replace(/\/$/, ''))
+          .filter(Boolean),
+      );
+    }
   }
 
   // Allow all if '*' is specified
