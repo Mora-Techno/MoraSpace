@@ -105,19 +105,19 @@ jobs:
           NODE_ENV: production
           SKIP_ENV_VALIDATION: "1"
 
-          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'https://moraspace-staging.muliaandiki.workers.dev' }}
-          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api-space-v1.mora.my.id' }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_BASEPATH: /home
-          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'qweqwe' }}
-          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API || '/api' }}
-          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API || '/v1' }}
-          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET || secrets.NEXT_INTERNAL_API_SECRET || '7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b' }}
-          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL || 'https://pub-7d1a189f820b45b79672171df36ba921.r2.dev' }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API }}
+          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API }}
+          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET }}
+          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL }}
 
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.NEXT_CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
@@ -173,19 +173,19 @@ jobs:
           NODE_ENV: production
           SKIP_ENV_VALIDATION: "1"
 
-          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'https://space.mora.my.id' }}
-          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api-space-v1.mora.my.id' }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
           NEXT_PUBLIC_BASEPATH: /home
-          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'qweqwe' }}
-          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API || '/api' }}
-          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API || '/v1' }}
-          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET || secrets.NEXT_INTERNAL_API_SECRET || '7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b' }}
-          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL || 'https://pub-7d1a189f820b45b79672171df36ba921.r2.dev' }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
+          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API }}
+          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API }}
+          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET }}
+          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL }}
 
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.NEXT_CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 

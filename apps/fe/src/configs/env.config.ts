@@ -7,36 +7,24 @@ export const env = createEnv({
   // Server Environment Variables Configuration
   server: {
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    AUTH_SECRET_KEY: z.string().default('default_build_auth_secret_key'),
-    NEXT_INTERNAL_API_SECRET: z
-      .string()
-      .default('7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b'),
-    GOOGLE_CLIENT_SECRET: z.string().default('default_google_secret'),
-    NEXT_CLOUDFLARE_ACCOUNT_ID: z.string().default('23ad70705473f1205500a8ceb2f70f92'),
-    NEXT_ACCESS_KEY_ID: z.string().default('4169985b67402440958aa9b30fb2fa7e'),
-    NEXT_SECRET_ACCESS_KEY: z
-      .string()
-      .default('130cc7ec470d3b5d43ddef14016fc5b57bad9ac5cfc6587e5b7d50405e209d99'),
+    AUTH_SECRET_KEY: requiredString,
+    NEXT_INTERNAL_API_SECRET: requiredString,
+    GOOGLE_CLIENT_SECRET: requiredString,
+    NEXT_CLOUDFLARE_ACCOUNT_ID: requiredString,
+    NEXT_ACCESS_KEY_ID: requiredString,
+    NEXT_SECRET_ACCESS_KEY: requiredString,
   },
 
   // Client Environment Variables Configuration
   client: {
-    NEXT_PUBLIC_APP_URL: z
-      .string()
-      .url()
-      .default('https://moraspace-staging.muliaandiki.workers.dev'),
-    NEXT_PUBLIC_BACKEND_URL: z.string().url().default('https://api-space-v1.mora.my.id'),
-    NEXT_PUBLIC_BASEPATH: z.string().default('/home'),
-    NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string().default('qweqwe'),
-    NEXT_PUBLIC_GATE_API: z.string().default('/api'),
-    NEXT_PUBLIC_VERSION_API: z.string().default('/v1'),
-    NEXT_PUBLIC_INTERNAL_API_SECRET: z
-      .string()
-      .default('7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b'),
-    NEXT_PUBLIC_R2_URL: z
-      .string()
-      .url()
-      .default('https://pub-7d1a189f820b45b79672171df36ba921.r2.dev'),
+    NEXT_PUBLIC_APP_URL: requiredString.url(),
+    NEXT_PUBLIC_BACKEND_URL: requiredString.url(),
+    NEXT_PUBLIC_BASEPATH: requiredString,
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: requiredString,
+    NEXT_PUBLIC_GATE_API: requiredString,
+    NEXT_PUBLIC_VERSION_API: requiredString,
+    NEXT_PUBLIC_INTERNAL_API_SECRET: requiredString,
+    NEXT_PUBLIC_R2_URL: requiredString.url(),
   },
 
   // Runtime Environment Variables Configuration
