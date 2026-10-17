@@ -1,4 +1,5 @@
 export type TrackStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type TrackStatusQuery = TrackStatus | 'ALL';
 
 export interface ITrackCatalog {
   id: string;
@@ -38,7 +39,7 @@ export type PickReviewTrack = {
 
 export type TrackCatalogQuery = {
   search?: string;
-  status?: TrackStatus;
+  status?: TrackStatusQuery;
   page?: number;
   limit?: number;
   sortBy?: string;

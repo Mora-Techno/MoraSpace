@@ -17,9 +17,12 @@ export const TrackCatalogQueryDto = t.Object({
   ...PaginationDto.properties,
   ...SortDto.properties,
   status: t.Optional(
-    t.Union([t.Literal('PENDING'), t.Literal('APPROVED'), t.Literal('REJECTED')], {
-      description: 'Filter berdasarkan status track',
-    }),
+    t.Union(
+      [t.Literal('PENDING'), t.Literal('APPROVED'), t.Literal('REJECTED'), t.Literal('ALL')],
+      {
+        description: 'Filter berdasarkan status track',
+      },
+    ),
   ),
 });
 
