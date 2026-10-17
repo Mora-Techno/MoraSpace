@@ -4,11 +4,12 @@ export type AuthSession = {
   accessToken?: string;
   refreshToken: string;
   role?: string;
+  platformRole?: string;
   updatedAt: number;
 };
 
 export function persistAuthSession(
-  session: Pick<AuthSession, 'accessToken' | 'refreshToken' | 'role'>,
+  session: Pick<AuthSession, 'accessToken' | 'refreshToken' | 'role' | 'platformRole'>,
 ) {
   if (typeof window === 'undefined') return;
 
@@ -73,12 +74,17 @@ export function persistAuthSessionFromResponse(data: unknown) {
     (typeof record.companyRole === 'string' ? record.companyRole : null) ??
     (typeof record.role === 'string' ? record.role : null);
 
+  const platformRole =
+    (typeof user?.platformRole === 'string' ? user.platformRole : null) ??
+    (typeof record.platformRole === 'string' ? record.platformRole : null);
+
   if (!refreshToken) return;
 
   persistAuthSession({
     accessToken: accessToken ?? undefined,
     refreshToken,
     role: role ?? undefined,
+    platformRole: platformRole ?? undefined,
   });
 }
 

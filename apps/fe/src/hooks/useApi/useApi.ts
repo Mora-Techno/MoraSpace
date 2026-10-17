@@ -6,6 +6,7 @@ import { useDashboard } from './dashboard/useDashboard';
 import { useDepartment } from './department/useDepartment';
 import { useInvitation } from './invitation/useInvitation';
 import { useMember } from './member/useMember';
+import { useModule } from './module/useModule';
 import { useMusic } from './music/useMusic';
 import { useNotess } from './note/useNotes';
 import { useNotification } from './notification/useNotification';
@@ -45,5 +46,6 @@ export function useApi() {
     chat: useChat(),
     dashboard: useDashboard(),
     workingHours: useWorkingHours(),
+    module: useModule(),
   };
 }

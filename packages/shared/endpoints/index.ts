@@ -59,3 +59,4 @@ export {
   WORKING_HOURS_ENDPOINTS,
   listWorkingHoursEndpoints,
 } from './workingHours.endpoints';
+export { MODULE_ENDPOINTS, listModuleEndpoints } from './module.endpoints';

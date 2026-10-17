@@ -24,7 +24,7 @@ export type NavItem = {
   children?: NavItem[];
 };
 
-type Role = 'member' | 'owner' | 'individual' | 'personal';
+type Role = 'member' | 'owner' | 'individual' | 'personal' | 'developer';
 
 /**
  * Fitur khas "member" yang dijadikan sub-laman di dalam area Owner.
@@ -117,12 +117,6 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
       mobile: true,
     },
     {
-      title: 'Review Tracks',
-      url: '/owner/catalog',
-      icon: Radio,
-      mobile: false,
-    },
-    {
       title: 'Company',
       url: '/owner/company',
       icon: Building2,
@@ -137,6 +131,10 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
     },
     { title: 'Settings', url: '/owner/settings', icon: Settings, mobile: true },
   ],
+  developer: [
+    { title: 'Dashboard', url: '/developer/dashboard', icon: Home, mobile: true },
+    { title: 'Review Tracks', url: '/developer/catalog', icon: Radio, mobile: true },
+  ],
   // Personal & individual: fitur obrolan disembunyikan karena chat bersifat company-scoped.
   personal: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
   individual: MEMBER_NAV_ITEMS.filter((item) => item.title !== 'Chat'),
@@ -144,6 +142,7 @@ const ALL_NAV_ITEMS: Record<Role, NavItem[]> = {
 
 export function getNavItems(role?: Role | string | null): NavItem[] {
   const normalized = role?.toLowerCase();
+  if (normalized === 'developer') return ALL_NAV_ITEMS.developer;
   if (normalized === 'owner') return ALL_NAV_ITEMS.owner;
   if (normalized === 'individual' || normalized === 'personal') return ALL_NAV_ITEMS.personal;
   return ALL_NAV_ITEMS.member;

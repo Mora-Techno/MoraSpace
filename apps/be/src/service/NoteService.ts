@@ -7,6 +7,7 @@ class NoteService {
     userId: string,
     query: {
       search?: string;
+      moduleId?: string;
       folderId?: string;
       startDate?: string;
       endDate?: string;
@@ -15,13 +16,21 @@ class NoteService {
       sortBy?: string;
       sortOrder?: 'asc' | 'desc';
     } = {},
+    companyId?: string | null,
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
-    if (companyMemberId) {
+    if (query.moduleId) {
+      where.moduleId = query.moduleId;
+      if (companyId) {
+        where.module = { companyId };
+      } else {
+        where.module = { userId };
+      }
+    } else if (companyMemberId) {
       where.companyMemberId = companyMemberId;
     } else {
       where.userId = userId;
@@ -60,6 +69,10 @@ class NoteService {
           id: true,
           title: true,
           content: true,
+          moduleId: true,
+          folderId: true,
+          createdAt: true,
+          updatedAt: true,
         },
         orderBy: orderBy as any,
         skip: skip,
@@ -79,9 +92,16 @@ class NoteService {
     };
   }
 
-  public async getById(id: string, companyMemberId: string | null, userId: string) {
+  public async getById(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+    companyId?: string | null,
+  ) {
     const whereFilter: Record<string, unknown> = { id };
-    if (companyMemberId) {
+    if (companyId) {
+      whereFilter.OR = [{ companyMemberId }, { module: { companyId } }];
+    } else if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;
     } else {
       whereFilter.userId = userId;
@@ -96,6 +116,8 @@ class NoteService {
     const data: Record<string, unknown> = {
       title: input.title,
       content: input.content,
+      moduleId: input.moduleId ?? null,
+      folderId: input.folderId ?? null,
     };
     if (companyMemberId) {
       data.companyMemberId = companyMemberId;
@@ -113,33 +135,29 @@ class NoteService {
     companyMemberId: string | null,
     userId: string,
     input: PickUpdateNote,
+    companyId?: string | null,
   ) {
-    const whereFilter: Record<string, unknown> = { id };
-    if (companyMemberId) {
-      whereFilter.companyMemberId = companyMemberId;
-    } else {
-      whereFilter.userId = userId;
-    }
-
-    const existing = await prisma.note.findFirst({
-      where: whereFilter as any,
-    });
+    const existing = await this.getById(id, companyMemberId, userId, companyId);
     if (!existing) return null;
 
-    return prisma.note.update({ where: { id }, data: input });
+    return prisma.note.update({
+      where: { id },
+      data: {
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.content !== undefined && { content: input.content }),
+        ...(input.moduleId !== undefined && { moduleId: input.moduleId || null }),
+        ...(input.folderId !== undefined && { folderId: input.folderId || null }),
+      },
+    });
   }
 
-  public async remove(id: string, companyMemberId: string | null, userId: string) {
-    const whereFilter: Record<string, unknown> = { id };
-    if (companyMemberId) {
-      whereFilter.companyMemberId = companyMemberId;
-    } else {
-      whereFilter.userId = userId;
-    }
-
-    const existing = await prisma.note.findFirst({
-      where: whereFilter as any,
-    });
+  public async remove(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+    companyId?: string | null,
+  ) {
+    const existing = await this.getById(id, companyMemberId, userId, companyId);
     if (!existing) return null;
 
     await prisma.note.delete({ where: { id } });
