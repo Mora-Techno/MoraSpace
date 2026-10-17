@@ -64,6 +64,8 @@ export const queryKey = {
     admins: () => ['companies', 'admins'] as const,
     me: () => ['companies', 'me'] as const,
     settings: () => ['companies', 'settings'] as const,
+    joinCode: () => ['companies', 'join-code'] as const,
+    joinPreview: (code: string) => ['companies', 'join-preview', code] as const,
   },
 
   adminCompaniesRoot: () => ['admin', 'companies'] as const,

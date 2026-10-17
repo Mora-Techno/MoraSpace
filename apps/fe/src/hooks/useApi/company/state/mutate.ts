@@ -2,8 +2,11 @@ import type {
   AdminUser,
   CompanyLogoPresign,
   CompanyProfile,
+  ICompanyJoinCode,
+  IJoinCompanyResult,
   PickCreateAdmin,
   PickCreateCompanyAdmin,
+  PickJoinCompany,
   PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
@@ -125,5 +128,45 @@ export function useAdminSetCompanyPlan() {
   >({
     mutationFn: ({ id, payload }) => Api.Company.AdminSetCompanyPlan(id, payload),
     invalidateKeys: [queryKey.adminCompaniesRoot()],
+  });
+}
+
+export function useRegenerateJoinCode() {
+  return useAppMutation<ICompanyJoinCode, void, CompanyCacheContext>({
+    mutationFn: () => Api.Company.RegenerateJoinCode(),
+    invalidateKeys: [queryKey.companies.joinCode()],
+    showSuccessToast: true,
+  });
+}
+
+export function useJoinCompany() {
+  return useAppMutation<IJoinCompanyResult, PickJoinCompany, CompanyCacheContext>({
+    mutationFn: (payload) => Api.Company.JoinCompany(payload),
+    invalidateKeys: [companyRooyKey, queryKey.auth.workspaces()],
+    onSuccess: async (res, _vars, _ctx, ns) => {
+      const data = res.data;
+      if (data?.session) {
+        persistAuthSessionFromResponse(data.session as any);
+        try {
+          await saveTokens({
+            accessToken: data.session.accessToken,
+            refreshToken: data.session.refreshToken,
+            role: data.session.role,
+          });
+        } catch {}
+      }
+
+      await ns.queryClient.resetQueries();
+
+      ns.alert.toast({
+        title: 'Berhasil Bergabung',
+        message: res.message || `Selamat bergabung dengan ${data?.company?.name || 'perusahaan'}!`,
+        icon: 'success',
+        onVoid: () => {
+          ns.router.replace('/member/dashboard');
+        },
+      });
+    },
+    showSuccessToast: false,
   });
 }

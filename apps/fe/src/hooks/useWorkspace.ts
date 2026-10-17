@@ -52,6 +52,8 @@ export function useWorkspaceSwitcher() {
     ? 'Individual'
     : activeCompany?.role || claims?.companyRole || 'Member';
 
+  const joinCompany = api.company.mutate.joinCompany();
+
   const handleSwitch = async (workspaceId: string) => {
     if (isPersonalActive && workspaceId === 'personal') return;
     if (!isPersonalActive && claims?.companyId === workspaceId) return;
@@ -64,6 +66,17 @@ export function useWorkspaceSwitcher() {
     }
   };
 
+  const handleJoinCompany = async (code: string) => {
+    try {
+      const res = await joinCompany.mutateAsync({ code });
+      reconnect();
+      return res;
+    } catch (err) {
+      console.error('Failed to join company:', err);
+      throw err;
+    }
+  };
+
   return {
     companies,
     isPersonalActive,
@@ -71,7 +84,9 @@ export function useWorkspaceSwitcher() {
     currentWorkspaceName,
     currentWorkspaceRole,
     isLoading,
-    isPending: switchWorkspace.isPending,
+    isPending: switchWorkspace.isPending || joinCompany.isPending,
+    isJoinPending: joinCompany.isPending,
     handleSwitch,
+    handleJoinCompany,
   };
 }

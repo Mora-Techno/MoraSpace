@@ -4,6 +4,8 @@ import {
   CompanyParamsDto,
   CompanyQueryDto,
   CreateAdminDto,
+  JoinCompanyDto,
+  JoinCompanyParamsDto,
   PresignLogoDto,
   RegisterCompanyDto,
   UpdateCompanyProfileDto,
@@ -112,6 +114,47 @@ class CompanyRouter {
       beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
       detail: {
         summary: 'Ubah working hours (Owner)',
+        tags: ['Companies'],
+      },
+    });
+
+    this.companyRouter.get('/join-code', (c: AppContext) => CompanyController.getJoinCode(c), {
+      beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
+      detail: {
+        summary: 'Ambil kode undangan & QR perusahaan',
+        tags: ['Companies'],
+      },
+    });
+
+    this.companyRouter.post(
+      '/join-code/regenerate',
+      (c: AppContext) => CompanyController.regenerateJoinCode(c),
+      {
+        beforeHandle: [verifyToken().beforeHandle, requireRole(['Owner']).beforeHandle],
+        detail: {
+          summary: 'Buat ulang kode undangan perusahaan',
+          tags: ['Companies'],
+        },
+      },
+    );
+
+    this.companyRouter.get(
+      '/join/preview/:code',
+      (c: AppContext) => CompanyController.previewJoinCode(c),
+      {
+        params: JoinCompanyParamsDto,
+        detail: {
+          summary: 'Pratinjau perusahaan sebelum bergabung via kode',
+          tags: ['Companies'],
+        },
+      },
+    );
+
+    this.companyRouter.post('/join', (c: AppContext) => CompanyController.join(c), {
+      body: JoinCompanyDto,
+      beforeHandle: [verifyToken().beforeHandle],
+      detail: {
+        summary: 'Bergabung ke perusahaan menggunakan kode undangan / QR',
         tags: ['Companies'],
       },
     });

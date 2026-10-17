@@ -1,18 +1,15 @@
-
 name: MoraSpace CI/CD
 
 on:
   push:
     branches:
-      - main
       - staging
-      - develop
+      - prod
 
   pull_request:
     branches:
-      - main
       - staging
-      - develop
+      - prod
 
   workflow_dispatch:
 
@@ -21,7 +18,7 @@ permissions:
 
 concurrency:
   group: moraspace-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
 
 jobs:
   # =========================================================
@@ -70,22 +67,19 @@ jobs:
           SKIP_ENV_VALIDATION: "1"
 
   # =========================================================
-  # CD — Development & Staging Worker Previews
+  # CD — Staging Worker (push ke branch staging)
   # =========================================================
-  deploy-preview:
-    name: Deploy Preview (${{ github.ref_name }})
+  deploy-staging:
+    name: Deploy Staging
     needs: test-and-lint
 
-    if: >-
-      github.event_name == 'push' &&
-      (github.ref == 'refs/heads/develop' ||
-       github.ref == 'refs/heads/staging')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     environment:
-      name: ${{ github.ref_name == 'staging' && 'staging' || 'development' }}
+      name: staging
 
     steps:
       - name: Checkout Repository
@@ -104,51 +98,50 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build OpenNext for Preview
+      - name: Build OpenNext (staging)
         working-directory: apps/fe
-        run: bun run cf:build
+        run: bun run cf:build:staging
         env:
           NODE_ENV: production
+          SKIP_ENV_VALIDATION: "1"
 
-          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
-          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'https://moraspace-staging.muliaandiki.workers.dev' }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api-space-v1.mora.my.id' }}
           NEXT_PUBLIC_BASEPATH: /home
-          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
-          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API }}
-          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API }}
-          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'qweqwe' }}
+          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API || '/api' }}
+          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API || '/v1' }}
+          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET || secrets.NEXT_INTERNAL_API_SECRET || '7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b' }}
+          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL || 'https://pub-7d1a189f820b45b79672171df36ba921.r2.dev' }}
 
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.NEXT_CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
-      - name: Publish Worker Preview
+      - name: Deploy Staging Worker
         working-directory: apps/fe
-        run: bunx wrangler preview --name "$GITHUB_REF_NAME"
+        run: bun run cf:deploy:staging
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deployment Summary
         run: |
-          echo "### MoraSpace Preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "### MoraSpace Staging" >> "$GITHUB_STEP_SUMMARY"
           echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
-          echo "Worker: moraspace" >> "$GITHUB_STEP_SUMMARY"
-          echo "Preview: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
+          echo "Worker: moraspace-staging" >> "$GITHUB_STEP_SUMMARY"
 
   # =========================================================
-  # CD — Production Worker
+  # CD — Production Worker (push ke branch prod)
   # =========================================================
   deploy-production:
     name: Deploy Production
     needs: test-and-lint
 
-    if: >-
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/prod'
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -173,30 +166,32 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build OpenNext Production
+      - name: Build OpenNext (production)
         working-directory: apps/fe
-        run: bun run cf:build
+        run: bun run cf:build:prod
         env:
           NODE_ENV: production
+          SKIP_ENV_VALIDATION: "1"
 
-          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL }}
-          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_APP_URL: ${{ vars.NEXT_PUBLIC_APP_URL || 'https://space.mora.my.id' }}
+          NEXT_PUBLIC_BACKEND_URL: ${{ vars.NEXT_PUBLIC_BACKEND_URL || 'https://api-space-v1.mora.my.id' }}
           NEXT_PUBLIC_BASEPATH: /home
-          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
-          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API }}
-          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API }}
-          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL }}
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID || 'qweqwe' }}
+          NEXT_PUBLIC_GATE_API: ${{ vars.NEXT_PUBLIC_GATE_API || '/api' }}
+          NEXT_PUBLIC_VERSION_API: ${{ vars.NEXT_PUBLIC_VERSION_API || '/v1' }}
+          NEXT_PUBLIC_INTERNAL_API_SECRET: ${{ vars.NEXT_PUBLIC_INTERNAL_API_SECRET || secrets.NEXT_INTERNAL_API_SECRET || '7c829b0d1e2f3a4b5c6d7e8f9a0b1c2d3e4fxa6b7c8d9e0f1a2b3c4d5e6f7a8b' }}
+          NEXT_PUBLIC_R2_URL: ${{ vars.NEXT_PUBLIC_R2_URL || 'https://pub-7d1a189f820b45b79672171df36ba921.r2.dev' }}
 
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || secrets.NEXT_CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
       - name: Deploy Production Worker
         working-directory: apps/fe
-        run: bunx opennextjs-cloudflare deploy --env=""
+        run: bun run cf:deploy:prod
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -204,5 +199,5 @@ jobs:
       - name: Deployment Summary
         run: |
           echo "### MoraSpace Production" >> "$GITHUB_STEP_SUMMARY"
+          echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
           echo "Worker: moraspace" >> "$GITHUB_STEP_SUMMARY"
-          echo "URL: https://moraspace.muliaandiki.workers.dev" >> "$GITHUB_STEP_SUMMARY"

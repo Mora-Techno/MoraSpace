@@ -69,3 +69,11 @@ export const CreateCompanyAdminDto = t.Object({
   ),
   tier: t.Optional(t.Union([t.Literal('free'), t.Literal('pro'), t.Literal('enterprise')])),
 });
+
+export const JoinCompanyDto = t.Object({
+  code: t.String({ minLength: 4, description: 'Kode undangan bergabung perusahaan' }),
+});
+
+export const JoinCompanyParamsDto = t.Object({
+  code: t.String({ description: 'Kode undangan bergabung perusahaan' }),
+});
