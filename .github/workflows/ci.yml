@@ -117,7 +117,7 @@ jobs:
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.NEXT_CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
@@ -126,7 +126,7 @@ jobs:
         run: bun run cf:deploy:staging
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.NEXT_CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deployment Summary
         run: |
@@ -185,7 +185,7 @@ jobs:
           AUTH_SECRET_KEY: ${{ secrets.AUTH_SECRET_KEY }}
           NEXT_INTERNAL_API_SECRET: ${{ secrets.NEXT_INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          NEXT_CLOUDFLARE_ACCOUNT_ID: ${{ secrets.NEXT_CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
@@ -194,7 +194,7 @@ jobs:
         run: bun run cf:deploy:prod
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.NEXT_CLOUDFLARE_ACCOUNT_ID || secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deployment Summary
         run: |
