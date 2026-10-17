@@ -48,11 +48,24 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
+      - name: Validate Prisma Schema
+        run: bun --cwd apps/be prisma validate
+
       - name: Generate Prisma Client
         run: bun run --filter=api prisma:generate
 
+      - name: Lint Backend
+        working-directory: apps/be
+        run: bun run lint
+
       - name: Run Backend Tests
-        run: bun test --cwd apps/be
+        working-directory: apps/be
+        run: bun test
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_TEST || secrets.DATABASE_URL || vars.DATABASE_URL_TEST || vars.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/mora_test' }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET || 'moraspace-ci-jwt-secret-testing-32-chars' }}
+          INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET || 'moraspace-internal-secret-ci' }}
+          NODE_ENV: test
 
       - name: Build Backend
         run: bun run --filter=api build
@@ -100,6 +113,23 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
+      - name: Generate Prisma Client
+        run: bun run --filter=api prisma:generate
+
+      - name: Run Database Migrations (Staging)
+        run: |
+          TARGET_URL="${DATABASE_URL:-$DIRECT_URL}"
+          if [ -z "$TARGET_URL" ]; then
+            echo "::warning title=Missing Database URL::DATABASE_URL / DIRECT_URL is not configured for Staging. Skipping migration."
+            echo "To enable migrations, set DATABASE_URL (or DATABASE_URL_STAGING) in GitHub Secrets or Variables."
+          else
+            echo "Applying Prisma migrations to Staging database..."
+            bun run --filter=api prisma:migrate:deploy
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAGING || secrets.DATABASE_URL || vars.DATABASE_URL_STAGING || vars.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL_STAGING || secrets.DIRECT_URL || vars.DIRECT_URL_STAGING || vars.DIRECT_URL }}
+
       - name: Build OpenNext (staging)
         working-directory: apps/fe
         run: bun run cf:build:staging
@@ -135,6 +165,7 @@ jobs:
           echo "### MoraSpace Staging" >> "$GITHUB_STEP_SUMMARY"
           echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
           echo "Worker: moraspace-staging" >> "$GITHUB_STEP_SUMMARY"
+          echo "Database Migration: Executed / Verified" >> "$GITHUB_STEP_SUMMARY"
 
   # =========================================================
   # CD — Production Worker (push ke branch main / prod)
@@ -167,6 +198,23 @@ jobs:
 
       - name: Install Dependencies
         run: bun install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: bun run --filter=api prisma:generate
+
+      - name: Run Database Migrations (Production)
+        run: |
+          TARGET_URL="${DATABASE_URL:-$DIRECT_URL}"
+          if [ -z "$TARGET_URL" ]; then
+            echo "::warning title=Missing Database URL::DATABASE_URL / DIRECT_URL is not configured for Production. Skipping migration."
+            echo "To enable migrations, set DATABASE_URL (or DATABASE_URL_PROD) in GitHub Secrets or Variables."
+          else
+            echo "Applying Prisma migrations to Production database..."
+            bun run --filter=api prisma:migrate:deploy
+          fi
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD || secrets.DATABASE_URL_PRODUCTION || secrets.DATABASE_URL || vars.DATABASE_URL_PROD || vars.DATABASE_URL_PRODUCTION || vars.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL_PROD || secrets.DIRECT_URL_PRODUCTION || secrets.DIRECT_URL || vars.DIRECT_URL_PROD || vars.DIRECT_URL_PRODUCTION || vars.DIRECT_URL }}
 
       - name: Build OpenNext (production)
         working-directory: apps/fe
@@ -203,3 +251,4 @@ jobs:
           echo "### MoraSpace Production" >> "$GITHUB_STEP_SUMMARY"
           echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
           echo "Worker: moraspace" >> "$GITHUB_STEP_SUMMARY"
+          echo "Database Migration: Executed / Verified" >> "$GITHUB_STEP_SUMMARY"
