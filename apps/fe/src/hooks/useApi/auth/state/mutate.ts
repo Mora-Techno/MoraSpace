@@ -46,6 +46,12 @@ export function useLogin() {
         } catch {}
       }
 
+      const platformRole = res?.data?.user?.platformRole?.toUpperCase();
+      if (platformRole === 'DEVELOPER' || platformRole === 'SUPER_ADMIN') {
+        ns.router.replace('/developer/dashboard');
+        return;
+      }
+
       const normalizedRole = role?.toLowerCase();
       switch (normalizedRole) {
         case 'admin':

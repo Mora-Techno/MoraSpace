@@ -9,7 +9,8 @@ import { loadAuthSession } from '@/utils/storage';
 export default function DeveloperDashboardContainer() {
   const router = useRouter();
   const { query } = useTrackCatalog();
-  const { data: pendingTracks = [], isLoading } = query.pending();
+  const { data: pendingTracks = [], isLoading: isPendingLoading } = query.pending();
+  const { data: approvedTracks = [], isLoading: isApprovedLoading } = query.list();
 
   const session = loadAuthSession();
   const platformRole = session?.platformRole || 'DEVELOPER';
@@ -28,8 +29,9 @@ export default function DeveloperDashboardContainer() {
     <DeveloperDashboardSection
       service={{
         pendingTracksCount: pendingTracks.length,
+        approvedTracksCount: approvedTracks.length,
         platformRole,
-        isLoading,
+        isLoading: isPendingLoading || isApprovedLoading,
         onNavigateCatalog: handleNavigateCatalog,
         onNavigateWorkspace: handleNavigateWorkspace,
       }}
