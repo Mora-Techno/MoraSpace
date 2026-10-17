@@ -4,11 +4,13 @@ on:
   push:
     branches:
       - staging
+      - main
       - prod
 
   pull_request:
     branches:
       - staging
+      - main
       - prod
 
   workflow_dispatch:
@@ -18,7 +20,7 @@ permissions:
 
 concurrency:
   group: moraspace-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/prod' }}
 
 jobs:
   # =========================================================
@@ -135,13 +137,13 @@ jobs:
           echo "Worker: moraspace-staging" >> "$GITHUB_STEP_SUMMARY"
 
   # =========================================================
-  # CD — Production Worker (push ke branch prod)
+  # CD — Production Worker (push ke branch main / prod)
   # =========================================================
   deploy-production:
     name: Deploy Production
     needs: test-and-lint
 
-    if: github.event_name == 'push' && github.ref == 'refs/heads/prod'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/prod')
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
