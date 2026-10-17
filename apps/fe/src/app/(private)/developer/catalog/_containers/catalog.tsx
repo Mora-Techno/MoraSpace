@@ -10,7 +10,7 @@ export default function DeveloperCatalogReviewContainer() {
   const { query, mutate } = useTrackCatalog();
   const { data: pendingTracks = [], isLoading: isPendingLoading } = query.pending();
   const { data: allTracks = [], isLoading: isAllLoading } = query.list({
-    status: 'ALL' as any,
+    status: 'ALL',
   });
 
   const approveTrack = mutate.approve();
