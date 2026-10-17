@@ -243,6 +243,78 @@ class CompanyController {
       return HttpResponse(c).internalError(error);
     }
   }
+
+  public async getJoinCode(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).badRequest('Tidak terhubung dengan company');
+      }
+
+      const data = await CompanyService.getJoinCode(user.companyId);
+      return HttpResponse(c).ok(data, undefined, 'Kode undangan company berhasil diambil');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async regenerateJoinCode(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      if (!user.companyId) {
+        return HttpResponse(c).badRequest('Tidak terhubung dengan company');
+      }
+
+      const data = await CompanyService.regenerateJoinCode(user.companyId);
+      return HttpResponse(c).ok(data, undefined, 'Kode undangan baru berhasil dibuat');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async previewJoinCode(c: AppContext) {
+    try {
+      const params = c.params as { code: string };
+      if (!params.code) {
+        return HttpResponse(c).badRequest('Kode undangan wajib diisi');
+      }
+
+      const data = await CompanyService.previewJoinCode(params.code);
+      return HttpResponse(c).ok(data, undefined, 'Informasi perusahaan berhasil diambil');
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
+
+  public async join(c: AppContext) {
+    try {
+      const user = getUser(c);
+      const authRespone = await unauthorizedValidate(user, c);
+      if (authRespone) return authRespone;
+
+      const body = c.body as { code: string };
+      if (!body?.code) {
+        return HttpResponse(c).badRequest('Kode undangan wajib diisi');
+      }
+
+      const data = await CompanyService.joinByCode(user.id, body.code);
+      return HttpResponse(c).ok(
+        data,
+        undefined,
+        data.alreadyMember
+          ? 'Anda sudah menjadi anggota perusahaan ini'
+          : 'Berhasil bergabung ke perusahaan',
+      );
+    } catch (error) {
+      return HttpResponse(c).internalError(error);
+    }
+  }
 }
 
 export default new CompanyController();

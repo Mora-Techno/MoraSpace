@@ -113,6 +113,7 @@ model Company {
   slug                String           @unique
   subscriptionId      String?          @unique @map("subscription_id")
   timezone            String?
+  inviteCode          String?          @unique @map("invite_code")
   updatedAt           DateTime         @updatedAt @map("updated_at")
   status              CompanyStatus    @default(active)
   suspendedAt         DateTime?        @map("suspended_at")

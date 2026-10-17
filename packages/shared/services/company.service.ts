@@ -5,9 +5,13 @@ import type {
   CompanyLogoPresign,
   CompanyProfile,
   CompanyQuery,
+  ICompanyJoinCode,
+  ICompanyJoinPreview,
   ICompanySetting,
+  IJoinCompanyResult,
   PickCreateAdmin,
   PickCreateCompanyAdmin,
+  PickJoinCompany,
   PickPresignCompanyLogo,
   PickRegisterCompany,
   PickUpdateCompanyProfile,
@@ -99,6 +103,35 @@ class CompanyService {
     const res = await PatchResponse<ICompanySetting>(COMPANY_ENDPOINTS.UPDATE_SETTINGS, payload);
     return toServiceResponse(res, {
       message: 'Pengaturan company berhasil diperbarui',
+    });
+  }
+
+  public async GetJoinCode(): Promise<TResponse<ICompanyJoinCode>> {
+    const res = await GetResponse<ICompanyJoinCode>(COMPANY_ENDPOINTS.JOIN_CODE);
+    return toServiceResponse(res, {
+      message: 'Kode undangan company berhasil diambil',
+    });
+  }
+
+  public async RegenerateJoinCode(): Promise<TResponse<ICompanyJoinCode>> {
+    const res = await PostResponse<ICompanyJoinCode>(COMPANY_ENDPOINTS.REGENERATE_JOIN_CODE, {});
+    return toServiceResponse(res, {
+      message: 'Kode undangan baru berhasil dibuat',
+    });
+  }
+
+  public async PreviewJoinCode(code: string): Promise<TResponse<ICompanyJoinPreview>> {
+    const res = await GetResponse<ICompanyJoinPreview>(COMPANY_ENDPOINTS.JOIN_PREVIEW(code));
+    return toServiceResponse(res, {
+      message: 'Informasi perusahaan berhasil diambil',
+    });
+  }
+
+  public async JoinCompany(payload: PickJoinCompany): Promise<TResponse<IJoinCompanyResult>> {
+    const res = await PostResponse<IJoinCompanyResult>(COMPANY_ENDPOINTS.JOIN, payload);
+    return toServiceResponse(res, {
+      message: 'Berhasil bergabung ke perusahaan',
+      statusCode: 200,
     });
   }
 

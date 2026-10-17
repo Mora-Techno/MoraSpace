@@ -1,7 +1,8 @@
 'use client';
 
 import type { WorkspaceItem } from '@repo/types';
-import { Building2, Check, ChevronsUpDown, Loader2, User } from 'lucide-react';
+import { Building2, Check, ChevronsUpDown, Loader2, QrCode, User } from 'lucide-react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -15,12 +16,15 @@ import {
 import { useWorkspaceSwitcher } from '@/hooks/useWorkspace';
 import { cn } from '@/utils/classname';
 
+import { QuickJoinCompanyDialog } from './quick-join-company-dialog';
+
 interface WorkspaceSwitcherProps {
   className?: string;
   collapsed?: boolean;
 }
 
 export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwitcherProps) {
+  const [isJoinDialogOpen, setIsJoinDialogOpen] = useState(false);
   const {
     companies,
     isPersonalActive,
@@ -29,7 +33,9 @@ export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwi
     currentWorkspaceRole,
     isLoading,
     isPending,
+    isJoinPending,
     handleSwitch,
+    handleJoinCompany,
   } = useWorkspaceSwitcher();
 
   return (
@@ -143,7 +149,28 @@ export function WorkspaceSwitcher({ className, collapsed = false }: WorkspaceSwi
             <Loader2 className="size-3.5 animate-spin mr-1.5" /> Memuat...
           </div>
         )}
+
+        <DropdownMenuSeparator className="my-1.5" />
+        <DropdownMenuItem
+          onClick={() => setIsJoinDialogOpen(true)}
+          className="flex items-center gap-2.5 rounded-lg px-2.5 py-2 cursor-pointer transition-colors text-muted-foreground hover:text-foreground"
+        >
+          <div className="flex size-7 items-center justify-center rounded-md bg-secondary text-secondary-foreground shrink-0">
+            <QrCode className="size-4" />
+          </div>
+          <div className="flex flex-1 flex-col">
+            <span className="text-xs font-medium text-foreground">Gabung Perusahaan</span>
+            <span className="text-[10px] text-muted-foreground">Pakai kode atau scan QR</span>
+          </div>
+        </DropdownMenuItem>
       </DropdownMenuContent>
+
+      <QuickJoinCompanyDialog
+        open={isJoinDialogOpen}
+        onOpenChange={setIsJoinDialogOpen}
+        onJoin={handleJoinCompany}
+        isPending={isJoinPending}
+      />
     </DropdownMenu>
   );
 }

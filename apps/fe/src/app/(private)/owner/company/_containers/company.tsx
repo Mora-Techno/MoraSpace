@@ -23,11 +23,14 @@ export default function CompanyContainer() {
   const router = useRouter();
   const ns = useAppNameSpace();
   const [selectedRole, setSelectedRole] = useState<string>('');
+  const [qrModalOpen, setQrModalOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const api = useApi();
   const { data: company, isLoading, refetch } = api.company.query.getMe();
+  const { data: joinCodeData, isLoading: isJoinCodeLoading } = api.company.query.getJoinCode();
   const presignLogo = api.company.mutate.presignLogo();
   const updateProfile = api.company.mutate.updateProfile();
+  const regenerateJoinCode = api.company.mutate.regenerateJoinCode();
 
   const handleLogoSelect = async (file: File) => {
     if (!file.type.startsWith('image/')) {
@@ -61,6 +64,10 @@ export default function CompanyContainer() {
     }
   };
 
+  const handleRegenerateCode = () => {
+    regenerateJoinCode.mutate();
+  };
+
   return (
     <CompanySection
       service={{
@@ -79,8 +86,12 @@ export default function CompanyContainer() {
         uploadPending: uploading,
         onRoleChange: (slug) => router.push(`/owner/company/${slug}`),
         onLogoSelect: handleLogoSelect,
+        joinCodeData: joinCodeData ?? null,
+        isJoinCodeLoading,
+        onRegenerateCode: handleRegenerateCode,
+        isRegeneratingCode: regenerateJoinCode.isPending,
       }}
-      state={{ selectedRole, setSelectedRole }}
+      state={{ selectedRole, setSelectedRole, qrModalOpen, setQrModalOpen }}
     />
   );
 }

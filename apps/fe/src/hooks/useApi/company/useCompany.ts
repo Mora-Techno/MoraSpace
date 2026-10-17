@@ -5,7 +5,9 @@ import {
   useAdminSuspendCompany,
   useCreateAdmin,
   useDeleteAdmin,
+  useJoinCompany,
   usePresignCompanyLogo,
+  useRegenerateJoinCode,
   useRegisterCompany,
   useUpdateCompanyProfile,
   useUpdateCompanySettings,
@@ -13,9 +15,11 @@ import {
 } from './state/mutate';
 import {
   useAdminListCompanies,
+  useGetCompanyJoinCode,
   useGetCompanySettings,
   useGetMyCompany,
   useListAdmins,
+  usePreviewJoinCompany,
 } from './state/query';
 
 export const useCompany = () => {
@@ -32,12 +36,16 @@ export const useCompany = () => {
       adminSuspendCompany: useAdminSuspendCompany,
       adminActivateCompany: useAdminActivateCompany,
       adminSetCompanyPlan: useAdminSetCompanyPlan,
+      regenerateJoinCode: useRegenerateJoinCode,
+      joinCompany: useJoinCompany,
     },
     query: {
       getMe: useGetMyCompany,
       listAdmins: useListAdmins,
       getSettings: useGetCompanySettings,
       adminListCompanies: useAdminListCompanies,
+      getJoinCode: useGetCompanyJoinCode,
+      previewJoinCompany: usePreviewJoinCompany,
     },
   };
 };

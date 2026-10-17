@@ -13,6 +13,10 @@ export const COMPANY_ENDPOINTS = {
   LOGO_PRESIGN: buildEndpoint(mount, '/logo/presign'),
   GET_SETTINGS: buildEndpoint(mount, '/settings'),
   UPDATE_SETTINGS: buildEndpoint(mount, '/settings'),
+  JOIN_CODE: buildEndpoint(mount, '/join-code'),
+  REGENERATE_JOIN_CODE: buildEndpoint(mount, '/join-code/regenerate'),
+  JOIN_PREVIEW: (code: string) => buildEndpoint(mount, `/join/preview/${code}`),
+  JOIN: buildEndpoint(mount, '/join'),
 } as const;
 
 export function listCompanyEndpoints() {
