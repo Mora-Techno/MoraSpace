@@ -1,18 +1,15 @@
-
 name: MoraSpace CI/CD
 
 on:
   push:
     branches:
-      - main
       - staging
-      - develop
+      - prod
 
   pull_request:
     branches:
-      - main
       - staging
-      - develop
+      - prod
 
   workflow_dispatch:
 
@@ -21,7 +18,7 @@ permissions:
 
 concurrency:
   group: moraspace-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
 
 jobs:
   # =========================================================
@@ -70,22 +67,19 @@ jobs:
           SKIP_ENV_VALIDATION: "1"
 
   # =========================================================
-  # CD — Development & Staging Worker Previews
+  # CD — Staging Worker (push ke branch staging)
   # =========================================================
-  deploy-preview:
-    name: Deploy Preview (${{ github.ref_name }})
+  deploy-staging:
+    name: Deploy Staging
     needs: test-and-lint
 
-    if: >-
-      github.event_name == 'push' &&
-      (github.ref == 'refs/heads/develop' ||
-       github.ref == 'refs/heads/staging')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
     environment:
-      name: ${{ github.ref_name == 'staging' && 'staging' || 'development' }}
+      name: staging
 
     steps:
       - name: Checkout Repository
@@ -104,9 +98,9 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build OpenNext for Preview
+      - name: Build OpenNext (staging)
         working-directory: apps/fe
-        run: bun run cf:build
+        run: bun run cf:build:staging
         env:
           NODE_ENV: production
 
@@ -125,30 +119,27 @@ jobs:
           NEXT_ACCESS_KEY_ID: ${{ secrets.NEXT_ACCESS_KEY_ID }}
           NEXT_SECRET_ACCESS_KEY: ${{ secrets.NEXT_SECRET_ACCESS_KEY }}
 
-      - name: Publish Worker Preview
+      - name: Deploy Staging Worker
         working-directory: apps/fe
-        run: bunx wrangler preview --name "$GITHUB_REF_NAME"
+        run: bun run cf:deploy:staging
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
       - name: Deployment Summary
         run: |
-          echo "### MoraSpace Preview" >> "$GITHUB_STEP_SUMMARY"
+          echo "### MoraSpace Staging" >> "$GITHUB_STEP_SUMMARY"
           echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
-          echo "Worker: moraspace" >> "$GITHUB_STEP_SUMMARY"
-          echo "Preview: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
+          echo "Worker: moraspace-staging" >> "$GITHUB_STEP_SUMMARY"
 
   # =========================================================
-  # CD — Production Worker
+  # CD — Production Worker (push ke branch prod)
   # =========================================================
   deploy-production:
     name: Deploy Production
     needs: test-and-lint
 
-    if: >-
-      github.event_name == 'push' &&
-      github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/prod'
 
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -173,9 +164,9 @@ jobs:
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
-      - name: Build OpenNext Production
+      - name: Build OpenNext (production)
         working-directory: apps/fe
-        run: bun run cf:build
+        run: bun run cf:build:prod
         env:
           NODE_ENV: production
 
@@ -196,7 +187,7 @@ jobs:
 
       - name: Deploy Production Worker
         working-directory: apps/fe
-        run: bunx opennextjs-cloudflare deploy --env=""
+        run: bun run cf:deploy:prod
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -204,5 +195,5 @@ jobs:
       - name: Deployment Summary
         run: |
           echo "### MoraSpace Production" >> "$GITHUB_STEP_SUMMARY"
+          echo "Branch: $GITHUB_REF_NAME" >> "$GITHUB_STEP_SUMMARY"
           echo "Worker: moraspace" >> "$GITHUB_STEP_SUMMARY"
-          echo "URL: https://moraspace.muliaandiki.workers.dev" >> "$GITHUB_STEP_SUMMARY"

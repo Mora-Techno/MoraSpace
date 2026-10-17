@@ -18,10 +18,11 @@ import type {
   PickUpdateCompanySettings,
   PickUpdateCompanySubscription,
 } from '@repo/types/company.types';
-import { sanitizeUser } from '@/utils/authTokens';
+import { createTokenPair, sanitizeUser } from '@/utils/authTokens';
 import { resolveAuthUser, toSafeAuthUser, uniqueCompanySlug } from '@/utils/memberContext';
 import { ensurePlan, getCompanyTier, inferBillingCycle } from '@/utils/planHelper';
 import { ensureDefaultRoles } from '@/utils/roleHelper';
+import { generateInviteCode } from '@/utils/inviteCodeHelper';
 
 class CompanyService {
   public async registerLeader(input: PickRegisterCompany) {
@@ -49,11 +50,17 @@ class CompanyService {
         },
       });
 
+      let inviteCode = generateInviteCode(8);
+      while (await tx.company.findUnique({ where: { inviteCode } })) {
+        inviteCode = generateInviteCode(8);
+      }
+
       const company = await tx.company.create({
         data: {
           name: input.companyName,
           slug,
           ownerId: leader.id,
+          inviteCode,
         },
       });
 
@@ -585,6 +592,246 @@ class CompanyService {
     });
 
     return this.getSettings(companyId);
+  }
+
+  public async getJoinCode(companyId: string) {
+    let company = await prisma.company.findUnique({
+      where: { id: companyId },
+      select: { id: true, name: true, inviteCode: true, slug: true },
+    });
+
+    if (!company) {
+      throw new Error('Company tidak ditemukan');
+    }
+
+    if (!company.inviteCode) {
+      let code = generateInviteCode(8);
+      while (await prisma.company.findUnique({ where: { inviteCode: code } })) {
+        code = generateInviteCode(8);
+      }
+      company = await prisma.company.update({
+        where: { id: companyId },
+        data: { inviteCode: code },
+        select: { id: true, name: true, inviteCode: true, slug: true },
+      });
+    }
+
+    const baseUrl = (process.env.FRONTEND_URL || 'http://localhost:3000')
+      .split(',')[0]
+      .trim()
+      .replace(/\/$/, '');
+    const inviteUrl = `${baseUrl}/join?code=${company.inviteCode}`;
+
+    return {
+      inviteCode: company.inviteCode!,
+      inviteUrl,
+      qrCodeData: inviteUrl,
+      companyName: company.name,
+    };
+  }
+
+  public async regenerateJoinCode(companyId: string) {
+    const company = await prisma.company.findUnique({
+      where: { id: companyId },
+    });
+
+    if (!company) {
+      throw new Error('Company tidak ditemukan');
+    }
+
+    let code = generateInviteCode(8);
+    while (await prisma.company.findUnique({ where: { inviteCode: code } })) {
+      code = generateInviteCode(8);
+    }
+
+    const updated = await prisma.company.update({
+      where: { id: companyId },
+      data: { inviteCode: code },
+      select: { id: true, name: true, inviteCode: true, slug: true },
+    });
+
+    const baseUrl = (process.env.FRONTEND_URL || 'http://localhost:3000')
+      .split(',')[0]
+      .trim()
+      .replace(/\/$/, '');
+    const inviteUrl = `${baseUrl}/join?code=${updated.inviteCode}`;
+
+    return {
+      inviteCode: updated.inviteCode!,
+      inviteUrl,
+      qrCodeData: inviteUrl,
+      companyName: updated.name,
+    };
+  }
+
+  public async previewJoinCode(code: string) {
+    const normalizedCode = code.trim().toUpperCase();
+    const company = await prisma.company.findUnique({
+      where: { inviteCode: normalizedCode },
+      select: {
+        id: true,
+        name: true,
+        logo: true,
+        status: true,
+        inviteCode: true,
+      },
+    });
+
+    if (!company || company.status !== 'active') {
+      throw new Error('Kode undangan tidak valid atau perusahaan tidak aktif');
+    }
+
+    const memberCount = await prisma.companyMember.count({
+      where: { companyId: company.id, status: 'active' },
+    });
+
+    return {
+      id: company.id,
+      name: company.name,
+      logo: company.logo,
+      memberCount,
+      code: company.inviteCode!,
+    };
+  }
+
+  public async joinByCode(userId: string, code: string) {
+    const normalizedCode = code.trim().toUpperCase();
+    const company = await prisma.company.findUnique({
+      where: { inviteCode: normalizedCode },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        status: true,
+      },
+    });
+
+    if (!company) {
+      throw new Error('Kode undangan tidak valid atau kadaluwarsa');
+    }
+
+    if (company.status === 'suspended') {
+      throw new Error('Perusahaan sedang ditangguhkan');
+    }
+
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new Error('User tidak ditemukan');
+    }
+
+    // Periksa apakah user sudah menjadi anggota
+    const existingMember = await prisma.companyMember.findUnique({
+      where: { companyId_userId: { companyId: company.id, userId } },
+      include: {
+        roles: { include: { role: true } },
+      },
+    });
+
+    if (existingMember) {
+      if (existingMember.status !== 'active') {
+        await prisma.companyMember.update({
+          where: { id: existingMember.id },
+          data: { status: 'active' },
+        });
+      }
+
+      const safeUser = await resolveAuthUser(userId, company.id);
+      let session = undefined;
+      if (safeUser) {
+        const tokens = await createTokenPair(safeUser);
+        session = {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          role: safeUser.companyRole ?? safeUser.platformRole,
+          user: safeUser,
+        };
+      }
+
+      return {
+        alreadyMember: true,
+        company: {
+          id: company.id,
+          name: company.name,
+          slug: company.slug,
+          logo: company.logo,
+        },
+        member: existingMember,
+        session,
+      };
+    }
+
+    // Periksa batas kuota workstation sesuai paket
+    const activeMembersCount = await prisma.companyMember.count({
+      where: { companyId: company.id, status: 'active' },
+    });
+    const tier = await getCompanyTier(company.id);
+    const limit = getWorkstationUserLimit(tier);
+    if (activeMembersCount >= limit) {
+      throw new Error(
+        `Batas kuota anggota untuk paket ${tier.toUpperCase()} telah tercapai (${limit} anggota). Silakan hubungi pemilik perusahaan.`,
+      );
+    }
+
+    // Buat CompanyMember dan berikan role Member
+    const member = await prisma.$transaction(async (tx) => {
+      const newMember = await tx.companyMember.create({
+        data: {
+          companyId: company.id,
+          userId,
+          status: 'active',
+          joinedAt: new Date(),
+        },
+      });
+
+      let memberRole = await tx.role.findFirst({
+        where: { companyId: company.id, name: 'Member' },
+      });
+
+      if (!memberRole) {
+        memberRole = await tx.role.create({
+          data: {
+            companyId: company.id,
+            name: 'Member',
+            description: 'Anggota perusahaan',
+            isSystem: true,
+          },
+        });
+      }
+
+      await tx.memberRole.create({
+        data: {
+          companyMemberId: newMember.id,
+          roleId: memberRole.id,
+        },
+      });
+
+      return newMember;
+    });
+
+    const safeUser = await resolveAuthUser(userId, company.id);
+    let session = undefined;
+    if (safeUser) {
+      const tokens = await createTokenPair(safeUser);
+      session = {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        role: safeUser.companyRole ?? safeUser.platformRole,
+        user: safeUser,
+      };
+    }
+
+    return {
+      alreadyMember: false,
+      company: {
+        id: company.id,
+        name: company.name,
+        slug: company.slug,
+        logo: company.logo,
+      },
+      member,
+      session,
+    };
   }
 }
 

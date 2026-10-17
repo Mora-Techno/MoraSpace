@@ -15,6 +15,7 @@ const OwnerCompanyMemberContainer = () => {
   const desc = 'Kelola anggota dari perusahaan Anda';
 
   const [open, setOpen] = useState<boolean>(false);
+  const [qrModalOpen, setQrModalOpen] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   const debounceSearch = useDebounce(searchTerm, 500);
@@ -24,6 +25,9 @@ const OwnerCompanyMemberContainer = () => {
   const deleteMember = api.member.mutate.delete();
   const createInvitation = api.invitation.mutate.create();
   const { data: allStatuses } = api.workingHours.query.memberStatus();
+
+  const { data: joinCodeData, isLoading: isJoinCodeLoading } = api.company.query.getJoinCode();
+  const regenerateJoinCode = api.company.mutate.regenerateJoinCode();
 
   // Bentuk runtime ListMembers = ICompanyMember + nested user; ratakan agar
   // section menerima fullName/email langsung (tipe AdminUser).
@@ -60,6 +64,10 @@ const OwnerCompanyMemberContainer = () => {
     createInvitation.mutate({ email }, { onSuccess: () => setOpen(false) });
   };
 
+  const handleRegenerateCode = () => {
+    regenerateJoinCode.mutate();
+  };
+
   return (
     <OwnerCompanyMemberSection
       template={{
@@ -76,6 +84,10 @@ const OwnerCompanyMemberContainer = () => {
           handleInvite,
           isInvitePending: createInvitation.isPending,
           statusByKey,
+          joinCodeData,
+          isJoinCodeLoading,
+          handleRegenerateCode,
+          isRegeneratePending: regenerateJoinCode.isPending,
         } as any
       }
       state={{
@@ -84,6 +96,8 @@ const OwnerCompanyMemberContainer = () => {
         setOpen,
         searchTerm,
         setSearchTerm,
+        qrModalOpen,
+        setQrModalOpen,
       }}
     />
   );

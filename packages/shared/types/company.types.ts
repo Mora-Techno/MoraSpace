@@ -136,3 +136,39 @@ export interface AdminUser {
 }
 
 export type CompanyRespone = Omit<ICompany, ''>;
+
+export interface ICompanyJoinCode {
+  inviteCode: string;
+  inviteUrl: string;
+  qrCodeData: string;
+  companyName: string;
+}
+
+export interface ICompanyJoinPreview {
+  id: string;
+  name: string;
+  logo: string | null;
+  memberCount: number;
+  code: string;
+}
+
+export interface PickJoinCompany {
+  code: string;
+}
+
+export interface IJoinCompanyResult {
+  alreadyMember: boolean;
+  company: {
+    id: string;
+    name: string;
+    slug: string;
+    logo: string | null;
+  };
+  member: any;
+  session?: {
+    accessToken: string;
+    refreshToken: string;
+    role?: string;
+    user?: any;
+  };
+}

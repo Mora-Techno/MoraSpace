@@ -48,3 +48,26 @@ export function useAdminListCompanies(query?: CompanyQuery) {
     staleTime: MODULE_QUERY,
   });
 }
+
+export function useGetCompanyJoinCode() {
+  return useQuery({
+    queryKey: queryKey.companies.joinCode(),
+    queryFn: async () => {
+      const res = await Api.Company.GetJoinCode();
+      return res.data;
+    },
+    staleTime: MODULE_QUERY,
+  });
+}
+
+export function usePreviewJoinCompany(code: string, enabled = true) {
+  return useQuery({
+    queryKey: queryKey.companies.joinPreview(code),
+    queryFn: async () => {
+      const res = await Api.Company.PreviewJoinCode(code);
+      return res.data;
+    },
+    enabled: Boolean(code && code.trim().length >= 6) && enabled,
+    staleTime: 60 * 1000,
+  });
+}
