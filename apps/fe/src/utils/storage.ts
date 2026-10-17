@@ -95,6 +95,7 @@ export function syncAuthFromRefreshResponse(data: unknown, fallback?: AuthSessio
         accessToken: fallback.accessToken,
         refreshToken: fallback.refreshToken,
         role: fallback.role,
+        platformRole: fallback.platformRole,
       });
     }
     return;

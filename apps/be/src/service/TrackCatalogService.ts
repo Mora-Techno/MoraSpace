@@ -1,6 +1,5 @@
 import prisma from 'prisma/client';
 import { extractYouTubeVideoId } from '@/utils/youtube.utils';
-import NotificationService from './NotificationService';
 import { sendMailMessage } from '@/utils/mail.utils';
 import type { PickSubmitTrack, PickReviewTrack } from '@repo/types/trackCatalog.types';
 
@@ -39,13 +38,14 @@ class TrackCatalogService {
     userId: string,
     companyId: string | null,
     input: PickSubmitTrack,
+    platformRole?: string | null,
   ) {
     const videoId = extractYouTubeVideoId(input.youtubeUrl);
     if (!videoId) {
       throw new Error('URL YouTube tidak valid');
     }
 
-    // Check duplicity (scoped to company)
+    // Check duplicity (scoped to company or global)
     const existing = await prisma.trackCatalog.findFirst({
       where: {
         companyId: companyId ?? null,
@@ -64,11 +64,14 @@ class TrackCatalogService {
       throw new Error(`Lagu ini ${statusMsg} (duplicate)`);
     }
 
+    const isPlatformCurator = platformRole === 'DEVELOPER' || platformRole === 'SUPER_ADMIN';
+
     const data: Record<string, unknown> = {
       title: input.title,
       youtubeUrl: input.youtubeUrl,
       youtubeVideoId: videoId,
-      status: 'PENDING',
+      status: isPlatformCurator ? 'APPROVED' : 'PENDING',
+      ...(isPlatformCurator ? { reviewedAt: new Date() } : {}),
     };
     if (companyId) data.companyId = companyId;
     if (companyMemberId) data.companyMemberId = companyMemberId;
@@ -93,8 +96,10 @@ class TrackCatalogService {
             companyId: companyId ?? undefined,
             companyMemberId,
             userId,
-            title: 'Track Submitted',
-            body: `Lagu "${input.title}" berhasil dikirim untuk review.`,
+            title: isPlatformCurator ? 'Track Added to Global Catalog' : 'Track Submitted',
+            body: isPlatformCurator
+              ? `Lagu "${input.title}" telah dipublikasikan ke Track Catalog global.`
+              : `Lagu "${input.title}" berhasil dikirim untuk review.`,
             type: 'track_catalog',
           },
         });
@@ -112,9 +117,11 @@ class TrackCatalogService {
       if (userEmail) {
         await sendMailMessage({
           to: userEmail.email,
-          subject: `[Mora] Track "${input.title}" Submitted`,
+          subject: isPlatformCurator
+            ? `[Mora] Track "${input.title}" Added to Catalog`
+            : `[Mora] Track "${input.title}" Submitted`,
           html: `<p>Halo ${submitterName},</p>
-<p>Lagu <strong>"${input.title}"</strong> telah berhasil dikirim ke Track Catalog dan sedang menunggu review oleh admin.</p>
+<p>Lagu <strong>"${input.title}"</strong> telah berhasil ${isPlatformCurator ? 'dipublikasikan ke katalog global' : 'dikirim ke Track Catalog dan sedang menunggu review'}.</p>
 <p>Terima kasih!</p>`,
         });
       }
@@ -125,10 +132,10 @@ class TrackCatalogService {
     return mapTrack(track);
   }
 
-  /** List tracks with optional status filter. Users only see APPROVED. */
+  /** List tracks with optional status filter. Users see APPROVED + global tracks. */
   public async list(
-    companyMemberId: string | null,
-    userId: string,
+    _companyMemberId: string | null,
+    _userId: string,
     companyId: string | null,
     query: {
       search?: string;
@@ -143,23 +150,30 @@ class TrackCatalogService {
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const conditions: Record<string, unknown>[] = [];
 
-    if (companyId) where.companyId = companyId;
+    if (companyId) {
+      conditions.push({
+        OR: [{ companyId }, { companyId: null }],
+      });
+    }
 
-    // Default: non-admin users only see APPROVED tracks
-    if (query.status) {
-      where.status = query.status;
-    } else {
-      where.status = 'APPROVED';
+    if (query.status && query.status !== 'ALL') {
+      conditions.push({ status: query.status });
+    } else if (!query.status) {
+      conditions.push({ status: 'APPROVED' });
     }
 
     if (query.search) {
-      where.OR = [
-        { title: { contains: query.search, mode: 'insensitive' } },
-        { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
-      ];
+      conditions.push({
+        OR: [
+          { title: { contains: query.search, mode: 'insensitive' } },
+          { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
+        ],
+      });
     }
+
+    const where = conditions.length > 0 ? { AND: conditions } : {};
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
@@ -208,22 +222,30 @@ class TrackCatalogService {
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
 
-    const where: Record<string, unknown> = {};
+    const conditions: Record<string, unknown>[] = [];
 
-    if (companyId) where.companyId = companyId;
-    // Default: non-admin users only see PENDING tracks
-    if (query.status) {
-      where.status = query.status;
-    } else {
-      where.status = 'PENDING';
+    if (companyId) {
+      conditions.push({
+        OR: [{ companyId }, { companyId: null }],
+      });
+    }
+
+    if (query.status && query.status !== 'ALL') {
+      conditions.push({ status: query.status });
+    } else if (!query.status) {
+      conditions.push({ status: 'PENDING' });
     }
 
     if (query.search) {
-      where.OR = [
-        { title: { contains: query.search, mode: 'insensitive' } },
-        { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
-      ];
+      conditions.push({
+        OR: [
+          { title: { contains: query.search, mode: 'insensitive' } },
+          { youtubeVideoId: { contains: query.search, mode: 'insensitive' } },
+        ],
+      });
     }
+
+    const where = conditions.length > 0 ? { AND: conditions } : {};
 
     const orderBy: Record<string, unknown>[] = [];
     if (query.sortBy) {
@@ -277,9 +299,9 @@ class TrackCatalogService {
    */
   public async approve(
     id: string,
-    adminMemberId: string | null,
+    _adminMemberId: string | null,
     adminCompanyId: string | null,
-    adminUserId: string,
+    _adminUserId: string,
   ) {
     const track = await prisma.trackCatalog.findUnique({
       where: { id },
@@ -355,7 +377,7 @@ class TrackCatalogService {
    */
   public async reject(
     id: string,
-    adminMemberId: string | null,
+    _adminMemberId: string | null,
     adminCompanyId: string | null,
     adminUserId: string,
     input: PickReviewTrack,
@@ -439,8 +461,8 @@ ${reason ? `<p>Alasan: <em>${input.rejectionReason}</em></p>` : ''}
   /** Delete a track catalog entry (owner or admin) */
   public async remove(
     id: string,
-    companyMemberId: string | null,
-    userId: string,
+    _companyMemberId: string | null,
+    _userId: string,
     companyId: string | null,
   ) {
     const where: Record<string, unknown> = { id };

@@ -18,6 +18,7 @@ import { PageHeader } from '@/components/molecules/PageHeader';
 export interface DeveloperDashboardSectionProps {
   service: {
     pendingTracksCount: number;
+    approvedTracksCount?: number;
     platformRole: string;
     isLoading: boolean;
     onNavigateCatalog: () => void;
@@ -26,7 +27,14 @@ export interface DeveloperDashboardSectionProps {
 }
 
 export const DeveloperDashboardSection: React.FC<DeveloperDashboardSectionProps> = ({
-  service: { pendingTracksCount, platformRole, isLoading, onNavigateCatalog, onNavigateWorkspace },
+  service: {
+    pendingTracksCount,
+    approvedTracksCount = 0,
+    platformRole,
+    isLoading,
+    onNavigateCatalog,
+    onNavigateWorkspace,
+  },
 }) => {
   return (
     <div className="w-full space-y-6 max-w-6xl mx-auto">
@@ -56,7 +64,7 @@ export const DeveloperDashboardSection: React.FC<DeveloperDashboardSectionProps>
             className="gap-2 text-xs h-9 bg-primary text-primary-foreground"
           >
             <Radio className="size-3.5" />
-            Tinjau Track Catalog
+            Kelola Track Catalog
           </Button>
         </div>
       </div>
@@ -83,18 +91,22 @@ export const DeveloperDashboardSection: React.FC<DeveloperDashboardSectionProps>
 
             <div>
               <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Antrean Track Catalog
+                Track Catalog Global
               </p>
               <div className="mt-1 flex items-baseline gap-2">
                 <span className="text-3xl font-serif font-bold text-foreground">
                   {isLoading ? '...' : pendingTracksCount}
                 </span>
-                <span className="text-xs text-muted-foreground">pengajuan YouTube</span>
+                <span className="text-xs text-muted-foreground">menunggu kurasi</span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-2 text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                <CheckCircle2 className="size-3.5" />
+                <span>{isLoading ? '...' : approvedTracksCount} track aktif di seluruh role</span>
               </div>
               <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                 {pendingTracksCount > 0
                   ? 'Ada musik latar yang diajukan oleh pengguna dan memerlukan persetujuan kurator platform.'
-                  : 'Seluruh musik latar yang diajukan telah selesai ditinjau dan disetujui.'}
+                  : 'Track yang disetujui otomatis dapat diputar oleh seluruh Member & Owner.'}
               </p>
             </div>
           </div>

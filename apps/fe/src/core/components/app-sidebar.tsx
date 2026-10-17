@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronRight, Leaf } from 'lucide-react';
+import { ChevronRight, Code2, Leaf, Sparkles, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
@@ -23,6 +23,7 @@ import {
 import { getNavItems, type NavItem } from '@/configs/nav.config';
 import { useWorkspaceNavRole } from '@/hooks/useWorkspaceNav';
 import { cn } from '@/utils/classname';
+import { loadAuthSession } from '@/utils/storage';
 
 function isItemActive(item: NavItem, pathname: string): boolean {
   if (item.url && (pathname === item.url || pathname.startsWith(item.url))) {
@@ -130,6 +131,11 @@ export function AppSidebar() {
   const navRole = useWorkspaceNavRole();
   const navItems = useMemo(() => getNavItems(navRole), [navRole]);
 
+  const session = loadAuthSession();
+  const platformRole = session?.platformRole?.toUpperCase();
+  const isDeveloperUser = platformRole === 'DEVELOPER' || platformRole === 'SUPER_ADMIN';
+  const isDeveloperRoute = pathname.startsWith('/developer');
+
   return (
     <Sidebar
       collapsible="offcanvas"
@@ -147,7 +153,9 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="font-serif">Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="font-serif">
+            {isDeveloperRoute ? 'Developer Platform' : 'Menu'}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {navItems.map((item) => (
@@ -161,6 +169,51 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isDeveloperUser && (
+          <SidebarGroup className="mt-auto border-t border-border/30 pt-3">
+            <SidebarGroupLabel className="font-serif flex items-center gap-1.5 text-purple-600 dark:text-purple-400">
+              <Sparkles className="size-3" />
+              <span>Layer 1 Platform</span>
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {isDeveloperRoute ? (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild tooltip={isCollapsed ? 'Workspace' : undefined}>
+                      <Link
+                        href={
+                          session?.role?.toLowerCase() === 'owner'
+                            ? '/owner/dashboard'
+                            : '/member/dashboard'
+                        }
+                        className="flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-all duration-300"
+                      >
+                        <User className="size-5" />
+                        {!isCollapsed && <span className="font-medium">Kembali ke Workspace</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ) : (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={isCollapsed ? 'Developer Console' : undefined}
+                    >
+                      <Link
+                        href="/developer/dashboard"
+                        className="flex h-10 items-center gap-3 rounded-xl px-3 py-2 text-purple-600 dark:text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 transition-all duration-300 font-medium"
+                      >
+                        <Code2 className="size-5" />
+                        {!isCollapsed && <span>Developer Console</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );

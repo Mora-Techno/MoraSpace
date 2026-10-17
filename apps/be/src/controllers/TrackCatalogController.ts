@@ -79,9 +79,14 @@ class TrackCatalogController {
         user.id,
         user.companyId ?? null,
         input,
+        user.platformRole,
       );
 
-      return HttpResponse(c).created(track, 'Track berhasil dikirim untuk review');
+      const isCurator = user.platformRole === 'DEVELOPER' || user.platformRole === 'SUPER_ADMIN';
+      return HttpResponse(c).created(
+        track,
+        isCurator ? 'Track berhasil ditambahkan ke katalog' : 'Track berhasil dikirim untuk review',
+      );
     } catch (error: any) {
       if (error?.message?.includes('duplicate')) {
         return HttpResponse(c).conflict(error.message);
