@@ -6,6 +6,7 @@ export const TodoStatusEnum = t.Union([t.Literal('pending'), t.Literal('complete
 export const CreateTodoDto = t.Object({
   text: t.String({ minLength: 1, description: 'Teks tugas' }),
   dueDate: t.Optional(t.String({ format: 'date-time', description: 'Tenggat waktu (ISO 8601)' })),
+  moduleId: t.Optional(t.Nullable(t.String({ format: 'uuid', description: 'ID modul tugas' }))),
 });
 
 export const UpdateTodoDto = t.Object({
@@ -19,12 +20,16 @@ export const UpdateTodoDto = t.Object({
       }),
     ),
   ),
+  moduleId: t.Optional(
+    t.Nullable(t.String({ format: 'uuid', description: 'ID modul tugas baru' })),
+  ),
 });
 
 export const TodoQueryDto = t.Object({
   ...SearchDto.properties,
   ...PaginationDto.properties,
   ...SortDto.properties,
+  moduleId: t.Optional(t.String({ format: 'uuid', description: 'Filter berdasarkan ID modul' })),
   status: t.Optional(
     t.Union([t.Literal('pending'), t.Literal('completed')], {
       description: 'Filter berdasarkan status tugas',

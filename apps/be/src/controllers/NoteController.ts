@@ -19,6 +19,7 @@ class NoteController {
         user.companyMemberId ?? null,
         user.id,
         c.query as any,
+        user.companyId ?? null,
       );
 
       if (!queryService) {
@@ -50,6 +51,7 @@ class NoteController {
         params.id,
         user.companyMemberId ?? null,
         user.id,
+        user.companyId ?? null,
       );
       if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');
 
@@ -98,6 +100,7 @@ class NoteController {
         user.companyMemberId ?? null,
         user.id,
         input,
+        user.companyId ?? null,
       );
       if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');
 
@@ -122,6 +125,7 @@ class NoteController {
         params.id,
         user.companyMemberId ?? null,
         user.id,
+        user.companyId ?? null,
       );
 
       if (!queryService) return HttpResponse(c).notFound('Catatan tidak ditemukan');

@@ -9,7 +9,10 @@ export function useNote(id: string) {
     queryKey: queryKey.notes.detail(id),
     queryFn: async () => {
       const res = await Api.Note.GetNote(id);
-      return res.data;
+      const raw = res as any;
+      return (
+        raw?.data?.id ? raw.data : raw?.id ? raw : (raw?.data ?? raw)
+      ) as import('@repo/types').Note;
     },
     staleTime: MODULE_QUERY,
     enabled: !!id,
@@ -21,7 +24,10 @@ export function useNotes(query?: import('@repo/types').NoteQuery) {
     queryKey: queryKey.notes.list(query),
     queryFn: async () => {
       const res = await Api.Note.ListNotes(query);
-      return res.data;
+      const raw = res as any;
+      return (
+        Array.isArray(raw?.data) ? raw.data : Array.isArray(raw) ? raw : (raw?.data?.data ?? [])
+      ) as import('@repo/types').Note[];
     },
     staleTime: MODULE_QUERY,
   });

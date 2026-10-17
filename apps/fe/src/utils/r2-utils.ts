@@ -8,7 +8,7 @@ import { env } from '@/configs';
 const WEBP_QUALITY = 82;
 const WEBP_MAX_DIMENSION = 1600;
 
-const bucketName = 'Space';
+const bucketName = process.env.NEXT_R2_BUCKET || process.env.R2_BUCKET || 'space';
 const avatarsPrefix = 'avatars';
 const R2_PUBLIC_URL = process.env.NEXT_PUBLIC_R2_URL || '';
 
@@ -83,6 +83,10 @@ export async function uploadAvatar(
 
   const accountId = env.NEXT_CLOUDFLARE_ACCOUNT_ID || process.env.NEXT_CLOUDFLARE_ACCOUNT_ID || '';
   return `https://${accountId}.r2.cloudflarestorage.com/${bucketName}/${Key}`;
+}
+
+export async function uploadNoteImage(fileOrFormData: File | FormData): Promise<string> {
+  return uploadAvatar(fileOrFormData, 'notes');
 }
 
 /**

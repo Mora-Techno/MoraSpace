@@ -9,6 +9,7 @@ export const CreateTaskDto = t.Object({
   startDate: t.Optional(t.String({ format: 'date-time', description: 'Tanggal mulai' })),
   dueDate: t.Optional(t.String({ format: 'date-time', description: 'Tenggat waktu' })),
   estimatedMinutes: t.Optional(t.Numeric({ description: 'Estimasi waktu dalam menit' })),
+  moduleId: t.Optional(t.Nullable(t.String({ format: 'uuid', description: 'ID modul tugas' }))),
   assigneeIds: t.Optional(
     t.Array(t.String({ format: 'uuid' }), {
       description: 'Daftar ID assignee',
@@ -30,6 +31,9 @@ export const UpdateTaskDto = t.Object({
     t.Nullable(t.String({ format: 'date-time', description: 'Tenggat waktu baru' })),
   ),
   estimatedMinutes: t.Optional(t.Nullable(t.Numeric({ description: 'Estimasi waktu baru' }))),
+  moduleId: t.Optional(
+    t.Nullable(t.String({ format: 'uuid', description: 'ID modul tugas baru' })),
+  ),
   assigneeIds: t.Optional(
     t.Array(t.String({ format: 'uuid' }), {
       description: 'Daftar ID assignee baru',
@@ -41,6 +45,7 @@ export const TaskQueryDto = t.Object({
   ...SearchDto.properties,
   ...PaginationDto.properties,
   ...SortDto.properties,
+  moduleId: t.Optional(t.String({ format: 'uuid', description: 'Filter berdasarkan ID modul' })),
   statusId: t.Optional(
     t.String({
       format: 'uuid',

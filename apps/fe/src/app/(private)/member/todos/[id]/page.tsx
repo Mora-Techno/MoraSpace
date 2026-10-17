@@ -1,6 +1,10 @@
-import TodoDetailContainer from './_container/todoDetail';
+import TodosContainer from '../_containers/todos';
 
-export default async function TodoDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function MemberTodoModulePage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
-  return <TodoDetailContainer id={id} />;
+  return <TodosContainer moduleId={id} />;
 }

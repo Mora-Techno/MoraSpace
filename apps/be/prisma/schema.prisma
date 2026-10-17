@@ -52,6 +52,7 @@ model User {
   createdConversations   Conversation[]       @relation("ConversationCreator")
   conversationMemberships ConversationMember[]
   sentChatMessages       Message[]            @relation("MessageSender")
+  modules                Module[]
 
   @@map("users")
 }
@@ -146,6 +147,7 @@ model Company {
   webhooks            Webhook[]
   urgentQuotaUsages   UrgentQuotaUsage[]
   metricEvents        MetricEvent[]
+  modules             Module[]
 
   @@map("companies")
 }
@@ -300,6 +302,7 @@ model CompanyMember {
   settings          UserSetting?
   urgentQuotaUsages UrgentQuotaUsage[]
   metricEvents      MetricEvent[]
+  createdModules    Module[]              @relation("ModuleCreator")
 
   @@unique([companyId, userId])
   @@map("company_members")
@@ -437,11 +440,13 @@ model Task {
   checklists       TaskChecklist[]
   comments         TaskComment[]
   labels           TaskLabelAssignment[]
+  moduleId         String?               @map("module_id")
   company          Company?              @relation(fields: [companyId], references: [id], onDelete: Cascade)
   priority         TaskPriority?         @relation(fields: [priorityId], references: [id])
   reporter         CompanyMember?        @relation("TaskReporter", fields: [reporterMemberId], references: [id])
   status           TaskStatus            @relation(fields: [statusId], references: [id])
   user             User?                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module           Module?               @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@map("tasks")
 }
@@ -594,9 +599,11 @@ model Todo {
   listId          String?        @map("list_id")
   title           String
   userId          String?        @map("user_id")
+  moduleId        String?        @map("module_id")
   companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
   list            TodoList?      @relation(fields: [listId], references: [id])
   user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module          Module?        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@map("todos")
 }
@@ -620,9 +627,11 @@ model Note {
   createdAt       DateTime       @default(now()) @map("created_at")
   updatedAt       DateTime       @updatedAt @map("updated_at")
   userId          String?        @map("user_id")
+  moduleId        String?        @map("module_id")
   companyMember   CompanyMember? @relation(fields: [companyMemberId], references: [id], onDelete: Cascade)
   folder          NoteFolder?    @relation(fields: [folderId], references: [id])
   user            User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module          Module?        @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@map("notes")
 }
@@ -1185,4 +1194,37 @@ enum MetricEventType {
   WORKING_STATUS_VIEWED
   APP_OPENED_OUT_OF_HOURS
 }
+
+enum ModuleType {
+  TASK
+  TODO
+  NOTE
+}
+
+model Module {
+  id              String         @id @default(uuid())
+  companyId       String?        @map("company_id")
+  userId          String?        @map("user_id")
+  creatorMemberId String?        @map("creator_member_id")
+  name            String
+  description     String?
+  color           String?        @default("#3b82f6")
+  icon            String?
+  type            ModuleType
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  company       Company?       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user          User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  creatorMember CompanyMember? @relation("ModuleCreator", fields: [creatorMemberId], references: [id], onDelete: SetNull)
+
+  tasks Task[]
+  todos Todo[]
+  notes Note[]
+
+  @@index([companyId, type])
+  @@index([userId, type])
+  @@map("modules")
+}
+
 

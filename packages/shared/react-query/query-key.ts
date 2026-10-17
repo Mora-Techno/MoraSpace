@@ -109,7 +109,8 @@ export const queryKey = {
 
   tasksRoot: () => ['tasks'] as const,
   tasks: {
-    list: () => ['tasks', 'list'] as const,
+    list: (filters?: import('../types/task.types').TaskQuery) =>
+      ['tasks', 'list', filters ?? {}] as const,
     statuses: () => ['tasks', 'statuses'] as const,
     priorities: () => ['tasks', 'priorities'] as const,
     detail: (id: string) => ['tasks', 'detail', id] as const,
@@ -147,5 +148,12 @@ export const queryKey = {
     status: (memberId?: string) => ['workingHours', 'status', memberId ?? 'all'] as const,
     quota: () => ['workingHours', 'quota'] as const,
     metrics: (range?: string) => ['workingHours', 'metrics', range ?? '7d'] as const,
+  },
+
+  modulesRoot: () => ['modules'] as const,
+  modules: {
+    list: (filters?: import('../types/module.types').ModuleQuery) =>
+      ['modules', 'list', filters ?? {}] as const,
+    detail: (id: string) => ['modules', 'detail', id] as const,
   },
 } as const;

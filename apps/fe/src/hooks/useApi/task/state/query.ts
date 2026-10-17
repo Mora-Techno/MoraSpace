@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKey } from '@/configs';
 import Api from '@/services/api';
 
-export function useListTasks() {
+export function useListTasks(query?: import('@repo/types').TaskQuery) {
   return useQuery({
-    queryKey: queryKey.tasks.list(),
+    queryKey: queryKey.tasks.list(query),
     queryFn: async () => {
-      const res = await Api.Task.ListTasks();
+      const res = await Api.Task.ListTasks(query);
       return res.data;
     },
     staleTime: MODULE_QUERY,

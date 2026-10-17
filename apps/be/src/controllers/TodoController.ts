@@ -18,6 +18,7 @@ class TodoController {
         user.companyMemberId ?? null,
         user.id,
         c.query as TodoQuery,
+        user.companyId ?? null,
       );
 
       if (!queryService) {
@@ -46,6 +47,7 @@ class TodoController {
         params.id,
         user.companyMemberId ?? null,
         user.id,
+        user.companyId ?? null,
       );
       if (!queryService) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 
@@ -97,6 +99,7 @@ class TodoController {
         user.companyMemberId ?? null,
         user.id,
         body,
+        user.companyId ?? null,
       );
       if (!queryService) return HttpResponse(c).notFound('Tugas tidak ditemukan');
 

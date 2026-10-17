@@ -1,5 +1,5 @@
-import CatalogReviewContainer from './_containers/catalog';
+import { redirect } from 'next/navigation';
 
 export default function OwnerCatalogReviewPage() {
-  return <CatalogReviewContainer />;
+  redirect('/developer/catalog');
 }

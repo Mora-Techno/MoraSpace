@@ -22,6 +22,7 @@ import chatService from './chat.service';
 import blogService from './blog.service';
 import dashboardService from './dashboard.service';
 import workingHoursService from './workingHours.service';
+import moduleService from './module.service';
 export {
   setAuthErrorHandler,
   setBaseURLProvider,
@@ -55,6 +56,7 @@ class ApiServicePackage {
   static Blog = WrapApi(blogService);
   static Dashboard = WrapApi(dashboardService);
   static WorkingHours = WrapApi(workingHoursService);
+  static Module = WrapApi(moduleService);
 }
 
 export { default as AuthService } from './auth.service';
@@ -81,6 +83,7 @@ export { default as TrackCatalogService } from './trackCatalog.service';
 export { default as ChatService } from './chat.service';
 export { default as BlogService } from './blog.service';
 export { default as DashboardService } from './dashboard.service';
+export { default as ModuleService } from './module.service';
 export { toServiceResponse } from './service-response';
 export { ApiServicePackage as Api };
 export default ApiServicePackage;

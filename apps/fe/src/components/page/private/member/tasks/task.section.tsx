@@ -7,6 +7,7 @@ import type {
   PickUpdateTaskStatusItem,
   TaskStatusOption,
 } from '@repo/types';
+import type { IModule, PickCreateModule, PickUpdateModule } from '@repo/types/module.types';
 import {
   AlertCircle,
   Check,
@@ -39,8 +40,10 @@ import {
   Label,
   WorkingStatusBadge,
 } from '@/components/atoms';
+import { CreateModuleDialog, ModuleHeader } from '@/components/molecules';
 import { RichTextEditor } from '@/components/molecules/editor/RichTextEditor';
 import { PageHeader } from '@/components/molecules/PageHeader';
+import { ModuleGridSection } from '@/components/organisms';
 import { stripHtml } from '@/utils/html';
 import { deleteObject, uploadAvatar } from '@/utils/r2-utils';
 
@@ -62,6 +65,19 @@ export interface TaskSectionProps {
     handleUpdateStatus: (id: string, payload: PickUpdateTaskStatusItem) => void;
     handleDeleteStatus: (id: string) => void;
     isPending: boolean;
+    moduleContext?: {
+      modules: IModule[];
+      activeModule: IModule | null;
+      moduleId: string | null;
+      isLoadingModules: boolean;
+      canManageModules: boolean;
+      onSelectModule: (module: IModule) => void;
+      onBackToModules: () => void;
+      onSwitchModule: (module: IModule) => void;
+      handleCreateModule: (payload: PickCreateModule) => Promise<void>;
+      handleUpdateModule: (id: string, payload: PickUpdateModule) => Promise<void>;
+      handleDeleteModule: (id: string) => Promise<void>;
+    };
   };
 }
 
@@ -95,8 +111,13 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
     handleUpdateStatus,
     handleDeleteStatus,
     isPending,
+    moduleContext,
   },
 }) => {
+  // Modal states for Module
+  const [openCreateModuleModal, setOpenCreateModuleModal] = useState(false);
+  const [editingModule, setEditingModule] = useState<IModule | null>(null);
+
   // Modal states for Task
   const [openCreateTaskModal, setOpenCreateTaskModal] = useState(false);
   const [taskTitle, setTaskTitle] = useState('');
@@ -265,29 +286,97 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
     handleStatusChange(taskId, targetStatusId);
   };
 
+  if (moduleContext && !moduleContext.moduleId) {
+    return (
+      <div className="w-full">
+        <ModuleGridSection
+          type="TASK"
+          modules={moduleContext.modules}
+          isLoading={moduleContext.isLoadingModules}
+          canManage={moduleContext.canManageModules}
+          onSelect={moduleContext.onSelectModule}
+          onCreate={() => {
+            setEditingModule(null);
+            setOpenCreateModuleModal(true);
+          }}
+          onEdit={(m) => {
+            setEditingModule(m);
+            setOpenCreateModuleModal(true);
+          }}
+          onDelete={(m) => moduleContext.handleDeleteModule(m.id)}
+        />
+        <CreateModuleDialog
+          open={openCreateModuleModal}
+          onOpenChange={setOpenCreateModuleModal}
+          type="TASK"
+          moduleToEdit={editingModule}
+          onSubmit={async (data) => {
+            if (editingModule) {
+              await moduleContext.handleUpdateModule(editingModule.id, data);
+            } else {
+              await moduleContext.handleCreateModule(data as any);
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full space-y-6">
       {/* Top Header & Global Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <PageHeader
-          title="Task Management"
-          description="Kanban board kolaborasi tim dengan status dinamis dan kemudahan drag-and-drop."
+      {moduleContext?.activeModule ? (
+        <ModuleHeader
+          activeModule={moduleContext.activeModule}
+          modules={moduleContext.modules}
+          onBack={moduleContext.onBackToModules}
+          onSwitchModule={moduleContext.onSwitchModule}
+          onEdit={(m) => {
+            setEditingModule(m);
+            setOpenCreateModuleModal(true);
+          }}
+          onDelete={(m) => moduleContext.handleDeleteModule(m.id)}
+          canManage={moduleContext.canManageModules}
+          extraAction={
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setOpenCreateStatusModal(true)}
+                className="gap-1.5 h-9 text-xs"
+              >
+                <Settings2 className="w-3.5 h-3.5 text-muted-foreground" />
+                <span className="hidden sm:inline">Tambah Status</span>
+              </Button>
+              <Button size="sm" onClick={handleOpenCreateTask} className="gap-1.5 h-9 text-xs">
+                <Plus className="w-3.5 h-3.5" />
+                <span>Tambah Task</span>
+              </Button>
+            </div>
+          }
         />
-        <div className="flex items-center gap-2 shrink-0">
-          <Button
-            variant="outline"
-            onClick={() => setOpenCreateStatusModal(true)}
-            className="gap-2"
-          >
-            <Settings2 className="w-4 h-4 text-muted-foreground" />
-            Tambah Status
-          </Button>
-          <Button onClick={handleOpenCreateTask} className="gap-2">
-            <Plus className="w-4 h-4" />
-            Tambah Task
-          </Button>
+      ) : (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <PageHeader
+            title="Task Management"
+            description="Kanban board kolaborasi tim dengan status dinamis dan kemudahan drag-and-drop."
+          />
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="outline"
+              onClick={() => setOpenCreateStatusModal(true)}
+              className="gap-2"
+            >
+              <Settings2 className="w-4 h-4 text-muted-foreground" />
+              Tambah Status
+            </Button>
+            <Button onClick={handleOpenCreateTask} className="gap-2">
+              <Plus className="w-4 h-4" />
+              Tambah Task
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Kanban Board */}
       {isLoading ? (
@@ -873,6 +962,22 @@ export const TaskSection: React.FC<TaskSectionProps> = ({
           )}
         </DialogContent>
       </Dialog>
+
+      {moduleContext && (
+        <CreateModuleDialog
+          open={openCreateModuleModal}
+          onOpenChange={setOpenCreateModuleModal}
+          type="TASK"
+          moduleToEdit={editingModule}
+          onSubmit={async (data) => {
+            if (editingModule) {
+              await moduleContext.handleUpdateModule(editingModule.id, data);
+            } else {
+              await moduleContext.handleCreateModule(data as any);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
