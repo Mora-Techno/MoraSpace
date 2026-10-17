@@ -26,6 +26,10 @@ async function restoreAuthSession(refreshToken: string) {
       (data.user as Record<string, any>)?.role ??
       (data as Record<string, any>)?.role;
 
+    const platformRole =
+      (data.user as Record<string, any>)?.platformRole ??
+      (data as Record<string, any>)?.platformRole;
+
     if (accessToken && newRefreshToken) {
       await saveTokens({
         role: role,
@@ -35,6 +39,7 @@ async function restoreAuthSession(refreshToken: string) {
       syncAuthFromRefreshResponse(data, {
         refreshToken: newRefreshToken,
         role: role,
+        platformRole: platformRole,
         updatedAt: Date.now(),
       });
       return true;
