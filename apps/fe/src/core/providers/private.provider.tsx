@@ -50,8 +50,29 @@ async function restoreAuthSession(refreshToken: string) {
   }
 }
 
-function checkRoleAccess(pathname: string, role: string | null | undefined) {
+function getStoredPlatformRole(): string | null {
+  const session = loadAuthSession();
+  if (session?.platformRole) return session.platformRole;
+  if (!session?.accessToken) return null;
+  try {
+    const payload = JSON.parse(atob(session.accessToken.split('.')[1]));
+    return payload?.platformRole ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function checkRoleAccess(
+  pathname: string,
+  role: string | null | undefined,
+  platformRole?: string | null,
+) {
   const normalizedRole = role?.toLowerCase() ?? null;
+  const normalizedPlatformRole = platformRole?.toUpperCase() ?? null;
+
+  if (pathname.startsWith('/developer')) {
+    return normalizedPlatformRole === 'DEVELOPER' || normalizedPlatformRole === 'SUPER_ADMIN';
+  }
   if (pathname.startsWith('/owner')) {
     return normalizedRole === 'owner';
   }
@@ -136,7 +157,8 @@ export default function PrivateProviders({ children }: { children: React.ReactNo
     const freshRole = loadAuthSession()?.role ?? role;
     if (freshRole !== role) setRole(freshRole);
 
-    if (!checkRoleAccess(pathname, freshRole)) {
+    const platformRole = getStoredPlatformRole();
+    if (!checkRoleAccess(pathname, freshRole, platformRole)) {
       const normalizedRole = freshRole?.toLowerCase();
       const redirectTo = normalizedRole === 'owner' ? '/owner/dashboard' : '/member/dashboard';
       router.replace(redirectTo);

@@ -485,7 +485,7 @@ class CompanyService {
   }
 
   // Logo via R2 presigned PUT — browser upload langsung, secret tetap di BE.
-  // Bucket 'Space' mengikuti FE r2-utils. Ukuran dibatasi di klien (2MB).
+  // Bucket 'space' mengikuti FE r2-utils. Ukuran dibatasi di klien (2MB).
   public async presignLogoUpload(
     companyId: string,
     input: PickPresignCompanyLogo,
@@ -512,9 +512,10 @@ class CompanyService {
       endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
       credentials: { accessKeyId, secretAccessKey },
     });
+    const bucket = process.env.R2_BUCKET || 'space';
     const uploadUrl = await getSignedUrl(
       client,
-      new PutObjectCommand({ Bucket: 'Space', Key: key, ContentType: input.contentType }),
+      new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: input.contentType }),
       { expiresIn: 300 },
     );
     return {

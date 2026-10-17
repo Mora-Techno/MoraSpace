@@ -1,6 +1,6 @@
 'use client';
 
-import { LogOut, Settings } from 'lucide-react';
+import { Code2, Home, LogOut, Settings } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import {
@@ -20,6 +20,7 @@ interface TokenClaims {
   fullName?: string;
   email?: string;
   companyRole?: string;
+  platformRole?: string;
 }
 
 // Klaim dibaca dari JWT lokal (tanpa endpoint baru) — nama/email/role sudah ada di token.
@@ -56,6 +57,21 @@ export default function ProfileDropdown() {
   const displayEmail = claims?.email || '-';
   const displayRole = claims?.companyRole || loadAuthSession()?.role || '-';
   const companyName = (company as { name?: string } | undefined)?.name || '-';
+  const platformRole = claims?.platformRole || loadAuthSession()?.platformRole;
+  const isDeveloper = platformRole === 'DEVELOPER' || platformRole === 'SUPER_ADMIN';
+  const isDeveloperArea = pathname.startsWith('/developer');
+
+  const handleToggleDeveloper = () => {
+    if (isDeveloperArea) {
+      const target =
+        loadAuthSession()?.role?.toLowerCase() === 'owner'
+          ? '/owner/dashboard'
+          : '/member/dashboard';
+      router.push(target);
+    } else {
+      router.push('/developer/dashboard');
+    }
+  };
 
   return (
     <DropdownMenu>
@@ -98,8 +114,25 @@ export default function ProfileDropdown() {
               {displayRole}
             </span>
           </div>
+          {isDeveloper && (
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-muted-foreground">Platform Role</span>
+              <span className="rounded-full bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 px-2 py-0.5 font-semibold text-[10px]">
+                {platformRole}
+              </span>
+            </div>
+          )}
         </div>
         <DropdownMenuSeparator />
+        {isDeveloper && (
+          <DropdownMenuItem
+            onClick={handleToggleDeveloper}
+            className="cursor-pointer gap-2 text-purple-600 dark:text-purple-400 font-medium"
+          >
+            {isDeveloperArea ? <Home className="size-4" /> : <Code2 className="size-4" />}
+            {isDeveloperArea ? 'Kembali ke Workspace' : 'Developer Console'}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           onClick={() => router.push(settingsRoute)}
           className="cursor-pointer gap-2"

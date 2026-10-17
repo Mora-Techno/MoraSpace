@@ -28,6 +28,7 @@ export {
   RoleService,
   TaskService,
   PomodoroService,
+  ModuleService,
   toServiceResponse,
 } from './services';
 

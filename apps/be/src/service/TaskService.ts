@@ -168,6 +168,7 @@ class TaskService {
       priorityId?: string;
       assigneeId?: string;
       reporterMemberId?: string;
+      moduleId?: string;
       startDate?: string;
       endDate?: string;
       page?: number;
@@ -210,6 +211,10 @@ class TaskService {
 
     if (query.statusId) {
       where.statusId = query.statusId;
+    }
+
+    if (query.moduleId) {
+      where.moduleId = query.moduleId;
     }
 
     if (query.priorityId) {
@@ -418,6 +423,7 @@ class TaskService {
           companyId: companyId ?? null,
           reporterMemberId: companyId ? (reporterMemberId ?? null) : null,
           userId: companyId ? null : userId,
+          moduleId: input.moduleId ?? null,
           title: input.title,
           description: input.description ?? null,
           statusId: input.statusId,
@@ -495,6 +501,9 @@ class TaskService {
           }),
           ...(input.estimatedMinutes !== undefined && {
             estimatedMinutes: input.estimatedMinutes,
+          }),
+          ...(input.moduleId !== undefined && {
+            moduleId: input.moduleId || null,
           }),
         },
       });

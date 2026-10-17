@@ -1,5 +1,6 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { useWorkspaces } from '@/hooks/useApi/auth/state/query';
@@ -12,10 +13,12 @@ import { loadAuthSession } from '@/utils/storage';
  * setelah mutasi switchWorkspace sukses, tanpa fetcher baru (cache dipakai bareng).
  */
 export function useWorkspaceNavRole(): string | undefined {
+  const pathname = usePathname();
   const { data } = useWorkspaces();
 
   return useMemo(() => {
+    if (pathname.startsWith('/developer')) return 'developer';
     if (data?.activeType === 'personal') return 'personal';
     return loadAuthSession()?.role?.toLowerCase();
-  }, [data?.activeType]);
+  }, [data?.activeType, pathname]);
 }

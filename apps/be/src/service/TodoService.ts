@@ -1,9 +1,16 @@
 import prisma from 'prisma/client';
 import type { PickCreateTodo, PickUpdateTodo, TodoQuery } from '@repo/types/todo.types';
 
-function mapTodo(todo: { id: string; title: string; completed: boolean; dueDate: Date | null }) {
+function mapTodo(todo: {
+  id: string;
+  title: string;
+  completed: boolean;
+  dueDate: Date | null;
+  moduleId?: string | null;
+}) {
   return {
     id: todo.id,
+    moduleId: todo.moduleId ?? null,
     text: todo.title,
     status: todo.completed ? ('completed' as const) : ('pending' as const),
     dueDate: todo.dueDate?.toISOString() ?? null,
@@ -18,6 +25,7 @@ class TodoService {
     userId: string,
     query: TodoQuery & {
       search?: string;
+      moduleId?: string;
       page?: number;
       limit?: number;
       startDate?: string;
@@ -25,13 +33,21 @@ class TodoService {
       sortBy?: string;
       sortOrder?: 'asc' | 'desc';
     },
+    companyId?: string | null,
   ) {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
     const where: Record<string, unknown> = {};
-    if (companyMemberId) {
+    if (query.moduleId) {
+      where.moduleId = query.moduleId;
+      if (companyId) {
+        where.module = { companyId };
+      } else {
+        where.module = { userId };
+      }
+    } else if (companyMemberId) {
       where.companyMemberId = companyMemberId;
     } else {
       where.userId = userId;
@@ -92,9 +108,16 @@ class TodoService {
     };
   }
 
-  public async getById(id: string, companyMemberId: string | null, userId: string) {
+  public async getById(
+    id: string,
+    companyMemberId: string | null,
+    userId: string,
+    companyId?: string | null,
+  ) {
     const whereFilter: Record<string, unknown> = { id };
-    if (companyMemberId) {
+    if (companyId) {
+      whereFilter.OR = [{ companyMemberId }, { module: { companyId } }];
+    } else if (companyMemberId) {
       whereFilter.companyMemberId = companyMemberId;
     } else {
       whereFilter.userId = userId;
@@ -112,6 +135,7 @@ class TodoService {
     const data: Record<string, unknown> = {
       title: input.text,
       dueDate: input.dueDate ? new Date(input.dueDate) : null,
+      moduleId: input.moduleId ?? null,
     };
     if (companyMemberId) {
       data.companyMemberId = companyMemberId;
@@ -131,17 +155,9 @@ class TodoService {
     companyMemberId: string | null,
     userId: string,
     input: PickUpdateTodo,
+    companyId?: string | null,
   ) {
-    const whereFilter: Record<string, unknown> = { id };
-    if (companyMemberId) {
-      whereFilter.companyMemberId = companyMemberId;
-    } else {
-      whereFilter.userId = userId;
-    }
-
-    const existing = await prisma.todo.findFirst({
-      where: whereFilter as any,
-    });
+    const existing = await this.getById(id, companyMemberId, userId, companyId);
     if (!existing) return null;
 
     const todo = await prisma.todo.update({
@@ -153,6 +169,9 @@ class TodoService {
         }),
         ...(input.dueDate !== undefined && {
           dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        }),
+        ...(input.moduleId !== undefined && {
+          moduleId: input.moduleId || null,
         }),
       },
     });

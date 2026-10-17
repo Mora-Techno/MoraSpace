@@ -85,7 +85,7 @@ export const QuickJoinCompanyDialog: React.FC<QuickJoinCompanyDialogProps> = ({
         onOpenChange(v);
       }}
     >
-      <DialogContent className="max-w-md p-6 rounded-2xl">
+      <DialogContent className="max-w-md h-auto p-6 rounded-2xl">
         <DialogHeader className="text-left space-y-1.5">
           <div className="flex items-center gap-2 text-primary font-medium text-xs tracking-wide uppercase">
             <QrCode className="size-3.5" />
@@ -173,36 +173,34 @@ export const QuickJoinCompanyDialog: React.FC<QuickJoinCompanyDialogProps> = ({
             </div>
           )}
 
-          <DialogFooter className="flex-col sm:flex-col gap-2 pt-2">
-            <Button
-              type="submit"
-              disabled={!hasValidLength || isPending || isPreviewLoading || Boolean(errorMessage)}
-              className="w-full h-10 rounded-xl text-xs font-medium gap-2 shadow-sm"
-            >
-              {isPending ? (
-                <>
-                  <Loader2 className="size-3.5 animate-spin" />
-                  Sedang Bergabung...
-                </>
-              ) : (
-                <>
-                  Gabung & Beralih ke Workspace
-                  <ArrowRight className="size-3.5" />
-                </>
-              )}
-            </Button>
+          <Button
+            type="submit"
+            disabled={!hasValidLength || isPending || isPreviewLoading || Boolean(errorMessage)}
+            className="w-full h-10 rounded-xl text-xs font-medium gap-2 shadow-sm"
+          >
+            {isPending ? (
+              <>
+                <Loader2 className="size-3.5 animate-spin" />
+                Sedang Bergabung...
+              </>
+            ) : (
+              <>
+                Gabung & Beralih ke Workspace
+                <ArrowRight className="size-3.5" />
+              </>
+            )}
+          </Button>
 
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={handleOpenFullPage}
-              disabled={isPending}
-              className="w-full text-[11px] text-muted-foreground hover:text-foreground h-8"
-            >
-              Scan QR Code atau buka halaman penuh
-            </Button>
-          </DialogFooter>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={handleOpenFullPage}
+            disabled={isPending}
+            className="w-full text-[11px] text-muted-foreground hover:text-foreground h-8"
+          >
+            Scan QR Code atau buka halaman penuh
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

@@ -7,16 +7,43 @@ import type {
   PickUpdateTask,
   PickUpdateTaskStatusItem,
 } from '@repo/types';
+import type { IModule, PickCreateModule, PickUpdateModule } from '@repo/types/module.types';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { TaskSection } from '@/components/page/private/member/tasks/task.section';
 import { useTask } from '@/hooks/useApi/task/useTask';
 import { useApi } from '@/hooks/useApi/useApi';
+import { useWorkspaceSwitcher } from '@/hooks/useWorkspace';
 
-export default function TasksContainer() {
+interface TasksContainerProps {
+  moduleId?: string;
+}
+
+export default function TasksContainer({ moduleId: propModuleId }: TasksContainerProps = {}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const moduleId = propModuleId ?? searchParams.get('moduleId');
+  const basePath = pathname.includes('/owner/') ? '/owner/member/tasks' : '/member/tasks';
+
   const { query, mutate } = useTask();
   const api = useApi();
-  const { data: tasks = [], isLoading: isLoadingTasks } = query.list();
+  const { isPersonalActive, currentWorkspaceRole } = useWorkspaceSwitcher();
+  const canManageModules =
+    isPersonalActive || currentWorkspaceRole === 'Owner' || currentWorkspaceRole === 'Admin';
+
+  const { data: modules = [], isLoading: isLoadingModules } = api.module.query.get({
+    type: 'TASK',
+  });
+  const activeModule = useMemo(
+    () => modules.find((m: IModule) => m.id === moduleId) ?? null,
+    [modules, moduleId],
+  );
+
+  const { data: tasks = [], isLoading: isLoadingTasks } = query.list(
+    moduleId ? { moduleId } : undefined,
+  );
   const { data: statuses = [], isLoading: isLoadingStatuses } = query.statuses();
   const { data: members = [] } = api.member.query.list();
   const { data: rawMemberStatuses = [] } = api.workingHours.query.memberStatus();
@@ -56,8 +83,15 @@ export default function TasksContainer() {
   const updateStatusItem = mutate.updateStatusItem();
   const deleteStatusItem = mutate.deleteStatusItem();
 
+  const createModule = api.module.mutate.create();
+  const updateModule = api.module.mutate.update();
+  const deleteModule = api.module.mutate.delete();
+
   const handleCreate = (payload: PickCreateTask) => {
-    createTask.mutate(payload);
+    createTask.mutate({
+      ...payload,
+      moduleId: moduleId ?? undefined,
+    });
   };
 
   const handleUpdate = (id: string, payload: PickUpdateTask) => {
@@ -87,6 +121,33 @@ export default function TasksContainer() {
     deleteStatusItem.mutate(id);
   };
 
+  const handleSelectModule = (module: IModule) => {
+    router.push(`${basePath}/${module.id}`);
+  };
+
+  const handleBackToModules = () => {
+    router.push(basePath);
+  };
+
+  const handleSwitchModule = (module: IModule) => {
+    router.push(`${basePath}/${module.id}`);
+  };
+
+  const handleCreateModule = async (payload: PickCreateModule) => {
+    await createModule.mutateAsync(payload);
+  };
+
+  const handleUpdateModule = async (id: string, payload: PickUpdateModule) => {
+    await updateModule.mutateAsync({ id, payload });
+  };
+
+  const handleDeleteModule = async (id: string) => {
+    await deleteModule.mutateAsync(id);
+    if (moduleId === id) {
+      router.push(basePath);
+    }
+  };
+
   return (
     <TaskSection
       service={{
@@ -113,6 +174,19 @@ export default function TasksContainer() {
           createStatus.isPending ||
           updateStatusItem.isPending ||
           deleteStatusItem.isPending,
+        moduleContext: {
+          modules,
+          activeModule,
+          moduleId,
+          isLoadingModules,
+          canManageModules,
+          onSelectModule: handleSelectModule,
+          onBackToModules: handleBackToModules,
+          onSwitchModule: handleSwitchModule,
+          handleCreateModule,
+          handleUpdateModule,
+          handleDeleteModule,
+        },
       }}
     />
   );

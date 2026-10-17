@@ -1,6 +1,7 @@
 export interface ITask {
   id: string;
   companyId: string;
+  moduleId?: string | null;
   title: string;
   description: string | null;
   statusId: string;
@@ -17,6 +18,7 @@ export interface ITask {
 export type PickCreateTask = {
   title: string;
   description?: string;
+  moduleId?: string;
   statusId: string;
   priorityId?: string;
   startDate?: string;
@@ -46,6 +48,7 @@ export type PickCreateTaskChecklist = {
 
 export type TaskQuery = {
   search?: string;
+  moduleId?: string;
   page?: number;
   limit?: number;
   sortBy?: string;

@@ -252,4 +252,11 @@ export type {
   OwnerMetricsSummary,
   WorkingHoursStatusQuery,
 } from './workingHours.types';
+export type {
+  ModuleType,
+  IModule,
+  PickCreateModule,
+  PickUpdateModule,
+  ModuleQuery,
+} from './module.types';
 export type { RequestStore } from '../../../apps/be/src/types/request.types';

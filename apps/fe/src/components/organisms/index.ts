@@ -4,6 +4,7 @@ export * from './BillingWidget';
 export * from './DailyGreetingSection';
 export * from './FloatingMusicPlayer';
 export * from './KpiCards';
+export * from './ModuleGridSection';
 export * from './MusicSection';
 export * from './PomodoroSection';
 export * from './QuickNotesSection';

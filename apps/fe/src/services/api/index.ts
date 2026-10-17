@@ -40,6 +40,7 @@ const Api = {
   Blog: ApiServicePackage.Blog,
   Dashboard: ApiServicePackage.Dashboard,
   WorkingHours: ApiServicePackage.WorkingHours,
+  Module: ApiServicePackage.Module,
 } as const;
 
 export default Api;

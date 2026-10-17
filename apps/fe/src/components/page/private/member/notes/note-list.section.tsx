@@ -2,6 +2,7 @@ import { formatDateOnly } from '@repo';
 import type { Note, NoteQuery, PickCreateNote } from '@repo/types';
 import { ChevronLeft, ChevronRight, Plus, Search, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/atoms';
 import { Input } from '@/components/atoms/Input';
@@ -9,6 +10,7 @@ import { GhibliCard } from '@/components/molecules/GhibliCard';
 import { NoteModal } from '@/components/molecules/modal/NoteModal';
 import { GhibliEmptyState } from '@/components/templates/GhibliEmptyState';
 import { cn } from '@/utils/classname';
+import { stripHtml } from '@/utils/html';
 
 interface NoteListSectionProps {
   service: {
@@ -33,6 +35,7 @@ interface NoteListSectionProps {
 }
 
 export function NoteListSection({ service, state }: NoteListSectionProps) {
+  const pathname = usePathname();
   const { handleDelete, handleSelect, isPending, handleSubmit, onSearch, onPageChange } = service;
   const {
     notes,
@@ -105,8 +108,8 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
                 <div className="flex flex-grow items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-serif text-lg font-medium">{note.title}</h3>
-                    <p className="mt-2 line-clamp-3 break-words whitespace-pre-wrap text-sm text-muted-foreground">
-                      {note.content || 'Kosong...'}
+                    <p className="mt-2 line-clamp-3 break-words text-sm text-muted-foreground">
+                      {stripHtml(note.content || '') || 'Kosong...'}
                     </p>
                   </div>
                   <Button
@@ -125,7 +128,11 @@ export function NoteListSection({ service, state }: NoteListSectionProps) {
                   <span>{formatDateOnly(note.createdAt)}</span>
                 </div>
                 <Link
-                  href={`/member/notes/${note.id}`}
+                  href={
+                    pathname.includes('/owner/')
+                      ? `/owner/member/notes/${note.id}`
+                      : `/member/notes/${note.id}`
+                  }
                   className="sr-only"
                   onClick={(e) => e.stopPropagation()}
                 >
