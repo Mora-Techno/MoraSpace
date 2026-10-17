@@ -39,6 +39,7 @@ const db = {
   taskStatus: { findMany: mock(async (_query: any) => []) },
   taskPriority: { findMany: mock(async (_query: any) => []) },
   employmentType: { findMany: mock(async (_query: any) => []) },
+  trackCatalog: { count: mock(async () => 0), findMany: mock(async () => []) },
   $transaction: async (operations: Promise<unknown>[]) => Promise.all(operations),
 };
 mock.module('prisma/client', () => ({ default: db }));
@@ -411,5 +412,10 @@ describe('Individual workspace and empty return policy contracts', () => {
       userId: personalUser.id,
       companyId: null,
     });
+  });
+
+  it('accepts status=ALL in music tracks catalog query without 422', async () => {
+    const res = await request('/music/tracks?status=ALL', 'GET');
+    expect(res.status).toBe(200);
   });
 });
